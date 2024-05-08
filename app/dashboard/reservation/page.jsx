@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { Work_Sans, Bebas_Neue, Karla } from "next/font/google";
 import DashboardLayout from "../layout";
+import DashboardIndex from "../_components";
 const karla = Karla({
   subsets: ["latin"],
   variable: "--font-karla",
@@ -18,9 +19,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="https://hopper.com/favicon.ico" />
       </Head>
-      <DashboardLayout>
-        <h1 className="text-4xl">reservation Page</h1>
-      </DashboardLayout>
+     <DashboardIndex/>
     </div>
   );
 }

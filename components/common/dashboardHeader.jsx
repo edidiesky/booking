@@ -56,8 +56,8 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
         window.location.reload();
     };
     return (
-      <HeaderStyles className="w-full z-[3000] flex border-b border-[rgba(0,0,0,.08)] relative items-center flex-col gap-2">
-        <div className="Header_wrapper w-[95%] mx-auto flex item-center justify-between">
+      <HeaderStyles className="w-full z-[3000] flex border-b border-[rgba(0,0,0,.08)] relative items-center justify-center">
+        <div className="Header_wrapper w-[95%] mx-auto flex items-center justify-between">
           <div className="flex w-full items-center gap-3">
             <div
               onClick={() => setBar(!bar)}
@@ -70,7 +70,7 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
               )}
             </div>
           </div>
-          <div className="flex w-full auto item-center justify-end gap-1">
+          <div className="flex w-full auto items-center justify-end gap-1">
             <div className="flex profile_wrapper relative items-center gap-2">
               <div className="flex items-center gap-2">
                 <img
@@ -133,7 +133,7 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
           <div className="w-full h-full absolute bg-[#000] opacity-[.6] z-[24] object-cover" />
           <div
             style={{ zIndex: "200" }}
-            className="w-full Header_wrapper py-4 flex item-center flex-col justify-space gap-2"
+            className="w-full Header_wrapper py-4 flex items-center flex-col justify-space gap-2"
           >
             <div className="w-full my-4 flex flex-col gap-2">
               {AdminSidebarData?.map((x, index) => {
@@ -215,7 +215,7 @@ export const HeaderStyles = styled.div`
         }
     }
         .profile_list{
-          padding:1rem 2rem;
+          padding:10px 2rem;
           font-size: 14px;
             transition:all .3s;
             cursor:pointer;
@@ -238,8 +238,7 @@ export const HeaderStyles = styled.div`
         }
     }
     a,.tab {
-        padding: 7px 14px;
-        min-height: 4rem;
+        padding: 10px 14px;
         font-weight: normal;
         margin: 0 auto;
         font-size: 14px;
