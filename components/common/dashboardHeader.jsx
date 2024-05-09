@@ -188,6 +188,7 @@ export const HeaderStyles = styled.div`
     position: sticky;
     top: 0;
     left:0;
+  border-bottom: 1px solid rgba(0,0,0,.09);
 
       .profile_wrapper:hover  .profile_dropdown {
             opacity:1;
