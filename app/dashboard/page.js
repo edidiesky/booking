@@ -19,10 +19,6 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="https://hopper.com/favicon.ico" />
       </Head>
-     {/* <DashboardLayout>
-      <DashboardIndex/>
-     </DashboardLayout> */}
-
        <DashboardIndex/>
     </div>
   );

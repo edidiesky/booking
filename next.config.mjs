@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["avada.website", "kalanidhithemes.com"],
+    domains: [
+      "avada.website",
+      "kalanidhithemes.com",
+      "homes-and-villas.marriott.com",
+      "www.lovathouse-crieff.com"
+    ],
     formats: ["image/avif", "image/webp"],
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
@@ -31,7 +31,7 @@ const AdminSidebarData = [
     id: 6,
     tab: {
       icon: <FaHotel fontSize={"20px"} />,
-      title: "Manage Reservation",
+      title: "Reservation",
       path: "reservation",
     },
     list: [],
@@ -40,7 +40,7 @@ const AdminSidebarData = [
     id: 4,
     tab: {
       icon: <FaRegUser fontSize={"20px"} />,
-      title: "Manage Clients",
+      title: "Clients",
       path: "customers",
     },
     list: [],
@@ -57,7 +57,7 @@ const DashboardSidebar = ({ active }) => {
         <div className="w-full h-[90%] flex flex-col gap-8">
           <div className="flex flex-col w-full items-start justify-between py-1">
             {/* <h4 className="text-3xl font-bold text-dark">RockTrading</h4> */}
-            <div className=" w-[90%] mx-auto relative flex gap-1 items-center justify-between">
+            <div className=" w-[80%] mx-auto relative flex gap-1 items-center justify-between">
               <div className="w-full flex items-center gap-1 justify-start">
                 <Image
                   alt="Cotion"
@@ -81,11 +81,11 @@ const DashboardSidebar = ({ active }) => {
           <div className="w-full my-4 flex flex-col gap-2">
             {AdminSidebarData?.map((x, index) => {
               return (
-                <div key={index} className="w-[90%] mx-auto">
+                <div key={index} className="w-[80%] mx-auto">
                   {x?.list?.length === 0 ? (
                     <Link
                       className={
-                        "text-3xl w-[90%] mx-auto text-dark family1 font-normal"
+                        "text-3xl w-[80%] mx-auto text-dark family1 font-normal"
                       }
                       href={`/dashboard/${x.tab.path}`}
                     >
@@ -121,13 +121,12 @@ const DashboardSidebar = ({ active }) => {
           </div>
         </div>
         <div className="flex flex-col gap-2 w-full items-start justify-between py-1">
-          <div className="w-[90%] mx-auto flex flex-col gap-4">
+          <div className="w-[80%] mx-auto flex flex-col gap-4">
             <Link
               className={
                 "text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font2 text-dark family1 font-normal"
               }
               href={`/dashboard/settings`}
-            
             >
               <FiSettings fontSize={"24px"} />
               Settings
@@ -159,10 +158,10 @@ export const HeaderStyles = styled.div`
   /* position: absolute;
   top: 0;
   left: 0; */
+  position: sticky;
   background-color: #fff;
   height: 100%;
   bottom: 0;
-  border-right: 1px solid rgba(0, 0, 0, 0.09);
   .dropdown {
     max-height: 0;
     transition: all 0.7s;

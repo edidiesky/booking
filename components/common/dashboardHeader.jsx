@@ -56,7 +56,7 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
         window.location.reload();
     };
     return (
-      <HeaderStyles className="w-full z-[3000] flex border-b border-[rgba(0,0,0,.08)] relative items-center justify-center">
+      <HeaderStyles className="w-full z-[3000] flex relative items-center justify-center">
         <div className="Header_wrapper w-[95%] mx-auto flex items-center justify-between">
           <div className="flex w-full items-center gap-3">
             <div
@@ -188,7 +188,6 @@ export const HeaderStyles = styled.div`
     position: sticky;
     top: 0;
     left:0;
-    border-bottom: 1px solid rgba(0,0,0,.09);
 
       .profile_wrapper:hover  .profile_dropdown {
             opacity:1;
