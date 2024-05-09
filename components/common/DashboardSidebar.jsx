@@ -155,18 +155,17 @@ const DashboardSidebar = ({ active }) => {
 
 export const HeaderStyles = styled.div`
   width: 350px;
-  /* position: absolute;
-  top: 0;
-  left: 0; */
   position: sticky;
   background-color: #fff;
-  height: 100%;
-  bottom: 0;
+  top: 0;
+  height:100vh;
   border-right: 1px solid rgba(0,0,0,.09);
+  @media (max-width:800px) {
+    display:none;
+  }
   .dropdown {
     max-height: 0;
     transition: all 0.7s;
-    /* min-height: 0; */
     &.active {
       max-height: 450px;
       /* min-height: 100px; */
@@ -174,11 +173,11 @@ export const HeaderStyles = styled.div`
   }
   a,
   .tab {
-    /* padding: 4px; */
+    /* padding:14px; */
     /* min-height: 4rem; */
     font-weight: bold;
     margin: 0 auto;
-    font-size: 15px;
+    font-size: 17px;
     border-radius: 10px;
     width: 100%;
     display: flex;

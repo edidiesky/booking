@@ -1,0 +1,40 @@
+import React from 'react';
+const Widget = () => {
+    return (
+      <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="p-8 rounded-[30px] border bg-white flex items-center gap-4 h-56">
+          <div className="flex flex-col">
+            <h3 className="text-5xl font-bold">
+              <span className="text-grey pb-4 block text-base font-normal">
+                New Booking
+              </span>
+              25
+            </h3>
+          </div>
+        </div>
+        <div className="p-8 rounded-[30px] border bg-white flex items-center gap-4 h-56">
+          <div className="flex flex-col">
+            <h3 className="text-5xl font-bold">
+              <span className="text-grey pb-4 block text-base font-normal">
+               Total Revenue
+              </span>
+              $13.599
+            </h3>
+          </div>
+        </div>
+        <div className="p-8 rounded-[30px] border bg-white flex items-center gap-4 h-56">
+          <div className="flex flex-col">
+            <h3 className="text-5xl font-bold">
+              <span className="text-grey pb-4 block text-base font-normal">
+                Total Reserved
+              </span>
+              90
+            </h3>
+          </div>
+        </div>
+      </div>
+    );
+}
+
+
+export default Widget;
