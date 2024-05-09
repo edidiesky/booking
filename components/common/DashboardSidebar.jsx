@@ -156,10 +156,8 @@ const DashboardSidebar = ({ active }) => {
 export const HeaderStyles = styled.div`
   width: 350px;
   position: sticky;
-  background-color: #fff;
   top: 0;
   height:100vh;
-  border-right: 1px solid rgba(0,0,0,.09);
   @media (max-width:800px) {
     display:none;
   }
@@ -190,18 +188,20 @@ export const HeaderStyles = styled.div`
     }
 
     &:hover {
-      background: rgb(231, 231, 231);
+      background: #2E3549;
+        color: #fff;
       svg {
-        color: #000;
+        color: #fff;
       }
     }
     &.active {
       position: relative;
-      background: rgb(231, 231, 231);
+      background: #2E3549;
+        color: #fff;
 
       span {
         svg {
-          color: #000;
+          color: #fff;
         }
       }
     }

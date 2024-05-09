@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { Work_Sans, Bebas_Neue, Karla } from "next/font/google";
-import DashboardLayout from "../layout";
-import DashboardIndex from "../_components";
+import DashboardIndex from "./_components";
 const karla = Karla({
   subsets: ["latin"],
   variable: "--font-karla",

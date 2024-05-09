@@ -11,13 +11,9 @@ export default function DashboardLayout({
   return (
     <section className="flex relative bg-[#fff]">
       <DashboardSidebar />
-      <div className="w-full bg-[#f7f7f7] flex flex-col gap-4">
+      <div className="w-full rounded-tl-[30px] rounded-tr-[30px] bg-[#F0F2F7] flex flex-col gap-4">
         <DashboardHeader />
-        <div className="flex flex-col gap-8 w-[95%] mx-auto">
-        
-          {children}
-        </div>
-        
+        <div className="flex flex-col gap-8 w-[95%] mx-auto">{children}</div>
       </div>
     </section>
   );
