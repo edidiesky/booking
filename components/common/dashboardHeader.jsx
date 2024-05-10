@@ -72,7 +72,7 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
 
             <label
               htmlFor=""
-              className="flex text-base text-dark w-[300px] lg:w-[350px]
+              className="flex text-base text-dark w-[200px] lg:w-[350px]
              items-center gap-2 h-12 border rounded-[40px] bg-[#f9f9f9] px-4"
             >
               <div className="w-8 h-8 rounded-full bg-[#000] text-white flex items-center justify-center">
