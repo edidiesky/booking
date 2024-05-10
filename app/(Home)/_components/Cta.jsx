@@ -56,7 +56,7 @@ export default function Cta() {
       <div className="w-[90%] mx-auto items-start m-auto max-w-custom  flex flex-col gap-16">
         <div className="w-full lg:w-[70%] grid grid-cols-1 sm:grid-cols-custom gap-8 ">
           <div className="w-full">
-            <h4
+            <h3
               ref={ctaText_1}
               className=" w-full text-5xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font3 font-medium text-text_dark_1 "
             >
@@ -74,10 +74,10 @@ export default function Cta() {
                   </span>
                 );
               })}
-            </h4>
+            </h3>
           </div>
           <div className="w-full flex flex-col gap-24">
-            <h4
+            <h5
               ref={ctaText_4}
               className=" w-full text-lg lg:text-lg flex flex-wrap gap-x-[8px] gap-y-[8px] md:gap-y-[4px]  leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
             >
@@ -95,7 +95,7 @@ export default function Cta() {
                   </span>
                 );
               })}
-            </h4>
+            </h5>
           </div>
         </div>
         {/* 1st apartment */}

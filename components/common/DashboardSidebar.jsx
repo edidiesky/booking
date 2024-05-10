@@ -81,7 +81,7 @@ const DashboardSidebar = ({ active }) => {
           <div className="w-full my-4 flex flex-col gap-2">
             {AdminSidebarData?.map((x, index) => {
               return (
-                <div key={index} className="w-[90%] mx-auto">
+                <div key={index} className="w-[90%] font-booking_font2 mx-auto">
                   {x?.list?.length === 0 ? (
                     <Link
                       className={
