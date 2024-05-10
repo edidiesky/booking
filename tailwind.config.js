@@ -8,7 +8,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        booking_font2: ["Roboto", "sans-serif"],
+        booking_font: ["var(--font-work)", "sans-serif"],
+        booking_font2: ["var(--font-lora)", "sans-serif"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

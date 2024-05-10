@@ -5,7 +5,7 @@ const Widget = () => {
       <div className="w-full grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
           style={{ transition: "all .3s" }}
-          className="p-8 w-full rounded-[30px] hover:shadow-xl justify-between cursor-pointer border bg-white flex items-center gap-4 h-56"
+          className="p-8 font-booking_font w-full rounded-[30px] hover:shadow-xl justify-between cursor-pointer border bg-white flex items-center gap-4 h-48"
         >
           <div className="flex flex-col">
             <h3 className="text-5xl font-bold">
@@ -21,7 +21,7 @@ const Widget = () => {
         </div>
         <div
           style={{ transition: "all .3s" }}
-          className="p-8 rounded-[30px] hover:shadow-xl cursor-pointer justify-between border bg-white flex items-center gap-4 h-56"
+          className="p-8 font-booking_font rounded-[30px] hover:shadow-xl cursor-pointer justify-between border bg-white flex items-center gap-4 h-48"
         >
           <div className="flex flex-col">
             <h3 className="text-4xl font-bold">
@@ -37,7 +37,7 @@ const Widget = () => {
         </div>
         <div
           style={{ transition: "all .3s" }}
-          className="p-8 rounded-[30px] hover:shadow-xl cursor-pointer justify-between border bg-white flex items-center gap-4 h-56"
+          className="p-8 font-booking_font rounded-[30px] hover:shadow-xl cursor-pointer justify-between border bg-white flex items-center gap-4 h-48"
         >
           <div className="flex flex-col">
             <h3 className="text-5xl font-bold">

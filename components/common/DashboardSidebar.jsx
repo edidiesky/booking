@@ -70,7 +70,7 @@ const DashboardSidebar = ({ active }) => {
                 />
                 <h4 className="hidden md:flex flex-col text-lg font-bold text-dark">
                   HOME & VILLAS{" "}
-                  <span className="block font-bold text-xs font-booking_font1">
+                  <span className="block font-bold text-xs font-booking_font">
                     {" "}
                     Benneth Okeke
                   </span>
@@ -81,7 +81,7 @@ const DashboardSidebar = ({ active }) => {
           <div className="w-full my-4 flex flex-col gap-2">
             {AdminSidebarData?.map((x, index) => {
               return (
-                <div key={index} className="w-[90%] font-booking_font2 mx-auto">
+                <div key={index} className="w-[90%] font-booking_font mx-auto">
                   {x?.list?.length === 0 ? (
                     <Link
                       className={
@@ -104,7 +104,7 @@ const DashboardSidebar = ({ active }) => {
                       }
                       className="overflow-hidden"
                     >
-                      <div className="tab text-3xl font-booking_font2 text-dark font-normal cursor-pointer family1 justify-between w-full">
+                      <div className="tab text-3xl font-booking_font text-dark font-normal cursor-pointer family1 justify-between w-full">
                         <div className="flex items-center gap-1">
                           <span className="w-12 h-12 text-xm rounded-xl flex items-center text-blue justify-center">
                             {x?.tab?.icon}
@@ -124,7 +124,7 @@ const DashboardSidebar = ({ active }) => {
           <div className="w-[90%] mx-auto flex flex-col gap-4">
             <Link
               className={
-                "text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font2 text-dark family1 font-normal"
+                "text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font text-dark family1 font-normal"
               }
               href={`/dashboard/settings`}
             >
@@ -173,9 +173,9 @@ export const HeaderStyles = styled.div`
   .tab {
     /* padding:14px; */
     /* min-height: 4rem; */
-    font-weight: bold;
+    font-weight: normal;
     margin: 0 auto;
-    font-size: 17px;
+    font-size: 15px;
     border-radius: 10px;
     width: 100%;
     display: flex;
@@ -183,9 +183,6 @@ export const HeaderStyles = styled.div`
     gap: 1rem;
     position: relative;
 
-    svg {
-      color: #000;
-    }
 
     &:hover {
       background: #2E3549;
