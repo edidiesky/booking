@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.42",
+    "apexcharts": "^3.49.0",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.1.9",
     "gsap": "^3.12.5",

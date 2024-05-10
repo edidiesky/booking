@@ -72,21 +72,6 @@ const DashboardSidebar = ({ active }) => {
                   </span>
                 </h4>
               </div>
-              <label
-                htmlFor=""
-                className="flex text-base text-dark w-full
-             items-center gap-2 h-12 border rounded-[40px] bg-[#fff] px-4"
-              >
-               <div className="w-8 h-8 rounded-full bg-[#000] text-white flex items-center justify-center">
-                <BiSearch />
-              </div>
-
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="bg-transparent border-none outline-none text-base text-dark flex-1"
-                />
-              </label>
             </div>
           </div>
           <div className="w-full my-4 flex flex-col gap-2">
