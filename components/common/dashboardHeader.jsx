@@ -10,7 +10,7 @@ import {
   FaHotel,
 } from "react-icons/fa";
 import { RxTimer } from "react-icons/rx";
-import { BiChevronDown, BiChevronUp, BiSupport } from "react-icons/bi";
+import { BiChevronDown, BiChevronUp, BiSearch, BiSupport } from "react-icons/bi";
 import Link from "next/link";
 import React, { useState } from "react";
 const AdminSidebarData = [
@@ -69,6 +69,21 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
                 <FaBars fontSize={"30px"} />
               )}
             </div>
+
+            <label
+              htmlFor=""
+              className="flex text-base text-dark w-[300px] lg:w-[350px]
+             items-center gap-2 h-12 border rounded-[40px] bg-[#f9f9f9] px-4"
+            >
+              <div className="w-8 h-8 rounded-full bg-[#000] text-white flex items-center justify-center">
+                <BiSearch />
+              </div>
+              <input
+                type="text"
+                placeholder="Search"
+                className="bg-transparent border-none outline-none text-sm text-dark flex-1"
+              />
+            </label>
           </div>
           <div className="flex w-full auto items-center justify-end gap-1">
             <div className="flex profile_wrapper relative items-center gap-2">
@@ -140,9 +155,7 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
                 return (
                   <div key={index} className="w-[90%] mx-auto">
                     {x?.list?.length === 0 ? (
-                      <Link
-                        href={`/dashboard/${x.tab.path}`}
-                      >
+                      <Link href={`/dashboard/${x.tab.path}`}>
                         <div className="flex items-center gap-1">
                           <span className="w-12 h-12 text-xm rounded-xl flex items-center text-blue justify-center">
                             {" "}
@@ -184,11 +197,10 @@ export const HeaderStyles = styled.div`
     padding:1rem 0;
     min-height: 6rem;
     width:100%;
-    background-color: #fff;
     position: sticky;
     top: 0;
     left:0;
-
+    background: inherit;
       .profile_wrapper:hover  .profile_dropdown {
             opacity:1;
             transform:scale(1);

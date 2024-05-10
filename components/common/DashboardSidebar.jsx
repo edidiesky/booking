@@ -1,20 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import styled from "styled-components";
+import { usePathname } from 'next/navigation'
 import Image from "next/image";
-import { TiHome, TiMessage } from "react-icons/ti";
+import { BiSearch } from "react-icons/bi";
+import { TiHome } from "react-icons/ti";
 import { FiSettings } from "react-icons/fi";
 import {
   FaRegUser,
-  FaUserCircle,
-  FaUsers,
-  FaHistory,
-  FaChartLine,
-  FaPhoneAlt,
   FaHotel,
 } from "react-icons/fa";
-import { RxTimer } from "react-icons/rx";
-// import { useAppSelector } from "@/hooks/reduxtoolkit";
 import Link from "next/link";
 
 const AdminSidebarData = [
@@ -23,25 +18,25 @@ const AdminSidebarData = [
     tab: {
       title: "Dashboard",
       path: "",
-      icon: <TiHome fontSize={"26px"} />,
+      icon: <TiHome fontSize={"18px"} />,
     },
     list: [],
   },
   {
     id: 6,
     tab: {
-      icon: <FaHotel fontSize={"20px"} />,
+      icon: <FaHotel fontSize={"16px"} />,
       title: "Reservation",
-      path: "reservation",
+      path: "/reservation",
     },
     list: [],
   },
   {
     id: 4,
     tab: {
-      icon: <FaRegUser fontSize={"20px"} />,
+      icon: <FaRegUser fontSize={"16px"} />,
       title: "Clients",
-      path: "customers",
+      path: "/customers",
     },
     list: [],
   },
@@ -51,13 +46,14 @@ const DashboardSidebar = ({ active }) => {
   // const { userInfo } = useAppSelector((store) => store.auth);
   const userInfo = {};
   const [activeindex, setActiveIndex] = useState(null);
+   const pathname = usePathname();
   return (
     <HeaderStyles className={`w-full flex column gap-2`}>
       <div className="w-full h-full py-4 justify-between flex items-center flex-col gap-4">
         <div className="w-full h-[90%] flex flex-col gap-8">
           <div className="flex flex-col w-full items-start justify-between py-1">
             {/* <h4 className="text-3xl font-bold text-dark">RockTrading</h4> */}
-            <div className=" w-[90%] mx-auto relative flex gap-1 items-center justify-between">
+            <div className=" w-[90%] mx-auto relative flex gap-4 items-center flex-col justify-between">
               <div className="w-full flex items-center gap-1 justify-start">
                 <Image
                   alt="Cotion"
@@ -76,45 +72,42 @@ const DashboardSidebar = ({ active }) => {
                   </span>
                 </h4>
               </div>
+              <label
+                htmlFor=""
+                className="flex text-base text-dark w-full
+             items-center gap-2 h-12 border rounded-[40px] bg-[#fff] px-4"
+              >
+               <div className="w-8 h-8 rounded-full bg-[#000] text-white flex items-center justify-center">
+                <BiSearch />
+              </div>
+
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="bg-transparent border-none outline-none text-base text-dark flex-1"
+                />
+              </label>
             </div>
           </div>
           <div className="w-full my-4 flex flex-col gap-2">
             {AdminSidebarData?.map((x, index) => {
+              // console.log(pathname, `/dashboard${x.tab.path}`);
               return (
                 <div key={index} className="w-[90%] font-booking_font mx-auto">
-                  {x?.list?.length === 0 ? (
-                    <Link
-                      className={
-                        "text-3xl w-[90%] mx-auto text-dark family1 font-normal"
-                      }
-                      href={`/dashboard/${x.tab.path}`}
-                    >
-                      <div className="flex items-center gap-1">
-                        <span className="w-12 h-12 text-xm rounded-xl flex items-center text-blue justify-center">
-                          {" "}
-                          {x.tab.icon}
-                        </span>
-                        {<h4>{x.tab?.title}</h4>}
-                      </div>
-                    </Link>
-                  ) : (
-                    <div
-                      onClick={() =>
-                        setActiveIndex(activeindex === x?.id ? false : x?.id)
-                      }
-                      className="overflow-hidden"
-                    >
-                      <div className="tab text-3xl font-booking_font text-dark font-normal cursor-pointer family1 justify-between w-full">
-                        <div className="flex items-center gap-1">
-                          <span className="w-12 h-12 text-xm rounded-xl flex items-center text-blue justify-center">
-                            {x?.tab?.icon}
-                          </span>
-                          {<h4>{x?.tab?.title}</h4>}
-                        </div>
-                        {/* {activeindex ? <BiChevronDown /> : <BiChevronUp />} */}
-                      </div>
+                  <Link
+                    className={`
+                      ${pathname === `/dashboard${x.tab.path}` ? "active" : ""}
+                      text-3xl w-[90%] mx-auto text-dark family1 font-normal`}
+                    href={`/dashboard${x.tab.path}`}
+                  >
+                    <div className="flex items-center">
+                      <span className="w-12 h-12 text-xm rounded-xl flex items-center text-blue justify-center">
+                        {" "}
+                        {x.tab.icon}
+                      </span>
+                      {<h4>{x.tab?.title}</h4>}
                     </div>
-                  )}
+                  </Link>
                 </div>
               );
             })}
@@ -123,9 +116,9 @@ const DashboardSidebar = ({ active }) => {
         <div className="flex flex-col gap-2 w-full items-start justify-between py-1">
           <div className="w-[90%] mx-auto flex flex-col gap-4">
             <Link
-              className={
-                "text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font text-dark family1 font-normal"
-              }
+              className={`${
+                pathname === `/dashboard/settings` ? "active" : ""
+              } text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font text-dark family1 font-normal`}
               href={`/dashboard/settings`}
             >
               <FiSettings fontSize={"24px"} />
@@ -140,7 +133,7 @@ const DashboardSidebar = ({ active }) => {
                 />
                 <h4 className="text-base text-dark font-bold family1">
                   {userInfo?.fullname || "Jermiah frim"}
-                  <span className="block font-normal text-sm text-dark">
+                  <span className="block font-normal text-sm text-grey">
                     {userInfo?.email || "jerrme@gmail.com"}
                   </span>
                 </h4>
@@ -157,9 +150,10 @@ export const HeaderStyles = styled.div`
   width: 350px;
   position: sticky;
   top: 0;
-  height:100vh;
-  @media (max-width:800px) {
-    display:none;
+  height: 100vh;
+  background: #f9f9f9;
+  @media (max-width: 800px) {
+    display: none;
   }
   .dropdown {
     max-height: 0;
@@ -183,22 +177,21 @@ export const HeaderStyles = styled.div`
     gap: 1rem;
     position: relative;
 
-
     &:hover {
-      background: #2E3549;
-        color: #fff;
+      background: #494ba243;
+      color: #1f0a74;
       svg {
-        color: #fff;
+        color: #1f0a74;
       }
     }
     &.active {
       position: relative;
-      background: #2E3549;
-        color: #fff;
+      background: #46466215;
+      color: #1f0a74;
 
       span {
         svg {
-          color: #fff;
+          color: #1f0a74;
         }
       }
     }
