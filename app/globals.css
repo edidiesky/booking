@@ -51,7 +51,6 @@ body {
   overflow: hidden;
 }
 
-
 textarea {
   border: 1px solid rgba(0, 0, 0, 0.2) !important;
   padding: 0.6rem;
@@ -59,8 +58,15 @@ textarea {
 }
 
 .input {
-    border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
   height: 60px;
-   padding: 0.6rem 1rem;
-   border-radius: 10px;
+  padding: 0.6rem 1rem;
+  border-radius: 20px;
+}
+
+.btn {
+  transition: all 0.5s;
+}
+.btn {
+  opacity: 0.7;
 }

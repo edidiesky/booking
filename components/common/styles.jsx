@@ -54,7 +54,7 @@ export const Table = styled.div`
 
             border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             padding: 2.5rem 1.8rem;
-              font-family: "var(--font-work)", sans-serif;
+              font-family: "Barlow", sans-serif;
 
          
             transition: all 0.3s var(--transition-2);
@@ -62,20 +62,20 @@ export const Table = styled.div`
         }
       }
       .btn {
-        padding: .4rem 1rem !important;
+        padding: .4rem 1.3rem !important;
       }
       tbody {
         tr {
           transition: all 0.5s var(--transition-2);
           z-index: 200;
           td {
-            font-size: 1rem;
+            font-size: 1.3rem;
             font-weight: 500;
             text-align: start;
             padding: 2rem 1.8rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.3rem;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-              font-family: "var(--font-work)", sans-serif;
+              font-family: "Barlow", sans-serif;
              
 
 
@@ -84,7 +84,7 @@ export const Table = styled.div`
             }
          
             .tablespan {
-              padding: 1rem;
+              padding: 1.3rem;
               border-radius: 40px;
               color: #333;
               text-align: center;
@@ -135,7 +135,7 @@ export const Table = styled.div`
               }
             }
             .details {
-              padding: 0.8rem 1rem;
+              padding: 0.8rem 1.3rem;
               background: #ddd;
               border-radius: 5px;
             }

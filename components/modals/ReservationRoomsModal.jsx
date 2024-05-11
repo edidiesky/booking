@@ -49,7 +49,7 @@ const ReservationRoomsModal = ({
       >
         <div className="w-[100%] mx-auto flex flex-col gap-4">
           <div className="w-full sticky justify-between top-0 left-0 bg-white z-20 flex gap-1">
-            <h3 className="text-2xl md:text-3xl font-bold font-booking_font4">
+            <h3 className="text-2xl font-bold font-booking_font4">
               Add Rooms
             </h3>
             <div className="flex items-center gap-2">
@@ -65,10 +65,10 @@ const ReservationRoomsModal = ({
               </div>
             </div>
           </div>
-          <div className="w-full h-[30rem] px-2 overflow-auto z-8 grid md:grid-cols-3 gap-4">
+          <div className="w-full h-[30rem] px-2 overflow-auto z-8 grid md:grid-cols-1 gap-8">
             {/* basic information */}
             <div className="w-full flex flex-col gap-4">
-              <h4 className="text-lg font-medium pb-4 border-b w-full">
+              <h4 className="text-xl font-medium pb-4 border-b w-full">
                 Basic Information
               </h4>
               <div className="w-full flex flex-col gap-4">
@@ -151,7 +151,7 @@ const ReservationRoomsModal = ({
             </div>
             {/* // persons */}
             <div className="w-full flex flex-col gap-4">
-              <h4 className="text-lg font-medium pb-4 border-b w-full">
+              <h4 className="text-xl font-medium pb-4 border-b w-full">
                 Persons
               </h4>
               {/* guests */}
@@ -211,7 +211,7 @@ const ReservationRoomsModal = ({
               </div>
               <div className="w-full grid grid-cols-2 gap-2">
                 {/* singlebeds */}
-                <div className="w-full text-base flex flex-col gap-2">
+                <div className="w-full text-lg flex flex-col gap-2">
                   <span className="text-bold text-dark">
                     Number of single beds{" "}
                   </span>
@@ -268,7 +268,7 @@ const ReservationRoomsModal = ({
             </div>
             {/* address data */}
             <div className="w-full flex flex-col gap-4">
-              <h4 className="text-lg font-medium pb-4 border-b w-full">
+              <h4 className="text-xl font-medium pb-4 border-b w-full">
                 Address Data
               </h4>
               <div className="w-full flex flex-col gap-4">
@@ -343,8 +343,8 @@ const DeleteContainer = styled(motion.div)`
   top: 0;
   background: rgba(0, 0, 0, 0.3);
   .guestModalCard {
-    max-width: 90vw;
-    min-width: 90vw;
+    max-width: 65vw;
+    min-width: 60vw;
     display: flex;
     max-height: 50rem;
     align-items: center;

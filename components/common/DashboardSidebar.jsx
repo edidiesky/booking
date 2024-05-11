@@ -23,6 +23,15 @@ const AdminSidebarData = [
     list: [],
   },
   {
+    id: 61,
+    tab: {
+      icon: <FaHotel fontSize={"16px"} />,
+      title: "Rooms",
+      path: "/rooms",
+    },
+    list: [],
+  },
+  {
     id: 6,
     tab: {
       icon: <FaHotel fontSize={"16px"} />,
