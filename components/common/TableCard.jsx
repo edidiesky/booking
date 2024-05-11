@@ -78,7 +78,7 @@ const TableCard = ({ x, type }) => {
           <td>
             <div className="flex item-center justify-center">
               <Link
-                href={`/account/admin/dashboard/Manage_Customers/${x?._id}`}
+                href={`#`}
                 className="icons flex hover:shadow-sm hover:bg-[#ddd] items-center justify-center"
               >
                 <MdEdit />
