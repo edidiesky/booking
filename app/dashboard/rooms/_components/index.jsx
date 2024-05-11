@@ -12,7 +12,7 @@ const DashboardIndex = () => {
           <ReservationRoomsModal modal={roommodal} setModal={setRoomModal} />
         )}
       </AnimatePresence>
-      <div className="w-full flex flex-col gap-12">
+      <div className="w-full pb-20 flex flex-col gap-12">
         <div className="w-full flex items-center justify-between">
           <h3 className="text-4xl font-booking_font font-bold">My Rooms</h3>
           <div className="flex items-center gap-2">

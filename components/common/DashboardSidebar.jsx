@@ -172,7 +172,7 @@ export const HeaderStyles = styled.div`
     position: relative;
 
     &:hover {
-      background: #494ba243;
+      background: #46466215;
       color: #1f0a74;
       svg {
         color: #1f0a74;
