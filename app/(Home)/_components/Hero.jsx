@@ -129,7 +129,7 @@ export default function Hero() {
               <h1 className="text-7xl w-100 text-white font-medium font-booking_font3">
                 Trusted homes <br /> backed by Marriott
               </h1>
-              <h4 className="text-xl font-medium text-grey_2 font-booking_font2">
+              <h4 className="text-xl font-medium text-grey font-booking_font2">
                 Earn and redeem points on premium vacation rentals
               </h4>
               <div className="w-full flex">

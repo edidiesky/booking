@@ -82,7 +82,7 @@ const DashboardSidebar = ({ active }) => {
                   <Link
                     className={`
                       ${pathname === `/dashboard${x.tab.path}` ? "active" : ""}
-                      text-3xl w-[90%] mx-auto text-dark family1 font-normal`}
+                      text-3xl w-[90%] mx-auto text-dark family1 font-bold`}
                     href={`/dashboard${x.tab.path}`}
                   >
                     <div className="flex items-center">
@@ -103,7 +103,7 @@ const DashboardSidebar = ({ active }) => {
             <Link
               className={`${
                 pathname === `/dashboard/settings` ? "active" : ""
-              } text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font text-dark family1 font-normal`}
+              } text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font text-dark family1 font-bold`}
               href={`/dashboard/settings`}
             >
               <FiSettings fontSize={"24px"} />
@@ -118,7 +118,7 @@ const DashboardSidebar = ({ active }) => {
                 />
                 <h4 className="text-base text-dark font-bold family1">
                   {userInfo?.fullname || "Jermiah frim"}
-                  <span className="block font-normal text-sm text-grey">
+                  <span className="block font-medium text-sm text-grey">
                     {userInfo?.email || "jerrme@gmail.com"}
                   </span>
                 </h4>
@@ -152,9 +152,9 @@ export const HeaderStyles = styled.div`
   .tab {
     /* padding:14px; */
     /* min-height: 4rem; */
-    font-weight: normal;
+    font-weight: bold;
     margin: 0 auto;
-    font-size: 15px;
+    font-size: 16px;
     border-radius: 10px;
     width: 100%;
     display: flex;
