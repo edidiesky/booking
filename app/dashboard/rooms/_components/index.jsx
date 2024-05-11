@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { AnimatePresence, Variant } from "framer-motion";
 import ReservationRoomsModal from "@/components/modals/ReservationRoomsModal";
+import RoomsList from "./rooms";
 const DashboardIndex = () => {
   const [roommodal, setRoomModal] = useState(false);
   return (
@@ -25,6 +26,7 @@ const DashboardIndex = () => {
             </div>
           </div>
         </div>
+        <RoomsList/>
       </div>
     </div>
   );
