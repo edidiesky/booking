@@ -178,7 +178,7 @@ export default function Hero() {
           </div>
 
           <div className="w-full justify-end flex">
-            <div className="p-4 cursor-pointer bg-[#C5F244] px-8 rounded-[40px] font-bold text-dark">
+            <div className="p-3 cursor-pointer bg-[#C5F244] px-8 rounded-[40px] font-bold text-dark">
               Search
             </div>
           </div>

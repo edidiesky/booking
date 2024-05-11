@@ -178,7 +178,6 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
                           </span>
                           {<h4>{x?.tab?.title}</h4>}
                         </div>
-                        {/* {activeindex ? <BiChevronDown /> : <BiChevronUp />} */}
                       </div>
                     </div>
                   )}
@@ -193,8 +192,8 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
 };
 
 export const HeaderStyles = styled.div`
-  padding: 1rem 0;
-  min-height: 6rem;
+  padding: .7rem 0;
+  min-height: 5rem;
   width: 100%;
   position: sticky;
   top: 0;

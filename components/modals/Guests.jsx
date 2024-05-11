@@ -8,18 +8,17 @@ const ModalVariants = {
   initial: {
     opacity: 0,
     y: "100vh",
-    visibility: "hidden",
+    
   },
   enter: {
     opacity: 1,
     y: "0",
-    visibility: "visible",
     transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
   },
   exit: {
     opacity: 0,
     y: "100vh",
-    visibility: "hidden",
+    
     transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
   },
 };
@@ -38,9 +37,9 @@ const GuestsModal = ({
   return (
     <DeleteContainer
       as={motion.div}
-      initial={{ opacity: 0, visibility: "hidden" }}
-      exit={{ opacity: 0, visibility: "hidden" }}
-      animate={{ opacity: 1, visibility: "visible" }}
+      initial={{ opacity: 0,  }}
+      exit={{ opacity: 0,  }}
+      animate={{ opacity: 1}}
     >
       <motion.div
         variants={ModalVariants}

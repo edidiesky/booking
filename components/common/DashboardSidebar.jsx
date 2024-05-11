@@ -52,7 +52,7 @@ const DashboardSidebar = ({ active }) => {
       <div className="w-full h-full py-4 justify-between flex items-center flex-col gap-4">
         <div className="w-full h-[90%] flex flex-col gap-8">
           <div className="flex flex-col w-full items-start justify-between py-1">
-            {/* <h4 className="text-3xl font-bold text-dark">RockTrading</h4> */}
+            {/* <h4 className="text-3xl font-medium text-dark">RockTrading</h4> */}
             <div className=" w-[90%] mx-auto relative flex gap-4 items-center flex-col justify-between">
               <div className="w-full flex items-center gap-1 justify-start">
                 <Image
@@ -66,7 +66,7 @@ const DashboardSidebar = ({ active }) => {
                 />
                 <h4 className="hidden md:flex flex-col text-lg font-bold text-dark">
                   HOME & VILLAS{" "}
-                  <span className="block font-bold text-xs font-booking_font">
+                  <span className="block font-medium text-xs font-booking_font">
                     {" "}
                     Benneth Okeke
                   </span>
@@ -74,7 +74,7 @@ const DashboardSidebar = ({ active }) => {
               </div>
             </div>
           </div>
-          <div className="w-full my-4 flex flex-col gap-2">
+          <div className="w-full my-4 flex flex-col gap-1">
             {AdminSidebarData?.map((x, index) => {
               // console.log(pathname, `/dashboard${x.tab.path}`);
               return (
@@ -82,7 +82,7 @@ const DashboardSidebar = ({ active }) => {
                   <Link
                     className={`
                       ${pathname === `/dashboard${x.tab.path}` ? "active" : ""}
-                      text-3xl w-[90%] mx-auto text-dark family1 font-bold`}
+                      text-3xl w-[90%] mx-auto text-dark family1 font-medium`}
                     href={`/dashboard${x.tab.path}`}
                   >
                     <div className="flex items-center">
@@ -103,7 +103,7 @@ const DashboardSidebar = ({ active }) => {
             <Link
               className={`${
                 pathname === `/dashboard/settings` ? "active" : ""
-              } text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font text-dark family1 font-bold`}
+              } text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font text-dark family1 font-medium`}
               href={`/dashboard/settings`}
             >
               <FiSettings fontSize={"24px"} />
@@ -116,7 +116,7 @@ const DashboardSidebar = ({ active }) => {
                   alt=""
                   className="w-10 rounded-full"
                 />
-                <h4 className="text-base text-dark font-bold family1">
+                <h4 className="text-base text-dark font-medium family1">
                   {userInfo?.fullname || "Jermiah frim"}
                   <span className="block font-medium text-sm text-grey">
                     {userInfo?.email || "jerrme@gmail.com"}
@@ -152,9 +152,9 @@ export const HeaderStyles = styled.div`
   .tab {
     /* padding:14px; */
     /* min-height: 4rem; */
-    font-weight: bold;
+    font-weight: medium;
     margin: 0 auto;
-    font-size: 16px;
+    font-size: 17px;
     border-radius: 10px;
     width: 100%;
     display: flex;

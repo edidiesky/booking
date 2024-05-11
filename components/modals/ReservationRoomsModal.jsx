@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { motion, AnimatePresence, Variant } from "framer-motion";
+import { motion } from "framer-motion";
 import styled from "styled-components";
 import { RxCross2 } from "react-icons/rx";
 import { BiMinus, BiPlus } from "react-icons/bi";
@@ -8,39 +8,37 @@ const ModalVariants = {
   initial: {
     opacity: 0,
     y: "100vh",
-    visibility: "hidden",
   },
   enter: {
     opacity: 1,
     y: "0",
-    visibility: "visible",
     transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
   },
   exit: {
     opacity: 0,
     y: "100vh",
-    visibility: "hidden",
+
     transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
   },
 };
 const ReservationRoomsModal = ({
   modal,
   setModal,
-  setChildrens,
-  childrens,
-  adults,
-  setAdults,
 }) => {
+    const [singlebeds, setSingleBeds] = useState(1);
+    const [twinbeds, setTwinBeds] = useState(1);
+    const [additionalbeds, setAdditionalBeds] = useState(1);
+    const [guests, setGuests] = useState(2);
   const handleClearAlert = () => {
     setModal(false);
   };
-   let limit = adults + childrens;
+
   return (
     <DeleteContainer
       as={motion.div}
-      initial={{ opacity: 0, visibility: "hidden" }}
-      exit={{ opacity: 0, visibility: "hidden" }}
-      animate={{ opacity: 1, visibility: "visible" }}
+      initial={{ opacity: 0 }}
+      exit={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
     >
       <motion.div
         variants={ModalVariants}
@@ -49,84 +47,283 @@ const ReservationRoomsModal = ({
         exit="exit"
         className="guestModalCard"
       >
-        <div className="w-[95%] mx-auto flex flex-col gap-8">
-          <div className="w-full flex items-center justify-between">
-            <h3 className="text-xl font-bold font-booking_font4">
-              Edit Travelers
+        <div className="w-[100%] mx-auto flex flex-col gap-4">
+          <div className="w-full sticky justify-between top-0 left-0 bg-white z-20 flex gap-1">
+            <h3 className="text-2xl md:text-3xl font-bold font-booking_font4">
+              Add Rooms
             </h3>
-            <div className="cross" onClick={handleClearAlert}>
-              <RxCross2 />
+            <div className="flex items-center gap-2">
+              <div
+                // onClick={() => setReservationModal(true)}
+                className="p-3 cursor-pointer text-sm
+             bg-[#C5F244] px-8 font-booking_font rounded-[10px] font-bold text-dark"
+              >
+                Save
+              </div>
+              <div className="cross" onClick={handleClearAlert}>
+                <RxCross2 />
+              </div>
             </div>
           </div>
+          <div className="w-full h-[30rem] px-2 overflow-auto z-8 grid md:grid-cols-3 gap-4">
+            {/* basic information */}
+            <div className="w-full flex flex-col gap-4">
+              <h4 className="text-lg font-medium pb-4 border-b w-full">
+                Basic Information
+              </h4>
+              <div className="w-full flex flex-col gap-4">
+                <div className="w-full grid grid-cols-2 gap-1">
+                  <label
+                    htmlFor="Room Name"
+                    className="text-sm font-normal flex flex-col gap-2"
+                  >
+                    Room Name
+                    <input
+                      type="text"
+                      id="Room Name"
+                      placeholder="Room Name"
+                      className="input text-sm"
+                    />
+                  </label>
 
-          <div className="w-full flex flex-col gap-8">
-            <div className="w-full fs-16 flex items-center justify-between">
-              <span className="text-bold text-dark">
-                Adults{" "}
-                <div className="block fs-14 text-light text-dark">Age 13+</div>
-              </span>
-              <div
-                className="flex items-center justify-end"
-                style={{ gap: "1rem" }}
-              >
-                <button
-                  onClick={() => setAdults(adults - 1)}
-                  disabled={adults === 0}
-                  className="w-12 h-12 rounded-full flex bg-[#fafafa] items-center justify-center"
-                >
-                  <BiMinus fontSize={"18px"} />
-                </button>{" "}
-                <h4 className="fs-18 flex-1 text-dark text-extra-bold">
-                  {adults}
-                </h4>
-                <button
-                  disabled={limit >= 6}
-                  onClick={() => setAdults(adults + 1)}
-                  className="w-12 h-12 rounded-full flex bg-[#fafafa] items-center justify-center"
-                >
-                  <BiPlus fontSize={"18px"} />
-                </button>
-              </div>
-            </div>{" "}
-            <div className="w-full fs-16 flex items-center justify-between">
-              <span className="text-bold text-dark">
-                Children{" "}
-                <div className="block fs-14 text-light text-dark">
-                  Age 2 - 12
+                  <label
+                    htmlFor="Room Type"
+                    className="text-sm font-normal flex flex-col gap-2"
+                  >
+                    Room Type
+                    <input
+                      type="text"
+                      id="Room Type"
+                      placeholder="Room Type"
+                      className="input text-sm"
+                    />
+                  </label>
                 </div>
-              </span>
-              <div
-                className="flex items-center justify-end"
-                style={{ gap: "1rem" }}
-              >
-                <button
-                  onClick={() => setChildrens(childrens - 1)}
-                  disabled={childrens === 0}
-                  className="w-12 h-12 rounded-full flex bg-[#fafafa] items-center justify-center"
+                {/*  Room Description */}
+                <label
+                  htmlFor="Room Description"
+                  className="text-sm font-normal flex flex-col gap-2"
                 >
-                  <BiMinus fontSize={"18px"} />
-                </button>{" "}
-                <h4 className="fs-18 flex-1 text-dark text-extra-bold">
-                  {childrens}
-                </h4>
-                <button
-                  disabled={limit >= 6}
-                  onClick={() => setChildrens(childrens + 1)}
-                  className="w-12 h-12 rounded-full flex bg-[#fafafa] items-center justify-center"
+                  Room Description
+                  <textarea
+                    id="Room Description"
+                    placeholder="Room Description"
+                    className="text-sm h-[100px]"
+                  />
+                </label>
+                {/*  Additional Equipments */}
+                <label
+                  htmlFor="Additional Equipments"
+                  className="text-sm font-normal flex flex-col gap-2"
                 >
-                  <BiPlus fontSize={"18px"} />
-                </button>
+                  Additional Equipments
+                  <textarea
+                    id="Additional Equipments"
+                    placeholder="Additional Equipments"
+                    className="text-sm h-[100px]"
+                  />
+                </label>
+                {/*  Room Size */}
+                <label
+                  htmlFor="Room Size"
+                  className="text-sm font-normal flex flex-col gap-2"
+                >
+                  Room Size
+                  <input
+                    id="Room Size"
+                    placeholder="Room Size"
+                    className="text-sm input"
+                  />
+                </label>
+                {/*  Room Widget */}
+                <label
+                  htmlFor="Room Widget"
+                  className="text-sm font-normal flex flex-col gap-2"
+                >
+                  Room Widget
+                  <input
+                    id="Room Widget"
+                    placeholder="Room Widget"
+                    className="text-sm input"
+                  />
+                </label>
               </div>
-            </div>{" "}
-          </div>
+            </div>
+            {/* // persons */}
+            <div className="w-full flex flex-col gap-4">
+              <h4 className="text-lg font-medium pb-4 border-b w-full">
+                Persons
+              </h4>
+              {/* guests */}
+              <div className="w-full grid grid-cols-2 gap-2">
+                {/* guests */}
+                <div className="w-full text-sm flex flex-col gap-2">
+                  <span className="text-bold text-dark">Number of Guests </span>
+                  <div
+                    className="flex items-center border p-3 rounded-[10px] justify-between"
+                    style={{ gap: "1rem" }}
+                  >
+                    <button
+                      onClick={() => setGuests(guests - 1)}
+                      disabled={guests === 0}
+                      className="w-8 h-8 rounded-full flex bg-[#fafafa] items-center justify-center"
+                    >
+                      <BiMinus fontSize={"18px"} />
+                    </button>{" "}
+                    <h4 className="fs-18 flex-1 text-center text-dark text-extra-bold">
+                      {guests}
+                    </h4>
+                    <button
+                      onClick={() => setGuests(guests + 1)}
+                      className="w-8 h-8 rounded-full flex bg-[#fafafa] items-center justify-center"
+                    >
+                      <BiPlus fontSize={"18px"} />
+                    </button>
+                  </div>
+                </div>{" "}
+                {/* Additional Beds  */}
+                <div className="w-full text-sm flex flex-col gap-2">
+                  <span className="text-bold text-dark">
+                    Number of Additional Beds{" "}
+                  </span>
+                  <div
+                    className="flex items-center border p-3 rounded-[10px] justify-between"
+                    style={{ gap: "1rem" }}
+                  >
+                    <button
+                      onClick={() => setAdditionalBeds(additionalbeds - 1)}
+                      disabled={additionalbeds === 0}
+                      className="w-8 h-8 rounded-full flex bg-[#fafafa] items-center justify-center"
+                    >
+                      <BiMinus fontSize={"18px"} />
+                    </button>{" "}
+                    <h4 className="fs-18 flex-1 text-center text-dark text-extra-bold">
+                      {additionalbeds}
+                    </h4>
+                    <button
+                      onClick={() => setAdditionalBeds(additionalbeds + 1)}
+                      className="w-8 h-8 rounded-full flex bg-[#fafafa] items-center justify-center"
+                    >
+                      <BiPlus fontSize={"18px"} />
+                    </button>
+                  </div>
+                </div>{" "}
+              </div>
+              <div className="w-full grid grid-cols-2 gap-2">
+                {/* singlebeds */}
+                <div className="w-full text-base flex flex-col gap-2">
+                  <span className="text-bold text-dark">
+                    Number of single beds{" "}
+                  </span>
+                  <div
+                    className="flex items-center border p-3 rounded-[10px] justify-between"
+                    style={{ gap: "1rem" }}
+                  >
+                    <button
+                      onClick={() => setSingleBeds(singlebeds - 1)}
+                      disabled={singlebeds === 0}
+                      className="w-8 h-8 rounded-full flex bg-[#fafafa] items-center justify-center"
+                    >
+                      <BiMinus fontSize={"18px"} />
+                    </button>{" "}
+                    <h4 className="fs-18 flex-1 text-center text-dark text-extra-bold">
+                      {singlebeds}
+                    </h4>
+                    <button
+                      onClick={() => setSingleBeds(singlebeds + 1)}
+                      className="w-8 h-8 rounded-full flex bg-[#fafafa] items-center justify-center"
+                    >
+                      <BiPlus fontSize={"18px"} />
+                    </button>
+                  </div>
+                </div>{" "}
+                {/* twinbeds Beds  */}
+                <div className="w-full text-sm flex flex-col gap-2">
+                  <span className="text-bold text-dark">
+                    Number of twin beds{" "}
+                  </span>
+                  <div
+                    className="flex items-center border p-3 rounded-[10px] justify-between"
+                    style={{ gap: "1rem" }}
+                  >
+                    <button
+                      onClick={() => setTwinBeds(twinbeds - 1)}
+                      disabled={twinbeds === 0}
+                      className="w-8 h-8 rounded-full flex bg-[#fafafa] items-center justify-center"
+                    >
+                      <BiMinus fontSize={"18px"} />
+                    </button>{" "}
+                    <h4 className="fs-18 flex-1 text-center text-dark text-extra-bold">
+                      {twinbeds}
+                    </h4>
+                    <button
+                      onClick={() => setTwinBeds(twinbeds + 1)}
+                      className="w-8 h-8 rounded-full flex bg-[#fafafa] items-center justify-center"
+                    >
+                      <BiPlus fontSize={"18px"} />
+                    </button>
+                  </div>
+                </div>{" "}
+              </div>
+            </div>
+            {/* address data */}
+            <div className="w-full flex flex-col gap-4">
+              <h4 className="text-lg font-medium pb-4 border-b w-full">
+                Address Data
+              </h4>
+              <div className="w-full flex flex-col gap-4">
+                <label
+                  htmlFor="Country /Region"
+                  className="text-sm font-normal flex flex-col gap-2"
+                >
+                  Country /Region
+                  <input
+                    type="text"
+                    id="Country /Region"
+                    placeholder="Country /Region"
+                    className="input text-sm"
+                  />
+                </label>
 
-          <h5 className="text-sm font-normal text-dark text-center">
-            You can search for up to 6 travelers
-          </h5>
+                <label
+                  htmlFor="Street"
+                  className="text-sm font-normal flex flex-col gap-2"
+                >
+                  Street
+                  <input
+                    type="text"
+                    id="Street"
+                    placeholder="Enter your address"
+                    className="input text-sm"
+                  />
+                </label>
 
-          <div className="w-full flex justify-center">
-            <div className="p-4 text-center w-full cursor-pointer bg-[#C5F244] px-8 rounded-[40px] font-bold text-dark">
-              Search
+                <label
+                  htmlFor="Postal Code"
+                  className="text-sm font-normal flex flex-col gap-2"
+                >
+                  Postal Code
+                  <input
+                    type="text"
+                    id="Postal Code"
+                    placeholder="Enter your postal code"
+                    className="input text-sm"
+                  />
+                </label>
+
+                <label
+                  htmlFor="city"
+                  className="text-sm font-normal flex flex-col gap-2"
+                >
+                  City
+                  <input
+                    type="text"
+                    id="city"
+                    placeholder="Enter your city"
+                    className="input text-sm"
+                  />
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -146,19 +343,24 @@ const DeleteContainer = styled(motion.div)`
   top: 0;
   background: rgba(0, 0, 0, 0.3);
   .guestModalCard {
-    max-width: 400px;
-    min-width: 340px;
+    max-width: 90vw;
+    min-width: 90vw;
     display: flex;
+    max-height: 50rem;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     background: #fff;
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
     gap: 2rem;
     border-radius: 6px;
     box-shadow: 0 2rem 3rem rgba(0, 0, 0, 0.4);
     position: relative;
-   .cross {
+    @media (max-width: 980px) {
+      max-width: 90%;
+      min-width: 90%;
+    }
+    .cross {
       width: 3rem;
       height: 3rem;
       border-radius: 50%;
@@ -187,7 +389,7 @@ const DeleteContainer = styled(motion.div)`
         background: var(--grey-2);
         color: #fff;
         outline: none;
-        border-radius: 40px;
+        border-radius: 10px;
         cursor: pointer;
         text-transform: none;
         &:hover {
