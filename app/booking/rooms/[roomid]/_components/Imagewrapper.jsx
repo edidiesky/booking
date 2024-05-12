@@ -7,14 +7,11 @@ const Imagewrapper = () => {
   // const { GigsDetails } = useSelector((store) => store.gigs);
   const GigsDetails = {
     listing_image: [
-      "/apartment_1.jpg",
-      "/apartment_2.png",
-      "/apartment_3.png",
-      "/apartment_4.png",
-      "/apartment_5.png",
-      "/apartment_6.png",
-      "/apartment_7.png",
-      "/apartment_8.png",
+      "https://a0.muscache.com/im/pictures/miso/Hosting-923193323939892290/original/18f089b4-68b0-4a66-bfd2-38f14a0f31cd.jpeg?im_w=960",
+      "https://a0.muscache.com/im/pictures/miso/Hosting-923193323939892290/original/18f089b4-68b0-4a66-bfd2-38f14a0f31cd.jpeg?im_w=960",
+      "https://a0.muscache.com/im/pictures/miso/Hosting-923193323939892290/original/f987fb73-f84d-4017-926d-39497e815c8a.jpeg?im_w=720",
+      "https://a0.muscache.com/im/pictures/miso/Hosting-923193323939892290/original/435cf41d-b3e6-4c8c-b8bc-5fe21a15eef7.jpeg?im_w=720",
+      "https://a0.muscache.com/im/pictures/miso/Hosting-923193323939892290/original/e2474a45-c3c1-4ba1-b57a-c27ff3e30956.jpeg?im_w=720",
     ],
   };
   // console.log(GigsDetails?.listing_image)

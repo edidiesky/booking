@@ -142,7 +142,7 @@ export default function RoomPaymentTab({
           </div>
           <div
             onClick={handleReservationBooking}
-            className="btn p-6 cursor-pointer px-8 text-base font-bold uppercase text-center rounded-sm text-white font-booking_font4"
+            className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font4"
           >
             SIGN IN TO SAVE
           </div>

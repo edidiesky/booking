@@ -1,16 +1,16 @@
 export const slideup = {
   initial: {
     opacity: 0,
-    y: "100%",
+    y: "30px",
   },
   animate: (i) => ({
     opacity: 1,
     y: "0",
-    transition: { duration: 0.5, delay: i * 0.020, },
+    transition: { duration: 0.4, delay: i * 0.03 },
   }),
   exit: {
     opacity: 0,
-    y: "100%",
+    y: "30px",
   },
 };
 

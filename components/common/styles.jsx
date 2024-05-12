@@ -60,7 +60,7 @@ export const Table = styled.div`
             font-size: 1rem;
             font-weight: 600;
             text-align: center;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             padding: 1.7rem 2rem;
             font-family: "Barlow", sans-serif;
           }
@@ -82,7 +82,7 @@ export const Table = styled.div`
             text-align: center;
             padding: 2rem 1rem;
             margin-bottom: 1;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             font-family: "Barlow", sans-serif;
 
             span {
@@ -90,15 +90,13 @@ export const Table = styled.div`
                 color: #840a0a;
                 padding: 0.8rem 1.2rem;
                 border-radius: 40px;
-                border: 1px solid #e91313e0;
-                background: rgba(255, 3, 3, 0.071);
+                background: #F3EFE5;
               }
               &.success {
                 color: #28a745;
                 padding: 0.8rem 1.2rem;
                 border-radius: 40px;
-                background: #10e24129;
-                border: 1px solid #28a746ec;
+                background: #EDFFEB;
               }
             }
           }

@@ -22,6 +22,7 @@ const lora = Lora({
 });
 import "./globals.css";
 import StyledComponentsRegistry from "@/utils/StylesComponentsRegistry";
+import SmoothScroll from "@/constants/utils/SmoothScroll";
 
 export const metadata = {
   title: "Restaurant Marketplace",
@@ -36,7 +37,9 @@ export default function RootLayout({ children }) {
       className={`${bebas_neue.variable} ${lora.variable}  ${work_sans.variable}`}
     >
       <body>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        <StyledComponentsRegistry>
+          <SmoothScroll>{children}</SmoothScroll>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );
