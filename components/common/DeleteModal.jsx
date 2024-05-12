@@ -46,7 +46,7 @@ export default function DeleteModal(
           <RxCross2 />
         </div>
         <div className="deleteCardTop">
-          <h3 className='text-3xl font-bold family1'>Delete User?</h3>
+          <h3 className='text-3xl font-bold family1'>Delete this User?</h3>
           <p className="family1 fs-18">
             Are you sure you want to delete user with id <span className="text-blue">&quot;{id}&quot; </span> from
             the database?
