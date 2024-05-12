@@ -38,15 +38,15 @@ const Statistics = () => {
     },
   ]);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const chart = new ApexCharts(document.getElementById("chart"), {
-        options: options,
-        series: series,
-      });
-      chart.render();
-    }
-  }, [options, series]);
+  //  useEffect(() => {
+  //    if (typeof window !== "undefined") {
+  //      const chart = new ApexCharts(document.getElementById("chart"), {
+  //        options: options,
+  //        series: series,
+  //      });
+  //      chart.render();
+  //    }
+  //  }, []);
 
   return (
     <div id="chart" className="w-full">
