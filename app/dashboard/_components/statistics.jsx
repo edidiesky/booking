@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import Chart from "react-apexcharts";
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 
 const Statistics = () => {
   const [options, setOptions] = useState({
