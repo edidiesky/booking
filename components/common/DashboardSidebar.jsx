@@ -6,6 +6,7 @@ import Image from "next/image";
 import { BiSearch } from "react-icons/bi";
 import { TiHome } from "react-icons/ti";
 import { FiSettings } from "react-icons/fi";
+import { LuBedDouble } from "react-icons/lu";
 import {
   FaRegUser,
   FaHotel,
@@ -34,7 +35,7 @@ const AdminSidebarData = [
   {
     id: 6,
     tab: {
-      icon: <FaHotel fontSize={"16px"} />,
+      icon: <LuBedDouble fontSize={"16px"} />,
       title: "Reservation",
       path: "/reservation",
     },

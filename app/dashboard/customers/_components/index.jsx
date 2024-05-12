@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { AnimatePresence, Variant } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import ReservationRoomsModal from "@/components/modals/ReservationRoomsModal";
 import RoomsList from "./customerlist";
 const DashboardIndex = () => {
