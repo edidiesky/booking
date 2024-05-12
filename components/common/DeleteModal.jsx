@@ -48,9 +48,9 @@ export default function DeleteModal(
         <div className="deleteCardTop">
           <h3 className='text-3xl font-bold family1'>Delete User?</h3>
           <p className="family1 fs-18">
-            Are you sure you want to delete user with id <span className="text-blue">"{id}" </span> from
+            Are you sure you want to delete user with id <span className="text-blue">&quot;{id}&quot; </span> from
             the database?
-            <br /> You can't undo this action.
+            <br /> You can&quot;t undo this action.
           </p>
         </div>
 

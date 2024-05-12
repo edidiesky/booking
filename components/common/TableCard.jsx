@@ -41,51 +41,30 @@ const TableCard = ({ x, type }) => {
             </div>
           </td>
           <td>
-            <span className="text-base family1 tex  text-grey">{x?.phone}</span>
+            <span className="text-base family1  text-grey">{x?.phone}</span>
           </td>
           <td>
-            <span className="text-grey text-base family1">
+            <span className=" text-grey text-base family1">
               {x?.country ? x?.country : "-"}
-            </span>
-          </td>
-          <td>
-            <span className="text-base family1 text-grey">
-              {x?.isAdmin === true ? (
-                <span
-                  style={{ fontSize: "1.2rem" }}
-                  className="tablespan text-base text-bold false"
-                >
-                  {" "}
-                  Admin
-                </span>
-              ) : (
-                <span
-                  style={{ fontSize: "1.2rem" }}
-                  className="tablespan text-base text-bold true"
-                >
-                  {" "}
-                  Client
-                </span>
-              )}
             </span>
           </td>
 
           <td>
             <span className="text-grey text-base family1 text-light">
-              {"1"}
+             24th May 2024
             </span>
           </td>
           <td>
-            <div className="flex item-center justify-center">
+            <div className="flex items-center justify-center">
               <Link
-                href={`#`}
-                className="icons flex hover:shadow-sm hover:bg-[#ddd] items-center justify-center"
+                href={`/account/admin/dashboard/Manage_Customers/${x?._id}`}
+                className="w-12 h-12 rounded-full flex hover:shadow-sm hover:bg-[#ddd] items-center justify-center"
               >
                 <MdEdit />
               </Link>
               <div
-                onClick={handleDeleteClient}
-                className="icons flex hover:shadow-sm hover:bg-[#ddd] items-center justify-center"
+                // onClick={handleDeleteClient}
+                className="w-12 h-12 rounded-full flex hover:shadow-sm hover:bg-[#ddd] items-center justify-center"
               >
                 <BsTrash />
               </div>

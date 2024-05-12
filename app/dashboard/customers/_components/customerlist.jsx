@@ -8,73 +8,33 @@ import TableCard from "@/components/common/TableCard";
 
 const rooms = [
   {
-    title: "Villa Borghese Luxury",
-    type: "rooms",
-    price: 44.8,
-    location: "3776 Bingamon Branch Rome",
-    city: "Rome",
-    country: "Italy",
-    host_Id: "64eb2adc634a3fec2d49c12d",
-    beds: 6,
-    bathrooms: 10,
-    bedrooms: 4,
-    endDate: "8/24/2024",
-    startDate: "4/24/2024",
-    image: [
-      "https://a0.muscache.com/im/pictures/miso/Hosting-919391066738299347/original/42fad312-c1f9-49d0-a3c7-d489720a6d84.jpeg?im_w=720",
-    ],
+    name: "Hover",
+    username: "peterfrog",
+    image:
+      "https://fiverr-res.cloudinary.com/t_profile_original,q_auto,f_auto/profile/photos/3935083/original/facial-hair.jpg",
+    lastname: "nikola",
+    country: "Serbia",
+    state: "Lagos",
+    phone: "1456-93837-5883",
+    email: "peterfrog@gmail.com",
+    createdAt: "1/17/2020",
+    password: 1234556,
+    role: "user",
   },
   {
-    title: " Borghese Luxury",
-    type: "rooms",
-    price: 44.8,
-    location: "3776 Bingamon Branch Rome",
-    city: "Rome",
-    country: "Italy",
-    host_Id: "64eb2adc634a3fec2d49c12d",
-    beds: 6,
-    bathrooms: 10,
-    bedrooms: 4,
-    endDate: "8/24/2024",
-    startDate: "4/24/2024",
-    image: [
-      "https://a0.muscache.com/im/pictures/miso/Hosting-919391066738299347/original/42fad312-c1f9-49d0-a3c7-d489720a6d84.jpeg?im_w=720",
-    ],
+    name: "Hover",
+    username: "peterfrog",
+    image:
+      "https://fiverr-res.cloudinary.com/t_profile_original,q_auto,f_auto/profile/photos/3935083/original/facial-hair.jpg",
+    lastname: "nikola",
+    country: "Serbia",
+    state: "Lagos",
+    phone: "1456-93837-5883",
+    email: "peterfrog@gmail.com",
+    createdAt: "1/17/2020",
+    password: 1234556,
+    role: "user",
   },
-  {
-    title: "Villa Borghese Luxury",
-    type: "rooms",
-    price: 44.8,
-    location: "3776 Bingamon Branch Rome",
-    city: "Rome",
-    country: "Italy",
-    host_Id: "64eb2adc634a3fec2d49c12d",
-    beds: 6,
-    bathrooms: 10,
-    bedrooms: 4,
-    endDate: "8/24/2024",
-    startDate: "4/24/2024",
-    image: [
-      "https://a0.muscache.com/im/pictures/miso/Hosting-919391066738299347/original/42fad312-c1f9-49d0-a3c7-d489720a6d84.jpeg?im_w=720",
-    ],
-  },
-  // {
-  //   title: " Borghese Luxury",
-  //   type: "rooms",
-  //   price: 44.8,
-  //   location: "3776 Bingamon Branch Rome",
-  //   city: "Rome",
-  //   country: "Italy",
-  //   host_Id: "64eb2adc634a3fec2d49c12d",
-  //   beds: 6,
-  //   bathrooms: 10,
-  //   bedrooms: 4,
-  //   endDate: "8/24/2024",
-  //   startDate: "4/24/2024",
-  //   image: [
-  //     "https://a0.muscache.com/im/pictures/miso/Hosting-919391066738299347/original/42fad312-c1f9-49d0-a3c7-d489720a6d84.jpeg?im_w=720",
-  //   ],
-  // },
 ];
 
 const RoomsList = () => {
@@ -101,16 +61,16 @@ const RoomsList = () => {
             <thead>
               <tr>
                 {/* <th>ID</th> */}
-                <th>Room Name</th>
-                <th>Capacity</th>
-                <th>Location</th>
+                <th>Customer Name</th>
+                <th>Email</th>
+                <th className=''>Location</th>
                 <th>Date Created</th>
-                <th>Manage Room</th>
+                <th>Manage Customer</th>
               </tr>
             </thead>
             <tbody>
               {rooms?.map((x, index) => {
-                return <TableCard x={x} type={"rooms"} key={x?._id} />;
+                return <TableCard x={x} type={"customerlist"} key={x?._id} />;
               })}
             </tbody>
           </table>
