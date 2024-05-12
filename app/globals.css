@@ -67,6 +67,6 @@ textarea {
 .btn {
   transition: all 0.5s;
 }
-.btn {
+.btn:hover {
   opacity: 0.7;
 }

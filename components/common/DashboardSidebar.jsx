@@ -146,7 +146,7 @@ export const HeaderStyles = styled.div`
   top: 0;
   height: 100vh;
   background: #f9f9f9;
-  @media (max-width: 800px) {
+  @media (max-width: 980px) {
     display: none;
   }
   .dropdown {

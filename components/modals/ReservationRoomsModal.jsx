@@ -48,15 +48,16 @@ const ReservationRoomsModal = ({
         className="guestModalCard"
       >
         <div className="w-[100%] mx-auto flex flex-col gap-4">
-          <div className="w-full sticky justify-between top-0 left-0 bg-white z-20 flex gap-1">
+          <div className="w-full py-4 sticky justify-between top-0 left-0
+           bg-white z-20 flex gap-1">
             <h3 className="text-2xl font-bold font-booking_font4">
               Add Rooms
             </h3>
             <div className="flex items-center gap-2">
               <div
                 // onClick={() => setReservationModal(true)}
-                className="p-3 cursor-pointer text-sm
-             bg-[#C5F244] px-8 font-booking_font rounded-[10px] font-bold text-dark"
+                className="p-3 cursor-pointer text-base
+             bg-[#C5F244] btn px-8 font-booking_font rounded-[10px] font-bold text-dark"
               >
                 Save
               </div>
@@ -75,76 +76,76 @@ const ReservationRoomsModal = ({
                 <div className="w-full grid grid-cols-2 gap-1">
                   <label
                     htmlFor="Room Name"
-                    className="text-sm font-normal flex flex-col gap-2"
+                    className="text-base font-medium flex flex-col gap-2"
                   >
                     Room Name
                     <input
                       type="text"
                       id="Room Name"
                       placeholder="Room Name"
-                      className="input text-sm"
+                      className="input text-base"
                     />
                   </label>
 
                   <label
                     htmlFor="Room Type"
-                    className="text-sm font-normal flex flex-col gap-2"
+                    className="text-base font-medium flex flex-col gap-2"
                   >
                     Room Type
                     <input
                       type="text"
                       id="Room Type"
                       placeholder="Room Type"
-                      className="input text-sm"
+                      className="input text-base"
                     />
                   </label>
                 </div>
                 {/*  Room Description */}
                 <label
                   htmlFor="Room Description"
-                  className="text-sm font-normal flex flex-col gap-2"
+                  className="text-base font-medium flex flex-col gap-2"
                 >
                   Room Description
                   <textarea
                     id="Room Description"
                     placeholder="Room Description"
-                    className="text-sm h-[100px]"
+                    className="text-base h-[100px]"
                   />
                 </label>
                 {/*  Additional Equipments */}
                 <label
                   htmlFor="Additional Equipments"
-                  className="text-sm font-normal flex flex-col gap-2"
+                  className="text-base font-medium flex flex-col gap-2"
                 >
                   Additional Equipments
                   <textarea
                     id="Additional Equipments"
                     placeholder="Additional Equipments"
-                    className="text-sm h-[100px]"
+                    className="text-base h-[100px]"
                   />
                 </label>
                 {/*  Room Size */}
                 <label
                   htmlFor="Room Size"
-                  className="text-sm font-normal flex flex-col gap-2"
+                  className="text-base font-medium flex flex-col gap-2"
                 >
                   Room Size
                   <input
                     id="Room Size"
                     placeholder="Room Size"
-                    className="text-sm input"
+                    className="text-base input"
                   />
                 </label>
                 {/*  Room Widget */}
                 <label
                   htmlFor="Room Widget"
-                  className="text-sm font-normal flex flex-col gap-2"
+                  className="text-base font-medium flex flex-col gap-2"
                 >
                   Room Widget
                   <input
                     id="Room Widget"
                     placeholder="Room Widget"
-                    className="text-sm input"
+                    className="text-base input"
                   />
                 </label>
               </div>
@@ -157,7 +158,7 @@ const ReservationRoomsModal = ({
               {/* guests */}
               <div className="w-full grid grid-cols-2 gap-2">
                 {/* guests */}
-                <div className="w-full text-sm flex flex-col gap-2">
+                <div className="w-full text-base flex flex-col gap-2">
                   <span className="text-bold text-dark">Number of Guests </span>
                   <div
                     className="flex items-center border p-3 rounded-[10px] justify-between"
@@ -182,7 +183,7 @@ const ReservationRoomsModal = ({
                   </div>
                 </div>{" "}
                 {/* Additional Beds  */}
-                <div className="w-full text-sm flex flex-col gap-2">
+                <div className="w-full text-base flex flex-col gap-2">
                   <span className="text-bold text-dark">
                     Number of Additional Beds{" "}
                   </span>
@@ -238,7 +239,7 @@ const ReservationRoomsModal = ({
                   </div>
                 </div>{" "}
                 {/* twinbeds Beds  */}
-                <div className="w-full text-sm flex flex-col gap-2">
+                <div className="w-full text-base flex flex-col gap-2">
                   <span className="text-bold text-dark">
                     Number of twin beds{" "}
                   </span>
@@ -274,53 +275,53 @@ const ReservationRoomsModal = ({
               <div className="w-full flex flex-col gap-4">
                 <label
                   htmlFor="Country /Region"
-                  className="text-sm font-normal flex flex-col gap-2"
+                  className="text-base font-medium flex flex-col gap-2"
                 >
                   Country /Region
                   <input
                     type="text"
                     id="Country /Region"
                     placeholder="Country /Region"
-                    className="input text-sm"
+                    className="input text-base"
                   />
                 </label>
 
                 <label
                   htmlFor="Street"
-                  className="text-sm font-normal flex flex-col gap-2"
+                  className="text-base font-medium flex flex-col gap-2"
                 >
                   Street
                   <input
                     type="text"
                     id="Street"
                     placeholder="Enter your address"
-                    className="input text-sm"
+                    className="input text-base"
                   />
                 </label>
 
                 <label
                   htmlFor="Postal Code"
-                  className="text-sm font-normal flex flex-col gap-2"
+                  className="text-base font-medium flex flex-col gap-2"
                 >
                   Postal Code
                   <input
                     type="text"
                     id="Postal Code"
                     placeholder="Enter your postal code"
-                    className="input text-sm"
+                    className="input text-base"
                   />
                 </label>
 
                 <label
                   htmlFor="city"
-                  className="text-sm font-normal flex flex-col gap-2"
+                  className="text-base font-medium flex flex-col gap-2"
                 >
                   City
                   <input
                     type="text"
                     id="city"
                     placeholder="Enter your city"
-                    className="input text-sm"
+                    className="input text-base"
                   />
                 </label>
               </div>
@@ -343,8 +344,8 @@ const DeleteContainer = styled(motion.div)`
   top: 0;
   background: rgba(0, 0, 0, 0.3);
   .guestModalCard {
-    max-width: 65vw;
-    min-width: 60vw;
+    max-width: 85vw;
+    min-width: 76vw;
     display: flex;
     max-height: 50rem;
     align-items: center;

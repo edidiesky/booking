@@ -32,12 +32,10 @@ export const Table = styled.div`
 
     .tableWrapper {
       border-collapse: collapse;
-      /* width: 100%; */
-      /* min-width:100%; */
-      /* min-width: 1100px; */
       overflow-x: auto;
       border-collapse: collapse;
       table-layout: fixed;
+      width:100%;
 
       thead {
         tr {
@@ -45,14 +43,14 @@ export const Table = styled.div`
           z-index: 200;
           text-align: start;
           transition: all 0.4s;
-          background-color: rgba(0, 0, 0, 0.09);
+          background-color: #f9f9f9;
           &:hover {
             background-color: rgba(0, 0, 0, 0.1);
           }
           th {
             font-size: 1rem;
             font-weight: 600;
-            text-align: start;
+            text-align: center;
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
             padding: 1.7rem 2rem;
             font-family: "Barlow", sans-serif;
@@ -72,7 +70,7 @@ export const Table = styled.div`
           td {
             font-size: 1;
             font-weight: 500;
-            text-align: start;
+            text-align: center;
             padding: 1rem;
             margin-bottom: 1;
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);

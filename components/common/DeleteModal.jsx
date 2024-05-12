@@ -1,65 +1,61 @@
-"use client"
+"use client";
 import React, { useState } from "react";
-import { motion, AnimatePresence, Variant } from 'framer-motion'
+import { motion, AnimatePresence, Variant } from "framer-motion";
 import styled from "styled-components";
 import { RxCross2 } from "react-icons/rx";
 // import { useAppDispatch, useAppSelector } from "@/hooks/reduxtoolkit";
 // import { ClearUserInfoAlert } from "@/features/auth/authSlice";
 // import { AdminDeleteUserProfile } from "@/features/auth/authReducer";
 
-
-
-export default function DeleteModal(
-  { type, modal, setModal, id }) {
+export default function DeleteModal({ type, modal, setModal, id }) {
   // const dispatch = useAppDispatch();
   // const { userAlert, userDetails } = useAppSelector((store) => store.auth);
   const handleClearAlert = () => {
-    setModal(false)
-  }
+    setModal(false);
+  };
   return (
     <DeleteContainer
       as={motion.div}
-      initial={{ opacity: 0, visibility: "hidden" }}
-      exit={{ opacity: 0, visibility: "hidden" }}
-      animate={{ opacity: 1, visibility: "visible" }}>
+      initial={{ opacity: 0 }}
+      exit={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
       <motion.div
         initial={{
-          opacity: 0,
           y: "100vh",
-          visibility: "hidden"
         }}
         animate={{
-          opacity: 1,
           y: "0",
-          visibility: "visible",
-          transition: { duration: .6, ease: [0.76, 0, .24, 1] }
+          transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] },
         }}
         exit={{
           y: "100vh",
-          transition: { duration: .6, ease: [0.76, 0, .24, 1] }
+          transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] },
         }}
-        className={"deleteCard"}>
-        <div
-          className="cross"
-          onClick={handleClearAlert}
-        >
+        className={"deleteCard gap-2"}
+      >
+        <div className="cross" onClick={handleClearAlert}>
           <RxCross2 />
         </div>
         <div className="deleteCardTop">
-          <h3 className='text-3xl font-bold family1'>Delete this User?</h3>
-          <p className="family1 fs-18">
-            Are you sure you want to delete user with id <span className="text-blue">&quot;{id}&quot; </span> from
-            the database?
+          <h3 className="text-xl font-bold family1">Delete this User?</h3>
+          <p className="family1 text-base text-center leading-[1.2]">
+            Are you sure you want to delete user with id{" "}
+            <span className="text-blue">&quot;{id}&quot; </span> from the
+            database?
             <br /> You can&quot;t undo this action.
           </p>
         </div>
 
         <div className="deleteCardBottom">
-          <button className="family1" onClick={handleClearAlert}>
+          <button
+            className="family1 flex items-center justify-center text-base"
+            onClick={handleClearAlert}
+          >
             Cancel
           </button>
           <button
-            className="deleteBtn family1"
+            className="btn deleteBtn family1 flex items-center justify-center text-base"
             // onClick={() => dispatch(AdminDeleteUserProfile({ Detailsdata: id }))}
           >
             Delete User
@@ -68,7 +64,6 @@ export default function DeleteModal(
       </motion.div>
     </DeleteContainer>
   );
-
 }
 
 const DeleteContainer = styled(motion.div)`
@@ -90,7 +85,7 @@ const DeleteContainer = styled(motion.div)`
     justify-content: center;
     flex-direction: column;
     background: #fff;
-    padding: 4rem 3rem;
+    padding: 2rem;
     gap: 2rem;
     border-radius: 6px;
     box-shadow: 0 2rem 3rem rgba(0, 0, 0, 0.4);
@@ -107,7 +102,7 @@ const DeleteContainer = styled(motion.div)`
       justify-content: center;
       cursor: pointer;
       &:hover {
-        background: var(--grey-2);
+        background: #eee;
       }
       svg {
         font-size: 20px;
@@ -121,21 +116,21 @@ const DeleteContainer = styled(motion.div)`
       gap: 1rem;
       button {
         padding: 1.2rem 2rem;
+        height: 60px;
         border: none;
-        font-size: 1.3rem;
         font-weight: 400;
-        background: var(--grey-2);
-        color: #fff;
+        background: #eee;
+        color: #000;
         outline: none;
         border-radius: 40px;
         cursor: pointer;
         text-transform: none;
         &:hover {
-          background: var(--grey-1);
-          color: var(--text-color);
+          background: #c4c4c4;
         }
         &.deleteBtn {
-          background: var(--blue-1);
+          background: #000;
+          color: #fff;
           &:hover {
             opacity: 0.8;
             color: #fff;
@@ -150,20 +145,9 @@ const DeleteContainer = styled(motion.div)`
       border-left: 5px solid var(--red);
       display: flex;
       align-items: center;
-      gap: 2rem;
       svg {
         font-size: 2rem;
         color: var(--red);
-      }
-      h4 {
-        font-size: 1.6rem;
-        font-weight: 400;
-        color: var(--red);
-        .deleteSpan {
-          font-weight: 600;
-          display: block;
-          padding-bottom: 1rem;
-        }
       }
     }
 
@@ -173,11 +157,6 @@ const DeleteContainer = styled(motion.div)`
       justify-content: center;
       flex-direction: column;
       gap: 1.4rem;
-      p {
-        line-height: 1.4;
-        font-size:1.3rem;
-        text-align: center;
-      }
     }
   }
 `;

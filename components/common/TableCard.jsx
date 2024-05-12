@@ -9,7 +9,6 @@ import DeleteModal from "./DeleteModal";
 
 const TableCard = ({ x, type }) => {
   const [userdeletemodal, setUserDeleteModal] = useState(false);
-  const [withdrawalmodal, setWithDrawalModal] = useState(false);
 
   const handleDeleteClient = () => {
     setUserDeleteModal(true);
@@ -29,9 +28,6 @@ const TableCard = ({ x, type }) => {
         </AnimatePresence>
         {/* <Delete /> */}
         <tr key={x?._id}>
-          {/* <td>
-                        <span className="text-grey text-base family1">{x?._id}</span>
-                    </td> */}
           <td>
             <div className="flex flex-col">
               <span className="text-base text-dark text-bold">
@@ -57,13 +53,14 @@ const TableCard = ({ x, type }) => {
           <td>
             <div className="flex items-center justify-center">
               <Link
-                href={`/account/admin/dashboard/Manage_Customers/${x?._id}`}
+                // href={`/account/admin/dashboard/Manage_Customers/${x?._id}`}
+                href={'#'}
                 className="w-12 h-12 rounded-full flex hover:shadow-sm hover:bg-[#ddd] items-center justify-center"
               >
                 <MdEdit />
               </Link>
               <div
-                // onClick={handleDeleteClient}
+                onClick={handleDeleteClient}
                 className="w-12 h-12 rounded-full flex hover:shadow-sm hover:bg-[#ddd] items-center justify-center"
               >
                 <BsTrash />
@@ -88,7 +85,7 @@ const TableCard = ({ x, type }) => {
         </AnimatePresence>
         <tr key={x?._id}>
           <td>
-            <div className="flex items-center gap-2">
+            <div className="flex w-full items-center gap-2">
               <img src={x?.image[0]} alt="" className="w-24 rounded-lg" />
               <span className="text-sm family1 text-dark">{x?.title}</span>
             </div>

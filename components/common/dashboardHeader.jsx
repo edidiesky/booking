@@ -72,10 +72,10 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
 
           <label
             htmlFor=""
-            className="hidden md:flex text-base text-dark w-[200px] lg:w-[350px]
+            className="hidden md:flex text-lg text-dark w-[200px] lg:w-[350px]
              items-center gap-2 h-12 border rounded-[20px] bg-[#f9f9f9] px-4"
           >
-            <div className="w-8 h-8 rounded-full bg-[#000] text-white flex items-center justify-center">
+            <div className=" text-dark flex items-center justify-center">
               <BiSearch />
             </div>
             <input

@@ -30,12 +30,12 @@ const Statistics = () => {
 
   const [series, setSeries] = useState([
     {
-      name: "Series A",
+      name: "Rooms",
       data: [14, 22, 45, 15, 40, 18, 58, 16],
     },
     {
-      name: "Series B",
-      data: [20, 29, 37, 36, 44, 45, 50, 58],
+      name: "Reservations",
+      data: [16, 23, 39, 26, 44, 25, 50, 28],
     },
   ]);
 
