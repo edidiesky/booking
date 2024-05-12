@@ -2,16 +2,12 @@
 import styled from "styled-components";
 import { RxCross1 } from "react-icons/rx";
 import { FaBars } from "react-icons/fa6";
-import { TiHome, TiMessage } from "react-icons/ti";
-import { GiMoneyStack } from "react-icons/gi";
 import { FaRegUser, FaHotel } from "react-icons/fa";
+import { TiHome, TiMessage } from "react-icons/ti";
+import { usePathname } from "next/navigation";
 import { RxTimer } from "react-icons/rx";
-import {
-  BiChevronDown,
-  BiChevronUp,
-  BiSearch,
-  BiSupport,
-} from "react-icons/bi";
+import { LuBedDouble } from "react-icons/lu";
+import { BiSearch } from "react-icons/bi";
 import Link from "next/link";
 import React, { useState } from "react";
 const AdminSidebarData = [
@@ -20,25 +16,34 @@ const AdminSidebarData = [
     tab: {
       title: "Dashboard",
       path: "",
-      icon: <TiHome fontSize={"26px"} />,
+      icon: <TiHome fontSize={"18px"} />,
+    },
+    list: [],
+  },
+  {
+    id: 61,
+    tab: {
+      icon: <FaHotel fontSize={"16px"} />,
+      title: "Rooms",
+      path: "/rooms",
     },
     list: [],
   },
   {
     id: 6,
     tab: {
-      icon: <FaHotel fontSize={"20px"} />,
-      title: "Manage Reservation",
-      path: "reservation",
+      icon: <LuBedDouble fontSize={"16px"} />,
+      title: "Reservation",
+      path: "/reservation",
     },
     list: [],
   },
   {
     id: 4,
     tab: {
-      icon: <FaRegUser fontSize={"20px"} />,
-      title: "Manage Clients",
-      path: "customers",
+      icon: <FaRegUser fontSize={"16px"} />,
+      title: "Clients",
+      path: "/customers",
     },
     list: [],
   },
@@ -48,6 +53,7 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
   // const { userInfo } = useAppSelector(store => store.auth)
   const userInfo = {};
   // const dispatch = useAppDispatch()
+  const pathname = usePathname();
   const [bar, setBar] = React.useState(false);
   const [activeindex, setActiveIndex] = useState(0);
 
@@ -131,7 +137,7 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
         style={{ zIndex: "200" }}
         className={`${
           bar ? "left-0" : "-left-[100%]"
-        } w-[300px] h-full transition-all ease duration-700 fixed flex lg:hidden top-0 flex-col gap-2`}
+        } w-[300px] bg-white border-r shadow-2xl  h-full transition-all ease duration-700 fixed flex lg:hidden top-0 flex-col gap-2`}
       >
         <div
           onClick={() => setBar(!bar)}
@@ -140,47 +146,42 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
             bar ? "left-0" : "-left-[100%]"
           } w-full h-full transition-all ease duration-300 fixed flex lg:hidden top-0 bg-[#42424227] flex-col gap-2`}
         ></div>
-        <img
-          src="https://images.unsplash.com/photo-1554110397-9bac083977c6"
-          alt=""
-          className="w-full z-20 h-full absolute object-cover"
-        />
-        <div className="w-full h-full absolute bg-[#000] opacity-[.6] z-[24] object-cover" />
+        {/* <div className="w-full h-full absolute bg-[#fff] z-[24] object-cover" /> */}
         <div
           style={{ zIndex: "200" }}
-          className="w-full Header_wrapper py-4 flex items-center flex-col justify-space gap-2"
+          className="w-full h-full bg-white Header_wrapper py-4 flex items-start flex-col gap-4"
         >
-          <div className="w-full my-4 flex flex-col gap-2">
+          <div className="flex px-3 items-center gap-2">
+            <img
+              src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
+              alt=""
+              className="w-10 rounded-full"
+            />
+            <h4 className="text-base text-dark font-bold family1">
+              {userInfo?.fullname || "Jermiah frim"}
+              <span className="block font-normal text-sm text-dark">
+                {userInfo?.email || "jerrme@gmail.com"}
+              </span>
+            </h4>
+          </div>
+          <div className="w-full my-4 flex flex-col">
             {AdminSidebarData?.map((x, index) => {
               return (
                 <div key={index} className="w-[90%] mx-auto">
-                  {x?.list?.length === 0 ? (
-                    <Link href={`/dashboard/${x.tab.path}`}>
-                      <div className="flex items-center gap-1">
-                        <span className="w-12 h-12 text-xm rounded-xl flex items-center text-blue justify-center">
-                          {" "}
-                          {x.tab.icon}
-                        </span>
-                        {<span>{x.tab?.title}</span>}
-                      </div>
-                    </Link>
-                  ) : (
-                    <div
-                      onClick={() =>
-                        setActiveIndex(activeindex === x?.id ? false : x?.id)
-                      }
-                      className="overflow-hidden"
-                    >
-                      <div className="tab text-3xl font-booking_font2 text-dark font-normal cursor-pointer family1 justify-between w-full">
-                        <div className="flex items-center gap-1">
-                          <span className="w-12 h-12 text-xm rounded-xl flex items-center text-blue justify-center">
-                            {x?.tab?.icon}
-                          </span>
-                          {<h4>{x?.tab?.title}</h4>}
-                        </div>
-                      </div>
+                  <Link
+                    className={`
+                      ${pathname === `/dashboard${x.tab.path}` ? "active" : ""}
+                      text-3xl w-[90%] mx-auto text-dark font-medium`}
+                    href={`/dashboard${x.tab.path}`}
+                  >
+                    <div className="flex items-center">
+                      <span className="w-12 h-12 text-xm rounded-xl flex items-center text-blue justify-center">
+                        {" "}
+                        {x.tab.icon}
+                      </span>
+                      {<h4>{x.tab?.title}</h4>}
                     </div>
-                  )}
+                  </Link>
                 </div>
               );
             })}
@@ -192,7 +193,7 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
 };
 
 export const HeaderStyles = styled.div`
-  padding: .7rem 0;
+  padding: 0.7rem 0;
   min-height: 5rem;
   width: 100%;
   position: sticky;
@@ -247,7 +248,7 @@ export const HeaderStyles = styled.div`
   }
   a,
   .tab {
-    padding: 10px 14px;
+    padding: 6px 14px;
     font-weight: normal;
     margin: 0 auto;
     font-size: 14px;
@@ -257,20 +258,14 @@ export const HeaderStyles = styled.div`
     align-items: center;
     gap: 1rem;
     position: relative;
-
-    @media (max-width: 1080px) {
-      justify-content: space-between;
-      padding: 14px 10px;
-      font-size: 1.3rem;
-      gap: 1rem;
-    }
-
     svg {
-      color: #fff;
+      color: #000;
     }
 
     &:hover {
       background: #635bff;
+      color: #fff;
+
       svg {
         color: #fff;
       }
@@ -278,7 +273,10 @@ export const HeaderStyles = styled.div`
     &.active {
       position: relative;
       background: #635bff;
-
+      color: #fff;
+      svg {
+        color: #fff;
+      }
       span {
         svg {
           color: #fff;

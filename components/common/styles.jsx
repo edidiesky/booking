@@ -35,7 +35,14 @@ export const Table = styled.div`
       overflow-x: auto;
       border-collapse: collapse;
       table-layout: fixed;
-      width: 100%;
+      /* width: 100%; */
+      /* max-width: 1100px; */
+      @media (max-width: 1080px) {
+        max-width: 900px;
+      }
+      @media (max-width: 780px) {
+        max-width: 500px;
+      }
 
       thead {
         tr {
@@ -44,6 +51,8 @@ export const Table = styled.div`
           text-align: start;
           transition: all 0.4s;
           background-color: #f9f9f9;
+          border-radius: 40px;
+          padding: 1rem 2rem;
           &:hover {
             background-color: rgba(0, 0, 0, 0.1);
           }
@@ -53,7 +62,7 @@ export const Table = styled.div`
             text-align: center;
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
             padding: 1.7rem 2rem;
-            font-family:  "var(--font-work)", sans-serif;
+            font-family: "Barlow", sans-serif;
           }
         }
       }
@@ -74,8 +83,8 @@ export const Table = styled.div`
             padding: 2rem 1rem;
             margin-bottom: 1;
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-            font-family:  "var(--font-work)", sans-serif;
-          
+            font-family: "Barlow", sans-serif;
+
             span {
               &.danger {
                 color: #840a0a;

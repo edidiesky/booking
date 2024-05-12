@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        booking_font: ["var(--font-work)", "sans-serif"],
+        booking_font: ["Barlow", "sans-serif"],
         booking_font2: ["Lora", "sans-serif"],
       },
       backgroundImage: {
