@@ -47,14 +47,14 @@ const TableCard = ({ x, type }) => {
 
           <td>
             <span className="text-grey text-base family1 text-light">
-             24th May 2024
+              24th May 2024
             </span>
           </td>
           <td>
             <div className="flex items-center justify-center">
               <Link
                 // href={`/account/admin/dashboard/Manage_Customers/${x?._id}`}
-                href={'#'}
+                href={"#"}
                 className="w-12 h-12 rounded-full flex hover:shadow-sm hover:bg-[#ddd] items-center justify-center"
               >
                 <MdEdit />
@@ -116,13 +116,53 @@ const TableCard = ({ x, type }) => {
       </>
     );
   }
+  if (type === "Reservation") {
+    return (
+      <>
+        <AnimatePresence>
+          {userdeletemodal && (
+            <DeleteModal
+              id={x?._id}
+              modal={userdeletemodal}
+              setModal={setUserDeleteModal}
+            />
+          )}
+        </AnimatePresence>
+        <tr key={x?._id}>
+          <td>
+            <span className="text-sm text-center family1 text-dark">
+              {x?.user}
+            </span>
+          </td>
+          <td className="text-sm">
+            {x?.status === "booked" ? (
+              <span className="text-sm text-center success">
+                {x?.status}
+              </span>
+            ) : (
+              <span className="text-sm text-center danger">
+                {x?.status}
+              </span>
+            )}
+          </td>
+
+          <td className="text-sm">{x?.venue}</td>
+
+          <td className="text-sm">
+            24th May - <span>25th Dec</span> 2024
+          </td>
+          <td className="text-sm">09:00 - 12:00</td>
+        </tr>
+      </>
+    );
+  }
 
   return (
     <>
       {/* <Delete /> */}
       <tr key={x?._id}>
         <td>
-          <span classNatitlee="text-base family1 text-grey">{x?.plan}</span>
+          <span className="text-base family1 text-grey">{x?.plan}</span>
         </td>
         <td>
           <span className="text-grey text-base family1">$ {x?.price}</span>

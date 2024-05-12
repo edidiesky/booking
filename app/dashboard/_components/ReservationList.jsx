@@ -1,15 +1,74 @@
-import React from 'react';
-const ReservationList = () => {
-    return (
-      <div className="w-full">
-        <div className="p-8 px-4 rounded-[30px] h-[500px] border bg-white flex gap-4">
-          <div className="flex flex-col">
-            <h3 className="text-3xl font-booking_font font-bold">Reservation</h3>
-          </div>
-        </div>
-      </div>
-    );
-}
+"use client";
+import React, { useState } from "react";
+import { Table } from "@/components/common/styles";
+import TableCard from "@/components/common/TableCard";
 
+const reservation = [
+  {
+    user: "Villa Borghese Luxury",
+    venue: "Lavana 4",
+    type: "reservation",
+    status: "booked",
+    price: 44.8,
+    endDate: "8/24/2024",
+    startDate: "4/24/2024",
+  },
+  {
+    user: "Villa Borghese Luxury",
+    venue: "Lavana 2",
+    type: "reservation",
+    status: "canceled",
+    price: 44.8,
+    endDate: "8/24/2024",
+    startDate: "4/24/2024",
+  },
+  {
+    user: "Villa Borghese Luxury",
+    venue: "Lavana 4",
+    type: "reservation",
+    status: "booked",
+    price: 44.8,
+    endDate: "8/24/2024",
+    startDate: "4/24/2024",
+  },
+  {
+    user: "Villa Borghese Luxury",
+    venue: "Lavana 2",
+    type: "reservation",
+    status: "canceled",
+    price: 44.8,
+    endDate: "8/24/2024",
+    startDate: "4/24/2024",
+  },
+];
+
+const ReservationList = () => {
+  //   const [roommodal, setRoomModal] = useState(false);
+  return (
+    <div className="w-full">
+      <Table>
+        <div className="TableContainer">
+          <table className="tableWrapper">
+            <thead>
+              <tr>
+                {/* <th>ID</th> */}
+                <th>Booking Name</th>
+                <th>Status</th>
+                <th>Venue</th>
+                <th>Checkin - CheckOut</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reservation?.map((x, index) => {
+                return <TableCard x={x} type={"Reservation"} key={x?._id} />;
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Table>
+    </div>
+  );
+};
 
 export default ReservationList;

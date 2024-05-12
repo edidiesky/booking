@@ -35,7 +35,7 @@ export const Table = styled.div`
       overflow-x: auto;
       border-collapse: collapse;
       table-layout: fixed;
-      width:100%;
+      width: 100%;
 
       thead {
         tr {
@@ -53,7 +53,7 @@ export const Table = styled.div`
             text-align: center;
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
             padding: 1.7rem 2rem;
-            font-family: "Barlow", sans-serif;
+            font-family:  "var(--font-work)", sans-serif;
           }
         }
       }
@@ -71,68 +71,42 @@ export const Table = styled.div`
             font-size: 1;
             font-weight: 500;
             text-align: center;
-            padding: 1rem;
+            padding: 2rem 1rem;
             margin-bottom: 1;
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-            font-family: "Barlow", sans-serif;
-
-            .true {
-              color: #e72d2d;
-            }
-
-            .tablespan {
-              padding: 1;
-              border-radius: 40px;
-              color: #333;
-              text-align: center;
-              &.true {
-                color: #28a745;
-                background: #10e24129;
-              }
-              &.tablespan_withdrawal {
-                background: #28a745;
-                color: #fff;
-              }
-              &.false {
+            font-family:  "var(--font-work)", sans-serif;
+          
+            span {
+              &.danger {
                 color: #840a0a;
+                padding: 0.8rem 1.2rem;
+                border-radius: 40px;
+                border: 1px solid #e91313e0;
                 background: rgba(255, 3, 3, 0.071);
               }
-            }
-
-            .true {
-              color: var(--green);
-              font-size: 1.3rem;
-            }
-            .false {
-              color: var(--red);
-              font-size: 1.3rem;
+              &.success {
+                color: #28a745;
+                padding: 0.8rem 1.2rem;
+                border-radius: 40px;
+                background: #10e24129;
+                border: 1px solid #28a746ec;
+              }
             }
           }
 
-          .action {
+          .icons {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1.8rem;
-            .icons {
-              width: 4rem;
-              height: 4rem;
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              svg {
-                font-size: 1.7rem;
-                cursor: pointer;
-              }
-              &:hover {
-                background: #ddd;
-              }
+            svg {
+              font-size: 1.7rem;
+              cursor: pointer;
             }
-            .details {
-              padding: 0.8rem 1.3rem;
+            &:hover {
               background: #ddd;
-              border-radius: 5px;
             }
           }
         }
