@@ -86,19 +86,19 @@ const Navbar = ({ text, path }) => {
                   <div className="flex profile_dropdown_bottom flex-col w-full">
                     <Link
                       href={"/dashboard"}
-                      className="font-medium text-xl p-2 family1 w-full profile_list text-dark block"
+                      className="font-booking_font4 text-xl p-2 family1 w-full profile_list text-dark block"
                     >
                       Dashboard
                     </Link>
                     <Link
                       href={"/dashboard/settings"}
-                      className="font-medium text-xl p-2 family1 w-full profile_list text-dark block"
+                      className="font-booking_font4 text-xl p-2 family1 w-full profile_list text-dark block"
                     >
                       Profile
                     </Link>
                     <div
                       // onClick={handleLogOut}
-                      className="font-medium text-xl p-2 family1 w-full profile_list text-dark block"
+                      className="font-booking_font4 text-xl p-2 family1 w-full profile_list text-dark block"
                     >
                       Log Out
                     </div>
