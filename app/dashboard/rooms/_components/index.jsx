@@ -13,18 +13,18 @@ const DashboardIndex = () => {
         )}
       </AnimatePresence>
       <div className="w-full pb-20 flex flex-col gap-12">
-        <div className="w-full flex items-center justify-between">
+        <div className="w-full grid lg:grid-cols-2 lg:items-center gap-4 justify-between">
           <h3 className="text-4xl font-booking_font4 font-bold">
             My Rooms
-            <span className="block text-base font-booking_font font-normal">
+            <span className="block pt-4 text-base font-booking_font font-normal">
               Make a review of your rooms created either by adding or modifying
               their content
             </span>
           </h3>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center lg:justify-end gap-2">
             <div
               onClick={() => setRoomModal(true)}
-              className="p-4 btn cursor-pointer text-base
+              className="p-4 btn cursor-pointer text-sm
              bg-[#C5F244] px-8 font-booking_font 
              rounded-[20px] font-bold text-dark"
             >
