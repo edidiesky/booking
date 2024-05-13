@@ -58,8 +58,7 @@ export default function RoomInfo() {
   const inView4 = useInView(ctaText_2, {
     margin: "0px 100px -50px 0px",
   });
-  const ctaText1 =
-    "SLOPESIDE CHALET - ADORABLE CABIN WITH A FIRE PIT. NEW RENOVATIONS, ADORABLE ON THE INSIDE! LOCATED NEAR SNOW SUMMIT, GREAT LCOATION!";
+  const ctaText1 = "1904 - SPLASH MOUNTAIN";
   return (
     <>
       <AnimatePresence mode="wait">
@@ -102,7 +101,7 @@ export default function RoomInfo() {
               <div className="w-full flex flex-col gap-8">
                 <h2
                   ref={ctaText_1}
-                  className="text-4xl font-bold flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font2"
+                  className="text-4xl md:text-5xl font-bold flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font2"
                 >
                   {ctaText1.split(" ").map((x, index) => {
                     return (

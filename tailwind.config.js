@@ -21,8 +21,10 @@ module.exports = {
         custom_2: "1304px",
       },
       fontFamily: {
-        booking_font: ["Barlow", "sans-serif"],
-        booking_font2: ["Lora", "sans-serif"],
+        booking_font: ["Proxima_Regular", "sans-serif"],
+        booking_font_bold: ["Proxima_Bold", "sans-serif"],
+        booking_font_normal: ["Proxima_SemiBold", "sans-serif"],
+        booking_font2: ["playfair", "sans-serif"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
