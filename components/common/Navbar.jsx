@@ -55,9 +55,9 @@ const Navbar = ({ text, path }) => {
               src="https://www.hopper.com/assets/treasure-D-5S8iOp.svg"
               className="w-14 h-14 rounded-full object-cover"
             />
-            <h4 className="hidden md:flex flex-col text-xl font-bold text-dark">
+            <h4 className="hidden md:flex flex-col text-xl font-bold font-booking_font4 text-dark">
               HOME & VILLAS{" "}
-              <span className="block font-bold text-xs font-booking_font1">
+              <span className="block font-bold text-xs font-booking_font">
                 {" "}
                 Benneth Okeke
               </span>

@@ -164,7 +164,7 @@ export const HeaderStyles = styled.div`
     /* min-height: 4rem; */
     font-weight: medium;
     margin: 0 auto;
-    font-size: 14px;
+    font-size: 16px;
     border-radius: 10px;
     width: 100%;
     display: flex;

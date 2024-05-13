@@ -345,7 +345,7 @@ const DeleteContainer = styled(motion.div)`
   background: rgba(0, 0, 0, 0.3);
   .guestModalCard {
     max-width: 85vw;
-    min-width: 76vw;
+    min-width: 60vw;
     display: flex;
     max-height: 50rem;
     align-items: center;
