@@ -84,6 +84,7 @@ textarea {
 
 .btn {
   transition: all 0.5s;
+  font-family: "Proxima_SemiBold", sans-serif;
 }
 .btn:hover {
   opacity: 0.7;

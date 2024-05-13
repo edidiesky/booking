@@ -53,16 +53,16 @@ export const Table = styled.div`
           background-color: #f9f9f9;
           border-radius: 40px;
           padding: 1rem 2rem;
+          text-transform: uppercase;
           &:hover {
             background-color: rgba(0, 0, 0, 0.1);
           }
           th {
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.8rem;
             text-align: center;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             padding: 1.7rem 2rem;
-            font-family: "Proxima_Regular", sans-serif;
+            font-family: "playfair", sans-serif;
           }
         }
       }
@@ -77,26 +77,23 @@ export const Table = styled.div`
             background-color: rgba(0, 0, 0, 0.09);
           }
           td {
-            font-size: 1;
-            font-weight: 500;
             text-align: center;
-            padding: 2rem 1rem;
-            margin-bottom: 1;
+            padding: 1.7rem 1rem;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            font-family: "Proxima_Regular", sans-serif;
+            font-family: "Proxima_SemiBold", sans-serif;
 
             span {
               &.danger {
                 color: #840a0a;
                 padding: 0.8rem 1.2rem;
                 border-radius: 40px;
-                background: #F3EFE5;
+                background: #f3efe5;
               }
               &.success {
                 color: #28a745;
                 padding: 0.8rem 1.2rem;
                 border-radius: 40px;
-                background: #EDFFEB;
+                background: #edffeb;
               }
             }
           }

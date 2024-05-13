@@ -14,10 +14,12 @@ const DashboardIndex = () => {
       </AnimatePresence>
       <div className="w-full pb-20 flex flex-col gap-12">
         <div className="w-full flex items-center justify-between">
-          <h3 className="text-4xl font-booking_font font-bold">Customers List
-          <span className="block text-base font-normal">
-            Make a review of your customers either by adding or modifying their content
-          </span>
+          <h3 className="text-4xl font-booking_font4 font-bold">
+            Customers List
+            <span className="block text-base font-booking_font font-normal">
+              Make a review of your customers either by adding or modifying
+              their content
+            </span>
           </h3>
         </div>
         <RoomsList />

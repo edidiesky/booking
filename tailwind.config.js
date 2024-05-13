@@ -25,6 +25,7 @@ module.exports = {
         booking_font_bold: ["Proxima_Bold", "sans-serif"],
         booking_font_normal: ["Proxima_SemiBold", "sans-serif"],
         booking_font2: ["playfair", "sans-serif"],
+        booking_font4: ["playfair", "sans-serif"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

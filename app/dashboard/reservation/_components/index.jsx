@@ -17,7 +17,7 @@ const DashboardIndex = () => {
       </AnimatePresence>
       <div className="w-full flex flex-col gap-12">
         <div className="w-full flex items-center justify-between">
-          <h3 className="text-4xl font-booking_font font-bold">
+          <h3 className="text-4xl font-booking_font4 font-bold">
             My Reservation
           </h3>
           <div className="flex items-center gap-2">

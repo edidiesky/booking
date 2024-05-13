@@ -74,7 +74,7 @@ const DashboardSidebar = ({ active }) => {
                   src="https://www.hopper.com/assets/treasure-D-5S8iOp.svg"
                   className="w-14 h-14 rounded-full object-cover"
                 />
-                <h4 className="hidden md:flex flex-col text-lg font-bold text-dark">
+                <h4 className="hidden md:flex flex-col text-lg font-booking_font_bold font-bold text-dark">
                   HOME & VILLAS{" "}
                   <span className="block font-medium text-xs font-booking_font">
                     {" "}
@@ -88,7 +88,7 @@ const DashboardSidebar = ({ active }) => {
             {AdminSidebarData?.map((x, index) => {
               // console.log(pathname, `/dashboard${x.tab.path}`);
               return (
-                <div key={index} className="w-[90%] font-booking_font mx-auto">
+                <div key={index} className="w-[90%] font-booking_font_bold mx-auto">
                   <Link
                     className={`
                       ${pathname === `/dashboard${x.tab.path}` ? "active" : ""}
@@ -113,7 +113,7 @@ const DashboardSidebar = ({ active }) => {
             <Link
               className={`${
                 pathname === `/dashboard/settings` ? "active" : ""
-              } text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font text-dark family1 font-medium`}
+              } text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font_bold text-dark family1 font-medium`}
               href={`/dashboard/settings`}
             >
               <FiSettings fontSize={"24px"} />
@@ -126,9 +126,9 @@ const DashboardSidebar = ({ active }) => {
                   alt=""
                   className="w-10 rounded-full"
                 />
-                <h4 className="text-base text-dark font-medium family1">
+                <h4 className="text-base text-dark font-booking_font_bold family1">
                   {userInfo?.fullname || "Jermiah frim"}
-                  <span className="block font-medium text-sm text-grey">
+                  <span className="block font-booking_font text-sm text-grey">
                     {userInfo?.email || "jerrme@gmail.com"}
                   </span>
                 </h4>
@@ -164,7 +164,7 @@ export const HeaderStyles = styled.div`
     /* min-height: 4rem; */
     font-weight: medium;
     margin: 0 auto;
-    font-size: 17px;
+    font-size: 14px;
     border-radius: 10px;
     width: 100%;
     display: flex;

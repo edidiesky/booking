@@ -53,7 +53,7 @@ const Statistics = () => {
     <div id="chart" className="w-full">
       <div className="p-8 w-full px-4 rounded-[30px] min-h-[600px] border bg-white flex gap-4">
         <div className="flex w-full flex-col gap-4">
-          <h3 className="text-3xl font-booking_font font-medium">
+          <h3 className="text-3xl font-booking_font4 font-medium">
             Customer Statistics
           </h3>
           <Chart

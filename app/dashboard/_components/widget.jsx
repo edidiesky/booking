@@ -7,11 +7,11 @@ const Widget = () => {
       <div className="w-full grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
           style={{ transition: "all .3s" }}
-          className="p-8 font-booking_font w-full rounded-[20px] hover:shadow-xl justify-between cursor-pointer border bg-white flex items-center gap-4 h-48"
+          className="p-8 font-booking_font4 w-full rounded-[20px] hover:shadow-xl justify-between cursor-pointer border bg-white flex items-center gap-4 h-48"
         >
           <div className="flex flex-col">
-            <h3 className="text-5xl font-bold">
-              <span className="text-grey pb-4 block text-xl font-normal">
+            <h3 className="text-5xl font-bold font-booking_font4">
+              <span className="text-grey pb-4 font-booking_font block text-xl font-normal">
                 New Booking
               </span>
               25
@@ -23,11 +23,11 @@ const Widget = () => {
         </div>
         <div
           style={{ transition: "all .3s" }}
-          className="p-8 font-booking_font rounded-[20px] hover:shadow-xl cursor-pointer justify-between border bg-white flex items-center gap-4 h-48"
+          className="p-8 font-booking_font4 rounded-[20px] hover:shadow-xl cursor-pointer justify-between border bg-white flex items-center gap-4 h-48"
         >
           <div className="flex flex-col">
-            <h3 className="text-4xl font-bold">
-              <span className="text-grey pb-4 block text-xl font-normal">
+            <h3 className="text-4xl font-bold font-booking_font4">
+              <span className="text-grey pb-4 font-booking_font block text-xl font-normal">
                 Total Revenue
               </span>
               $13.599
@@ -39,11 +39,11 @@ const Widget = () => {
         </div>
         <div
           style={{ transition: "all .3s" }}
-          className="p-8 font-booking_font rounded-[20px] hover:shadow-xl cursor-pointer justify-between border bg-white flex items-center gap-4 h-48"
+          className="p-8 font-booking_font4 rounded-[20px] hover:shadow-xl cursor-pointer justify-between border bg-white flex items-center gap-4 h-48"
         >
           <div className="flex flex-col">
-            <h3 className="text-5xl font-bold">
-              <span className="text-grey pb-4 block text-xl font-normal">
+            <h3 className="text-5xl font-bold font-booking_font4">
+              <span className="text-grey pb-4 font-booking_font block text-xl font-normal">
                 Total Reserved
               </span>
               90

@@ -117,10 +117,10 @@ const RoomsList = () => {
         </div>
       </Table>
       <div className="w-full flex items-center justify-end gap-2">
-        <div className="p-4 rounded-2xl text-base font-bold px-8 border hover:opacity-[.8] cursor-pointer border-[rgba(0,0,0,0.3)]">
+        <div className="p-4 rounded-2xl text-base font-bold font-booking_font_bold px-8 border hover:opacity-[.8] cursor-pointer border-[rgba(0,0,0,0.3)]">
           Previous
         </div>
-        <div className="p-4 rounded-2xl text-base font-bold px-8 border hover:opacity-[.8] cursor-pointer border-[rgba(0,0,0,0.3)]">
+        <div className="p-4 rounded-2xl text-base font-bold font-booking_font_bold px-8 border hover:opacity-[.8] cursor-pointer border-[rgba(0,0,0,0.3)]">
           Next
         </div>
       </div>

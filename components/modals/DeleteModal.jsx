@@ -38,8 +38,8 @@ export default function DeleteModal({ type, modal, setModal, id }) {
           <RxCross2 />
         </div>
         <div className="deleteCardTop">
-          <h3 className="text-xl font-bold family1">Delete this User?</h3>
-          <p className="family1 text-base text-center leading-[1.2]">
+          <h3 className="text-xl font-bold font-booking_font_bold family1">Delete this User?</h3>
+          <p className="family1 text-sm text-center leading-[1.2]">
             Are you sure you want to delete user with id{" "}
             <span className="text-blue">&quot;{id}&quot; </span> from the
             database?
@@ -49,13 +49,13 @@ export default function DeleteModal({ type, modal, setModal, id }) {
 
         <div className="deleteCardBottom">
           <button
-            className="family1 flex items-center justify-center text-base"
+            className="family1 flex items-center justify-center text-sm"
             onClick={handleClearAlert}
           >
             Cancel
           </button>
           <button
-            className="btn deleteBtn family1 flex items-center justify-center text-base"
+            className="btn deleteBtn family1 flex items-center justify-center text-sm"
             // onClick={() => dispatch(AdminDeleteUserProfile({ Detailsdata: id }))}
           >
             Delete User
@@ -112,11 +112,10 @@ const DeleteContainer = styled(motion.div)`
       display: flex;
       align-items: center;
       justify-content: center;
-      padding-top: 2rem;
       gap: 1rem;
       button {
-        padding: 1.2rem 2rem;
-        height: 60px;
+        padding: 1rem 2rem;
+        height: 55px;
         border: none;
         font-weight: 400;
         background: #eee;

@@ -157,9 +157,9 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
               alt=""
               className="w-10 rounded-full"
             />
-            <h4 className="text-base text-dark font-bold family1">
+            <h4 className="text-base font-booking_font4 text-dark">
               {userInfo?.fullname || "Jermiah frim"}
-              <span className="block font-normal text-sm text-dark">
+              <span className="block font-normal font-booking_font text-sm text-dark">
                 {userInfo?.email || "jerrme@gmail.com"}
               </span>
             </h4>
