@@ -53,12 +53,12 @@ export default function Cta() {
     "I AM PASSIONATE ABOUT WEB TECHNOLOGIES AND ELECTRICAL ENGINEERING. I LOVE WORKING AT THE INTERSECTION OF CREATIVITY AND USER FRIENDLY INTERFACES . I CREATE MEMORABLE WEB EXPERIENCES.";
   return (
     <div data-scroll className="py-32 w-full mt-20 z-50">
-      <div className="w-[90%] mx-auto items-start m-auto max-w-custom  flex flex-col gap-16">
-        <div className="w-full lg:w-[70%] grid grid-cols-1 sm:grid-cols-custom gap-8 ">
+      <div className="w-[90%] mx-auto items-start m-auto max-w-custom  flex flex-col gap-4">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-custom gap-8 lg:gap-20">
           <div className="w-full">
             <h3
               ref={ctaText_1}
-              className=" w-full text-5xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font3 font-medium text-text_dark_1 "
+              className=" w-full text-5xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
             >
               {ctaText1.split(" ").map((x, index) => {
                 return (
@@ -76,7 +76,7 @@ export default function Cta() {
               })}
             </h3>
           </div>
-          <div className="w-full flex flex-col gap-24">
+          <div className="w-full lg:w-[600px] flex flex-col gap-24">
             <h5
               ref={ctaText_4}
               className=" w-full text-lg lg:text-lg flex flex-wrap gap-x-[8px] gap-y-[8px] md:gap-y-[4px]  leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
@@ -99,12 +99,12 @@ export default function Cta() {
           </div>
         </div>
         {/* 1st apartment */}
-        <div className="mt-36 md:mt-40 flex flex-col gap-20">
+        <div className="mt-20 md:mt-24 flex flex-col gap-20">
           <div className="w-full  grid grid-cols-1 sm:grid-cols-1 gap-4 ">
             <div className="w-full">
               <h4
                 ref={ctaText_5}
-                className=" w-full text-5xl lg:text-6xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font3 font-medium text-text_dark_1 "
+                className=" w-full text-5xl lg:text-6xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
               >
                 {ctaText2.split(" ").map((x, index) => {
                   return (
@@ -206,7 +206,7 @@ export default function Cta() {
             <div className="w-full">
               <h4
                 ref={ctaText_7}
-                className=" w-full text-5xl lg:text-6xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font3 font-medium text-text_dark_1 "
+                className=" w-full text-5xl lg:text-6xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
               >
                 {ctaText5.split(" ").map((x, index) => {
                   return (

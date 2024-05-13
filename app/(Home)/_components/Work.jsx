@@ -152,7 +152,7 @@ const Work = () => {
             <div className="w-[full]">
               <h4
                 ref={ctaText_1}
-                className=" w-full text-6xl lg:text-7xl flex flex-wrap justify-center gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font3 font-medium text-text_dark_1 "
+                className=" w-full text-6xl flex flex-wrap justify-center gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
               >
                 {ctaText1.split(" ").map((x, index) => {
                   return (
@@ -210,7 +210,7 @@ const Work = () => {
                     } w-full flex `}
                   >
                     <div className="w-full flex bg-white flex-col items-start justify-start p-16 md:p-20 md:justify-center gap-4">
-                      <h3 className="text-5xl font-booking_font3 font-medium text-text_dark_1 ">
+                      <h3 className="text-5xl font-booking_font-bold font-medium text-text_dark_1 ">
                         {apartment?.title}
                       </h3>
                       <h4 className="text-xl italic">
@@ -255,7 +255,7 @@ const Work = () => {
               <div className="w-[full]">
                 <h4
                   ref={ctaText_3}
-                  className=" w-full text-6xl lg:text-7xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font3 font-medium text-text_dark_1 "
+                  className=" w-full text-6xl lg:text-7xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
                 >
                   {ctaText2.split(" ").map((x, index) => {
                     return (
@@ -337,7 +337,7 @@ const Work = () => {
               <div className="w-[full]">
                 <h4
                   ref={ctaText_5}
-                  className=" w-full text-6xl lg:text-7xl flex flex-wrap md:justify-center md:items-center gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font3 font-medium text-text_dark_1 "
+                  className=" w-full text-6xl lg:text-7xl flex flex-wrap md:justify-center md:items-center gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
                 >
                   {ctaText5.split(" ").map((x, index) => {
                     return (
