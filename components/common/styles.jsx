@@ -35,13 +35,18 @@ export const Table = styled.div`
       overflow-x: auto;
       border-collapse: collapse;
       table-layout: fixed;
-      /* width: 100%; */
-      /* max-width: 1100px; */
       @media (max-width: 1080px) {
         max-width: 900px;
+        min-width: 900px;
       }
       @media (max-width: 780px) {
-        max-width: 500px;
+        max-width: 600px;
+        min-width: 600px;
+      }
+
+      @media (max-width: 580px) {
+        max-width: 600px;
+        min-width: 600px;
       }
 
       thead {
