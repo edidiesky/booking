@@ -119,20 +119,20 @@ export default function RoomInfo() {
                   })}
                 </h2>
                 <ul className="flex items-center gap-8">
-                  <li className="text-base font-booking_font4 font-normal">
+                  <li className="text-base font-booking_font_normal font-normal">
                     3 Guests
                   </li>
 
                   <li
                     style={{ listStyleType: "square" }}
-                    className="text-base font-booking_font4 font-normal"
+                    className="text-base font-booking_font_normal font-normal"
                   >
                     1 Bedrooms
                   </li>
 
                   <li
                     style={{ listStyleType: "square" }}
-                    className="text-base font-booking_font4 font-normal"
+                    className="text-base font-booking_font_normal font-normal"
                   >
                     1 Bathrooms
                   </li>

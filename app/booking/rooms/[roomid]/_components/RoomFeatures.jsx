@@ -62,12 +62,12 @@ export default function RoomFeatures() {
             <div className="flex w-full flex-col gap-8">
               <h2
                 style={{ letterSpacing: "4px" }}
-                className="text-4xl pb-4 border-b font-booking_font2 uppercase border-[rgba(0,0,0,.6)] font-medium"
+                className="text-4xl pb-4 border-b font-booking_font4 uppercase border-[rgba(0,0,0,.6)] font-medium"
               >
                 Home Features
               </h2>
               <div className="w-full flex flex-col gap-16">
-                <h4 className="text-sm leading-[1.7] font-booking_font2 font-normal">
+                <h4 className="text-sm leading-[1.7] font-booking_font_normal font-normal">
                   Enjoy the comforts of home and beyond with these distinctive
                   features.
                 </h4>
@@ -93,12 +93,12 @@ export default function RoomFeatures() {
             <div className="flex w-full flex-col gap-8">
               <h2
                 style={{ letterSpacing: "4px" }}
-                className="text-xl pb-4 border-b font-booking_font2 uppercase border-[rgba(0,0,0,.6)] font-medium"
+                className="text-xl pb-4 border-b font-booking_font_normal uppercase border-[rgba(0,0,0,.6)] font-medium"
               >
                 ALL STAYS INCLUDE
               </h2>
               <div className="w-full flex flex-col gap-16">
-                <h4 className="text-sm leading-[1.7] font-booking_font2 font-normal">
+                <h4 className="text-sm leading-[1.7] font-booking_font_normal font-normal">
                   We believe certain amenities should be standard. Every home
                   comes outfitted with these best-in-class essentials for a
                   worry-free stay.

@@ -18,41 +18,41 @@ export default function RoomDetails() {
                 <div className="w-full flex flex-col gap-2">
                   <h2
                     style={{ letterSpacing: "4px" }}
-                    className="text-xl font-booking_font4 pb-1 border-b uppercase font-medium"
+                    className="text-xl font-booking_font_normal pb-1 border-b uppercase font-medium"
                   >
                     BEDS & BATH
                   </h2>
-                  <h4 className="text-sm leading-[1.7] font-booking_font4 font-normal">
+                  <h4 className="text-sm leading-[1.7] font-booking_font_normal font-normal">
                     Review bedroom arrangements to make sure each is right for
                     you. Full and half bathrooms are shown as one total.
                   </h4>
                 </div>
                 <div className="w-full md:w-full justify-between flex items-center gap-2 md:gap-8">
                   <div className="flex w-full flex-col gap-4 text-lg">
-                    <h4 className="text-base font-booking_font4 pb-1 border-b font-medium">
+                    <h4 className="text-base font-booking_font_normal pb-1 border-b font-medium">
                       Bedroom
                     </h4>
                     <div className="flex items-center gap-4">
-                      <div className="flex flex-col gap-2 text-xs font-booking_font4 font-medium">
+                      <div className="flex flex-col gap-2 text-xs font-booking_font_normal font-medium">
                         <LuBedDouble fontSize={"26px"} />1 Queen Bed
                       </div>
-                      <div className="flex flex-col gap-2 text-xs font-booking_font4 font-medium">
+                      <div className="flex flex-col gap-2 text-xs font-booking_font_normal font-medium">
                         <LuBedSingle fontSize={"26px"} />1 Single Bed
                       </div>
                     </div>
                   </div>
                   <div className="flex w-full flex-col gap-4 text-lg">
-                    <h4 className="text-base font-booking_font4 pb-1 border-b font-medium">
+                    <h4 className="text-base font-booking_font_normal pb-1 border-b font-medium">
                       Living Room
                     </h4>
                     <div className="flex items-center gap-4">
-                      <div className="flex flex-col gap-2 text-xs font-booking_font4 font-medium">
+                      <div className="flex flex-col gap-2 text-xs font-booking_font_normal font-medium">
                         <LuBedSingle fontSize={"26px"} />1 Sofa Bed
                       </div>
                     </div>
                   </div>
                   <div className="flex w-full flex-col gap-4 text-lg">
-                    <h4 className="text-base font-booking_font4 pb-1 border-b font-medium">
+                    <h4 className="text-base font-booking_font_normal pb-1 border-b font-medium">
                       Bathrooms
                     </h4>
                     <div className="flex items-center gap-4">
@@ -68,12 +68,12 @@ export default function RoomDetails() {
                 <div className="w-full flex flex-col gap-2">
                   <h2
                     style={{ letterSpacing: "4px" }}
-                    className="text-xl border-b pb-4  font-booking_font4 uppercase font-medium"
+                    className="text-xl border-b pb-4  font-booking_font_normal uppercase font-medium"
                   >
                     ATTRIBUTES
                   </h2>
                 </div>
-                <div className="w-full md:w-[600px] flex text-base font-booking_font4 font-normal  items-center gap-4 gap-y-2 flex-wrap">
+                <div className="w-full md:w-[600px] flex text-base font-booking_font_normal font-normal  items-center gap-4 gap-y-2 flex-wrap">
                   <span>Patio/Balcony</span>
                   <span> Tennis Courts: Community </span>
                   <span>Mountain View</span>
@@ -88,12 +88,12 @@ export default function RoomDetails() {
                 <div className="w-full flex flex-col gap-2">
                   <h2
                     style={{ letterSpacing: "4px" }}
-                    className="text-xl border-b pb-4 font-booking_font4 uppercase font-medium"
+                    className="text-xl border-b pb-4 font-booking_font_normal uppercase font-medium"
                   >
                     AMENITIES
                   </h2>
                 </div>
-                <div className="w-full md:w-[600px] flex text-base font-booking_font4 font-normal  items-center gap-4 flex-wrap">
+                <div className="w-full md:w-[600px] flex text-base font-booking_font_normal font-normal  items-center gap-4 flex-wrap">
                   <span>Patio/Balcony</span>
                   <span> Tennis Courts: Community </span>
                   <span>Mountain View</span>
@@ -108,12 +108,12 @@ export default function RoomDetails() {
                 <div className="w-full flex flex-col gap-2">
                   <h2
                     style={{ letterSpacing: "4px" }}
-                    className="text-xl border-b pb-4 font-booking_font4 uppercase font-medium"
+                    className="text-xl border-b pb-4 font-booking_font_normal uppercase font-medium"
                   >
                     SERVICES
                   </h2>
                 </div>
-                <div className="w-full md:w-[600px] flex text-base font-booking_font4 font-normal  items-center gap-4 flex-wrap">
+                <div className="w-full md:w-[600px] flex text-base font-booking_font_normal font-normal  items-center gap-4 flex-wrap">
                   <span>Patio/Balcony</span>
                   <span> Tennis Courts: Community </span>
                   <span>Mountain View</span>

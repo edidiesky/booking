@@ -8,7 +8,17 @@ export const Table = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+    background: #f3f3f3;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--grey-1);
+    border-radius: 10px;
+    transition: all 0.5s;
+  }
   .TableContainer {
     display: flex;
     flex-direction: column;

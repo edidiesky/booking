@@ -109,21 +109,21 @@ export default function RoomPaymentTab({
           </div>
           <div className="w-full flex flex-col gap-2">
             {/* price */}
-            <div className="w-full text-basesm font-light font-booking_font4 flex items-center justify-between">
+            <div className="w-full text-basesm font-light font-booking_font_normal flex items-center justify-between">
               <span>238.20 x 2 nights</span>
               <span>
                 476.40 <span className="text-base">USD</span>
               </span>
             </div>
             {/* taxes */}
-            <div className="w-full text-base font-light font-booking_font4 flex items-center justify-between">
+            <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
               <span>Fees and taxess</span>
               <span>
                 476.40 <span className="text-lg">USD</span>
               </span>
             </div>
             {/* total */}
-            <div className="w-full text-base font-light font-booking_font4 flex items-center justify-between">
+            <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
               <span>Total</span>
               <span>
                 476.40 <span className="text-lg">USD</span>
@@ -142,17 +142,17 @@ export default function RoomPaymentTab({
           </div>
           <div
             onClick={handleReservationBooking}
-            className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font4"
+            className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font_normal"
           >
             SIGN IN TO SAVE
           </div>
         </div>
       </div>
       <div className="flex flex-col py-4 gap-4">
-        <h4 className="text-xl text-center font-booking_font4">
+        <h4 className="text-xl text-center font-booking_font_normal">
           Have questions about this home?
         </h4>
-        <div className="p-6 w-[90%] mx-auto font-booking_font4 border-[rgba(0,0,0,1)] text-base text-center border uppercase">
+        <div className="p-6 w-[90%] mx-auto font-booking_font_normal border-[rgba(0,0,0,1)] text-base text-center border uppercase">
           CONTACT PROPERTY MANAGER
         </div>
       </div>

@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
 import { motion, AnimatePresence, Variant } from "framer-motion";
 import styled from "styled-components";
 import { RxCross2 } from "react-icons/rx";
@@ -60,50 +62,72 @@ const RegisterModal = ({ modal, setModal }) => {
         exit="exit"
         className="guestModalCard"
       >
-        <div className="w-full mx-auto flex py-4 flex-col gap-8">
-          <div className="w-full flex flex-col">
-            <div className="w-full p-6 px-8 border-b flex border-[rgba(0,0,0,.2)] items-center justify-between">
-              <h3 className="text-2xl font-bold font-booking_font4">
-                Sign Up
-                <span className="block text-sm font-light">
-                  Register to your account and check out your bookings
-                </span>
-              </h3>
-              <div className="cross" onClick={handleClearAlert}>
-                <RxCross2 />
-              </div>
+        <div className="w-full mx-auto h-[450px] flex flex-col gap-8">
+          <div className="w-full sticky top-0 left-0 p-6 px-8 border-b flex border-[rgba(0,0,0,.2)] items-center justify-between">
+            <h3 className="text-2xl font-bold font-booking_font4">
+              Sign Up
+              <span className="block text-sm font-light">
+                Register to your account and check out your bookings
+              </span>
+            </h3>
+            <div className="cross" onClick={handleClearAlert}>
+              <RxCross2 />
             </div>
           </div>
-
-          <form className="w-[90%] mx-auto p-4 px-8 pb-4 flex flex-col gap-4">
-            {RegisterFormInputData?.map((input, index) => {
-              return (
-                <label
-                  key={index}
-                  htmlFor={input.label}
-                  className="text-sm font-booking_font4 rounded-[10px] flex flex-col gap-2 text-dark"
-                >
-                  <span className="text-dark font-bold">{input.label}</span>
-                  <div className="input flex item-center gap-1">
-                    {/* <MdOutlineMailOutline fontSize={'18px'} className="text-grey" /> */}
-                    <input
-                      className="w-100 rounded-2xl font-normal text-base"
-                      required={true}
-                      name={input?.name}
-                      id={input.label}
-                      value={formvalue[input.name]}
-                      type={input.type}
-                      placeholder={input.label}
-                      onChange={handleFormChange}
-                    ></input>
-                  </div>
-                </label>
-              );
-            })}
-            <div className="p-4 mt-4 px-8 text-center w-full cursor-pointer btn rounded-[10px] font-booking_font4 font-bold text-white">
-              Sign Up
-            </div>
-          </form>
+          <div className="w-full overflow-auto h-[350px]  flex">
+            <form className="w-[90%] mx-auto p-4 px-8 pb-4 flex flex-col gap-4">
+              {RegisterFormInputData?.map((input, index) => {
+                return (
+                  <label
+                    key={index}
+                    htmlFor={input.label}
+                    className="text-sm font-booking_font4 rounded-[10px] flex flex-col gap-2 text-dark"
+                  >
+                    <span className="text-dark font-bold">{input.label}</span>
+                    <div className="input flex item-center gap-1">
+                      {/* <MdOutlineMailOutline fontSize={'18px'} className="text-grey" /> */}
+                      <input
+                        className="w-100 rounded-2xl font-normal text-base"
+                        required={true}
+                        name={input?.name}
+                        id={input.label}
+                        value={formvalue[input.name]}
+                        type={input.type}
+                        placeholder={input.label}
+                        onChange={handleFormChange}
+                      ></input>
+                    </div>
+                  </label>
+                );
+              })}
+              <div className="w-full flex items-center justify-center flex-col gap-3">
+                <div className="p-4 px-8 text-center w-full cursor-pointer btn bg-[#000] rounded-[10px] font-booking_font_normal font-bold text-white">
+                  Sign Up
+                </div>
+                <div className="w-full flex items-center justify-start gap-2">
+                  <span className="text-sm font-light text-dark">
+                    Already a Member?{" "}
+                    <span
+                      style={{ textDecoration: "underline" }}
+                      className="font-bold font-booking_font_bold cursor-pointer"
+                      // href={"#"}
+                    >
+                      Sign In
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <div className="option text-dark">or</div>
+              <div className="p-4 px-8 items-center flex justify-center gap-4 w-full cursor-pointer btn text-[#000] rounded-[10px] font-booking_font_normal font-bold border border-[rgba(0,0,0,.9)]">
+                <FcGoogle fontSize={"28px"} />
+                Continue with Google
+              </div>
+              <div className="p-4 px-8 items-center flex justify-center gap-4 w-full cursor-pointer btn text-[#000] rounded-[10px] font-booking_font_normal font-bold border border-[rgba(0,0,0,.9)]">
+                <FaGithub fontSize={"28px"} />
+                Continue with Github
+              </div>{" "}
+            </form>
+          </div>
         </div>
       </motion.div>
     </RegisterModalStyles>
@@ -120,6 +144,33 @@ const RegisterModalStyles = styled(motion.div)`
   justify-content: center;
   top: 0;
   background: rgba(0, 0, 0, 0.3);
+  .option {
+    width: 100%;
+    position: relative;
+    text-align: center;
+    padding: 0 1.4rem;
+    font-size: 15px;
+    &::after {
+      width: 45%;
+      height: 0.2px;
+      content: "";
+      background-color: rgba(0, 0, 0, 0.1);
+      left: 0;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    &::before {
+      width: 45%;
+      height: 0.4px;
+      content: "";
+      background-color: rgba(0, 0, 0, 0.1);
+      right: 0;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
   .guestModalCard {
     max-width: 400px;
     min-width: 540px;
