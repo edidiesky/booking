@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import {useRouter} from 'next/navigation'
 import Link from "next/link";
 import { motion, AnimatePresence, Variant } from "framer-motion";
 import styled from "styled-components";
@@ -28,6 +29,7 @@ const ModalVariants = {
   },
 };
 const LoginModal = ({ modal, setModal, setRegisterModal }) => {
+  const router = useRouter()
   const handleClearAlert = () => {
     setModal(false);
   };
@@ -59,9 +61,10 @@ const LoginModal = ({ modal, setModal, setRegisterModal }) => {
         if(callback?.ok) {
           toast.success('Login succesfully')
           setModal(false)
+          router.refresh()
         }
         if (callback?.error) {
-          toast.error("Login process failed!!");
+          toast.error("Login process failed!: Check username or password");
         }
     })
   };

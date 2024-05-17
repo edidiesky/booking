@@ -9,6 +9,7 @@ import { BiCart } from "react-icons/bi";
 import { HiBars3 } from "react-icons/hi2";
 import LoginModal from "../modals/Login";
 import RegisterModal from "../modals/Register";
+import { signOut } from "next-auth/react";
 const Navbar = ({ currentUser }) => {
   const [menu, setMenu] = useState(false);
   const [active, setActive] = useState(false);
@@ -117,7 +118,7 @@ const Navbar = ({ currentUser }) => {
                   {currentUser && (
                     <h4 className="text-base font-booking_font_bold text-dark font-bold family1">
                       {currentUser?.name}
-                      <span className="block font-normal text-sm text-dark">
+                      <span className="block font-normal font-booking_font text-sm text-grey">
                         {currentUser?.email}
                       </span>
                     </h4>
@@ -140,7 +141,7 @@ const Navbar = ({ currentUser }) => {
                           Profile
                         </Link>
                         <div
-                          // onClick={handleLogOut}
+                          onClick={()=> signOut()}
                           className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                         >
                           Log Out
@@ -167,7 +168,7 @@ const Navbar = ({ currentUser }) => {
                           Profile
                         </Link>
                         <div
-                          // onClick={handleLogOut}
+                          onClick={()=> signOut()}
                           className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                         >
                           Log Out
