@@ -5,7 +5,6 @@ import Navbar from "@/components/common/Navbar";
 export default function Root() {
   return (
     <div className="relative">
-      <Navbar />
       <HomeIndex />
     </div>
   );

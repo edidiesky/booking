@@ -6,10 +6,11 @@ export default async function getCurrentUserSession() {
   try {
     // get the current session from mext-auth
     const session = await getServerSession(nextauthOptions);
+    // return session
     if (!session?.user?.email) {
       return null;
     }
-    // find the current user
+    // // find the current user
     const currentUser = await prisma.user.findUnique({
       where: {
         email: session?.user?.email,
@@ -18,7 +19,7 @@ export default async function getCurrentUserSession() {
     if (!currentUser) {
       return null;
     }
-    return user;
+    return currentUser;
   } catch (error) {
     return null;
   }

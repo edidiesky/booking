@@ -23,6 +23,7 @@ export async function POST(request) {
         name,
         hashedPassword,
         username,
+        role: "user",
       },
     });
 
