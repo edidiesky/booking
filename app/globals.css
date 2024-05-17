@@ -119,17 +119,10 @@ html.lenis body {
 }
 
 .loading {
-  width:6rem;
-  height:6rem;
+  width:4rem;
+  height:4rem;
   border: 2px solid #f9f9f9;
   border-radius: 50%;
   border-top-color: #000000;
-  animation: spinner .7s linear infinite;
-}
-.loading.small {
-   width: 3rem;
-  height: 3rem;
-  border: 3px solid #f9f9f9 !important;
-  border-top-color: #000000 !important;
-
+  animation: spinner 1.2s linear infinite;
 }

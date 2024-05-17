@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Image from "next/image";
+import axios from "axios";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { motion, AnimatePresence, Variant } from "framer-motion";
@@ -8,6 +8,8 @@ import styled from "styled-components";
 import { RxCross2 } from "react-icons/rx";
 import { BiMinus, BiPlus } from "react-icons/bi";
 import { RegisterFormInputData } from "@/constants/data/formdata";
+import toast from "react-hot-toast";
+import Loader from "../loader";
 const ModalVariants = {
   initial: {
     opacity: 0,
@@ -30,17 +32,13 @@ const RegisterModal = ({ modal, setModal, setLoginModal }) => {
     setModal(false);
   };
   const [formvalue, setFormValue] = useState({
-    fullname: "",
+    name: "",
     username: "",
     email: "",
     password: "",
-    phone: "",
-    country: "",
-    location: "",
-    state: "",
-    zipcode: "",
-    address: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleFormChange = (e) => {
     setFormValue({
@@ -48,10 +46,27 @@ const RegisterModal = ({ modal, setModal, setLoginModal }) => {
       [e.target.name]: e.target.value,
     });
   };
-  const handleLoginModal = ()=> {
-    setModal(false)
+  const handleLoginModal = () => {
+    setModal(false);
     setLoginModal(true);
-  }
+  };
+
+  const handleFormSubmision = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    axios
+      .post("/api/register", formvalue)
+      .then(() => {
+        setModal(false);
+      })
+      .catch((error) => {
+        // toast.error(error);
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
   return (
     <RegisterModalStyles
       as={motion.div}
@@ -59,6 +74,9 @@ const RegisterModal = ({ modal, setModal, setLoginModal }) => {
       exit={{ opacity: 0, visibility: "hidden" }}
       animate={{ opacity: 1, visibility: "visible" }}
     >
+      {
+        loading && <Loader/>
+      }
       <motion.div
         variants={ModalVariants}
         initial="initial"
@@ -79,7 +97,10 @@ const RegisterModal = ({ modal, setModal, setLoginModal }) => {
             </div>
           </div>
           <div className="w-full overflow-auto h-[400px] pb-6 flex">
-            <form className="w-[90%] mx-auto p-4 px-8 pb-4 flex flex-col gap-4">
+            <form
+              onSubmit={handleFormSubmision}
+              className="w-[90%] mx-auto p-4 px-8 pb-4 flex flex-col gap-4"
+            >
               {RegisterFormInputData?.map((input, index) => {
                 return (
                   <label
@@ -105,9 +126,12 @@ const RegisterModal = ({ modal, setModal, setLoginModal }) => {
                 );
               })}
               <div className="w-full flex items-center justify-center flex-col gap-3">
-                <div className="p-4 px-8 text-center w-full cursor-pointer btn bg-[#000] rounded-[10px] font-booking_font_normal font-bold text-white">
+                <button
+                  type="submit"
+                  className="p-4 px-8 text-center w-full cursor-pointer btn bg-[#000] rounded-[10px] font-booking_font_normal font-bold text-white"
+                >
                   Sign Up
-                </div>
+                </button>
                 <div className="w-full flex items-center justify-start gap-2">
                   <span className="text-sm font-light text-dark">
                     Already a Member?{" "}

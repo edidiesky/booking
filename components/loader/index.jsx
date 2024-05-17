@@ -2,7 +2,7 @@ import React from "react";
 const Loader = () => {
   return (
     <div
-      className="flex items-center justify-center"
+      className="flex items-center z-[10000000] justify-center"
       style={{
         width: "100vw",
         position: "fixed",

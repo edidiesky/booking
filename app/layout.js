@@ -23,11 +23,12 @@ const lora = Lora({
 import "./globals.css";
 import StyledComponentsRegistry from "@/utils/StylesComponentsRegistry";
 import SmoothScroll from "@/constants/utils/SmoothScroll";
+import ToasterProvider from "./providers/ToasterProvider";
 
 export const metadata = {
-  title: "Restaurant Marketplace",
+  title: "Okeke Booking Platform",
   description:
-    "Restaurant Marketplace built extensively using the power of Nextjs, Expresjs and Prisma",
+    "Okeke Booking Platform built extensively using the power of Nextjs, Expresjs and Prisma",
 };
 
 export default function RootLayout({ children }) {
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
       className={`${bebas_neue.variable} ${lora.variable}  ${work_sans.variable}`}
     >
       <body>
+        <ToasterProvider/>
         <StyledComponentsRegistry>
           <SmoothScroll>{children}</SmoothScroll>
         </StyledComponentsRegistry>

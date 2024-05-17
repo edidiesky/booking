@@ -50,9 +50,9 @@ export const inputData2 = [
 export const RegisterFormInputData = [
     {
         id: 4,
-        name: "fullname",
+        name: "name",
         type: "name",
-        text: "Full Name",
+        text: "Your full Name",
         label: "Full Name",
         required: true,
     },
@@ -75,16 +75,6 @@ export const RegisterFormInputData = [
         required: true,
     },
     {
-        id: 3,
-        name: "phone",
-        placeholder: "Please input your phone",
-        type: "text",
-        text: "Phone",
-        label: "Phone",
-        required: true,
-    },
-
-    {
         id: 34,
         name: "username",
         placeholder: "Please input your username",
@@ -93,51 +83,6 @@ export const RegisterFormInputData = [
         label: "Username",
         required: true,
     },
-    {
-        id: 5,
-        name: "country",
-        placeholder: "Please input your country",
-        type: "text",
-        text: "Country",
-        label: "Country",
-        required: true,
-    },
-    // {
-    //     id: 6,
-    //     name: "location",
-    //     placeholder: "Please input your location",
-    //     type: "text",
-    //     text: "location",
-    //     label: "Location",
-    //     required: true,
-    // },
-    // {
-    //     id: 7,
-    //     name: "state",
-    //     placeholder: "Please input your state",
-    //     type: "text",
-    //     text: "state",
-    //     label: "State",
-    //     required: true,
-    // },
-    // {
-    //     id: 7,
-    //     name: "address",
-    //     placeholder: "Please input your address",
-    //     type: "text",
-    //     text: "address",
-    //     label: "Address",
-    //     required: true,
-    // },
-    // {
-    //     id: 7,
-    //     name: "zipcode",
-    //     placeholder: "Please input your zipcode",
-    //     type: "text",
-    //     text: "zipcode",
-    //     label: "Zipcode",
-    //     required: true,
-    // },
 ];
 export const DashboardProfileInputData = [
     {

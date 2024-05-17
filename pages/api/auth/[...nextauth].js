@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
-import Providers from "next-auth/providers";
+import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
@@ -7,21 +8,21 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-export default NextAuth({
+export const nextauthOptions = {
   providers: [
-    Providers.Google({
+    GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    Providers.Github({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
     }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "email", type: "text" },
-        password: { label: "password", type: "password" },
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.password || !credentials?.email) {
@@ -38,8 +39,8 @@ export default NextAuth({
         }
 
         const isCorrectPassword = await bcrypt.compare(
-          user?.hashedPassword,
-          credentials?.password
+          credentials.password,
+          user.hashedPassword
         );
 
         if (!isCorrectPassword) {
@@ -57,4 +58,6 @@ export default NextAuth({
   },
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXT_AUTH_SECRET,
-});
+};
+
+export default NextAuth(nextauthOptions);
