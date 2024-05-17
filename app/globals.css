@@ -110,3 +110,26 @@ html.lenis body {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading {
+  width:6rem;
+  height:6rem;
+  border: 2px solid #f9f9f9;
+  border-radius: 50%;
+  border-top-color: #000000;
+  animation: spinner .7s linear infinite;
+}
+.loading.small {
+   width: 3rem;
+  height: 3rem;
+  border: 3px solid #f9f9f9 !important;
+  border-top-color: #000000 !important;
+
+}
