@@ -16,10 +16,12 @@ import RoomFeatures from "./RoomFeatures";
 import RoomDetails from "./RoomDetails";
 import RoomPaymentTab from "./RoomPaymentTab";
 import LoginModal from "@/components/modals/Login";
+import RegisterModal from "@/components/modals/Register";
 export default function RoomInfo() {
   const [datemodal, setDateModal] = useState(false);
   const [guestsmodal, setGuestsModal] = useState(false);
   const [loginmodal, setLoginModal] = useState(false);
+  const [registermodal, setRegisterModal] = useState(false);
 
   // data for filtering
   const [childrens, setChildrens] = useState(1);
@@ -76,9 +78,24 @@ export default function RoomInfo() {
       {/* // register modal */}
       <AnimatePresence mode="wait">
         {loginmodal && (
-          <LoginModal modal={loginmodal} setModal={setLoginModal} />
+          <LoginModal
+            registermodal={registermodal}
+            modal={loginmodal}
+            setModal={setLoginModal}
+            setRegisterModal={setRegisterModal}
+          />
         )}
       </AnimatePresence>
+      <AnimatePresence mode="wait">
+        {registermodal && (
+          <RegisterModal
+            setLoginModal={setLoginModal}
+            modal={registermodal}
+            setModal={setRegisterModal}
+          />
+        )}
+      </AnimatePresence>
+      {/* RegisterModal */}
       {/* date modal */}
       <AnimatePresence mode="wait">
         {datemodal && (

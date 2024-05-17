@@ -25,7 +25,7 @@ const ModalVariants = {
     transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
   },
 };
-const RegisterModal = ({ modal, setModal }) => {
+const RegisterModal = ({ modal, setModal, setLoginModal }) => {
   const handleClearAlert = () => {
     setModal(false);
   };
@@ -48,6 +48,10 @@ const RegisterModal = ({ modal, setModal }) => {
       [e.target.name]: e.target.value,
     });
   };
+  const handleLoginModal = ()=> {
+    setModal(false)
+    setLoginModal(true);
+  }
   return (
     <RegisterModalStyles
       as={motion.div}
@@ -62,11 +66,11 @@ const RegisterModal = ({ modal, setModal }) => {
         exit="exit"
         className="guestModalCard"
       >
-        <div className="w-full mx-auto h-[450px] flex flex-col gap-8">
+        <div className="w-full mx-auto h-[550px] flex flex-col">
           <div className="w-full sticky top-0 left-0 p-6 px-8 border-b flex border-[rgba(0,0,0,.2)] items-center justify-between">
-            <h3 className="text-2xl font-bold font-booking_font4">
+            <h3 className="text-2xl font-bold font-booking_font_bold">
               Sign Up
-              <span className="block text-sm font-light">
+              <span className="block text-sm font-light font-booking_font_normal">
                 Register to your account and check out your bookings
               </span>
             </h3>
@@ -74,20 +78,20 @@ const RegisterModal = ({ modal, setModal }) => {
               <RxCross2 />
             </div>
           </div>
-          <div className="w-full overflow-auto h-[350px]  flex">
+          <div className="w-full overflow-auto h-[400px] pb-6 flex">
             <form className="w-[90%] mx-auto p-4 px-8 pb-4 flex flex-col gap-4">
               {RegisterFormInputData?.map((input, index) => {
                 return (
                   <label
                     key={index}
                     htmlFor={input.label}
-                    className="text-sm font-booking_font4 rounded-[10px] flex flex-col gap-2 text-dark"
+                    className="text-sm font-booking_font_normal rounded-[10px] flex flex-col gap-2 text-dark"
                   >
                     <span className="text-dark font-bold">{input.label}</span>
                     <div className="input flex item-center gap-1">
                       {/* <MdOutlineMailOutline fontSize={'18px'} className="text-grey" /> */}
                       <input
-                        className="w-100 rounded-2xl font-normal text-base"
+                        className="w-full rounded-2xl text-dark font-normal text-sm"
                         required={true}
                         name={input?.name}
                         id={input.label}
@@ -108,6 +112,7 @@ const RegisterModal = ({ modal, setModal }) => {
                   <span className="text-sm font-light text-dark">
                     Already a Member?{" "}
                     <span
+                      onClick={handleLoginModal}
                       style={{ textDecoration: "underline" }}
                       className="font-bold font-booking_font_bold cursor-pointer"
                       // href={"#"}

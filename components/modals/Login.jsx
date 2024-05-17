@@ -25,7 +25,7 @@ const ModalVariants = {
     transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
   },
 };
-const LoginModal = ({ modal, setModal }) => {
+const LoginModal = ({ modal, setModal, setRegisterModal }) => {
   const handleClearAlert = () => {
     setModal(false);
   };
@@ -48,6 +48,11 @@ const LoginModal = ({ modal, setModal }) => {
       [e.target.name]: e.target.value,
     });
   };
+
+    const handleLoginModal = () => {
+      setModal(false);
+      setRegisterModal(true);
+    };
   return (
     <LoginModalStyles
       as={motion.div}
@@ -88,7 +93,7 @@ const LoginModal = ({ modal, setModal }) => {
                       <div className="input flex item-center gap-1">
                         {/* <MdOutlineMailOutline fontSize={'18px'} className="text-grey" /> */}
                         <input
-                          className="w-100 rounded-2xl font-normal text-base"
+                          className="w-100 rounded-2xl text-dark font-normal text-base"
                           required={true}
                           name={input?.name}
                           id={input.label}
@@ -110,6 +115,7 @@ const LoginModal = ({ modal, setModal }) => {
                   <span className="text-sm font-light text-dark">
                     Not yet a Member?{" "}
                     <span
+                      onClick={handleLoginModal}
                       style={{ textDecoration: "underline" }}
                       className="font-bold font-booking_font_bold cursor-pointer"
                       // href={"#"}

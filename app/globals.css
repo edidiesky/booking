@@ -67,7 +67,11 @@ input {
   border: none;
   outline: none;
 }
-
+input::placegolder {
+  font-size:13px;
+  font-weight:normal;
+  color:#000;
+}
 .input {
   border: 1px solid rgba(0, 0, 0, 0.2) !important;
   height: 60px;

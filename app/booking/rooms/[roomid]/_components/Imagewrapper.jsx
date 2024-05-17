@@ -129,8 +129,8 @@ export const Wrapper = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 12px;
-  height: 30rem;
+  grid-gap: 6px;
+  height: 32rem;
   /* background:red; */
   @media (max-width: 480px) {
     min-height: 25rem;
