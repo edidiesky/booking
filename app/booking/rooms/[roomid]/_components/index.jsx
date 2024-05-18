@@ -1,12 +1,14 @@
-"use client";
+
 import React from "react";
 import Footer from "@/components/common/Footer";
 import RoomInfo from "./Top";
-export default function BookingItem() {
+import getCurrentUserSession from "@/app/actions/getCurrentUser";
+export default async function BookingItem() {
+    const currentUser = await getCurrentUserSession();
   return (
-    <div className='bg-white'>
-      <RoomInfo/>
-      <Footer/>
+    <div className="bg-white">
+      <RoomInfo currentUser={currentUser} />
+      <Footer />
     </div>
   );
 }

@@ -15,6 +15,7 @@ export default function RoomPaymentTab({
   setGuestsModal,
   loginmodal,
   setLoginModal,
+  currentUser,
 }) {
   const formatDate = (date) => {
     return moment(date).format("MMM D");
@@ -25,13 +26,10 @@ export default function RoomPaymentTab({
       (1000 * 3600 * 24)
   );
   const limit = childrens + adults;
-
-  // const userInfo = { username: "Daniel" };
-  const userInfo = null
   const handleReservationBooking = () => {
-    if (userInfo) {
+    if (currentUser) {
       // console.log('Reservation has been booked')
-      window.location.href = `/reservation/payment`
+      window.location.href = `/reservation/payment`;
     } else {
       setLoginModal(true);
     }
@@ -44,7 +42,7 @@ export default function RoomPaymentTab({
             <div
               onClick={() => setDateModal(true)}
               style={{
-                border: "1px solid rgba(0,0,0,.3)",
+                border: "1px solid rgba(0,0,0,.5)",
                 borderBottom: "none",
                 borderTopRightRadius: "8px",
                 borderTopLeftRadius: "8px",
@@ -140,12 +138,21 @@ export default function RoomPaymentTab({
               789.85 <span className="text-base">USD</span>
             </span>
           </div>
-          <div
-            onClick={handleReservationBooking}
-            className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font_normal"
-          >
-            SIGN IN TO SAVE
-          </div>
+          {currentUser ? (
+            <div
+              // onClick={handleReservationBooking}
+              className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font_normal"
+            >
+              Place Reservation
+            </div>
+          ) : (
+            <div
+              onClick={handleReservationBooking}
+              className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font_normal"
+            >
+              SIGN IN TO SAVE
+            </div>
+          )}
         </div>
       </div>
       <div className="flex flex-col py-4 gap-4">

@@ -17,7 +17,7 @@ import RoomDetails from "./RoomDetails";
 import RoomPaymentTab from "./RoomPaymentTab";
 import LoginModal from "@/components/modals/Login";
 import RegisterModal from "@/components/modals/Register";
-export default function RoomInfo() {
+export default function RoomInfo({ currentUser }) {
   const [datemodal, setDateModal] = useState(false);
   const [guestsmodal, setGuestsModal] = useState(false);
   const [loginmodal, setLoginModal] = useState(false);
@@ -158,6 +158,7 @@ export default function RoomInfo() {
               </div>
               <div className="w-full relative lg:sticky top-[10%] lg:w-[420px] flex flex-col gap-16">
                 <RoomPaymentTab
+                  currentUser={currentUser}
                   setAdults={setAdults}
                   datemodal={datemodal}
                   setDateModal={setDateModal}

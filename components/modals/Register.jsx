@@ -10,6 +10,7 @@ import { BiMinus, BiPlus } from "react-icons/bi";
 import { RegisterFormInputData } from "@/constants/data/formdata";
 import toast from "react-hot-toast";
 import Loader from "../loader";
+import { signIn } from "next-auth/react";
 const ModalVariants = {
   initial: {
     opacity: 0,
@@ -147,14 +148,14 @@ const RegisterModal = ({ modal, setModal, setLoginModal }) => {
                 </div>
               </div>
               <div className="option text-dark">or</div>
-              <div className="p-4 px-8 items-center flex justify-center gap-4 w-full cursor-pointer btn text-[#000] rounded-[10px] font-booking_font_normal font-bold border border-[rgba(0,0,0,.9)]">
+              <div onClick={() => signIn('google')} className="p-4 px-8 items-center flex justify-center gap-4 w-full cursor-pointer btn text-[#000] rounded-[10px] font-booking_font_normal font-bold border border-[rgba(0,0,0,.9)]">
                 <FcGoogle fontSize={"28px"} />
                 Continue with Google
               </div>
-              <div className="p-4 px-8 items-center flex justify-center gap-4 w-full cursor-pointer btn text-[#000] rounded-[10px] font-booking_font_normal font-bold border border-[rgba(0,0,0,.9)]">
+              {/* <div className="p-4 px-8 items-center flex justify-center gap-4 w-full cursor-pointer btn text-[#000] rounded-[10px] font-booking_font_normal font-bold border border-[rgba(0,0,0,.9)]">
                 <FaGithub fontSize={"28px"} />
                 Continue with Github
-              </div>{" "}
+              </div>{" "} */}
             </form>
           </div>
         </div>
