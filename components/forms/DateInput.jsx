@@ -8,7 +8,7 @@ import styled from "styled-components";
 export default function DateInput({ handleSelect, dateRange, type }) {
   return (
     <DateContainer>
-      <div className="container w-100">
+      <div className="container w-full">
         <DateRange
           rangeColors={["var(--grey-1)"]}
           ranges={[dateRange.selection]}
@@ -23,7 +23,7 @@ export default function DateInput({ handleSelect, dateRange, type }) {
           //   disabledDates={Date}
         />
       </div>
-      <div className="container1 w-100">
+      <div className="container1 w-full">
         <DateRange
           rangeColors={["var(--grey-1)"]}
           ranges={[dateRange.selection]}

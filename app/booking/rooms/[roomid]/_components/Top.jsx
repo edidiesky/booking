@@ -13,6 +13,8 @@ import DateModal from "@/components/modals/Date";
 import Imagewrapper from "./Imagewrapper";
 import RoomTitleAndDescription from "./RoomTitleAndDescription";
 import RoomFeatures from "./RoomFeatures";
+import RoomCalendar from './RoomCalendar'
+import RoomLocation from './RoomLocation'
 import RoomDetails from "./RoomDetails";
 import RoomPaymentTab from "./RoomPaymentTab";
 import LoginModal from "@/components/modals/Login";
@@ -179,7 +181,8 @@ export default function RoomInfo({ currentUser, roomid }) {
           </div>
         </div>
         <RoomFeatures />
-        <RoomDetails />
+        <RoomCalendar />
+        <RoomLocation />
       </div>
     </>
   );
