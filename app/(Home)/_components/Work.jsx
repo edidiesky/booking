@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { apartmentDataList } from "@/constants/data/apartment";
 import { motion, useInView } from "framer-motion";
+import Skeleton from "react-loading-skeleton";
+import useRooms from "@/app/actions/useRooms";
 import {
   opacity,
   slideup,
@@ -145,6 +147,8 @@ const Work = () => {
   const ctatext4 =
     "We offer a selection of teas from the Wee tea company and coffee pods, in the bathroom you will find luxurious towels alongside gorgeous locally handmade soaps, but you should come and see for yourself and enjoy your time at Lovat House Bed and Breakfast.";
 // console.log(apartmentDataList?.slice(4,7))
+
+ const { loading, error, rooms } = useRooms();
   return (
     <>
       <div data-scroll className="pt-40 bg-[#F5F5F5] w-full relative">
@@ -195,61 +199,65 @@ const Work = () => {
           </div>
 
           <div ref={container} className="w-full flex flex-col">
-            {apartmentDataList?.slice(4,6)?.map((apartment, index) => {
-              return (
-                <div key={index} className="w-full hide">
-                  <motion.div
-                    variants={slideup3}
-                    custom={index}
-                    initial="initial"
-                    animate={inView3 ? "animate" : "exit"}
-                    key={index}
-                    className={`${
-                      index % 2 === 0
-                        ? "flex-col md:flex-row-reverse"
-                        : "flex-col md:flex-row"
-                    } w-full flex `}
-                  >
-                    <div className="flex-[1] flex bg-white flex-col items-start justify-start py-20 md:justify-center gap-4">
-                      <div className="w-[80%] mx-auto flex flex-col items-start gap-4">
-                        <h3 className="text-5xl font-booking_font-bold font-medium text-text_dark_1 ">
-                          {apartment?.title}
-                        </h3>
-                        <h4 className="text-xl italic">
-                          {apartment?.description}
-                        </h4>
-                        <h3 className="text-lg font-normal font-booking_font1">
-                          Rates from{" "}
-                          <span className="font-bold text-3xl">
-                            £{apartment?.price}
-                          </span>{" "}
-                          per night
-                        </h3>
+            {loading
+              ? apartmentDataList?.slice(4, 6)?.map((apartment, index) => {
+                  return <Skeleton key={index} width={"100%"} height={450} />;
+                })
+              : rooms?.slice(4, 6)?.map((apartment, index) => {
+                  return (
+                    <div key={index} className="w-full hide">
+                      <motion.div
+                        variants={slideup3}
+                        custom={index}
+                        initial="initial"
+                        animate={inView3 ? "animate" : "exit"}
+                        key={index}
+                        className={`${
+                          index % 2 === 0
+                            ? "flex-col md:flex-row-reverse"
+                            : "flex-col md:flex-row"
+                        } w-full flex `}
+                      >
+                        <div className="flex-[1] flex bg-white flex-col items-start justify-start py-20 md:justify-center gap-4">
+                          <div className="w-[80%] mx-auto flex flex-col items-start gap-4">
+                            <h3 className="text-5xl font-booking_font-bold font-medium text-text_dark_1 ">
+                              {apartment?.title}
+                            </h3>
+                            <h4 className="text-xl italic">
+                              {apartment?.description}
+                            </h4>
+                            <h3 className="text-lg font-normal font-booking_font1">
+                              Rates from{" "}
+                              <span className="font-bold text-3xl">
+                                £{apartment?.price}
+                              </span>{" "}
+                              per night
+                            </h3>
 
-                        <div className="p-4 mt-8 text-sm cursor-pointer uppercase bg-[#C5F244] px-8 rounded-[40px] font-bold text-dark">
-                          Book Now
+                            <div className="p-4 mt-8 text-sm cursor-pointer uppercase bg-[#C5F244] px-8 rounded-[40px] font-bold text-dark">
+                              Book Now
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                        <div className="flex-[1] cursor-pointer">
+                          <Image
+                            alt="Cotion"
+                            width={0}
+                            sizes="100vw"
+                            height={0}
+                            loading="lazy"
+                            style={{
+                              transition:
+                                "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                            }}
+                            src={apartment?.images[0]}
+                            className="w-full hover:grayscale-[1] grayscale-0"
+                          />
+                        </div>
+                      </motion.div>
                     </div>
-                    <div className="flex-[1] cursor-pointer">
-                      <Image
-                        alt="Cotion"
-                        width={0}
-                        sizes="100vw"
-                        height={0}
-                        loading="lazy"
-                        style={{
-                          transition:
-                            "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                        }}
-                        src={apartment?.images[0]}
-                        className="w-full hover:grayscale-[1] grayscale-0"
-                      />
-                    </div>
-                  </motion.div>
-                </div>
-              );
-            })}
+                  );
+                })}
           </div>
         </div>
         <div className="bg-white w-full py-24 flex flex-col gap-12">
