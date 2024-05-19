@@ -4,7 +4,7 @@ import Image from "next/image";
 import { apartmentDataList } from "@/constants/data/apartment";
 import { motion, useInView } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
-import useRooms from "@/app/actions/useRooms";
+import useRooms from "@/app/hooks/useRooms";
 import {
   opacity,
   slideup,

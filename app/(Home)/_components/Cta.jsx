@@ -12,7 +12,7 @@ import {
 import { motion, useInView } from "framer-motion";
 import { apartmentDataList } from "@/constants/data/apartment";
 import Skeleton from "react-loading-skeleton";
-import useRooms from "@/app/actions/useRooms";
+import useRooms from "@/app/hooks/useRooms";
 
 export default function Cta() {
   const ctaText_1 = useRef(null);
