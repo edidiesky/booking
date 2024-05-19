@@ -1,47 +1,9 @@
-export const apartmentList = [
-  {
-    images:
-      "https://homes-and-villas.marriott.com/images/beachfront_homepage_1x1.jpg?imwidth=640",
-    title: "BeachFront Oasis",
-    description:
-      "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
-  },
-  {
-    images:
-      "https://homes-and-villas.marriott.com/images/epic_pools_16x9.png?imwidth=640",
-    title: "EpicPool Homes",
-    description:
-      "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
-  },
-  {
-    images:
-      "https://homes-and-villas.marriott.com/images/cabin_and_treehoueses_16x9.jpeg?imwidth=640",
-    title: "Cabins and TreeHouses",
-    description:
-      "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
-  },
-  {
-    images:
-      "https://homes-and-villas.marriott.com/images/room_to_seasonal_ski_destinations_16x9.jpg?imwidth=640",
-    title: "Playful Retreats",
-    description:
-      "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
-  },
-  {
-    images:
-      "https://homes-and-villas.marriott.com/assets/images/monthly_rentals_16x9.jpeg?imwidth=640",
-    title: "Monthly Retreats",
-    description:
-      "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
-  },
-];
 
-export const apartmentDataList = [
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+// import { apartmentDataList } from "./constants/data/apartment";
+import { PrismaClient } from "@prisma/client";
+const apartmentDataList = [
   {
     userid: "66476760ef11a9967074c22c",
     bedroom: 4,
@@ -60,7 +22,7 @@ export const apartmentDataList = [
     title: "BeachFront Oasis",
     description:
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
+    price: 70,
   },
   {
     userid: "66476760ef11a9967074c22c",
@@ -80,7 +42,7 @@ export const apartmentDataList = [
     title: "Cabins and TreeHouses",
     description:
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
+    price: 70,
   },
   {
     userid: "66476760ef11a9967074c22c",
@@ -100,7 +62,7 @@ export const apartmentDataList = [
     title: "Cabins and TreeHouses",
     description:
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
+    price: 70,
   },
   {
     userid: "66476760ef11a9967074c22c",
@@ -120,7 +82,7 @@ export const apartmentDataList = [
     title: "Playful Retreats",
     description:
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
+    price: 70,
   },
   {
     userid: "66476760ef11a9967074c22c",
@@ -140,7 +102,7 @@ export const apartmentDataList = [
     title: "Monthly Retreats",
     description:
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
+    price: 70,
   },
 
   {
@@ -161,7 +123,7 @@ export const apartmentDataList = [
     title: "BeachFront Oasis",
     description:
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
+    price: 70,
   },
   {
     userid: "66476760ef11a9967074c22c",
@@ -181,7 +143,7 @@ export const apartmentDataList = [
     title: "BeachFront Oasis",
     description:
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
+    price: 70,
   },
   {
     userid: "66476760ef11a9967074c22c",
@@ -201,7 +163,7 @@ export const apartmentDataList = [
     title: "BeachFront Oasis",
     description:
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
+    price: 70,
   },
   {
     userid: "66476760ef11a9967074c22c",
@@ -221,7 +183,7 @@ export const apartmentDataList = [
     title: "BeachFront Oasis",
     description:
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
+    price: 70,
   },
   {
     userid: "66476760ef11a9967074c22c",
@@ -241,6 +203,56 @@ export const apartmentDataList = [
     title: "BeachFront Oasis",
     description:
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
+    price: 70,
   },
 ];
+
+
+dotenv.config();
+
+const prisma = new PrismaClient(); 
+const mongoUrl = process.env.DATABASE_URL;
+if (!mongoUrl) {
+  throw new Error("MongoDB connection string is not defined.");
+}
+
+mongoose.connect(mongoUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+mongoose.connection.on("error", (error) =>
+  console.error("MongoDB connection error:", error)
+);
+
+const importData = async () => {
+  try {
+    // Use Prisma to insert data
+    await prisma.rooms.createMany({
+      data: apartmentDataList,
+    });
+    console.log("Data Imported!");
+    process.exit();
+  } catch (error) {
+    console.error("Error importing data:", error);
+    process.exit(1);
+  }
+};
+
+const destroyData = async () => {
+  try {
+    // Use Prisma to delete data
+    await prisma.rooms.deleteMany();
+    console.log("Data Destroyed!");
+    process.exit();
+  } catch (error) {
+    console.error("Error destroying data:", error);
+    process.exit(1);
+  }
+};
+
+if (process.argv[2] === "-d") {
+  destroyData();
+} else {
+  importData();
+}

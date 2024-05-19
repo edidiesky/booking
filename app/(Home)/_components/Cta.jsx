@@ -9,7 +9,7 @@ import {
   slideup2,
 } from "@/constants/utils/framer";
 import { motion, useInView } from "framer-motion";
-import { apartmentList } from "@/constants/data/apartment";
+import { apartmentDataList } from "@/constants/data/apartment";
 
 
 
@@ -144,7 +144,7 @@ export default function Cta() {
               </h4>
             </div>
           </div>
-          <div className="w-100 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="w-full  grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
               href={"/booking/rooms/30"}
               className="shadow rounded-2xl overflow-hidden w-full flex flex-col"
@@ -159,17 +159,17 @@ export default function Cta() {
                   transition:
                     "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
-                src={apartmentList[0]?.images}
-                className="w-full hover:grayscale-[1] grayscale-0"
+                src={apartmentDataList[0]?.images[0]}
+                className="w-full h-full hover:grayscale-[1] grayscale-0"
               />
               <div className="w-full flex flex-col p-6 py-8 bg-white">
                 <h3 className="text-lg font-booking_font2 font-medium text-text_dark_1 ">
-                  {apartmentList[0]?.title}
+                  {apartmentDataList[0]?.title}
                 </h3>
               </div>
             </Link>
-            <div className="w-100 grid grid-cols-1 md:grid-cols-2 gap-8">
-              {apartmentList?.slice(0, 4).map((apartment, index) => {
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+              {apartmentDataList?.slice(0, 4).map((apartment, index) => {
                 return (
                   <Link
                     href={"/booking/rooms/30"}
@@ -186,11 +186,11 @@ export default function Cta() {
                         transition:
                           "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                       }}
-                      src={apartment?.images}
+                      src={apartment?.images[0]}
                       className="w-full h-full object-cover hover:grayscale-[1] grayscale-0"
                     />
                     <div className="w-full flex flex-col p-6 bg-white">
-                      <h3 className="text-lg font-booking_font2 font-medium text-text_dark_1 ">
+                      <h3 className="text-xl font-booking_font_bold font-medium text-text_dark_1 ">
                         {apartment?.title}
                       </h3>
                     </div>
@@ -246,7 +246,7 @@ export default function Cta() {
               </h4>
             </div>
           </div>
-          <div className="w-100 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="w-full grid  grid-cols-1 md:grid-cols-2 gap-4">
             <Link
               href={"/booking/rooms/30"}
               className="shadow rounded-2xl overflow-hidden w-full flex flex-col"
@@ -261,17 +261,17 @@ export default function Cta() {
                   transition:
                     "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
-                src={apartmentList[1]?.images}
+                src={apartmentDataList[1]?.images[0]}
                 className="w-full h-full hover:grayscale-[1] grayscale-0"
               />
               <div className="w-full flex flex-col p-6 py-8 bg-white">
-                <h3 className="text-lg font-booking_font2 font-medium text-text_dark_1 ">
-                  {apartmentList[1]?.title}
+                <h3 className="text-xl font-booking_font_bold font-medium text-text_dark_1 ">
+                  {apartmentDataList[1]?.title}
                 </h3>
               </div>
             </Link>
-            <div className="w-100 grid md:grid-cols-2 gap-8">
-              {apartmentList?.slice(1, 5).map((apartment, index) => {
+            <div className="w-full grid md:grid-cols-2 gap-4">
+              {apartmentDataList?.slice(1, 5).map((apartment, index) => {
                 return (
                   <Link
                     href={"/booking/rooms/30"}
@@ -288,11 +288,11 @@ export default function Cta() {
                         transition:
                           "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                       }}
-                      src={apartment?.images}
+                      src={apartment?.images[0]}
                       className="w-full h-full object-cover hover:grayscale-[1] grayscale-0"
                     />
                     <div className="w-full flex flex-col p-6 bg-white">
-                      <h3 className="text-lg font-booking_font2 font-medium text-text_dark_1 ">
+                      <h3 className="text-xl font-booking_font_bold font-medium text-text_dark_1 ">
                         {apartment?.title}
                       </h3>
                     </div>
