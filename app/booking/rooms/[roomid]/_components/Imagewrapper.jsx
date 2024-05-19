@@ -1,128 +1,57 @@
 import Image from "next/image";
 import React from "react";
 import { useSelector } from "react-redux";
-
+import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";
-const Imagewrapper = () => {
-  // const { GigsDetails } = useSelector((store) => store.gigs);
-  const GigsDetails = {
-    listing_image: [
-      "https://a0.muscache.com/im/pictures/miso/Hosting-923193323939892290/original/18f089b4-68b0-4a66-bfd2-38f14a0f31cd.jpeg?im_w=960",
-      "https://a0.muscache.com/im/pictures/miso/Hosting-923193323939892290/original/18f089b4-68b0-4a66-bfd2-38f14a0f31cd.jpeg?im_w=960",
-      "https://a0.muscache.com/im/pictures/miso/Hosting-923193323939892290/original/f987fb73-f84d-4017-926d-39497e815c8a.jpeg?im_w=720",
-      "https://a0.muscache.com/im/pictures/miso/Hosting-923193323939892290/original/435cf41d-b3e6-4c8c-b8bc-5fe21a15eef7.jpeg?im_w=720",
-      "https://a0.muscache.com/im/pictures/miso/Hosting-923193323939892290/original/e2474a45-c3c1-4ba1-b57a-c27ff3e30956.jpeg?im_w=720",
-    ],
-  };
-  // console.log(GigsDetails?.listing_image)
-
+const Imagewrapper = ({ loading, room }) => {
   return (
-    <Wrapper>
-      <div className="w-100 imagewrapper">
-        <Image
-          alt="Cotion"
-          width={0}
-          sizes="100vw"
-          height={0}
-          loading="lazy"
-          src={GigsDetails?.listing_image[0]}
-          className="image w-full h-full"
-        />
-        <div className="gradient"></div>
-      </div>
-      <Wrapper>
-        <div className="w-full imagewrapper images">
-          {GigsDetails?.listing_image[1] && (
+    <>
+      {loading ? (
+        <Wrapper>
+          <Skeleton width={"100%"} height={520} />
+          <Wrapper>
+            <Skeleton width={"100%"} height={255} />
+            <Skeleton width={"100%"} height={255} />
+            <Skeleton width={"100%"} height={255} />
+            <Skeleton width={"100%"} height={255} />
+          </Wrapper>
+        </Wrapper>
+      ) : (
+        <Wrapper>
+          <div className="w-100 imagewrapper">
             <Image
               alt="Cotion"
               width={0}
               sizes="100vw"
               height={0}
               loading="lazy"
-              src={GigsDetails?.listing_image[1]}
+              src={room?.images[0]}
               className="image w-full h-full"
             />
-          )}
+            <div className="gradient"></div>
+          </div>
+          <Wrapper>
+            {room?.images?.slice(1,5)?.map((room, index) => {
+              return (
+                <div key={index} className="w-full imagewrapper images">
+                  <Image
+                    alt="Cotion"
+                    width={0}
+                    sizes="100vw"
+                    height={0}
+                    loading="lazy"
+                    src={room}
+                    className="image w-full h-full"
+                  />
 
-          <div className="gradient"></div>
-        </div>{" "}
-        <div className="w-full imagewrapper images">
-          {GigsDetails?.listing_image[2] ? (
-            <Image
-              alt="Cotion"
-              width={0}
-              sizes="100vw"
-              height={0}
-              loading="lazy"
-              src={GigsDetails?.listing_image[2]}
-              className="image w-full h-full"
-            />
-          ) : (
-            <Image
-              alt="Cotion"
-              width={0}
-              sizes="100vw"
-              height={0}
-              loading="lazy"
-              src={GigsDetails?.listing_image[1]}
-              className="image w-full h-full"
-            />
-          )}
-
-          <div className="gradient"></div>
-        </div>{" "}
-        <div className="w-full imagewrapper images">
-          {GigsDetails?.listing_image[3] ? (
-            <Image
-              alt="Cotion"
-              width={0}
-              sizes="100vw"
-              height={0}
-              loading="lazy"
-              src={GigsDetails?.listing_image[3]}
-              className="image w-full h-full"
-            />
-          ) : (
-            <Image
-              alt="Cotion"
-              width={0}
-              sizes="100vw"
-              height={0}
-              loading="lazy"
-              src={GigsDetails?.listing_image[1]}
-              className="image w-full h-full"
-            />
-          )}
-
-          <div className="gradient"></div>
-        </div>{" "}
-        <div className="w-full imagewrapper images">
-          {GigsDetails?.listing_image[4] ? (
-            <Image
-              alt="Cotion"
-              width={0}
-              sizes="100vw"
-              height={0}
-              loading="lazy"
-              src={GigsDetails?.listing_image[4]}
-              className="image w-full h-full"
-            />
-          ) : (
-            <Image
-              alt="Cotion"
-              width={0}
-              sizes="100vw"
-              height={0}
-              loading="lazy"
-              src={GigsDetails?.listing_image[1]}
-              className="image w-full h-full"
-            />
-          )}
-
-          <div className="gradient"></div>
-        </div>
-      </Wrapper>
-    </Wrapper>
+                  <div className="gradient"></div>
+                </div>
+              );
+            })}
+          </Wrapper>
+        </Wrapper>
+      )}
+    </>
   );
 };
 export const Wrapper = styled.div`

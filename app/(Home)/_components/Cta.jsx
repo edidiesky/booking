@@ -159,7 +159,7 @@ export default function Cta() {
           ) : (
             <div className="w-full  grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link
-                href={`/booking/rooms/${rooms[0]?._id}`}
+                href={`/booking/rooms/${rooms[0]?.id}`}
                 className="shadow rounded-2xl overflow-hidden w-full flex flex-col"
               >
                 <Image
@@ -185,7 +185,7 @@ export default function Cta() {
                 {rooms?.slice(0, 4).map((apartment, index) => {
                   return (
                     <Link
-                      href={`booking/rooms/${apartment?._id}`}
+                      href={`booking/rooms/${apartment?.id}`}
                       key={index}
                       className="shadow rounded-2xl overflow-hidden w-full flex flex-col"
                     >
@@ -272,7 +272,7 @@ export default function Cta() {
           ) : (
             <div className="w-full grid  grid-cols-1 md:grid-cols-2 gap-4">
               <Link
-                href={`/booking/rooms/${rooms[1]?._id}`}
+                href={`/booking/rooms/${rooms[1]?.id}`}
                 className="shadow rounded-2xl overflow-hidden w-full flex flex-col"
               >
                 <Image
@@ -298,7 +298,7 @@ export default function Cta() {
                 {rooms?.slice(1, 5).map((apartment, index) => {
                   return (
                     <Link
-                      href={`booking/rooms/${apartment?._id}`}
+                      href={`booking/rooms/${apartment?.id}`}
                       key={index}
                       className="shadow rounded-2xl overflow-hidden w-full flex flex-col"
                     >

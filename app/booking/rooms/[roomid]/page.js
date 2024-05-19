@@ -7,7 +7,10 @@ const karla = Karla({
   weight: ["400", "500", "600", "700"],
 });
 import HomeIndex from "./_components";
-export default function Home() {
+import useGetRoomById from "@/app/hooks/useGetRoomById";
+export default function Home({params}) {
+  // console.log(params)
+  // const  {loading, error, room } = useGetRoomById(params?.roomid)
   return (
     <div className={`${karla.variable}`}>
       {/* <Head>
@@ -16,7 +19,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="https://hopper.com/favicon.ico" />
       </Head> */}
-      <HomeIndex />
+      <HomeIndex roomid={params} />
     </div>
   );
 }

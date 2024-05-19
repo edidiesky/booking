@@ -10,7 +10,7 @@ export async function GET(request, { params }) {
     );
   }
   try {
-    const room = await prisma.rooms.findMany({
+    const room = await prisma.rooms.findUnique({
       where: {
         id: id,
       },
