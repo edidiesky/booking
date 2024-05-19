@@ -144,7 +144,7 @@ const Work = () => {
     "Check of some of our popular destinations selected by individuals";
   const ctatext4 =
     "We offer a selection of teas from the Wee tea company and coffee pods, in the bathroom you will find luxurious towels alongside gorgeous locally handmade soaps, but you should come and see for yourself and enjoy your time at Lovat House Bed and Breakfast.";
-console.log(apartmentDataList?.slice(4,7))
+// console.log(apartmentDataList?.slice(4,7))
   return (
     <>
       <div data-scroll className="pt-40 bg-[#F5F5F5] w-full relative">
