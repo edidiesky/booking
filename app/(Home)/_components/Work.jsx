@@ -151,7 +151,7 @@ const Work = () => {
  const { loading, error, rooms } = useRooms();
   return (
     <>
-      <div data-scroll className="pt-40 bg-[#F5F5F5] w-full relative">
+      <div data-scroll className="pt-40 bg-[#f1e9dd] w-full relative">
         <div className="w-[90%] pb-24 m-auto max-w-custom relative flex flex-col gap-16">
           <div className="w-[80%] mx-auto flex flex-col items-center gap-4 justify-center">
             <div className="w-[full]">

@@ -181,7 +181,7 @@ export default function RoomInfo({ currentUser, roomid }) {
           </div>
         </div>
         <RoomFeatures />
-        <RoomCalendar />
+        {/* <RoomCalendar /> */}
         <RoomLocation />
       </div>
     </>

@@ -68,9 +68,9 @@ input {
   outline: none;
 }
 input::placegolder {
-  font-size:13px;
-  font-weight:normal;
-  color:#000;
+  font-size: 13px;
+  font-weight: normal;
+  color: #000;
 }
 .input {
   border: 1px solid rgba(0, 0, 0, 0.2) !important;
@@ -81,6 +81,7 @@ input::placegolder {
 
 .btn {
   transition: all 0.5s;
+  background: #0b2735 !important;
   font-family: "Proxima_SemiBold", sans-serif;
 }
 .btn:hover {
@@ -111,7 +112,6 @@ html.lenis body {
   pointer-events: none;
 }
 
-
 @keyframes spinner {
   to {
     transform: rotate(360deg);
@@ -119,10 +119,45 @@ html.lenis body {
 }
 
 .loading {
-  width:4rem;
-  height:4rem;
+  width: 4rem;
+  height: 4rem;
   border: 2px solid #f9f9f9;
   border-radius: 50%;
   border-top-color: #000000;
   animation: spinner 1.2s linear infinite;
+}
+
+.rdrMonth {
+  width: 100% !important;
+  font-size: 14px !important;
+  font-family: "Proxima_SemiBold", sans-serif;
+}
+.rdrMonthAndYearPickers select {
+  font-size: 14px !important;
+  color: #000 !important;
+  font-family: "Proxima_SemiBold", sans-serif;
+}
+.css-1flmtb5-MuiDataGrid-root .MuiDataGrid-row {
+  max-height: 300px !important;
+  min-height: 300px !important;
+}
+
+.css-1flmtb5-MuiDataGrid-root
+  .MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)
+  > .MuiDataGrid-cell {
+  max-height: 300px !important;
+  min-height: 300px !important;
+}
+
+.rdrDateRangePickerWrapper {
+  border: 2px solid #ccc;
+  border-radius: 50% !important;
+  padding: 10px;
+  font-family: "Proxima_SemiBold", sans-serif;
+}
+.rdrCalendarWrapper {
+  width: 100% !important;
+  color: #000 !important;
+  font-size: 15px !important;
+  font-family: "Proxima_SemiBold", sans-serif;
 }

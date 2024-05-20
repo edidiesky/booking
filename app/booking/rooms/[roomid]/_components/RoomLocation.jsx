@@ -16,7 +16,7 @@ export default function RoomLocation() {
           <div className="w-full flex flex-col gap-8">
             <h3
               ref={ctaText_1}
-              className="text-4xl md:text-5xl font-bold flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font2"
+              className="text-4xl uppercase font-bold flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font_normal"
             >
               {ctaText1.split(" ").map((x, index) => {
                 return (
