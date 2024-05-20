@@ -34,7 +34,7 @@ export default function RoomPaymentTab({
   console.log(moment(dateRange?.selection?.startDate).format("MMM D"));
   return (
     <div className="w-full flex-col gap-8">
-      <div className="p-8 border border-[rgba(0,0,0,.6)] shadow rounded-xl flex flex-col w-full">
+      <div className="p-8 border border-[rgba(0,0,0,.4)] shadow rounded-xl flex flex-col w-full">
         <div className="w-full flex flex-col gap-6">
           <div className="flex flex-col w-full">
             <div

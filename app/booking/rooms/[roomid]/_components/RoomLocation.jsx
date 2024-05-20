@@ -3,15 +3,8 @@ import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { slideup } from "@/constants/utils/framer";
 import Skeleton from "react-loading-skeleton";
-import dynamic from "next/dynamic";
-const ReactleafletImport = dynamic(() => import("react-leaflet"), {
-  ssr: false,
-});
-const leafletImport = dynamic(() => import("leaflet"), { ssr: false });
-const { MapContainer, Marker, Popup, TileLayer } = ReactleafletImport;
-const { Icon } = leafletImport;
-// import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-// import { Icon } from "leaflet";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { Icon } from "leaflet";
 export default function RoomLocation({ loading, room }) {
   const ctaText_1 = useRef(null);
   const inView = useInView(ctaText_1, {
@@ -30,26 +23,31 @@ export default function RoomLocation({ loading, room }) {
       <div className="w-full pb-24">
         <div className="w-[90%] mx-auto max-w-custom_2">
           <div className="w-full flex flex-col gap-8">
-            <h3
-              ref={ctaText_1}
-              className="text-4xl font-bold flex flex-wrap 
+            {loading ? (
+              <Skeleton width={"60%"} height={20} />
+            ) : (
+              <h3
+                ref={ctaText_1}
+                className="text-4xl font-bold flex flex-wrap 
               gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4"
-            >
-              {ctaText1.split(" ").map((x, index) => {
-                return (
-                  <span key={index} className="inline-flex hide relative">
-                    <motion.span
-                      variants={slideup}
-                      custom={index}
-                      initial="initial"
-                      animate={inView ? "animate" : "exit"}
-                    >
-                      {x}
-                    </motion.span>
-                  </span>
-                );
-              })}
-            </h3>
+              >
+                {ctaText1.split(" ").map((x, index) => {
+                  return (
+                    <span key={index} className="inline-flex hide relative">
+                      <motion.span
+                        variants={slideup}
+                        custom={index}
+                        initial="initial"
+                        animate={inView ? "animate" : "exit"}
+                      >
+                        {x}
+                      </motion.span>
+                    </span>
+                  );
+                })}
+              </h3>
+            )}
+
             {loading ? (
               <Skeleton width={"100%"} height={520} />
             ) : (

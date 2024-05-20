@@ -23,12 +23,12 @@ const Imagewrapper = ({ loading, room }) => {
             style={{ transition: "all .3s" }}
             className="absolute 
           bottom-0 left-0
-           text-lg p-4 px-8 hover:bg-[rgba(0,0,0,.6)]
+           text-base p-4 px-4 hover:bg-[rgba(0,0,0,.6)]
             hover:text-white
             uppercase text-dark bg-white
-             z-40 flex items-center justify-center gap-2"
+             z-40 flex items-center justify-center gap-4"
           >
-            <TfiGallery />
+            <TfiGallery fontSize={'24px'} />
             photos
           </div>
           <div className="w-100 imagewrapper">
