@@ -35,7 +35,7 @@
 }
 :root {
   --grey-1: rgb(167, 167, 167);
-  --dark-1: #000000;
+  --dark-1: #0b2735;
   --primary: #e4c590;
   --background_2: #0e0d0c;
 }
@@ -123,7 +123,7 @@ html.lenis body {
   height: 4rem;
   border: 2px solid #f9f9f9;
   border-radius: 50%;
-  border-top-color: #000000;
+  border-top-color: #0b2735;
   animation: spinner 1.2s linear infinite;
 }
 

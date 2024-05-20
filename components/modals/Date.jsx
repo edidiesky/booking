@@ -53,7 +53,7 @@ const DateModal = ({
       >
         <div className="w-[95%] z-30 mx-auto flex flex-col gap-4">
           <div className="w-full flex items-center justify-between">
-            <h3 className="text-xl font-bold font-booking_font4">
+            <h3 className="text-2xl font-bold font-booking_font2">
               Select the dates of your stay
             </h3>
             <div className="cross" onClick={handleClearAlert}>
@@ -64,8 +64,8 @@ const DateModal = ({
             <DateInput handleSelect={handleSelect} dateRange={dateRange} />
           </div>
 
-          <div className="w-full flex justify-nd">
-            <div className="p-4 text-center cursor-pointer bg-[#C5F244] px-8 rounded-[40px] font-bold text-dark">
+          <div className="w-full flex justify-end">
+            <div onClick={handleClearAlert} className="p-4 text-center cursor-pointer text-sm font-booking_font_bold text-white btn px-8 rounded-[40px] font-bold text-dark">
               Done
             </div>
           </div>
@@ -93,7 +93,7 @@ const DateModalStyles = styled(motion.div)`
     justify-content: center;
     flex-direction: column;
     background: #fff;
-    padding: 1rem 2rem;
+    padding:2rem;
     gap: 2rem;
     border-radius: 6px;
     box-shadow: 0 2rem 3rem rgba(0, 0, 0, 0.4);

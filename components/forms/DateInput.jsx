@@ -10,7 +10,7 @@ export default function DateInput({ handleSelect, dateRange, type }) {
     <DateContainer>
       <div className="container w-full">
         <DateRange
-          rangeColors={["var(--grey-1)"]}
+          rangeColors={["#bdae95"]}
           ranges={[dateRange.selection]}
           onChange={handleSelect}
           showDateDisplay={false}
@@ -25,7 +25,7 @@ export default function DateInput({ handleSelect, dateRange, type }) {
       </div>
       <div className="container1 w-full">
         <DateRange
-          rangeColors={["var(--grey-1)"]}
+          rangeColors={["#bdae95"]}
           ranges={[dateRange.selection]}
           onChange={handleSelect}
           showDateDisplay={false}

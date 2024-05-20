@@ -54,27 +54,8 @@ const Navbar = ({ currentUser }) => {
       >
         <Menu setMenu={setMenu} menu={menu} />
         <div className={`w-full mx-auto max-w-custom_2`}>
-          <div className="w-[95%] mx-auto text-text_dark_1 flex item-center justify-space gap-2 md:gap-4">
-            <div className="flex md:hidden items-center justify-start flex-1 span">
-              <HiBars3 fontSize={"34px"} color="#000" />
-            </div>
-            <div className="flex-1 hidden md:flex items-center gap-8">
-              <Link href={"/"} className="font-booking_font2 font-bold text-lg">
-                Home
-              </Link>
-              <Link href={"/"} className="font-booking_font2 font-bold text-lg">
-                About
-              </Link>
-
-              <Link href={"/"} className="font-booking_font2 font-bold text-lg">
-                Collections
-              </Link>
-
-              <Link href={"/"} className="font-booking_font2 font-bold text-lg">
-                Service
-              </Link>
-            </div>
-            <div className="flex-1 flex items-center gap-1 justify-center">
+          <div className="w-[95%] mx-auto text-text_dark_1 flex item-center justify-space gap-2 lg:gap-4">
+            <div className="flex-1 flex items-center gap-1 justify-start">
               <Image
                 alt="Cotion"
                 width={0}
@@ -84,7 +65,7 @@ const Navbar = ({ currentUser }) => {
                 src="https://www.hopper.com/assets/treasure-D-5S8iOp.svg"
                 className="w-14 h-14 rounded-full object-cover"
               />
-              <h4 className="hidden md:flex flex-col text-xl font-bold font-booking_font4 text-dark">
+              <h4 className="hidden lg:flex flex-col text-xl font-bold font-booking_font_bold text-dark">
                 HOME & VILLAS{" "}
                 <span className="block font-bold text-xs font-booking_font">
                   {" "}
@@ -92,8 +73,42 @@ const Navbar = ({ currentUser }) => {
                 </span>
               </h4>
             </div>
+            <div className="flex items-center justify-center gap-2 flex-1">
+              <div className="flex lg:hidden items-center justify-start flex-1 span">
+                <HiBars3 fontSize={"34px"} color="#000" />
+              </div>
+              <div className="flex-1 hidden lg:flex justify-center items-center gap-8">
+                <Link
+                  href={"/"}
+                  className="font-booking_font_normal text-base"
+                >
+                  Home
+                </Link>
+                <Link
+                  href={"/"}
+                  className="font-booking_font_normal text-base"
+                >
+                  About
+                </Link>
+
+                <Link
+                  href={"/"}
+                  className="font-booking_font_normal text-base"
+                >
+                  Collections
+                </Link>
+
+                <Link
+                  href={"/"}
+                  className="font-booking_font_normal text-base"
+                >
+                  Service
+                </Link>
+              </div>
+            </div>
+
             <ProfileDropdownStyles className="flex-1 relative flex items-end justify-end gap-4">
-              {/* <div className="w-12 md:w-12 h-12 md:h-12 rounded-full bg-[#000] flex items-center justify-center text-2xl text-white">
+              {/* <div className="w-12 lg:w-12 h-12 lg:h-12 rounded-full bg-[#000] flex items-center justify-center text-2xl text-white">
                 <BiCart />
               </div> */}
               <div className="flex profile_wrapper relative items-center gap-2">
@@ -102,7 +117,7 @@ const Navbar = ({ currentUser }) => {
                     <img
                       src={currentUser?.image}
                       alt=""
-                      className="w-12 md:w-12 h-12 md:h-12 rounded-full"
+                      className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
                     />
                   ) : currentUser?.username ? (
                     <div className="w-12 h-12 text-white rounded-full bg-[#000] text-2xl flex items-center justify-center ">
@@ -112,7 +127,7 @@ const Navbar = ({ currentUser }) => {
                     <img
                       src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
                       alt=""
-                      className="w-12 md:w-12 h-12 md:h-12 rounded-full"
+                      className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
                     />
                   )}
                   {currentUser && (
@@ -141,7 +156,7 @@ const Navbar = ({ currentUser }) => {
                           Profile
                         </Link>
                         <div
-                          onClick={()=> signOut()}
+                          onClick={() => signOut()}
                           className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                         >
                           Log Out
@@ -168,7 +183,7 @@ const Navbar = ({ currentUser }) => {
                           Profile
                         </Link>
                         <div
-                          onClick={()=> signOut()}
+                          onClick={() => signOut()}
                           className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                         >
                           Log Out

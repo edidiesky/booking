@@ -46,11 +46,10 @@ export default function RoomInfo({ currentUser, roomid }) {
     // console.log(selectedStartDate, selectedendDate, ranges);
 
     setDateRange({
-      ...dateRange,
+      ...ranges.range1,
       selection: {
         startDate: selectedStartDate,
         endDate: selectedendDate,
-        key: "selection",
       },
     });
   };
@@ -65,6 +64,9 @@ export default function RoomInfo({ currentUser, roomid }) {
     margin: "0px 100px -50px 0px",
   });
   const ctaText1 = "1904 - SPLASH MOUNTAIN";
+
+
+
   return (
     <>
       <AnimatePresence mode="wait">
@@ -175,14 +177,15 @@ export default function RoomInfo({ currentUser, roomid }) {
                   setGuestsModal={setGuestsModal}
                   loginmodal={loginmodal}
                   setLoginModal={setLoginModal}
+                  room={room}
                 />
               </div>
             </div>
           </div>
         </div>
-        <RoomFeatures />
+        <RoomFeatures loading={loading} room={room} />
         {/* <RoomCalendar /> */}
-        <RoomLocation />
+        <RoomLocation loading={loading} room={room} />
       </div>
     </>
   );

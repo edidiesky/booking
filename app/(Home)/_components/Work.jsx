@@ -6,32 +6,10 @@ import { motion, useInView } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import useRooms from "@/app/hooks/useRooms";
 import {
-  opacity,
   slideup,
-  smallslideup,
   slideup2,
   slideup3,
 } from "@/constants/utils/framer";
-
-const apartmentList = [
-  {
-    images:
-      "http://www.lovathouse-crieff.com/wp-content/uploads/2016/01/lovat-double_room-570x568.jpg",
-    title: "DOUBLE ROOM",
-    description:
-      "Double room, on the ground floor with a generous ensuite with corner bath and shower over. Relax in comfort in Egyptian cotton sheets.",
-    price: "100",
-  },
-  {
-    images:
-      "http://www.lovathouse-crieff.com/wp-content/uploads/2016/06/10m-1.jpg",
-    title: "FAMILY ROOM",
-    description:
-      "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
-    price: "70",
-  },
-];
-
 const destinationsList = [
   {
     image:
@@ -203,7 +181,7 @@ const Work = () => {
               ? apartmentDataList?.slice(4, 6)?.map((apartment, index) => {
                   return <Skeleton key={index} width={"100%"} height={450} />;
                 })
-              : rooms?.slice(4, 6)?.map((apartment, index) => {
+              : rooms?.slice(3, 5)?.map((apartment, index) => {
                   return (
                     <div key={index} className="w-full hide">
                       <motion.div

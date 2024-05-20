@@ -3,24 +3,19 @@ import React, { useRef, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import moment from "moment";
 export default function RoomPaymentTab({
-  setAdults,
-  datemodal,
   setDateModal,
-  handleSelect,
   dateRange,
   adults,
-  setChildrens,
   childrens,
-  guestsmodal,
   setGuestsModal,
-  loginmodal,
   setLoginModal,
   currentUser,
+  room,
 }) {
   const formatDate = (date) => {
     return moment(date).format("MMM D");
   };
-  const differnceinDays = Math.round(
+  const differenceinDays = Math.round(
     (moment(dateRange?.selection?.endDate, "MMMM Do YYYY") -
       moment(dateRange?.selection?.startDate, "MMMM Do YYYY")) /
       (1000 * 3600 * 24)
@@ -34,9 +29,12 @@ export default function RoomPaymentTab({
       setLoginModal(true);
     }
   };
+  const totalPrice =
+    room?.price * differenceinDays + room?.price * differenceinDays * 0.1;
+  console.log(moment(dateRange?.selection?.startDate).format("MMM D"));
   return (
     <div className="w-full flex-col gap-8">
-      <div className="p-8 border shadow rounded-xl flex flex-col w-full">
+      <div className="p-8 border border-[rgba(0,0,0,.6)] shadow rounded-xl flex flex-col w-full">
         <div className="w-full flex flex-col gap-6">
           <div className="flex flex-col w-full">
             <div
@@ -47,7 +45,7 @@ export default function RoomPaymentTab({
                 borderTopRightRadius: "8px",
                 borderTopLeftRadius: "8px",
               }}
-              className="dateWrapper flex items-center gap-1 justify-space"
+              className="dateWrapper cursor-pointer flex items-center gap-1 justify-space"
             >
               <div
                 style={{ padding: ".7rem", lineHeight: "20px" }}
@@ -55,13 +53,16 @@ export default function RoomPaymentTab({
               >
                 <div className="text-sm block capitalize text-dark text-light">
                   <span className="uppercase text-sm block">check-in</span>
-                  {formatDate(dateRange?.selection?.startDate)}
+                  {formatDate(dateRange?.selection?.startDate) !==
+                  "Invalid Date"
+                    ? formatDate(dateRange?.selection?.startDate)
+                    : "Add Date"}
                 </div>
               </div>{" "}
               <div
                 style={{
                   padding: ".7rem",
-                  borderLeft: "1px solid rgba(0,0,0,.3)",
+                  borderLeft: "1px solid rgba(0,0,0,.6)",
                   height: "100%",
                   lineHeight: "20px",
                 }}
@@ -69,7 +70,9 @@ export default function RoomPaymentTab({
               >
                 <div className="fs-12 block capitalize text-dark text-light">
                   <span className="uppercase text-sm block">check-out</span>
-                  {formatDate(dateRange?.selection?.endDate)}
+                  {formatDate(dateRange?.selection?.endDate) !== "Invalid Date"
+                    ? formatDate(dateRange?.selection?.endDate)
+                    : "Add Date"}
                 </div>
               </div>
             </div>{" "}
@@ -77,11 +80,11 @@ export default function RoomPaymentTab({
             <div
               onClick={() => setGuestsModal(true)}
               style={{
-                border: "1px solid rgba(0,0,0,.3)",
+                border: "1px solid rgba(0,0,0,.6)",
                 borderBottomRightRadius: "8px",
                 borderBottomLeftRadius: "8px",
               }}
-              className="dateWrapper flex items-center gap-1 justify-space"
+              className="dateWrapper cursor-pointer flex items-center gap-1 justify-space"
             >
               <div
                 style={{ padding: ".7rem" }}
@@ -107,35 +110,39 @@ export default function RoomPaymentTab({
           </div>
           <div className="w-full flex flex-col gap-2">
             {/* price */}
-            <div className="w-full text-basesm font-light font-booking_font_normal flex items-center justify-between">
-              <span>238.20 x 2 nights</span>
+            <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
               <span>
-                476.40 <span className="text-base">USD</span>
+                {room?.price} x {differenceinDays} nights
+              </span>
+              <span>
+                {room?.price * differenceinDays}{" "}
+                <span className="text-base">USD</span>
               </span>
             </div>
             {/* taxes */}
             <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
               <span>Fees and taxess</span>
               <span>
-                476.40 <span className="text-lg">USD</span>
+                {room?.price * differenceinDays * 0.1}{" "}
+                <span className="text-lg">USD</span>
               </span>
             </div>
             {/* total */}
             <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
               <span>Total</span>
               <span>
-                476.40 <span className="text-lg">USD</span>
+                {totalPrice} <span className="text-lg">USD</span>
               </span>
             </div>
           </div>
           {/* summary */}
           <div
-            className="w-full text-xl font-bold font-booking_font1
+            className="w-full text-xl font-bold font-booking_font_bold
                     flex items-center justify-between"
           >
             <span>You Pay</span>
             <span>
-              789.85 <span className="text-base">USD</span>
+              {totalPrice} <span className="text-base">USD</span>
             </span>
           </div>
           {currentUser ? (

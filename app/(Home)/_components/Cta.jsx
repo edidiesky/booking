@@ -215,7 +215,7 @@ export default function Cta() {
           )}
         </div>
         {/* 2nd apartment */}
-        <div className="w-full mt-36 md:mt-40 flex flex-col gap-20">
+        {/* <div className="w-full mt-36 md:mt-40 flex flex-col gap-20">
           <div className="w-full  grid grid-cols-1 sm:grid-cols-1 gap-2">
             <div className="w-full">
               <h4
@@ -326,7 +326,7 @@ export default function Cta() {
               </div>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );
