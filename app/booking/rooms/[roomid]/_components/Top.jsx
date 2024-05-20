@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef, useState } from "react";
 import Link from "next/link";
+import Skeleton from "react-loading-skeleton";
 import { motion, useInView, AnimatePresence, Variant } from "framer-motion";
 import {
   opacity,
@@ -121,69 +122,105 @@ export default function RoomInfo({ currentUser, roomid }) {
             <Imagewrapper loading={loading} room={room} />
             {/* // title section */}
             <div className="w-full flex flex-col-reverse lg:grid grid-cols-1 lg:grid-cols-custom_5 gap-20">
-              <div className="w-full flex flex-col gap-8">
-                <h2
-                  ref={ctaText_1}
-                  className="text-4xl md:text-5xl font-bold flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font2"
-                >
-                  {ctaText1.split(" ").map((x, index) => {
-                    return (
-                      <span key={index} className="inline-flex hide relative">
-                        <motion.span
-                          variants={slideup}
-                          custom={index}
-                          initial="initial"
-                          animate={inView ? "animate" : "exit"}
-                        >
-                          {x}
-                        </motion.span>
-                      </span>
-                    );
-                  })}
-                </h2>
-                <ul className="flex items-center gap-8">
-                  <li className="text-base font-booking_font_normal font-normal">
-                    3 Guests
-                  </li>
-
-                  <li
-                    style={{ listStyleType: "square" }}
-                    className="text-base font-booking_font_normal font-normal"
+              {loading ? (
+                <div className="w-full flex flex-col gap-4">
+                  <Skeleton width={"40%"} height={20} />
+                  <Skeleton width={"60%"} height={40} />
+                  <ul className="flex items-center gap-8">
+                    <Skeleton width={"50%"} height={10} />
+                    <Skeleton width={"50%"} height={10} />
+                    <Skeleton width={"50%"} height={10} />
+                  </ul>
+                  <div className="w-full flex flex-col gap-2">
+                    <Skeleton width={"100%"} height={10} />
+                    <Skeleton width={"80%"} height={10} />
+                    <Skeleton width={"50%"} height={10} />
+                    <Skeleton width={"100%"} height={10} />
+                    <Skeleton width={"80%"} height={10} />
+                    <Skeleton width={"50%"} height={10} />
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full flex flex-col gap-8">
+                  <h2
+                    ref={ctaText_1}
+                    className="text-4xl md:text-5xl font-bold flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font2"
                   >
-                    1 Bedrooms
-                  </li>
+                    {ctaText1.split(" ").map((x, index) => {
+                      return (
+                        <span key={index} className="inline-flex hide relative">
+                          <motion.span
+                            variants={slideup}
+                            custom={index}
+                            initial="initial"
+                            animate={inView ? "animate" : "exit"}
+                          >
+                            {x}
+                          </motion.span>
+                        </span>
+                      );
+                    })}
+                  </h2>
+                  <ul className="flex items-center gap-8">
+                    <li className="text-base font-booking_font_normal font-normal">
+                      3 Guests
+                    </li>
 
-                  <li
-                    style={{ listStyleType: "square" }}
-                    className="text-base font-booking_font_normal font-normal"
-                  >
-                    1 Bathrooms
-                  </li>
-                </ul>
-                <RoomTitleAndDescription />
-              </div>
+                    <li
+                      style={{ listStyleType: "square" }}
+                      className="text-base font-booking_font_normal font-normal"
+                    >
+                      1 Bedrooms
+                    </li>
+
+                    <li
+                      style={{ listStyleType: "square" }}
+                      className="text-base font-booking_font_normal font-normal"
+                    >
+                      1 Bathrooms
+                    </li>
+                  </ul>
+                  <RoomTitleAndDescription />
+                </div>
+              )}
+
               <div className="w-full relative lg:sticky top-[10%] lg:w-[420px] flex flex-col gap-16">
-                <RoomPaymentTab
-                  currentUser={currentUser}
-                  setAdults={setAdults}
-                  datemodal={datemodal}
-                  setDateModal={setDateModal}
-                  handleSelect={handleSelect}
-                  dateRange={dateRange}
-                  adults={adults}
-                  setChildrens={setChildrens}
-                  childrens={childrens}
-                  guestsmodal={guestsmodal}
-                  setGuestsModal={setGuestsModal}
-                  loginmodal={loginmodal}
-                  setLoginModal={setLoginModal}
-                  room={room}
-                />
+                {loading ? (
+                  <div className="w-full flex flex-col gap-2">
+                    <Skeleton width={"100%"} height={460} />
+                    <Skeleton width={"60%"} height={50} />
+                  </div>
+                ) : (
+                  <RoomPaymentTab
+                    currentUser={currentUser}
+                    setAdults={setAdults}
+                    datemodal={datemodal}
+                    setDateModal={setDateModal}
+                    handleSelect={handleSelect}
+                    dateRange={dateRange}
+                    adults={adults}
+                    setChildrens={setChildrens}
+                    childrens={childrens}
+                    guestsmodal={guestsmodal}
+                    setGuestsModal={setGuestsModal}
+                    loginmodal={loginmodal}
+                    setLoginModal={setLoginModal}
+                    room={room}
+                  />
+                )}
               </div>
             </div>
           </div>
         </div>
-        <RoomFeatures loading={loading} room={room} />
+        {loading ? (
+          <div className="w-[90%] max-w-custom_2 mx-auto grid md:grid-cols-2 gap-4">
+            <Skeleton width={"100%"} height={350} />
+            <Skeleton width={"100%"} height={350} />
+          </div>
+        ) : (
+          <RoomFeatures loading={loading} room={room} />
+        )}
+
         {/* <RoomCalendar /> */}
         <RoomLocation loading={loading} room={room} />
       </div>

@@ -3,8 +3,15 @@ import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { slideup } from "@/constants/utils/framer";
 import Skeleton from "react-loading-skeleton";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import { Icon } from "leaflet";
+import dynamic from "next/dynamic";
+const ReactleafletImport = dynamic(() => import("react-leaflet"), {
+  ssr: false,
+});
+const leafletImport = dynamic(() => import("leaflet"), { ssr: false });
+const { MapContainer, Marker, Popup, TileLayer } = ReactleafletImport;
+const { Icon } = leafletImport;
+// import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+// import { Icon } from "leaflet";
 export default function RoomLocation({ loading, room }) {
   const ctaText_1 = useRef(null);
   const inView = useInView(ctaText_1, {

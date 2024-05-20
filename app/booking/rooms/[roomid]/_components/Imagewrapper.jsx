@@ -1,5 +1,6 @@
 import Image from "next/image";
 import React from "react";
+import { TfiGallery } from "react-icons/tfi";
 import { useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";
@@ -9,7 +10,7 @@ const Imagewrapper = ({ loading, room }) => {
       {loading ? (
         <Wrapper>
           <Skeleton width={"100%"} height={520} />
-          <Wrapper>
+          <Wrapper className='hidden lg:grid'>
             <Skeleton width={"100%"} height={255} />
             <Skeleton width={"100%"} height={255} />
             <Skeleton width={"100%"} height={255} />
@@ -17,7 +18,19 @@ const Imagewrapper = ({ loading, room }) => {
           </Wrapper>
         </Wrapper>
       ) : (
-        <Wrapper>
+        <Wrapper className="relative">
+          <div
+            style={{ transition: "all .3s" }}
+            className="absolute 
+          bottom-0 left-0
+           text-lg p-4 px-8 hover:bg-[rgba(0,0,0,.6)]
+            hover:text-white
+            uppercase text-dark bg-white
+             z-40 flex items-center justify-center gap-2"
+          >
+            <TfiGallery />
+            photos
+          </div>
           <div className="w-100 imagewrapper">
             <Image
               alt="Cotion"
@@ -31,7 +44,7 @@ const Imagewrapper = ({ loading, room }) => {
             <div className="gradient"></div>
           </div>
           <Wrapper>
-            {room?.images?.slice(1,5)?.map((room, index) => {
+            {room?.images?.slice(1, 5)?.map((room, index) => {
               return (
                 <div key={index} className="w-full imagewrapper images">
                   <Image
