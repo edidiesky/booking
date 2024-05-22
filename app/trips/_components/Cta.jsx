@@ -2,6 +2,7 @@
 import Image from "next/image";
 import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+// import {search} from 'next/searc'
 import moment from "moment";
 import { MdArrowRightAlt } from "react-icons/md";
 import {
@@ -13,7 +14,7 @@ import {
 import { motion, useInView } from "framer-motion";
 import { apartmentDataList } from "@/constants/data/apartment";
 import Skeleton from "react-loading-skeleton";
-import useGetReservationById from "@/app/hooks/useGetReservationById";
+import useGetUserReservation from "@/app/hooks/useGetUserReservation";
 
 export default function Cta() {
   const ctaText_1 = useRef(null);
@@ -29,8 +30,8 @@ export default function Cta() {
    const ctatext4 =
     "This page provides a list of all your placed home reservations";
 
-  const { loading, error, rooms } = useGetReservationById();
-  console.log(rooms);
+  const { loading, error, rooms } = useGetUserReservation();
+  // console.log(rooms);
   return (
     <div data-scroll className="py-20 w-full z-50">
       <div className="w-[90%] mx-auto m-auto max-w-custom  flex flex-col gap-4">
