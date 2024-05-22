@@ -1,19 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { AiOutlineBars } from "react-icons/ai";
 import styled from "styled-components";
 import Image from "next/image";
 import Link from "next/link";
-import Menu from "./Menu";
-import { BiCart } from "react-icons/bi";
-import { HiBars3 } from "react-icons/hi2";
 import LoginModal from "../modals/Login";
 import RegisterModal from "../modals/Register";
 import { signOut } from "next-auth/react";
 const Navbar = ({ currentUser }) => {
-  const [menu, setMenu] = useState(false);
-   const [bar, setBar] = React.useState(false);
+  const [bar, setBar] = React.useState(false);
   const [active, setActive] = useState(false);
   const [loginmodal, setLoginModal] = useState(false);
   const [registermodal, setRegisterModal] = useState(false);
@@ -97,15 +93,17 @@ const Navbar = ({ currentUser }) => {
                 </span>
               </h4>
             </div>
-            <div className="flex-1 hidden lg:flex justify-center items-center 
-            gap-6">
+            <div
+              className="flex-1 hidden lg:flex justify-center items-center 
+            gap-6"
+            >
               {linkData?.map((link, index) => {
                 return (
                   <Link
-                  style={{transition:'all .4s'}}
+                    style={{ transition: "all .4s" }}
                     key={index}
                     href={`/${link?.path}`}
-                    className="font-booking_font_normal hover:text-[#eee] text-lg"
+                    className="font-booking_font_normal hover:text-[#706f6f] text-base"
                   >
                     {link?.title}
                   </Link>
