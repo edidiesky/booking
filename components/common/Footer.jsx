@@ -4,8 +4,8 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 const Footer = () => {
   return (
-    <div className="relative min-h-[40vh] flex flex-col items-center justify-center bg-[var(--dark-1)]">
-      <div className="w-[90%] px-8 max-w-custom_2 mx-auto py-20 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
+    <div className="relative min-h-[40vh] flex flex-col items-center justify-center bg-[#000]">
+      <div className="w-[95%] px-4 max-w-custom_1 mx-auto py-20 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
         <div className="flex-1 gap-2 flex items-center justify-start md:justify-center">
           <Image
             alt="Cotion"
@@ -16,9 +16,9 @@ const Footer = () => {
             src="https://www.hopper.com/assets/treasure-D-5S8iOp.svg"
             className="w-14 h-14 rounded-full object-cover"
           />
-          <h4 className="text-3xl font-bold text-white">
+          <h4 className="text-2xl font-bold font-booking_font4 text-white">
             HOME & VILLAS{" "}
-            <span className="block font-medium text-base font-booking_font1">
+            <span className="block font-normal text-base font-booking_font">
               {" "}
               Benneth Okeke
             </span>
@@ -59,7 +59,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="w-[95%] pt-4 border-t border-[rgba(255,255,255,.3)] max-w-custom mx-auto py-20 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
+      <div className="w-[95%] pt-4 border-t border-[rgba(255,255,255,.3)] max-w-custom mx-auto py-4 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
         <div className="flex-1 gap-2 flex items-start justify-start">
           <h4 className="text-sm font-normal font-booking_font text-white">
             © Copyright 2024, Victor Essien, All rights reserved.

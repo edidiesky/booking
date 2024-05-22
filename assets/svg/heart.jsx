@@ -11,8 +11,8 @@ const Heart = ({ active }) => {
         style={{
           display: "block",
           fill: active ? "var(--red)" : "rgba(0, 0, 0, 0.5)",
-          height: "24px",
-          width: "24px",
+          height: "30px",
+          width: "30px",
           stroke: active ? "var(--red)" : "#FFFFFF",
           strokeWidth: " 2",
           overflow: "visible",

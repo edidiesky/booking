@@ -14,16 +14,6 @@ const Navbar = ({ currentUser }) => {
   const [loginmodal, setLoginModal] = useState(false);
   const [registermodal, setRegisterModal] = useState(false);
 
-  const handleScroll = () => {
-    window.scrollY > 150 ? setActive(true) : setActive(false);
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // console.log(currentUser);
 
   const linkData = [
     {
@@ -69,9 +59,7 @@ const Navbar = ({ currentUser }) => {
         )}
       </AnimatePresence>
       <div
-        className={`${
-          active ? "shadow-lg bg-white" : "bg-inherit"
-        } w-full sticky min-h-[70px] top-0 z-[500] py-4`}
+        className={`bg-inherit w-full min-h-[80px] z-[500] py-4`}
       >
         <div className={`w-full mx-auto max-w-custom_2`}>
           <div className="w-[95%] mx-auto text-text_dark_1 flex item-center justify-space gap-2 lg:gap-4">
