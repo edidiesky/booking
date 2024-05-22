@@ -4,7 +4,7 @@ import { TfiGallery } from "react-icons/tfi";
 import { useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";
-const Imagewrapper = ({ loading, room }) => {
+const Imagewrapper = ({ loading, room, setGalleryModal }) => {
   return (
     <>
       {loading ? (
@@ -20,6 +20,7 @@ const Imagewrapper = ({ loading, room }) => {
       ) : (
         <Wrapper className="relative">
           <div
+          onClick={()=> setGalleryModal(true)}
             style={{ transition: "all .3s" }}
             className="absolute 
           bottom-0 left-0

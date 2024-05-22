@@ -2,6 +2,8 @@
 import React, { useRef, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import moment from "moment";
+import axios from "axios";
+import toast from "react-hot-toast";
 export default function RoomPaymentTab({
   setDateModal,
   dateRange,
@@ -12,6 +14,9 @@ export default function RoomPaymentTab({
   currentUser,
   room,
 }) {
+
+  const [bookingloading, setBookingLoading] = useState(false)
+  const [bookingsuccess, setBookingSuccess] = useState(false)
   const formatDate = (date) => {
     return moment(date).format("MMM D");
   };
@@ -21,17 +26,41 @@ export default function RoomPaymentTab({
       (1000 * 3600 * 24)
   );
   const limit = childrens + adults;
+
+  const totalPrice =
+    room?.price * differenceinDays + room?.price * differenceinDays * 0.1;
+  const reservationData = {
+    totalPrice: totalPrice,
+    startDate: moment(dateRange?.selection?.startDate, "MMMM Do YYYY"),
+    endDate: moment(dateRange?.selection?.endDate, "MMMM Do YYYY"),
+  };
   const handleReservationBooking = () => {
     if (currentUser) {
       // console.log('Reservation has been booked')
-      window.location.href = `/reservation/payment`;
+      // window.location.href = `/reservation/payment`;
+      if (differenceinDays <= 2) {
+        toast.error("Reservation date should be more than 2 days");
+      } else {
+        // toast.success("Reservation date is fine");
+        const { data } = axios
+          .post(`/api/reservation/${room?.id}`, reservationData)
+          .then(() => {
+            // setModal(false);
+          })
+          .catch((error) => {
+            const erroMessage = error?.response?.data?.message || "An error occurred"
+            toast.error(erroMessage);
+            // console.log(error);
+          })
+          .finally(() => {
+            // setLoading(false);
+          });
+      }
     } else {
       setLoginModal(true);
     }
   };
-  const totalPrice =
-    room?.price * differenceinDays + room?.price * differenceinDays * 0.1;
-  console.log(moment(dateRange?.selection?.startDate).format("MMM D"));
+  // console.log(moment(dateRange?.selection?.startDate).format("MMM D"));
   return (
     <div className="w-full flex-col gap-8">
       <div className="p-8 border border-[rgba(0,0,0,.4)] shadow rounded-xl flex flex-col w-full">
@@ -54,7 +83,7 @@ export default function RoomPaymentTab({
                 <div className="text-sm block capitalize text-dark text-light">
                   <span className="uppercase text-sm block">check-in</span>
                   {formatDate(dateRange?.selection?.startDate) !==
-                  "Invalid Date"
+                  "Invalid date"
                     ? formatDate(dateRange?.selection?.startDate)
                     : "Add Date"}
                 </div>
@@ -70,7 +99,7 @@ export default function RoomPaymentTab({
               >
                 <div className="fs-12 block capitalize text-dark text-light">
                   <span className="uppercase text-sm block">check-out</span>
-                  {formatDate(dateRange?.selection?.endDate) !== "Invalid Date"
+                  {formatDate(dateRange?.selection?.endDate) !== "Invalid date"
                     ? formatDate(dateRange?.selection?.endDate)
                     : "Add Date"}
                 </div>
@@ -108,56 +137,72 @@ export default function RoomPaymentTab({
               </div>
             </div>
           </div>
-          <div className="w-full flex flex-col gap-2">
-            {/* price */}
-            <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
-              <span>
-                {room?.price} x {differenceinDays} nights
-              </span>
-              <span>
-                {room?.price * differenceinDays}{" "}
-                <span className="text-base">USD</span>
-              </span>
-            </div>
-            {/* taxes */}
-            <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
-              <span>Fees and taxess</span>
-              <span>
-                {room?.price * differenceinDays * 0.1}{" "}
-                <span className="text-lg">USD</span>
-              </span>
-            </div>
-            {/* total */}
-            <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
-              <span>Total</span>
-              <span>
-                {totalPrice} <span className="text-lg">USD</span>
-              </span>
-            </div>
-          </div>
-          {/* summary */}
-          <div
-            className="w-full text-xl font-bold font-booking_font_bold
+          {formatDate(dateRange?.selection?.startDate) !== "Invalid date" && (
+            <>
+              <div className="w-full flex flex-col gap-2">
+                {/* price */}
+                <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
+                  <span>
+                    {room?.price} x {differenceinDays} nights
+                  </span>
+                  <span>
+                    {room?.price * differenceinDays}{" "}
+                    <span className="text-base">USD</span>
+                  </span>
+                </div>
+                {/* taxes */}
+                <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
+                  <span>Fees and taxess</span>
+                  <span>
+                    {room?.price * differenceinDays * 0.1}{" "}
+                    <span className="text-lg">USD</span>
+                  </span>
+                </div>
+                {/* total */}
+                <div className="w-full text-base font-light font-booking_font_normal flex items-center justify-between">
+                  <span>Total</span>
+                  <span>
+                    {totalPrice} <span className="text-lg">USD</span>
+                  </span>
+                </div>
+              </div>
+              {/* summary */}
+              <div
+                className="w-full text-xl font-bold font-booking_font_bold
                     flex items-center justify-between"
-          >
-            <span>You Pay</span>
-            <span>
-              {totalPrice} <span className="text-base">USD</span>
-            </span>
-          </div>
-          {currentUser ? (
-            <div
-              // onClick={handleReservationBooking}
-              className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font_normal"
-            >
-              Place Reservation
-            </div>
+              >
+                <span>You Pay</span>
+                <span>
+                  {totalPrice} <span className="text-base">USD</span>
+                </span>
+              </div>
+            </>
+          )}
+          {formatDate(dateRange?.selection?.startDate) !== "Invalid date" ? (
+            <>
+              {currentUser ? (
+                <div
+                  onClick={handleReservationBooking}
+                  className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font_normal"
+                >
+                  Place Reservation
+                </div>
+              ) : (
+                <div
+                  onClick={handleReservationBooking}
+                  className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font_normal"
+                >
+                  SIGN IN TO SAVE
+                </div>
+              )}
+            </>
           ) : (
             <div
-              onClick={handleReservationBooking}
-              className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font_normal"
+              onClick={() => setDateModal(true)}
+              className="btn p-6 cursor-pointer px-8 
+              text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font_normal"
             >
-              SIGN IN TO SAVE
+              Check for Availability
             </div>
           )}
         </div>

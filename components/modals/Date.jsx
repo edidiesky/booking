@@ -1,9 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { motion, AnimatePresence, Variant } from "framer-motion";
+import { motion } from "framer-motion";
 import styled from "styled-components";
 import { RxCross2 } from "react-icons/rx";
-import { BiMinus, BiPlus } from "react-icons/bi";
 import DateInput from "../forms/DateInput";
 const ModalVariants = {
   initial: {
@@ -98,9 +97,9 @@ const DateModalStyles = styled(motion.div)`
     border-radius: 6px;
     box-shadow: 0 2rem 3rem rgba(0, 0, 0, 0.4);
     position: relative;
-    @media (max-width: 980px) {
+    @media (max-width: 780px) {
       max-width: 90%;
-      min-width: 320px;
+      min-width: 90%;
     }
     .cross {
       width: 3rem;

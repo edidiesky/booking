@@ -17,6 +17,7 @@ import RoomFeatures from "./RoomFeatures";
 import RoomCalendar from "./RoomCalendar";
 import RoomLocation from "./RoomLocation";
 import RoomDetails from "./RoomDetails";
+import RoomGallery from "./RoomGallery";
 import RoomPaymentTab from "./RoomPaymentTab";
 import LoginModal from "@/components/modals/Login";
 import RegisterModal from "@/components/modals/Register";
@@ -26,6 +27,7 @@ export default function RoomInfo({ currentUser, roomid }) {
   const [guestsmodal, setGuestsModal] = useState(false);
   const [loginmodal, setLoginModal] = useState(false);
   const [registermodal, setRegisterModal] = useState(false);
+  const [gallerymodal, setGalleryModal] = useState(false);
   const { loading, error, room } = useGetRoomById(roomid);
   // console.log(roomid);
   // data for filtering
@@ -113,11 +115,17 @@ export default function RoomInfo({ currentUser, roomid }) {
           />
         )}
       </AnimatePresence>
-
+      {gallerymodal && (
+        <RoomGallery room={room} setGalleryModal={setGalleryModal} />
+      )}
       <div className="w-full py-4 flex flex-col gap-24 justify-end items-end">
         <div className="w-[95%] relative md:w-[90%] mx-auto max-w-custom_2 justify-end items-end flex flex-col">
           <div className="w-full flex flex-col gap-20 justify-end">
-            <Imagewrapper loading={loading} room={room} />
+            <Imagewrapper
+              loading={loading}
+              room={room}
+              setGalleryModal={setGalleryModal}
+            />
             {/* // title section */}
             <div className="w-full flex flex-col-reverse lg:grid grid-cols-1 lg:grid-cols-custom_5 gap-20">
               {loading ? (

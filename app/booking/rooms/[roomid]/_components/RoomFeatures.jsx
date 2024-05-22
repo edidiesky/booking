@@ -67,7 +67,7 @@ export default function RoomFeatures() {
                 Enjoy the comforts of home and beyond with these distinctive
                 features.
               </h4>
-              <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="w-full grid grid-cols-3 md:grid-cols-4 gap-4">
                 {featureList1.map((x, index) => {
                   return (
                     <div
@@ -92,7 +92,7 @@ export default function RoomFeatures() {
                 comes outfitted with these best-in-class essentials for a
                 worry-free stay.
               </h4>
-              <div className="w-full grid md:grid-cols-3 gap-4">
+              <div className="w-full grid grid-cols-3 gap-4">
                 {featureList2.map((x, index) => {
                   return (
                     <div
