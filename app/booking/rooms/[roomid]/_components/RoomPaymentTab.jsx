@@ -14,7 +14,7 @@ export default function RoomPaymentTab({
   currentUser,
   room,
 }) {
-
+// states of the reservation booking either loading or
   const [bookingloading, setBookingLoading] = useState(false)
   const [bookingsuccess, setBookingSuccess] = useState(false)
   const formatDate = (date) => {

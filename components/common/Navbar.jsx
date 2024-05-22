@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { AiOutlineBars } from "react-icons/ai";
 import styled from "styled-components";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +13,7 @@ import RegisterModal from "../modals/Register";
 import { signOut } from "next-auth/react";
 const Navbar = ({ currentUser }) => {
   const [menu, setMenu] = useState(false);
+   const [bar, setBar] = React.useState(false);
   const [active, setActive] = useState(false);
   const [loginmodal, setLoginModal] = useState(false);
   const [registermodal, setRegisterModal] = useState(false);
@@ -26,6 +28,29 @@ const Navbar = ({ currentUser }) => {
   }, []);
 
   // console.log(currentUser);
+
+  const linkData = [
+    {
+      title: "Collections",
+      path: "collections",
+    },
+    {
+      title: "Saved Homes",
+      path: "savedhomes",
+    },
+    {
+      title: "Destinations",
+      path: "destinations",
+    },
+    {
+      title: "My Trips",
+      path: "trips",
+    },
+    {
+      title: "About & FAQ",
+      path: "about",
+    },
+  ];
   return (
     <>
       <AnimatePresence mode="wait">
@@ -52,10 +77,9 @@ const Navbar = ({ currentUser }) => {
           active ? "shadow-lg bg-white" : "bg-inherit"
         } w-full sticky min-h-[70px] top-0 z-[500] py-4`}
       >
-        <Menu setMenu={setMenu} menu={menu} />
         <div className={`w-full mx-auto max-w-custom_2`}>
           <div className="w-[95%] mx-auto text-text_dark_1 flex item-center justify-space gap-2 lg:gap-4">
-            <div className="flex-1 flex items-center gap-1 justify-start">
+            <div className=" flex items-center gap-1 justify-start">
               <Image
                 alt="Cotion"
                 width={0}
@@ -73,143 +97,203 @@ const Navbar = ({ currentUser }) => {
                 </span>
               </h4>
             </div>
-            <div className="flex items-center justify-center gap-2 flex-1">
-              <div className="flex lg:hidden items-center justify-start flex-1 span">
-                <HiBars3 fontSize={"34px"} color="#000" />
-              </div>
-              <div className="flex-1 hidden lg:flex justify-center items-center gap-8">
-                <Link
-                  href={"/"}
-                  className="font-booking_font_normal text-base"
-                >
-                  Home
-                </Link>
-                <Link
-                  href={"/"}
-                  className="font-booking_font_normal text-base"
-                >
-                  About
-                </Link>
-
-                <Link
-                  href={"/"}
-                  className="font-booking_font_normal text-base"
-                >
-                  Collections
-                </Link>
-
-                <Link
-                  href={"/"}
-                  className="font-booking_font_normal text-base"
-                >
-                  Service
-                </Link>
-              </div>
+            <div className="flex-1 hidden lg:flex justify-center items-center 
+            gap-6">
+              {linkData?.map((link, index) => {
+                return (
+                  <Link
+                  style={{transition:'all .4s'}}
+                    key={index}
+                    href={`/${link?.path}`}
+                    className="font-booking_font_normal hover:text-[#eee] text-lg"
+                  >
+                    {link?.title}
+                  </Link>
+                );
+              })}
             </div>
-
-            <ProfileDropdownStyles className="flex-1 relative flex items-end justify-end gap-4">
-              {/* <div className="w-12 lg:w-12 h-12 lg:h-12 rounded-full bg-[#000] flex items-center justify-center text-2xl text-white">
+            <div className="flex items-center justify-end gap-4">
+              <div className="flex lg:hidden items-center justify-start span">
+                <AiOutlineBars fontSize={"25px"} color="#000" />
+              </div>
+              <ProfileDropdownStyles className=" relative flex items-end justify-end gap-4">
+                {/* <div className="w-12 lg:w-12 h-12 lg:h-12 rounded-full bg-[#000] flex items-center justify-center text-2xl text-white">
                 <BiCart />
               </div> */}
-              <div className="flex profile_wrapper relative items-center gap-2">
-                <div className="flex items-center gap-2">
-                  {currentUser?.image ? (
-                    <img
-                      src={currentUser?.image}
-                      alt=""
-                      className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
-                    />
-                  ) : currentUser?.username ? (
-                    <div className="w-12 h-12 text-white rounded-full bg-[#000] text-2xl flex items-center justify-center ">
-                      {currentUser?.username[0]}{" "}
-                    </div>
-                  ) : (
-                    <img
-                      src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
-                      alt=""
-                      className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
-                    />
-                  )}
-                  {currentUser && (
-                    <h4 className="text-base font-booking_font_bold text-dark font-bold family1">
-                      {currentUser?.name}
-                      <span className="block font-normal font-booking_font text-sm text-grey">
-                        {currentUser?.email}
-                      </span>
-                    </h4>
-                  )}
-                </div>
-                <div className="profile_dropdown shadow-2xl absolute">
-                  <div className="w-full flex flex-col">
-                    {currentUser?.role === "admin" ? (
-                      <div className="flex profile_dropdown_bottom flex-col w-full">
-                        <Link
-                          href={"/dashboard"}
-                          className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
-                        >
-                          Dashboard
-                        </Link>
-                        <Link
-                          href={"/dashboard/settings"}
-                          className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
-                        >
-                          Profile
-                        </Link>
-                        <div
-                          onClick={() => signOut()}
-                          className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
-                        >
-                          Log Out
-                        </div>
-                      </div>
-                    ) : currentUser?.email ? (
-                      <div className="flex profile_dropdown_bottom flex-col w-full">
-                        <Link
-                          href={"/Reservation"}
-                          className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
-                        >
-                          Reservation
-                        </Link>
-                        <Link
-                          href={"/Favourites"}
-                          className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
-                        >
-                          Favourites
-                        </Link>
-                        <Link
-                          href={"/dashboard/settings"}
-                          className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
-                        >
-                          Profile
-                        </Link>
-                        <div
-                          onClick={() => signOut()}
-                          className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
-                        >
-                          Log Out
-                        </div>
-                      </div>
+                <div className="flex profile_wrapper relative items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    {currentUser?.image ? (
+                      <img
+                        src={currentUser?.image}
+                        alt=""
+                        className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
+                      />
+                    ) : currentUser?.username ? (
+                      // <div className="w-12 h-12 text-white rounded-full bg-[#000] text-2xl flex items-center justify-center ">
+                      //   {currentUser?.username[0]}{" "}
+                      // </div>
+                      <img
+                        src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
+                        alt=""
+                        className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
+                      />
                     ) : (
-                      <div className="flex profile_dropdown_bottom flex-col w-full">
-                        <div
-                          onClick={() => setRegisterModal(true)}
-                          className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
-                        >
-                          Sign Up
-                        </div>
-                        <div
-                          onClick={() => setLoginModal(true)}
-                          className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
-                        >
-                          Sign In
-                        </div>
-                      </div>
+                      <img
+                        src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
+                        alt=""
+                        className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
+                      />
                     )}
+                    {currentUser && (
+                      <h4 className="text-base font-booking_font_bold text-dark font-bold family1">
+                        {currentUser?.name}
+                        <span className="block font-normal font-booking_font text-sm text-grey">
+                          {currentUser?.email}
+                        </span>
+                      </h4>
+                    )}
+                  </div>
+                  <div className="profile_dropdown shadow-2xl absolute">
+                    <div className="w-full flex flex-col">
+                      {currentUser?.role === "admin" ? (
+                        <div className="flex profile_dropdown_bottom flex-col w-full">
+                          <Link
+                            href={"/dashboard"}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Dashboard
+                          </Link>
+                          <Link
+                            href={"/dashboard/settings"}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Profile
+                          </Link>
+                          <Link
+                            href={"/Reservation"}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Reservation
+                          </Link>
+                          <Link
+                            href={"/Favourites"}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Favourites
+                          </Link>
+                          <div
+                            onClick={() => signOut()}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Log Out
+                          </div>
+                        </div>
+                      ) : currentUser?.email ? (
+                        <div className="flex profile_dropdown_bottom flex-col w-full">
+                          <Link
+                            href={"/Reservation"}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Reservation
+                          </Link>
+                          <Link
+                            href={"/Favourites"}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Favourites
+                          </Link>
+                          <Link
+                            href={"/dashboard/settings"}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Profile
+                          </Link>
+                          <div
+                            onClick={() => signOut()}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Log Out
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex profile_dropdown_bottom flex-col w-full">
+                          <div
+                            onClick={() => setRegisterModal(true)}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Sign Up
+                          </div>
+                          <div
+                            onClick={() => setLoginModal(true)}
+                            className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
+                          >
+                            Sign In
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </ProfileDropdownStyles>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{ zIndex: "200" }}
+        className={`${
+          bar ? "left-0" : "-left-[100%]"
+        } w-[300px] h-full transition-all ease duration-700 fixed flex lg:hidden top-0 bg-[#fff] shadow-2xl column gap-2`}
+      >
+        <div
+          onClick={() => setBar(!bar)}
+          style={{ zIndex: "200" }}
+          className={`${
+            bar ? "left-0" : "-left-[100%]"
+          } w-full h-full transition-all ease duration-300 fixed flex lg:hidden top-0 bg-[#42424227] column gap-2`}
+        ></div>
+
+        <div
+          style={{ zIndex: "200" }}
+          className="w-full Header_wrapper h-full bg-white flex item-center column justify-space gap-2"
+        >
+          <ul className="flex flex-col w-full">
+            {currentUser
+              ? linkData?.slice(0, 6)?.map((x, index) => {
+                  return (
+                    <Link
+                      href={`/${x.path}`}
+                      key={index}
+                      className="font-bold text-dark   hover:bg-[rgba(0,0,0,.1)] py-[20px] text-3xl px-8"
+                    >
+                      {x.title}
+                    </Link>
+                  );
+                })
+              : linkData?.map((x, index) => {
+                  return (
+                    <Link
+                      href={`/${x.path}`}
+                      key={index}
+                      className="font-bold text-dark   hover:bg-[rgba(0,0,0,.1)] py-[20px] text-3xl px-8"
+                    >
+                      {x.title}
+                    </Link>
+                  );
+                })}
+            {!currentUser && (
+              <div className="w-100 px-2 py-2 flex items-center gap-4">
+                <Link href={"/register"} className="btn w-full btn-1 text-2xl ">
+                  Sign Up
+                </Link>
+                <div className="btn_wrapper w-full">
+                  <div className="btn w-full btn-2 text-2xl font-bold">
+                    Log In
                   </div>
                 </div>
               </div>
-            </ProfileDropdownStyles>
-          </div>
+            )}
+          </ul>
         </div>
       </div>
     </>

@@ -126,10 +126,10 @@ export default function Hero() {
         <div className="w-full h-100 relative z-30 flex flex-col items-start">
           <div className="w-[80%] max-w-custom mx-auto">
             <div className=" flex flex-col gap-8">
-              <h1 className="text-7xl w-100 text-white font-medium font-booking_font3">
+              <h1 className="text-7xl w-100 text-white font-medium font-booking_font4">
                 Trusted homes <br /> backed by Marriott
               </h1>
-              <h4 className="text-xl font-medium text-grey font-booking_font2">
+              <h4 className="text-2xl font-medium text-grey font-booking_font_normal">
                 Earn and redeem points on premium vacation rentals
               </h4>
               <div className="w-full flex">

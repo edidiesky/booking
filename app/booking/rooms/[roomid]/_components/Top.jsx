@@ -63,10 +63,7 @@ export default function RoomInfo({ currentUser, roomid }) {
   const inView = useInView(ctaText_1, {
     margin: "0px 100px -50px 0px",
   });
-  const inView4 = useInView(ctaText_2, {
-    margin: "0px 100px -50px 0px",
-  });
-  const ctaText1 = `${room?.title}`;
+  // const ctaText1 = `${room?.title}`;
 
   return (
     <>
@@ -147,12 +144,12 @@ export default function RoomInfo({ currentUser, roomid }) {
                   </div>
                 </div>
               ) : (
-                <div className="w-full flex flex-col gap-8">
+                <div className="w-full flex flex-col gap-4">
                   <h2
-                    ref={ctaText_1}
+                    // ref={ctaText_1}
                     className="text-4xl md:text-5xl font-bold flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font2"
                   >
-                    {ctaText1.split(" ").map((x, index) => {
+                    {/* {ctaText1.split(" ").map((x, index) => {
                       return (
                         <span key={index} className="inline-flex hide relative">
                           <motion.span
@@ -165,7 +162,8 @@ export default function RoomInfo({ currentUser, roomid }) {
                           </motion.span>
                         </span>
                       );
-                    })}
+                    })} */}
+                    {room?.title}
                   </h2>
                   <ul className="flex items-center gap-8">
                     <li className="text-base font-booking_font_normal font-normal">
