@@ -14,7 +14,6 @@ const Navbar = ({ currentUser }) => {
   const [loginmodal, setLoginModal] = useState(false);
   const [registermodal, setRegisterModal] = useState(false);
 
-
   const linkData = [
     {
       title: "Collections",
@@ -58,9 +57,7 @@ const Navbar = ({ currentUser }) => {
           />
         )}
       </AnimatePresence>
-      <div
-        className={`bg-inherit w-full min-h-[80px] z-[500] py-4`}
-      >
+      <div className={`bg-inherit w-full min-h-[80px] z-[500] py-4`}>
         <div className={`w-full mx-auto max-w-custom_2`}>
           <div className="w-[95%] mx-auto text-text_dark_1 flex items-center justify-between gap-2 lg:gap-4">
             <div className=" flex items-center gap-1 justify-start">
@@ -100,7 +97,11 @@ const Navbar = ({ currentUser }) => {
             </div>
             <div className="flex items-center justify-end gap-4">
               <div className="flex lg:hidden backdrop:span">
-                <AiOutlineBars fontSize={"25px"} color="#000" />
+                <AiOutlineBars
+                  onClick={() => setBar(true)}
+                  fontSize={"25px"}
+                  color="#000"
+                />
               </div>
               <ProfileDropdownStyles className=" relative flex items-end justify-end gap-4">
                 {/* <div className="w-12 lg:w-12 h-12 lg:h-12 rounded-full bg-[#000] flex items-center justify-center text-2xl text-white">
@@ -241,8 +242,40 @@ const Navbar = ({ currentUser }) => {
 
         <div
           style={{ zIndex: "200" }}
-          className="w-full Header_wrapper h-full bg-white flex item-center column justify-space gap-2"
+          className="w-full Header_wrapper h-full bg-white flex item-center flex-col gap-4"
         >
+          <div className="flex p-4 items-center gap-2">
+            {currentUser?.image ? (
+              <img
+                src={currentUser?.image}
+                alt=""
+                className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
+              />
+            ) : currentUser?.username ? (
+              // <div className="w-12 h-12 text-white rounded-full bg-[#000] text-2xl flex items-center justify-center ">
+              //   {currentUser?.username[0]}{" "}
+              // </div>
+              <img
+                src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
+                alt=""
+                className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
+              />
+            ) : (
+              <img
+                src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
+                alt=""
+                className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
+              />
+            )}
+            {currentUser && (
+              <h4 className="text-base font-booking_font_bold text-dark font-bold family1">
+                {currentUser?.name}
+                <span className="block font-normal font-booking_font text-sm text-grey">
+                  {currentUser?.email}
+                </span>
+              </h4>
+            )}
+          </div>
           <ul className="flex flex-col w-full">
             {currentUser
               ? linkData?.slice(0, 6)?.map((x, index) => {
@@ -250,7 +283,8 @@ const Navbar = ({ currentUser }) => {
                     <Link
                       href={`/${x.path}`}
                       key={index}
-                      className="font-bold text-dark   hover:bg-[rgba(0,0,0,.1)] py-[20px] text-3xl px-8"
+                      className="font-normal text-dark font-booking_font
+                        hover:bg-[rgba(0,0,0,.1)] py-[20px] border-b text-lg px-8"
                     >
                       {x.title}
                     </Link>
@@ -261,7 +295,7 @@ const Navbar = ({ currentUser }) => {
                     <Link
                       href={`/${x.path}`}
                       key={index}
-                      className="font-bold text-dark   hover:bg-[rgba(0,0,0,.1)] py-[20px] text-3xl px-8"
+                      className="font-bold text-dark font-booking_font_bold  hover:bg-[rgba(0,0,0,.1)] py-[20px] border-b text-lg px-8"
                     >
                       {x.title}
                     </Link>
@@ -269,11 +303,11 @@ const Navbar = ({ currentUser }) => {
                 })}
             {!currentUser && (
               <div className="w-100 px-2 py-2 flex items-center gap-4">
-                <Link href={"/register"} className="btn w-full btn-1 text-2xl ">
+                <Link href={"/register"} className="btn w-full btn-1 text-xl ">
                   Sign Up
                 </Link>
                 <div className="btn_wrapper w-full">
-                  <div className="btn w-full btn-2 text-2xl font-bold">
+                  <div className="btn w-full btn-2 text-xl font-bold">
                     Log In
                   </div>
                 </div>
