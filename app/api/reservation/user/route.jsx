@@ -1,15 +1,9 @@
+import getCurrentUserSession from "@/app/actions/getCurrentUser";
+import prisma from "@/prisma";
+import { NextResponse } from "next/server";
+
 export async function GET(request, { params }) {
   try {
-    const { id } = params;
-    if (!id) {
-      return NextResponse.json(
-        { message: "Room Id is required" },
-        { status: 400 }
-      );
-    }
-
-    const body = await request.json();
-
     const currentUser = await getCurrentUserSession();
     if (!currentUser) {
       return NextResponse.json(
@@ -22,6 +16,13 @@ export async function GET(request, { params }) {
     const availableRooms = await prisma.reservations.findMany({
       where: {
         userid: currentUser?.id,
+      },
+      include: {
+        user: true,
+        rooms: true,
+      },
+      orderBy: {
+        createdAt: "asc",
       },
     });
 

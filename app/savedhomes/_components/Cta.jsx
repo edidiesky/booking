@@ -93,6 +93,13 @@ export default function Cta() {
           ) : (
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {rooms?.map((apartment, index) => {
+                const startDate = moment(apartment?.rooms?.startDate).format(
+                  "MMMM Do"
+                );
+
+                 const endDate = moment(apartment?.rooms?.endDate).format(
+                   "MMMM Do"
+                 );
                 return (
                   <Link
                     href={`booking/rooms/${apartment?.id}`}

@@ -5,7 +5,7 @@ import axios from "axios";
 export default function useGetReservationById() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [rooms, setRooms] = useState({});
+  const [rooms, setRooms] = useState([]);
   //   console.log(roomid);
   useEffect(() => {
     const getRooms = async () => {

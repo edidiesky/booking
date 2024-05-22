@@ -157,7 +157,7 @@ const Navbar = ({ currentUser }) => {
                             Profile
                           </Link>
                           <Link
-                            href={"/Reservation"}
+                            href={"/trips"}
                             className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                           >
                             Reservation
@@ -178,7 +178,7 @@ const Navbar = ({ currentUser }) => {
                       ) : currentUser?.email ? (
                         <div className="flex profile_dropdown_bottom flex-col w-full">
                           <Link
-                            href={"/Reservation"}
+                            href={"/trips"}
                             className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                           >
                             Reservation

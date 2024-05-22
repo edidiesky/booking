@@ -2,7 +2,7 @@
 import Image from "next/image";
 import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
-import axios from "axios";
+import moment from "moment";
 import { MdArrowRightAlt } from "react-icons/md";
 import {
   opacity,
@@ -13,7 +13,7 @@ import {
 import { motion, useInView } from "framer-motion";
 import { apartmentDataList } from "@/constants/data/apartment";
 import Skeleton from "react-loading-skeleton";
-import useRooms from "@/app/hooks/useRooms";
+import useGetReservationById from "@/app/hooks/useGetReservationById";
 
 export default function Cta() {
   const ctaText_1 = useRef(null);
@@ -29,7 +29,8 @@ export default function Cta() {
    const ctatext4 =
     "This page provides a list of all your placed home reservations";
 
-  const { loading, error, rooms } = useRooms();
+  const { loading, error, rooms } = useGetReservationById();
+  console.log(rooms);
   return (
     <div data-scroll className="py-20 w-full z-50">
       <div className="w-[90%] mx-auto m-auto max-w-custom  flex flex-col gap-4">
@@ -56,7 +57,7 @@ export default function Cta() {
           <div className="w-full lg:w-[600px] flex flex-col gap-24">
             <h5
               ref={ctaText_4}
-              className=" w-full text-lg flex flex-wrap gap-[8px] leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
+              className=" w-full text-sm flex flex-wrap gap-[8px] leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
             >
               {ctatext4.split(" ").map((x, index) => {
                 return (
@@ -93,9 +94,16 @@ export default function Cta() {
           ) : (
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {rooms?.map((apartment, index) => {
+                 const startDate = moment(apartment?.startDate).format(
+                   "MMMM Do"
+                 );
+
+                 const endDate = moment(apartment?.endDate).format(
+                   "MMMM Do"
+                 );
                 return (
                   <Link
-                    href={`booking/rooms/${apartment?.id}`}
+                    href={`/reservation/payment/?reservationId=${apartment?.rooms?.id}`}
                     key={index}
                     className="w-full flex flex-col"
                   >
@@ -109,7 +117,7 @@ export default function Cta() {
                         transition:
                           "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                       }}
-                      src={apartment?.images[0]}
+                      src={apartment?.rooms?.images[0]}
                       className="w-full h-[300px] object-cover hover:grayscale-[1] grayscale-0"
                     />
                     <div className="w-full flex flex-col py-3 bg-white gap-2">
@@ -120,14 +128,24 @@ export default function Cta() {
                         for settling in castle
                       </h4>
                       <h3 className="text-2xl font-booking_font4 font-medium text-text_dark_1 ">
-                        {apartment?.title}
+                        {apartment?.rooms?.title}
                       </h3>
 
                       <div
-                        style={{ letterSpacing: "3px" }}
-                        className="py-4 flex items-center gap-2 pb-2 uppercase border-b border-[rgba(0,0,0,.6)] text-xs font-bold font-booking_font_bold"
+                        style={{ letterSpacing: "1px" }}
+                        className="py-2 flex items-center justify-between gap-2 pb-2 uppercase border-b border-[rgba(0,0,0,.6)] text-xs font-bold font-booking_font_bold"
                       >
-                        explore homes <MdArrowRightAlt />
+                        <span className="flex uppercase items-center gap-2">
+                          Date: <span>{startDate}</span> -{" "}
+                          <span>{endDate}</span>
+                        </span>
+
+                        <span className="flex text-xs text-grey font-normal font-booking_font flex-col">
+                          price
+                          <span className="block text-lg text-stone-950 font-bold font-booking_font_bold">
+                            ${apartment?.rooms?.price}
+                          </span>
+                        </span>
                       </div>
                     </div>
                   </Link>
