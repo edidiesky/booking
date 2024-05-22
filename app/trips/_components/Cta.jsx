@@ -14,7 +14,6 @@ import { motion, useInView } from "framer-motion";
 import { apartmentDataList } from "@/constants/data/apartment";
 import Skeleton from "react-loading-skeleton";
 import useRooms from "@/app/hooks/useRooms";
-import Heart from "@/assets/svg/heart";
 
 export default function Cta() {
   const ctaText_1 = useRef(null);
@@ -26,17 +25,18 @@ export default function Cta() {
     margin: "0px 100px -50px 0px",
   });
 
-  const ctaText1 = "Saved Homes";
-  const ctatext4 =
-    "Don't see your saved homes? Our site uses cookies to track your saved homes and they aren't shared across different devices, so try visiting us again from your original device.";
+  const ctaText1 = "My Trips";
+   const ctatext4 =
+    "This page provides a list of all your placed home reservations";
+
   const { loading, error, rooms } = useRooms();
   return (
     <div data-scroll className="py-20 w-full z-50">
-      <div className="w-[90%] mx-auto max-w-custom_2 flex flex-col gap-4">
-        <div className="w-full grid grid-cols-1 gap-8">
+      <div className="w-[90%] mx-auto m-auto max-w-custom  flex flex-col gap-4">
+        <div className="w-full grid grid-cols-1 gap-2">
           <h3
             ref={ctaText_1}
-            className=" w-full text-6xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
+            className=" w-full text-6xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1.4] font-booking_font4 font-medium text-text_dark_1 "
           >
             {ctaText1.split(" ").map((x, index) => {
               return (
@@ -53,10 +53,10 @@ export default function Cta() {
               );
             })}
           </h3>
-          <div className="w-[60%] flex flex-col">
+          <div className="w-full lg:w-[600px] flex flex-col gap-24">
             <h5
               ref={ctaText_4}
-              className=" w-full text-base flex flex-wrap gap-[4px] leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
+              className=" w-full text-lg flex flex-wrap gap-[8px] leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
             >
               {ctatext4.split(" ").map((x, index) => {
                 return (
@@ -78,10 +78,10 @@ export default function Cta() {
         {/* 1st apartment */}
         <div className="w-full mt-16 flex flex-col gap-20">
           {loading ? (
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {apartmentDataList?.map((apartment, index) => {
                 return (
-                  <div key={index} className="w-full flex flex-col gap-2">
+                  <div className="w-full flex flex-col gap-2">
                     <Skeleton key={index} width={"100%"} height={300} />
                     <Skeleton key={index} width={"30%"} height={10} />
                     <Skeleton key={index} width={"60%"} height={30} />
@@ -113,33 +113,21 @@ export default function Cta() {
                       className="w-full h-[300px] object-cover hover:grayscale-[1] grayscale-0"
                     />
                     <div className="w-full flex flex-col py-3 bg-white gap-2">
-                      <div className="w-full flex items-center justify-between">
-                        <h4
-                          style={{ letterSpacing: "3px" }}
-                          className="text-xs text-grey uppercase font-booking_font_bold font-bold"
-                        >
-                          for settling in castle
-                        </h4>
-                        <Heart />
-                      </div>
+                      <h4
+                        style={{ letterSpacing: "3px" }}
+                        className="text-xs text-grey uppercase font-booking_font_bold font-bold"
+                      >
+                        for settling in castle
+                      </h4>
                       <h3 className="text-2xl font-booking_font4 font-medium text-text_dark_1 ">
                         {apartment?.title}
                       </h3>
 
                       <div
                         style={{ letterSpacing: "3px" }}
-                        className="py-2 flex items-center justify-between gap-2 pb-1  border-b border-[rgba(0,0,0,.6)] text-xs font-bold font-booking_font_bold"
+                        className="py-4 flex items-center gap-2 pb-2 uppercase border-b border-[rgba(0,0,0,.6)] text-xs font-bold font-booking_font_bold"
                       >
-                        <span className="flex uppercase items-center gap-2">
-                          explore homes <MdArrowRightAlt />
-                        </span>
-
-                        <span className="flex text-xs text-grey font-normal font-booking_font flex-col">
-                          price
-                          <span className="block text-lg text-stone-950 font-bold font-booking_font_bold">
-                            ${apartment?.price}
-                          </span>
-                        </span>
+                        explore homes <MdArrowRightAlt />
                       </div>
                     </div>
                   </Link>

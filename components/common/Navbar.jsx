@@ -62,7 +62,7 @@ const Navbar = ({ currentUser }) => {
         className={`bg-inherit w-full min-h-[80px] z-[500] py-4`}
       >
         <div className={`w-full mx-auto max-w-custom_2`}>
-          <div className="w-[95%] mx-auto text-text_dark_1 flex item-center justify-space gap-2 lg:gap-4">
+          <div className="w-[95%] mx-auto text-text_dark_1 flex items-center justify-between gap-2 lg:gap-4">
             <div className=" flex items-center gap-1 justify-start">
               <Image
                 alt="Cotion"
@@ -83,7 +83,7 @@ const Navbar = ({ currentUser }) => {
             </div>
             <div
               className="flex-1 hidden lg:flex justify-center items-center 
-            gap-6"
+            gap-8"
             >
               {linkData?.map((link, index) => {
                 return (
@@ -99,7 +99,7 @@ const Navbar = ({ currentUser }) => {
               })}
             </div>
             <div className="flex items-center justify-end gap-4">
-              <div className="flex lg:hidden items-center justify-start span">
+              <div className="flex lg:hidden backdrop:span">
                 <AiOutlineBars fontSize={"25px"} color="#000" />
               </div>
               <ProfileDropdownStyles className=" relative flex items-end justify-end gap-4">
