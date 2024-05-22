@@ -9,7 +9,7 @@ export default function RoomPaymentTab() {
   // get the reservation Id from the search parameter
  const searchParams = useSearchParams();
  const reservationId = searchParams.get("reservationId");
-//  console.log(reservationId);
+ console.log(reservationId);
 
 const { room, loading } = useGetReservationById(reservationId);
   return (

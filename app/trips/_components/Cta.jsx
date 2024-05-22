@@ -104,7 +104,7 @@ export default function Cta() {
                  );
                 return (
                   <Link
-                    href={`/reservation/payment/?reservationId=${apartment?.rooms?.id}`}
+                    href={`/reservation/payment/?reservationId=${apartment?.id}`}
                     key={index}
                     className="w-full flex flex-col"
                   >
