@@ -7,17 +7,37 @@ import Skeleton from "react-loading-skeleton";
 import useGetReservationById from "@/app/hooks/useGetReservationById";
 export default function RoomPaymentTab() {
   // get the reservation Id from the search parameter
- const searchParams = useSearchParams();
- const reservationId = searchParams.get("reservationId");
- console.log(reservationId);
+  const searchParams = useSearchParams();
+  const reservationId = searchParams.get("reservationId");
+  //  console.log(reservationId);
 
-const { room, loading } = useGetReservationById(reservationId);
+  const { room, loading } = useGetReservationById(reservationId);
+  const startDate = moment(room?.startDate).format("MMMM Do");
+  const endDate = moment(room?.endDate).format("MMMM Do");
+  let date1 = moment(room?.startDate, "MMMM Do YYYY, h:mm:ss a");
+  let date2 = moment(room?.endDate, "MMMM Do YYYY, h:mm:ss a");
+  const differenceInDays = date1;// Convert milliseconds to days
+  console.log(differenceInDays);
   return (
     <>
       {loading ? (
-        <div className="w-full flex flex-col gap-2">
-          <Skeleton width={"100%"} height={460} />
-          <Skeleton width={"60%"} height={50} />
+        <div className="w-full shadow-lg flex flex-col gap-2">
+          <Skeleton width={"100%"} height={260} />
+          <Skeleton width={"60%"} height={30} />
+          <Skeleton width={"40%"} height={10} />
+          <div className="w-full flex items-center justify-between gap-2">
+            <Skeleton width={"40%"} height={10} />
+            <Skeleton width={"40%"} height={10} />
+          </div>
+          <div className="w-full flex items-center justify-between gap-2">
+            <Skeleton width={"40%"} height={10} />
+            <Skeleton width={"40%"} height={10} />
+          </div>{" "}
+          <div className="w-full flex items-center justify-between gap-2">
+            <Skeleton width={"40%"} height={10} />
+            <Skeleton width={"40%"} height={10} />
+          </div>
+          <Skeleton width={"100%"} height={40} />
         </div>
       ) : (
         <div className="w-full flex-col gap-8">
@@ -28,8 +48,8 @@ const { room, loading } = useGetReservationById(reservationId);
               sizes="100vw"
               height={0}
               loading="lazy"
-              src="/apartment_1.jpg"
-              className="image w-full h-[300px]"
+              src={room?.rooms?.images[0]}
+              className="image object-cover w-full h-[300px]"
             />
             <div className="w-full flex flex-col gap-2">
               <div className="flex p-8 pb-6 border-b-4 flex-col w-full gap-2">
@@ -37,10 +57,10 @@ const { room, loading } = useGetReservationById(reservationId);
                   1 Bedroom | 3 Guests
                 </span>
                 <h1 className="text-3xl w-full font-medium font-booking_font4">
-                  SLOPESIDE CHALET - Adorable cabin with a f...
+                  {room?.rooms?.title}
                 </h1>
                 <span className="text-sm font-booking_font font-normal">
-                  Big Bear Lake, CA
+                  {room?.rooms?.address}, {room?.rooms?.city}
                 </span>
                 {/* date and guests */}
                 <div className="py-3 flex items-center justify-between w-full">
@@ -50,7 +70,7 @@ const { room, loading } = useGetReservationById(reservationId);
                       Dates
                     </span>
                     <span className="text-base font-booking_font font-normal">
-                      May 8 - 10, 2024
+                      {startDate} - {endDate}
                     </span>
                   </div>
 

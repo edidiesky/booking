@@ -97,7 +97,7 @@ export async function GET(request, { params }) {
     }
 
     // Check for room availability
-    const availableRooms = await prisma.reservations.findMany({
+    const availableRooms = await prisma.reservations.findUnique({
       where: {
         id:id,
         userid: currentUser?.id,
@@ -105,9 +105,6 @@ export async function GET(request, { params }) {
       include: {
         user: true,
         rooms: true,
-      },
-      orderBy: {
-        createdAt: "asc",
       },
     });
 

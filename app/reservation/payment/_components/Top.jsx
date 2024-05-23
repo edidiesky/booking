@@ -56,7 +56,7 @@ export default function RoomInfo() {
   return (
     <>
       <div className="w-full py-20 flex flex-col gap-24 justify-end items-end">
-        <div className="w-[90%] relative md:w-[80%] mx-auto max-w-custom_2 justify-end items-end flex flex-col">
+        <div className="w-[90%] relative md:w-[80%] mx-auto max-w-custom_1 justify-end items-end flex flex-col">
           <div className="w-full flex flex-col gap-20 justify-end">
             <div className="w-full grid grid-cols-1 lg:grid-cols-custom_5 gap-20">
               <div className="flex flex-col gap-12 w-full">
