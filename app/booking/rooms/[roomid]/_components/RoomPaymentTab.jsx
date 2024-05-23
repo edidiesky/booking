@@ -1,9 +1,12 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import moment from "moment";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import Loader from "@/components/loader";
+import { redirect } from "next/navigation";
 export default function RoomPaymentTab({
   setDateModal,
   dateRange,
@@ -14,9 +17,11 @@ export default function RoomPaymentTab({
   currentUser,
   room,
 }) {
-// states of the reservation booking either loading or
-  const [bookingloading, setBookingLoading] = useState(false)
-  const [bookingsuccess, setBookingSuccess] = useState(false)
+  // states of the reservation booking either loading or
+  const [bookingloading, setBookingLoading] = useState(false);
+  const [bookingdata, setBookingData] = useState(null);
+
+  const router = useRouter();
   const formatDate = (date) => {
     return moment(date).format("MMM D");
   };
@@ -34,7 +39,7 @@ export default function RoomPaymentTab({
     startDate: moment(dateRange?.selection?.startDate, "MMMM Do YYYY"),
     endDate: moment(dateRange?.selection?.endDate, "MMMM Do YYYY"),
   };
-  const handleReservationBooking = () => {
+  const handleReservationBooking = async () => {
     if (currentUser) {
       // console.log('Reservation has been booked')
       // window.location.href = `/reservation/payment`;
@@ -42,25 +47,32 @@ export default function RoomPaymentTab({
         toast.error("Reservation date should be more than 2 days");
       } else {
         // toast.success("Reservation date is fine");
-        const { data } = axios
-          .post(`/api/reservation/${room?.id}`, reservationData)
-          .then(() => {
-            // setModal(false);
-          })
-          .catch((error) => {
-            const erroMessage = error?.response?.data?.message || "An error occurred"
-            toast.error(erroMessage);
-            // console.log(error);
-          })
-          .finally(() => {
-            // setLoading(false);
-          });
+        try {
+          setBookingLoading(true);
+          const { data } = await axios.post(
+            `/api/reservation/${room?.id}`,
+            reservationData
+          );
+          setBookingData(data);
+        } catch (error) {
+          const erroMessage =
+            error?.response?.data?.message || "An error occurred";
+          toast.error(erroMessage);
+        } finally {
+          setBookingLoading(false);
+        }
       }
     } else {
       setLoginModal(true);
     }
   };
-  // console.log(moment(dateRange?.selection?.startDate).format("MMM D"));
+  // console.log(bookingdata);
+
+  useEffect(() => {
+    if (bookingdata !== null) {
+      redirect(`/reservation/payment?reservationId=${bookingdata?.id}`);
+    }
+  }, [bookingdata]);
   return (
     <div className="w-full flex-col gap-8">
       <div className="p-8 border border-[rgba(0,0,0,.4)] shadow rounded-xl flex flex-col w-full">
@@ -181,12 +193,19 @@ export default function RoomPaymentTab({
           {formatDate(dateRange?.selection?.startDate) !== "Invalid date" ? (
             <>
               {currentUser ? (
-                <div
+                <button
                   onClick={handleReservationBooking}
                   className="btn bg-[#494BA2] p-6 cursor-pointer px-8 text-base rounded-[10px] font-bold uppercase text-center text-white font-booking_font_normal"
                 >
-                  Place Reservation
-                </div>
+                  {bookingloading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader type="dots" />
+                      Placing Reservation
+                    </span>
+                  ) : (
+                    "Place Reservation"
+                  )}{" "}
+                </button>
               ) : (
                 <div
                   onClick={handleReservationBooking}

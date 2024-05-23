@@ -1,5 +1,20 @@
 import React from "react";
-const Loader = () => {
+import { ThreeDots } from "react-loader-spinner";
+const Loader = ({type, color}) => {
+  if (type === "dots") {
+    return (
+      <ThreeDots
+        height="27"
+        width="27"
+        radius="9"
+        color={color?color:"#fff"}
+        ariaLabel="three-dots-loading"
+        wrapperStyle={{}}
+        wrapperClassName=""
+        visible={true}
+      />
+    );
+  }
   return (
     <div
       className="flex items-center z-[10000000] justify-center"

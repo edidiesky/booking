@@ -1,6 +1,5 @@
 
 import React from "react";
-import Footer from "@/components/common/Footer";
 import RoomInfo from "./Top";
 import getCurrentUserSession from "@/app/actions/getCurrentUser";
 export default async function BookingItem({ roomid }) {
@@ -8,7 +7,6 @@ export default async function BookingItem({ roomid }) {
   return (
     <div className="bg-white">
       <RoomInfo currentUser={currentUser} roomid={roomid} />
-      <Footer />
     </div>
   );
 }
