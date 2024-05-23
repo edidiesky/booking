@@ -24,9 +24,8 @@ const DashboardIndex = () => {
           <div className="flex items-center lg:justify-end gap-2">
             <div
               onClick={() => setRoomModal(true)}
-              className="p-4 btn cursor-pointer text-sm
-             bg-[#C5F244] px-8 font-booking_font 
-             rounded-[20px] font-bold text-dark"
+              className="p-4 btn cursor-pointer text-base px-8 font-booking_font 
+             rounded-[10px] font-bold text-white"
             >
               Add a room
             </div>
