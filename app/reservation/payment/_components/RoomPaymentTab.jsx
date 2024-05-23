@@ -14,10 +14,12 @@ export default function RoomPaymentTab() {
   const { room, loading } = useGetReservationById(reservationId);
   const startDate = moment(room?.startDate).format("MMMM Do");
   const endDate = moment(room?.endDate).format("MMMM Do");
-  let date1 = moment(room?.startDate, "MMMM Do YYYY, h:mm:ss a");
-  let date2 = moment(room?.endDate, "MMMM Do YYYY, h:mm:ss a");
-  const differenceInDays = date1;// Convert milliseconds to days
-  console.log(differenceInDays);
+  let date1 = moment(room?.startDate);
+  let date2 = moment(room?.endDate);
+  const differenceInDays = date2.diff(date1, "days");// Convert milliseconds to days
+  // console.log(differenceInDays);
+
+  // const
   return (
     <>
       {loading ? (
@@ -88,16 +90,18 @@ export default function RoomPaymentTab() {
               <div className="w-full flex p-4 pb-6 px-8 border-b-4 flex-col gap-2">
                 {/* price */}
                 <div className="w-full text-base font-light font-booking_font flex items-center justify-between">
-                  <span>238.20 x 2 nights</span>
                   <span>
-                    476.40 <span className="text-base">USD</span>
+                    {room?.rooms?.price} x {differenceInDays} nights
+                  </span>
+                  <span>
+                    {room?.totalPrice} <span className="text-base">USD</span>
                   </span>
                 </div>
                 {/* taxes */}
                 <div className="w-full text-base pb-4 font-light font-booking_font flex items-center justify-between">
                   <span>Fees and taxess</span>
                   <span>
-                    476.40 <span className="text-base">USD</span>
+                    {room?.totalPrice} <span className="text-base">USD</span>
                   </span>
                 </div>
                 {/* total */}
@@ -106,7 +110,7 @@ export default function RoomPaymentTab() {
                     Total Cash
                   </span>
                   <span className="font-bold font-booking_font_bold">
-                    476.40{" "}
+                    {room?.totalPrice}{" "}
                     <span className="text-base font-light font-booking_font">
                       USD
                     </span>
@@ -120,7 +124,7 @@ export default function RoomPaymentTab() {
                     Total Cash
                   </span>
                   <span className="font-bold font-booking_font_bold">
-                    476.40{" "}
+                    {room?.totalPrice}{" "}
                     <span className="text-base font-light font-booking_font">
                       USD
                     </span>

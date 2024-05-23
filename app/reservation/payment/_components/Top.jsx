@@ -1,17 +1,22 @@
 "use client";
 import React, { useRef, useState } from "react";
-import Link from "next/link";
-import { motion, useInView, AnimatePresence, Variant } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
-  opacity,
   slideup,
-  smallslideup,
-  slideup2,
 } from "@/constants/utils/framer";
-import RoomTitleAndDescription from "./RoomTitleAndDescription";
 import RoomPaymentTab from "./RoomPaymentTab";
 import { BiCheck, BiChevronLeft } from "react-icons/bi";
+import { useSearchParams } from "next/navigation";
+import moment from "moment";
+import Skeleton from "react-loading-skeleton";
+import useGetReservationById from "@/app/hooks/useGetReservationById";
 export default function RoomInfo() {
+
+  const searchParams = useSearchParams();
+  const reservationId = searchParams.get("reservationId");
+  //  console.log(reservationId);
+
+  const { room, loading } = useGetReservationById(reservationId);
   const [datemodal, setDateModal] = useState(false);
   const [guestsmodal, setGuestsModal] = useState(false);
 
@@ -142,9 +147,13 @@ export default function RoomInfo() {
                     <span className="font-bold">here.</span>
                   </span>
 
-                  <div className="btn p-6 cursor-pointer px-8 text-base font-bold uppercase text-center rounded-lg text-white font-booking_font">
-                    pay now
-                  </div>
+                  {loading ? (
+                    <Skeleton width={"100%"} height={40} />
+                  ) : (
+                    <div className="btn p-6 cursor-pointer px-8 text-base font-bold uppercase text-center rounded-lg text-white font-booking_font">
+                      pay now
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="w-full sticky top-[10%] lg:w-[420px] flex flex-col gap-16">
