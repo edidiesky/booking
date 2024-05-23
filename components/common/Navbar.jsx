@@ -60,7 +60,7 @@ const Navbar = ({ currentUser }) => {
       <div className={`bg-inherit w-full min-h-[80px] z-[500] py-4`}>
         <div className={`w-full mx-auto max-w-custom_2`}>
           <div className="w-[95%] mx-auto text-text_dark_1 flex items-center justify-between gap-2 lg:gap-4">
-            <div className=" flex items-center gap-1 justify-start">
+            <Link href={"/"} className=" flex items-center gap-1 justify-start">
               <Image
                 alt="Cotion"
                 width={0}
@@ -77,7 +77,7 @@ const Navbar = ({ currentUser }) => {
                   Benneth Okeke
                 </span>
               </h4>
-            </div>
+            </Link>
             <div
               className="flex-1 hidden lg:flex justify-center items-center 
             gap-8"
