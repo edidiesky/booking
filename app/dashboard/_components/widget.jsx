@@ -39,7 +39,7 @@ const Widget = () => {
             } font-booking_font4 w-full rounded-[10px] hover:shadow-2xl justify-between cursor-pointer border bg-white flex items-center gap-4 h-48`}
           >
             <div className="flex flex-col">
-              <h3 className="text-5xl font-bold font-booking_font4">
+              <h3 className="text-5xl font-bold font-booking_font_bold">
                 <span className="text-grey pb-4 font-booking_font block text-xl font-normal">
                   {widget?.title}
                 </span>

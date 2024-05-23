@@ -77,7 +77,7 @@ export const Table = styled.div`
             text-align: center;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             padding: 1.7rem 2rem;
-            font-family: "playfair", sans-serif;
+            font-family: "Proxima_Bold", sans-serif;
           }
         }
       }

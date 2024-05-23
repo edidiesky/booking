@@ -4,7 +4,6 @@ import StyledComponentsRegistry from "@/utils/StylesComponentsRegistry";
 import SmoothScroll from "@/constants/utils/SmoothScroll";
 import ToasterProvider from "./providers/ToasterProvider";
 import Navbar from "@/components/common/Navbar";
-import getCurrentUserSession from "./actions/getCurrentUser";
 import "react-loading-skeleton/dist/skeleton.css";
 import Footer from "@/components/common/Footer";
 export const metadata = {
@@ -14,7 +13,6 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const currentUser = await getCurrentUserSession()
   
   return (
     <html
@@ -24,9 +22,8 @@ export default async function RootLayout({ children }) {
         <ToasterProvider />
         <StyledComponentsRegistry>
           <SmoothScroll>
-            <Navbar currentUser={currentUser} />
+         
             {children}
-            <Footer/>
           </SmoothScroll>
         </StyledComponentsRegistry>
       </body>
