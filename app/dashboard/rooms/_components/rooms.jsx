@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+
 import { BiSearch } from "react-icons/bi";
 import { AnimatePresence, Variant } from "framer-motion";
 import ReservationRoomsModal from "@/components/modals/ReservationRoomsModal";

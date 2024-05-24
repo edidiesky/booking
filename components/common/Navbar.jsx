@@ -284,7 +284,7 @@ const Navbar = ({ currentUser }) => {
                       href={`/${x.path}`}
                       key={index}
                       className="font-normal text-dark font-booking_font
-                        hover:bg-[rgba(0,0,0,.1)] py-[20px] border-b text-lg px-8"
+                        hover:bg-[rgba(0,0,0,.1)] py-[20px] border-b text-sm px-8"
                     >
                       {x.title}
                     </Link>
@@ -295,7 +295,7 @@ const Navbar = ({ currentUser }) => {
                     <Link
                       href={`/${x.path}`}
                       key={index}
-                      className="font-bold text-dark font-booking_font_bold  hover:bg-[rgba(0,0,0,.1)] py-[20px] border-b text-lg px-8"
+                      className="font-bold text-dark font-booking_font_bold  hover:bg-[rgba(0,0,0,.1)] py-[20px] border-b text-sm px-8"
                     >
                       {x.title}
                     </Link>
@@ -303,11 +303,11 @@ const Navbar = ({ currentUser }) => {
                 })}
             {!currentUser && (
               <div className="w-100 px-2 py-2 flex items-center gap-4">
-                <Link href={"/register"} className="btn w-full btn-1 text-xl ">
+                <Link href={"/register"} className="btn w-full btn-1 text-lg ">
                   Sign Up
                 </Link>
                 <div className="btn_wrapper w-full">
-                  <div className="btn w-full btn-2 text-xl font-bold">
+                  <div className="btn w-full btn-2 text-lg font-bold">
                     Log In
                   </div>
                 </div>
