@@ -2,7 +2,14 @@
 import React, { useState } from "react";
 import Image from "next/image";
 
-const RoomDetail = () => {
+const RoomDetail = ({
+  title,
+  bathrooms,
+  shortdescription,
+  price,
+  images,
+  rooms,
+}) => {
   const room = {
     image: "/images/images_1.jpg",
   };
@@ -11,19 +18,22 @@ const RoomDetail = () => {
       <div className="w-full flex flex-col gap-8">
         <h4 className="text-2xl font-booking_font4 font-bold">Preview</h4>
         <div className="w-full flex flex-col gap-4">
-          <Image
-            alt="Cotion"
-            width={0}
-            sizes="100vw"
-            height={0}
-            loading="lazy"
-            style={{
-              transition:
-                "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-            }}
-            src="/images/images_1.jpg"
-            className="w-full h-[200px] rounded-lg object-cover hover:grayscale-[1] grayscale-0"
-          />
+          {images?.length > 0 && (
+            <Image
+              alt="Cotion"
+              width={0}
+              sizes="100vw"
+              height={0}
+              loading="lazy"
+              style={{
+                transition:
+                  "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+              }}
+              src={images[0]}
+              className="w-full h-[200px] rounded-lg object-cover hover:grayscale-[1] grayscale-0"
+            />
+          )}
+
           <div className="w-full flex flex-col gap-2">
             <h4
               style={{ letterSpacing: "3px" }}
@@ -32,26 +42,26 @@ const RoomDetail = () => {
               for settling in castle
             </h4>
             <h3 className="text-2xl lg:text-2xl font-booking_font4 font-medium text-text_dark_1 ">
-              BeachFront Oasis
+              {title}
             </h3>
             <div className="w-full flex flex-wrap gap-2">
               <h4
                 style={{ letterSpacing: "2px" }}
                 className="text-xs text-dark uppercase font-booking_font_bold font-bold"
               >
-                Price: $50
+                Price: ${price}
               </h4>
               <h4
                 style={{ letterSpacing: "2px" }}
                 className="text-xs text-dark uppercase font-booking_font_bold font-bold"
               >
-                Rooms: 10
+                Rooms: {rooms}
               </h4>
               <h4
                 style={{ letterSpacing: "2px" }}
                 className="text-xs text-dark uppercase font-booking_font_bold font-bold"
               >
-                BathRooms: 10
+                BathRooms: {bathrooms}
               </h4>
             </div>
           </div>

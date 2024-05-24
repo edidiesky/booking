@@ -5,8 +5,11 @@ import RoomDetail from "./roomdetail";
 const DashboardIndex = () => {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
+  const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
   const [images, setImages] = useState("");
   const [features, setFeatures] = useState([]);
+  const [amenities, setAmenities] = useState([]);
   const [rooms, setRooms] = useState(0);
   const [bathrooms, setBathRooms] = useState(0);
   const [description, setDescription] = useState("");
@@ -24,7 +27,7 @@ const DashboardIndex = () => {
             </span>
           </h3>
         </div>
-        <div className="w-full relative grid items-start md:grid-cols-custom gap-6">
+        <div className="w-full relative flex gap-8 flex-col-reverse lg:grid items-start lg:grid-cols-custom">
           <RoomForms
             description={description}
             setTitle={setTitle}
@@ -42,9 +45,22 @@ const DashboardIndex = () => {
             images={images}
             features={features}
             setFeatures={setFeatures}
+            setAmenities={setAmenities}
+            amenities={amenities}
+            setAddress={setAddress}
+            address={address}
+            city={city}
+            setCity={setCity}
           />
-          <div className="w-full md:w-[350px] sticky top-[15%] left-0">
-            <RoomDetail title={title} shortdescription={shortdescription} />
+          <div className="w-full md:w-[350px] relative lg:sticky top-[15%] left-0">
+            <RoomDetail
+              images={images}
+              title={title}
+              price={price}
+              rooms={rooms}
+              bathrooms={bathrooms}
+              shortdescription={shortdescription}
+            />
           </div>
         </div>
       </div>
