@@ -3,10 +3,17 @@ import React, { useState } from "react";
 import RoomForms from "./roomsform";
 import RoomDetail from "./roomdetail";
 const DashboardIndex = () => {
-  const [roommodal, setRoomModal] = useState(false);
+  const [title, setTitle] = useState('');
+  const [price, setPrice] = useState('');
+  const [images, setImages] = useState("");
+  const [features, setFeatures] = useState([]);
+  const [rooms, setRooms] = useState(0);
+  const [bathrooms, setBathRooms] = useState(0);
+  const [description, setDescription] = useState("");
+  const [shortdescription, setShortDescription] = useState("");
   return (
-    <div className="w-full">
-      <div className="w-full pb-20 flex flex-col gap-12">
+    <div className="w-full relative">
+      <div className="w-full relative pb-20 flex flex-col gap-12">
         <div className="w-full grid lg:grid-cols-2 lg:items-center gap-4 justify-between">
           <h3 className="text-4xl font-booking_font4 font-bold">
             Add Your Room
@@ -17,10 +24,27 @@ const DashboardIndex = () => {
             </span>
           </h3>
         </div>
-        <div className="w-full grid items-start md:grid-cols-custom gap-6">
-          <RoomForms />
-          <div className="w-full md:w-[350px] sticky top-0 left-0">
-            <RoomDetail />
+        <div className="w-full relative grid items-start md:grid-cols-custom gap-6">
+          <RoomForms
+            description={description}
+            setTitle={setTitle}
+            title={title}
+            setDescription={setDescription}
+            setShortDescription={setShortDescription}
+            shortdescription={shortdescription}
+            setPrice={setPrice}
+            price={price}
+            rooms={rooms}
+            setRooms={setRooms}
+            setBathRooms={setBathRooms}
+            bathrooms={bathrooms}
+            setImages={setImages}
+            images={images}
+            features={features}
+            setFeatures={setFeatures}
+          />
+          <div className="w-full md:w-[350px] sticky top-[15%] left-0">
+            <RoomDetail title={title} shortdescription={shortdescription} />
           </div>
         </div>
       </div>

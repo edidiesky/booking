@@ -9,7 +9,7 @@ const RoomDetail = () => {
   return (
     <div className="w-full shadow-xl bg-[#fff] border p-6 rounded-md">
       <div className="w-full flex flex-col gap-8">
-        <h4 className="text-3xl font-booking_font4 font-bold">Preview</h4>
+        <h4 className="text-2xl font-booking_font4 font-bold">Preview</h4>
         <div className="w-full flex flex-col gap-4">
           <Image
             alt="Cotion"
@@ -31,9 +31,29 @@ const RoomDetail = () => {
             >
               for settling in castle
             </h4>
-            <h3 className="text-2xl lg:text-3xl font-booking_font4 font-medium text-text_dark_1 ">
+            <h3 className="text-2xl lg:text-2xl font-booking_font4 font-medium text-text_dark_1 ">
               BeachFront Oasis
             </h3>
+            <div className="w-full flex flex-wrap gap-2">
+              <h4
+                style={{ letterSpacing: "2px" }}
+                className="text-xs text-dark uppercase font-booking_font_bold font-bold"
+              >
+                Price: $50
+              </h4>
+              <h4
+                style={{ letterSpacing: "2px" }}
+                className="text-xs text-dark uppercase font-booking_font_bold font-bold"
+              >
+                Rooms: 10
+              </h4>
+              <h4
+                style={{ letterSpacing: "2px" }}
+                className="text-xs text-dark uppercase font-booking_font_bold font-bold"
+              >
+                BathRooms: 10
+              </h4>
+            </div>
           </div>
         </div>
       </div>
