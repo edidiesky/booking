@@ -120,12 +120,12 @@ html.lenis body {
 }
 
 .loading {
-  width: 4rem;
-  height: 4rem;
-  border: 2px solid #f9f9f9;
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid #f9f9f9;
   border-radius: 50%;
   border-top-color: #0b2735;
-  animation: spinner 1.2s linear infinite;
+  animation: spinner 1s linear infinite;
 }
 
 .rdrMonth {

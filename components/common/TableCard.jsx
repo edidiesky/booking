@@ -72,6 +72,7 @@ const TableCard = ({ x, type }) => {
     );
   }
   if (type === "rooms") {
+      const startDate = moment(x?.createdAt).format("MMMM Do YYYY");
     return (
       <>
         <AnimatePresence>
@@ -86,15 +87,15 @@ const TableCard = ({ x, type }) => {
         <tr key={x?._id}>
           <td>
             <div className="flex w-full justify-center items-center gap-2">
-              <img src={x?.image[0]} alt="" className="w-24 rounded-lg" />
+              <img src={x?.images[0]} alt="" className="w-24 h-16 rounded-lg" />
               <span className="text-[.8rem] family1 text-dark">{x?.title}</span>
             </div>
           </td>
-          <td className="text-[.8rem]">{x?.city}</td>
+          <td className="text-[.8rem]">{x?.address}</td>
 
           <td className="text-[.8rem]">{x?.city}</td>
 
-          <td className="text-[.8rem]">24th December 2024</td>
+          <td className="text-[.8rem]">{startDate}</td>
 
           <td className="text-[.8rem]">
             <div className="flex items-center justify-center">

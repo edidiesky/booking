@@ -17,7 +17,7 @@ const Loader = ({type, color}) => {
   }
   return (
     <div
-      className="flex items-center z-[10000000] justify-center"
+      className="flex items-center top-0 left-0 z-[10000000] justify-center"
       style={{
         width: "100vw",
         position: "fixed",

@@ -9,12 +9,10 @@ const karla = Karla({
 import HomeIndex from "./_components";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
-import getCurrentUserSession from "../actions/getCurrentUser";
 import useGetRoomById from "@/app/hooks/useGetRoomById";
+import getCurrentUserSession from "@/app/actions/getCurrentUser";
 export default async function Home({params}) {
     const currentUser = await getCurrentUserSession();
-  // console.log(params)
-  // const  {loading, error, room } = useGetRoomById(params?.roomid)
   return (
     <div className={`${karla.variable}`}>
       <Navbar currentUser={currentUser} />
