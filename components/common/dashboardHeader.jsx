@@ -49,9 +49,7 @@ const AdminSidebarData = [
   },
 ];
 
-const DashboardHeader = ({ sidebar, setSidebar }) => {
-  // const { userInfo } = useAppSelector(store => store.auth)
-  const userInfo = {};
+const DashboardHeader = ({ sidebar, setSidebar, currentUser }) => {
   // const dispatch = useAppDispatch()
   const pathname = usePathname();
   const [bar, setBar] = React.useState(false);
@@ -100,9 +98,9 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
                 className="w-10 rounded-full"
               />
               <h4 className="text-base text-dark font-booking_font4 font-bold family1">
-                {userInfo?.fullname || "Jermiah frim"}
+                {currentUser?.name}
                 <span className="block font-normal font-booking_font text-sm text-dark">
-                  {userInfo?.email || "jerrme@gmail.com"}
+                  {currentUser?.email}
                 </span>
               </h4>
             </div>
@@ -158,9 +156,9 @@ const DashboardHeader = ({ sidebar, setSidebar }) => {
               className="w-10 rounded-full"
             />
             <h4 className="text-base font-booking_font4 text-dark">
-              {userInfo?.fullname || "Jermiah frim"}
+              {currentUser?.fullname || "Jermiah frim"}
               <span className="block font-normal font-booking_font text-sm text-dark">
-                {userInfo?.email || "jerrme@gmail.com"}
+                {currentUser?.email || "jerrme@gmail.com"}
               </span>
             </h4>
           </div>

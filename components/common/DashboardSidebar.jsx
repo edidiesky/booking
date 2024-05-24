@@ -1,16 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { usePathname } from 'next/navigation'
+import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { BiSearch } from "react-icons/bi";
 import { TiHome } from "react-icons/ti";
 import { FiSettings } from "react-icons/fi";
 import { LuBedDouble } from "react-icons/lu";
-import {
-  FaRegUser,
-  FaHotel,
-} from "react-icons/fa";
+import { FaRegUser, FaHotel } from "react-icons/fa";
 import Link from "next/link";
 
 const AdminSidebarData = [
@@ -52,17 +48,15 @@ const AdminSidebarData = [
   },
 ];
 
-const DashboardSidebar = ({ active }) => {
-  // const { userInfo } = useAppSelector((store) => store.auth);
-  const userInfo = {};
-  const [activeindex, setActiveIndex] = useState(null);
-   const pathname = usePathname();
+const DashboardSidebar = ({ active, currentUser }) => {
+  // const currentUser = {};
+  const pathname = usePathname();
   return (
     <HeaderStyles className={`w-full flex column gap-2`}>
       <div className="w-full h-full py-4 justify-between flex items-center flex-col gap-4">
         <div className="w-full h-[90%] flex flex-col gap-8">
           <div className="flex flex-col w-full items-start justify-between py-1">
-            {/* <h4 className="text-3xl font-medium text-dark">RockTrading</h4> */}
+            {/* <h4 className="text-sm text-dark">RockTrading</h4> */}
             <div className=" w-[90%] mx-auto relative flex gap-4 items-center flex-col justify-between">
               <div className="w-full flex items-center gap-1 justify-start">
                 <Image
@@ -74,9 +68,9 @@ const DashboardSidebar = ({ active }) => {
                   src="https://www.hopper.com/assets/treasure-D-5S8iOp.svg"
                   className="w-14 h-14 rounded-full object-cover"
                 />
-                <h4 className="hidden md:flex flex-col text-lg font-booking_font_normal font-bold text-dark">
+                <h4 className="hidden md:flex flex-col text-lg font-booking_font4 font-bold text-dark">
                   HOME & VILLAS{" "}
-                  <span className="block font-medium text-xs font-booking_font">
+                  <span className="block text-xs font-booking_font">
                     {" "}
                     Benneth Okeke
                   </span>
@@ -84,15 +78,18 @@ const DashboardSidebar = ({ active }) => {
               </div>
             </div>
           </div>
-          <div className="w-full my-4 flex flex-col gap-1">
+          <div className="w-full my-4 flex flex-col">
             {AdminSidebarData?.map((x, index) => {
               // console.log(pathname, `/dashboard${x.tab.path}`);
               return (
-                <div key={index} className="w-[90%] font-booking_font_normal mx-auto">
+                <div
+                  key={index}
+                  className="w-[90%] font-booking_font_normal text-sm mx-auto"
+                >
                   <Link
                     className={`
                       ${pathname === `/dashboard${x.tab.path}` ? "active" : ""}
-                      text-3xl w-[90%] mx-auto text-dark family1 font-medium`}
+                      text-sm w-[90%] mx-auto text-dark family1`}
                     href={`/dashboard${x.tab.path}`}
                   >
                     <div className="flex items-center">
@@ -113,7 +110,7 @@ const DashboardSidebar = ({ active }) => {
             <Link
               className={`${
                 pathname === `/dashboard/settings` ? "active" : ""
-              } text-3xl flex items-center gap-4 p-[6px] px-4 font-booking_font_normal text-dark family1 font-medium`}
+              } text-sm flex items-center gap-4 p-[6px] px-4 font-booking_font_normal text-dark family1`}
               href={`/dashboard/settings`}
             >
               <FiSettings fontSize={"24px"} />
@@ -126,10 +123,10 @@ const DashboardSidebar = ({ active }) => {
                   alt=""
                   className="w-10 rounded-full"
                 />
-                <h4 className="text-base text-dark font-booking_font_normal family1">
-                  {userInfo?.fullname || "Jermiah frim"}
+                <h4 className="text-base text-dark font-booking_font4">
+                  {currentUser?.name}
                   <span className="block font-booking_font text-sm text-grey">
-                    {userInfo?.email || "jerrme@gmail.com"}
+                    {currentUser?.email}
                   </span>
                 </h4>
               </div>
@@ -142,11 +139,12 @@ const DashboardSidebar = ({ active }) => {
 };
 
 export const HeaderStyles = styled.div`
-  width: 350px;
+  width: 320px;
   position: sticky;
   top: 0;
   height: 100vh;
-  background: #f9f9f9;
+  background: #fff;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
   @media (max-width: 980px) {
     display: none;
   }
@@ -160,11 +158,8 @@ export const HeaderStyles = styled.div`
   }
   a,
   .tab {
-    /* padding:14px; */
-    /* min-height: 4rem; */
     font-weight: medium;
     margin: 0 auto;
-    font-size: 15px;
     border-radius: 10px;
     width: 100%;
     display: flex;

@@ -13,13 +13,13 @@ const DashboardIndex = () => {
             <span className="block pt-6 text-sm font-booking_font font-normal">
               The most important idea about this section is that it gives u
               ability to add your rooms. When adding your room product idea do
-              not foget to fill out the forms
+              not forget to fill out the forms else errors are bound to occur
             </span>
           </h3>
         </div>
-        <div className="w-full grid md:grid-cols-custom gap-6">
+        <div className="w-full grid items-start md:grid-cols-custom gap-6">
           <RoomForms />
-          <div className="w-full md:w-[300px]">
+          <div className="w-full md:w-[350px] sticky top-0 left-0">
             <RoomDetail />
           </div>
         </div>
