@@ -6,7 +6,8 @@ const nextConfig = {
       "kalanidhithemes.com",
       "homes-and-villas.marriott.com",
       "www.lovathouse-crieff.com",
-      "a0.muscache.com"
+      "a0.muscache.com",
+      "res.cloudinary.com"
     ],
     formats: ["image/avif", "image/webp"],
   },

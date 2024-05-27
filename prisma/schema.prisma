@@ -67,6 +67,8 @@ model Rooms {
   bedroom     Int
   bathroom    Int
   images      String[]
+  features    Json?
+  amenities    Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

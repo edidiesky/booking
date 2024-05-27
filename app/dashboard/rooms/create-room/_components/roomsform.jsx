@@ -4,6 +4,8 @@ import { BiSearch, BiUpload } from "react-icons/bi";
 import Loader from "@/components/loader";
 import Link from "next/link";
 import { RoomFeaturesList, RoomFeaturesList2 } from "@/constants/data/feature";
+import ImageUpload from "./imageUpload";
+import Roomfeatures from "./roomfeatures";
 
 const RoomForms = ({
   title,
@@ -116,8 +118,8 @@ const RoomForms = ({
                 name="price"
                 value={price}
                 id="price"
-                type="text"
-                onChange={(e) => setPrice(e.target.value)}
+                type="number"
+                onChange={(e) => setPrice(parseFloat(e.target.value))}
                 className="text-sm w-full input"
               />
             </label>
@@ -132,7 +134,7 @@ const RoomForms = ({
                   value={rooms}
                   id="rooms"
                   type="number"
-                  onChange={(e) => setRooms(e.target.value)}
+                  onChange={(e) => setRooms(parseFloat(e.target.value))}
                   className="text-sm w-full input"
                 />
               </label>
@@ -146,7 +148,7 @@ const RoomForms = ({
                   value={bathrooms}
                   id="bathrooms"
                   type="number"
-                  onChange={(e) => setBathRooms(e.target.value)}
+                  onChange={(e) => setBathRooms(parseFloat(e.target.value))}
                   className="text-sm w-full input"
                 />
               </label>
@@ -202,106 +204,15 @@ const RoomForms = ({
       </div>
 
       {/* images */}
-      <div className="w-full shadow-xl bg-[#fff] border p-6 px-2 rounded-md">
-        <div className="w-[95%] md:w-[90%] mx-auto flex flex-col gap-8">
-          <div className="w-full flex items-center justify-between">
-            <h4 className="text-2xl font-booking_font4 font-bold">
-              Room Images
-              <span className="font-normal font-booking_font text-base block">
-                Share what makes your rooms images special.
-              </span>
-            </h4>
-          </div>
-          <div className="w-full flex flex-col gap-4">
-            <div className="w-full flex flex-col gap-4 text-sm font-booking_font_bold">
-              <span>Photos</span>
-              <div className="w-full bg-[#fafafa] rounded-lg flex items-center justify-center h-[300px]">
-                <label
-                  htmlFor="titlprice"
-                  className="text-sm font-bold cursor-pointer flex items-center shadow-xl border rounded-lg justify-center bg-white p-4 gap-3 font-booking_font_bold"
-                >
-                  <BiUpload /> Select the photos for your room
-                  {/* <input
-                    name="price"
-                    value={price}
-                    id="price"
-                    type="text"
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="text-sm w-full input"
-                  /> */}
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ImageUpload images={images} setImages={setImages} />
 
       {/* Room Attributes and Features */}
-      <div className="w-full shadow-xl bg-[#fff] border p-6 px-2 rounded-md">
-        <div className="w-[95%] md:w-[90%] mx-auto flex flex-col gap-8">
-          <div className="w-full flex items-center justify-between">
-            <h4 className="text-2xl font-booking_font4 font-bold">
-              Room Attributes & Features
-              <span className="font-normal font-booking_font text-base block">
-                Share what makes your place special.
-              </span>
-            </h4>
-          </div>
-          <div className="pt-2 w-full flex flex-col gap-8">
-            <div className="flex gap-4 flex-col w-full">
-              <span className="font-bold font-booking_font_bold text-base block">
-                Room Features
-              </span>
-              <div className="w-full grid grid-cols-3 lg:grid-cols-4 gap-3">
-                {RoomFeaturesList?.map((x, index) => {
-                  const active = features.includes(x);
-                  return (
-                    <div
-                      onClick={() => handleFeatureSelection(x)}
-                      className={`${
-                        active
-                          ? "border-[rgba(0,0,0,.7)] bg-[#fafafa] border-2"
-                          : "border-[rgba(0,0,0,.08)] border"
-                      } flex w-full cursor-pointer hover:bg-[#fafafa] p-4 rounded-lg flex-col gap-2`}
-                    >
-                      {x?.icon}
-                      <span className="text-xs font-booking_font_bold font-bold">
-                        {x?.title}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="flex gap-4 flex-col w-full">
-              <span className="font-bold font-booking_font_bold text-base block">
-                Room Amenities
-              </span>
-              <div className="w-full grid grid-cols-3 lg:grid-cols-4 gap-3">
-                {RoomFeaturesList2?.map((x, index) => {
-                  const active = amenities.includes(x);
-                  return (
-                    <div
-                      onClick={() => handleRoomAmenitiesSelection(x)}
-                      className={`${
-                        active
-                          ? "border-[rgba(0,0,0,.7)] bg-[#fafafa] border-2"
-                          : "border-[rgba(0,0,0,.08)] border"
-                      } flex w-full cursor-pointer hover:bg-[#fafafa] p-4 rounded-lg flex-col gap-2`}
-                    >
-                      {x?.icon}
-                      <span className="text-xs font-booking_font_bold font-bold">
-                        {x?.title}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Roomfeatures
+        amenities={amenities}
+        features={features}
+        handleFeatureSelection={handleFeatureSelection}
+        handleRoomAmenitiesSelection={handleRoomAmenitiesSelection}
+      />
     </div>
   );
 };

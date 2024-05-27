@@ -104,8 +104,6 @@ const apartmentDataList = [
       "Family room, nice and spacious with a double and single bed with the fabulous shower room. You won’t want to leave.",
     price: 70,
   },
-
- e
 ];
 
 
