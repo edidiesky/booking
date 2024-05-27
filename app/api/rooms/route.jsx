@@ -4,7 +4,11 @@ import { NextResponse } from "next/server";
 
 export async function GET(request) {
   try {
-    const rooms = await prisma.rooms.findMany({});
+    const rooms = await prisma.rooms.findMany({
+       orderBy: {
+        createdAt: "desc",
+      },
+    });
 
     return NextResponse.json(rooms);
   } catch (error) {

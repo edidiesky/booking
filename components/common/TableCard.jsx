@@ -72,12 +72,13 @@ const TableCard = ({ x, type }) => {
     );
   }
   if (type === "rooms") {
-      const startDate = moment(x?.createdAt).format("MMMM Do YYYY");
+    const startDate = moment(x?.createdAt).format("MMMM Do YYYY");
     return (
       <>
         <AnimatePresence>
           {userdeletemodal && (
             <DeleteModal
+              type="rooms"
               id={x?._id}
               modal={userdeletemodal}
               setModal={setUserDeleteModal}
@@ -86,9 +87,11 @@ const TableCard = ({ x, type }) => {
         </AnimatePresence>
         <tr key={x?._id}>
           <td>
-            <div className="flex w-full justify-center items-center gap-2">
-              <img src={x?.images[0]} alt="" className="w-24 h-16 rounded-lg" />
-              <span className="text-[.8rem] family1 text-dark">{x?.title}</span>
+            <div className="flex w-full justify-center flex-col items-center gap-2">
+              <img src={x?.images[0]} alt="" className="w-28 h-16 rounded-lg" />
+              <span className="text-[.8rem] family1 text-center text-dark">
+                {x?.title}
+              </span>
             </div>
           </td>
           <td className="text-[.8rem]">{x?.address}</td>
@@ -171,7 +174,9 @@ const TableCard = ({ x, type }) => {
         </td>
 
         <td>
-          <span className="text-grey text-[.8rem] family1 text-light">Type 1</span>
+          <span className="text-grey text-[.8rem] family1 text-light">
+            Type 1
+          </span>
         </td>
         <td>
           <span className="text-grey text-[.8rem] family1 text-light">

@@ -67,7 +67,7 @@ export const Table = styled.div`
           transition: all 0.4s;
           background-color: #f9f9f9;
           border-radius: 40px;
-          padding: 1rem 2rem;
+          padding: 1rem;
           text-transform: uppercase;
           &:hover {
             background-color: rgba(0, 0, 0, 0.1);
@@ -76,7 +76,7 @@ export const Table = styled.div`
             font-size: 0.8rem;
             text-align: center;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            padding: 1.7rem 2rem;
+            padding: 1.7rem 1rem;
             font-family: "Proxima_Bold", sans-serif;
           }
         }
@@ -89,12 +89,12 @@ export const Table = styled.div`
           transition: all 0.5s;
           z-index: 200;
           &:hover {
-            background-color: rgba(0, 0, 0, 0.09);
+            background-color: rgba(0, 0, 0, 0.06);
           }
           td {
             text-align: center;
-            padding: 1.7rem 1rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.07);
             font-family: "Proxima_SemiBold", sans-serif;
 
             span {

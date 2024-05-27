@@ -1,11 +1,10 @@
 "use client";
 import React, { useState } from "react";
+import { CiWarning } from "react-icons/ci";
 import { motion, AnimatePresence, Variant } from "framer-motion";
 import styled from "styled-components";
 import { RxCross2 } from "react-icons/rx";
-// import { useAppDispatch, useAppSelector } from "@/hooks/reduxtoolkit";
-// import { ClearUserInfoAlert } from "@/features/auth/authSlice";
-// import { AdminDeleteUserProfile } from "@/features/auth/authReducer";
+import { IoWarning } from "react-icons/io5";
 
 export default function DeleteModal({ type, modal, setModal, id }) {
   // const dispatch = useAppDispatch();
@@ -13,6 +12,63 @@ export default function DeleteModal({ type, modal, setModal, id }) {
   const handleClearAlert = () => {
     setModal(false);
   };
+  if (type === "rooms") {
+    return (
+      <DeleteContainer
+        as={motion.div}
+        initial={{ opacity: 0 }}
+        exit={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <motion.div
+          initial={{
+            y: "100vh",
+          }}
+          animate={{
+            y: "0",
+            transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] },
+          }}
+          exit={{
+            y: "100vh",
+            transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] },
+          }}
+          className={"deleteCard gap-2"}
+        >
+          <div className="cross" onClick={handleClearAlert}>
+            <RxCross2 />
+          </div>
+          <div className="deleteCardTop p-8 px-4 flex items-center justify-center flex-col gap-2">
+            <span className="w-full flex items-center justify-center">
+              <CiWarning fontSize={"60px"} color={"var(--red)"} />
+            </span>
+            <h3 className="text-lg text-center font-bold font-booking_font_bold family1">
+              Delete this room?
+              <span className="block text-sm w-[80%] mx-auto text-center font-booking_font font-normal text-dark">
+                By deleting this product, you are directly removing the product
+                form the database and the website. It cannot be retrieved back
+                if this action you carry has been taken.
+              </span>
+            </h3>
+          </div>
+
+          <div className="deleteCardBottom py-3 w-full flex items-center justify-end px-4 border-t">
+            <button
+              className="family1 font-booking_font_bold flex items-center justify-center text-sm"
+              onClick={handleClearAlert}
+            >
+              Cancel
+            </button>
+            <button
+              className="deleteBtn family1 font-booking_font_bold flex items-center justify-center text-sm"
+              // onClick={() => dispatch(AdminDeleteUserProfile({ Detailsdata: id }))}
+            >
+              Delete room
+            </button>
+          </div>
+        </motion.div>
+      </DeleteContainer>
+    );
+  }
   return (
     <DeleteContainer
       as={motion.div}
@@ -37,28 +93,32 @@ export default function DeleteModal({ type, modal, setModal, id }) {
         <div className="cross" onClick={handleClearAlert}>
           <RxCross2 />
         </div>
-        <div className="deleteCardTop">
-          <h3 className="text-xl font-bold font-booking_font_bold family1">Delete this User?</h3>
-          <p className="family1 text-sm text-center leading-[1.2]">
-            Are you sure you want to delete user with id{" "}
-            <span className="text-blue">&quot;{id}&quot; </span> from the
-            database?
-            <br /> You can&quot;t undo this action.
-          </p>
+        <div className="deleteCardTop p-8 px-4 flex items-center justify-center flex-col gap-2">
+          <span className="w-full flex items-center justify-center">
+            <CiWarning fontSize={"60px"} color={"var(--red)"} />
+          </span>
+          <h3 className="text-lg text-center font-bold font-booking_font_bold family1">
+            Delete this user?
+            <span className="block text-sm w-[80%] mx-auto text-center font-booking_font font-normal text-dark">
+              By deleting this user, you are directly removing the product form
+              the database and the website. It cannot be retrieved back if this
+              action you carry has been taken.
+            </span>
+          </h3>
         </div>
 
-        <div className="deleteCardBottom">
+        <div className="deleteCardBottom py-3 w-full flex items-center justify-end px-4 border-t">
           <button
-            className="family1 flex items-center justify-center text-sm"
+            className="family1 font-booking_font_bold flex items-center justify-center text-sm"
             onClick={handleClearAlert}
           >
             Cancel
           </button>
           <button
-            className="btn deleteBtn family1 flex items-center justify-center text-sm"
+            className="deleteBtn family1 font-booking_font_bold flex items-center justify-center text-sm"
             // onClick={() => dispatch(AdminDeleteUserProfile({ Detailsdata: id }))}
           >
-            Delete User
+            Delete user
           </button>
         </div>
       </motion.div>
@@ -78,24 +138,26 @@ const DeleteContainer = styled(motion.div)`
   top: 0;
   background: rgba(0, 0, 0, 0.4);
   .deleteCard {
-    max-width: 400px;
-    min-width: 200px;
+    max-width: 600px;
+    min-width: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     background: #fff;
-    padding: 2rem;
-    gap: 2rem;
-    border-radius: 6px;
+    border-radius: 4px;
     box-shadow: 0 2rem 3rem rgba(0, 0, 0, 0.4);
     position: relative;
+    @media (max-width: 780px) {
+      max-width: 90%;
+      min-width: 90%;
+    }
     .cross {
       position: absolute;
       right: 10px;
-      top: 20px;
-      width: 3rem;
-      height: 3rem;
+      top: 1.5%;
+      width: 2rem;
+      height: 2rem;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -110,25 +172,23 @@ const DeleteContainer = styled(motion.div)`
     }
     .deleteCardBottom {
       display: flex;
-      align-items: center;
-      justify-content: center;
       gap: 1rem;
       button {
-        padding: 1rem 2rem;
-        height: 55px;
+        padding: 0.5rem 2rem;
+        min-height: 46px;
         border: none;
-        font-weight: 400;
+        font-weight: 600;
         background: #eee;
         color: #000;
         outline: none;
-        border-radius: 40px;
+        border-radius: 10px;
         cursor: pointer;
         text-transform: none;
         &:hover {
           background: #c4c4c4;
         }
         &.deleteBtn {
-          background: #000;
+          background: var(--red);
           color: #fff;
           &:hover {
             opacity: 0.8;
@@ -138,7 +198,7 @@ const DeleteContainer = styled(motion.div)`
       }
     }
     .deleteCardCenter {
-      padding: 2rem;
+      padding: 2rem 0;
       width: 100%;
       background: var(--grey-3);
       border-left: 5px solid var(--red);
@@ -155,7 +215,6 @@ const DeleteContainer = styled(motion.div)`
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      gap: 1.4rem;
     }
   }
 `;

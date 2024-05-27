@@ -36,7 +36,7 @@ const DashboardIndex = () => {
     bathroom: bathrooms,
     description: description,
   };
-  // console.log(roomData);
+  console.log(roomData);
   const handleRoomCreation = async () => {
     try {
       setRoomCreationLoading(true);
@@ -49,6 +49,7 @@ const DashboardIndex = () => {
     }
     finally {
       setRoomCreationLoading(false);
+       setRoomCreationSuccess(true);
     }
   };
   useEffect(() => {
@@ -58,7 +59,7 @@ const DashboardIndex = () => {
       }, 3000);
       return () => clearTimeout(timeout);
     }
-  }, [roomcreationsuccess]);
+  }, [roomcreationsuccess, redirect]);
   return (
     <div className="w-full relative">
       <div className="w-full relative pb-20 flex flex-col gap-12">
@@ -75,7 +76,7 @@ const DashboardIndex = () => {
             <button
               disabled={roomcreationloading}
               onClick={handleRoomCreation}
-              className="btn text-sm p-4 px-8 text-white rounded-lg"
+              className="btn text-sm p-3 px-8 text-white rounded-lg"
             >
               {roomcreationloading ? (
                 <span className="flex items-center justify-center gap-2">

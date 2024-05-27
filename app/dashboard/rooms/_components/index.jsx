@@ -17,7 +17,7 @@ const DashboardIndex = () => {
         <div className="w-full grid lg:grid-cols-2 lg:items-center gap-4 justify-between">
           <h3 className="text-4xl font-booking_font4 font-bold">
             My Rooms
-            <span className="block pt-4 text-base font-booking_font font-normal">
+            <span className="block pt-4 text-sm font-booking_font font-normal">
               Make a review of your rooms created either by adding or modifying
               their content
             </span>
@@ -25,7 +25,7 @@ const DashboardIndex = () => {
           <div className="flex items-center lg:justify-end gap-2">
             <Link
               href={"/dashboard/rooms/create-room"}
-              className="p-4 btn cursor-pointer text-base px-8 font-booking_font 
+              className="p-3 btn cursor-pointer text-sm px-8 font-booking_font 
              rounded-[10px] font-bold text-white"
             >
               Add a room

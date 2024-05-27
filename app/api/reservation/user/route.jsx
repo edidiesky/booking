@@ -22,7 +22,7 @@ export async function GET(request, { params }) {
         rooms: true,
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: "desc",
       },
     });
 
