@@ -108,7 +108,7 @@ export default function Hero() {
 
       <div
         data-scroll
-        className="min-h-[100vh] z-40 relative flex flex-col items-center justify-center"
+        className="py-64 z-40 relative flex flex-col items-center justify-center"
       >
         <div
           style={{
