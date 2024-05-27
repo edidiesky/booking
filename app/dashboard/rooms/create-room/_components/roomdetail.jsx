@@ -18,7 +18,7 @@ const RoomDetail = ({
       <div className="w-full flex flex-col gap-8">
         <h4 className="text-2xl font-booking_font4 font-bold">Preview</h4>
         <div className="w-full flex flex-col gap-4">
-          {images?.length > 0 && (
+          {images?.length > 0 ? (
             <Image
               alt="Cotion"
               width={0}
@@ -32,6 +32,10 @@ const RoomDetail = ({
               src={images[0]}
               className="w-full h-[200px] rounded-lg object-cover hover:grayscale-[1] grayscale-0"
             />
+          ) : (
+            <>
+              <div className="w-full h-[200px] bg-[#fafafa] border"></div>
+            </>
           )}
 
           <div className="w-full flex flex-col gap-2">

@@ -1,16 +1,34 @@
 "use client";
 import React, { useState } from "react";
+import axios from "axios";
 import { CiWarning } from "react-icons/ci";
 import { motion, AnimatePresence, Variant } from "framer-motion";
 import styled from "styled-components";
 import { RxCross2 } from "react-icons/rx";
-import { IoWarning } from "react-icons/io5";
-
-export default function DeleteModal({ type, modal, setModal, id }) {
-  // const dispatch = useAppDispatch();
-  // const { userAlert, userDetails } = useAppSelector((store) => store.auth);
+import toast from "react-hot-toast";
+import Loader from "../loader";
+import { useRouter } from "next/navigation";
+export default function DeleteModal({ type, modal, setModal, room }) {
+  const [roomdeleteloading, setRoomDeleteLoading] = useState(false);
+  const router = useRouter();
   const handleClearAlert = () => {
     setModal(false);
+  };
+  const handleDeleteRoom = async () => {
+    try {
+      setRoomDeleteLoading(true);
+      await axios.delete(`/api/rooms/${room?.id}`);
+      toast.success("Room has been succesfully deleted");
+
+      router.refresh();
+      setModal(false);
+    } catch (error) {
+      const erroMessage = error?.response?.data?.message || "An error occurred";
+      toast.error(erroMessage);
+    } finally {
+      setRoomDeleteLoading(false);
+      router.refresh();
+    }
   };
   if (type === "rooms") {
     return (
@@ -59,10 +77,19 @@ export default function DeleteModal({ type, modal, setModal, id }) {
               Cancel
             </button>
             <button
+              disabled={roomdeleteloading}
+              onClick={handleDeleteRoom}
               className="deleteBtn family1 font-booking_font_bold flex items-center justify-center text-sm"
               // onClick={() => dispatch(AdminDeleteUserProfile({ Detailsdata: id }))}
             >
-              Delete room
+              {roomdeleteloading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader type="dots" />
+                  Deleting in process
+                </span>
+              ) : (
+                " Delete Room"
+              )}
             </button>
           </div>
         </motion.div>
@@ -115,10 +142,19 @@ export default function DeleteModal({ type, modal, setModal, id }) {
             Cancel
           </button>
           <button
+            disabled={roomdeleteloading}
+            onClick={handleDeleteRoom}
             className="deleteBtn family1 font-booking_font_bold flex items-center justify-center text-sm"
             // onClick={() => dispatch(AdminDeleteUserProfile({ Detailsdata: id }))}
           >
-            Delete user
+            {roomdeleteloading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader type="dots" />
+                Deleting in process
+              </span>
+            ) : (
+              " Delete user"
+            )}
           </button>
         </div>
       </motion.div>

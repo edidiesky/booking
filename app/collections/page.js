@@ -8,7 +8,7 @@ export default async function Root() {
   // console.log(params)
   // const  {loading, error, room } = useGetRoomById(params?.roomid)
   return (
-    <div className={`${karla.variable}`}>
+    <div>
       <Navbar currentUser={currentUser} />
       <HomeIndex />
       <Footer />
