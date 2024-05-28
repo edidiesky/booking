@@ -1,11 +1,7 @@
 "use client";
-import Image from "next/image";
 import React, { useRef, useState, useEffect } from "react";
-import { cookies } from "next/headers";
 import {
-  opacity,
   slideup,
-  smallslideup,
   slideup2,
 } from "@/constants/utils/framer";
 import { motion, useInView } from "framer-motion";

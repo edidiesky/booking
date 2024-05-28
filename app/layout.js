@@ -3,9 +3,8 @@ import "./globals.css";
 import StyledComponentsRegistry from "@/utils/StylesComponentsRegistry";
 import SmoothScroll from "@/constants/utils/SmoothScroll";
 import ToasterProvider from "./providers/ToasterProvider";
-import Navbar from "@/components/common/Navbar";
 import "react-loading-skeleton/dist/skeleton.css";
-import Footer from "@/components/common/Footer";
+import StoreProvider from "./storeProvider";
 export const metadata = {
   title: "Okeke Booking Platform",
   description:
@@ -15,15 +14,12 @@ export const metadata = {
 export default async function RootLayout({ children }) {
   
   return (
-    <html
-      lang="en"
-    >
+    <html lang="en">
       <body>
         <ToasterProvider />
         <StyledComponentsRegistry>
           <SmoothScroll>
-         
-            {children}
+            <StoreProvider>{children}</StoreProvider>
           </SmoothScroll>
         </StyledComponentsRegistry>
       </body>

@@ -12,6 +12,7 @@
   "dependencies": {
     "@next-auth/prisma-adapter": "^0.4.4-canary.81",
     "@prisma/client": "^5.14.0",
+    "@reduxjs/toolkit": "^2.2.5",
     "@studio-freight/lenis": "^1.0.42",
     "apexcharts": "^3.49.0",
     "axios": "^1.6.8",
