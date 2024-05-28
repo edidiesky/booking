@@ -7,7 +7,7 @@ import Link from "next/link";
 import { MdArrowRightAlt } from "react-icons/md";
 import Heart from "@/assets/svg/heart";
 import { useRouter } from "next/navigation";
-
+import toast from "react-hot-toast";
 const RoomCard = ({
   apartment,
   index,
@@ -88,9 +88,14 @@ const RoomCard = ({
         (rooms) => rooms?.id !== apartment?.id
       );
       localStorage.setItem("savedRooms", JSON.stringify(newsavedrooms));
+      toast.success(
+        `${apartment?.title} has been removed from saved collections`
+      );
       setSavedRooms(newsavedrooms);
     } else {
       setSavedRooms([...savedrooms, apartment]);
+      toast.success(`${apartment?.title} has been added to saved collections`);
+
       localStorage.setItem(
         "savedRooms",
         JSON.stringify([...savedrooms, apartment])

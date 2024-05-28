@@ -1,9 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useRef, useState, useEffect } from "react";
-import Link from "next/link";
-import axios from "axios";
-import { MdArrowRightAlt } from "react-icons/md";
+import { cookies } from "next/headers";
 import {
   opacity,
   slideup,
@@ -32,14 +30,13 @@ export default function Cta() {
     "We've hand-picked the most inspirational and interesting homes from around the world in our Curated Collections. Start exploring and 'heart' your favorites to your 'Saved Homes' list.";
 
   const { loading, error, rooms } = useRooms();
-  // let savedroomsInLocalStoarge = localStorage.getItem("savedRooms");
-  // console.log(savedroomsInLocalStoarge);
+  let savedroomsInLocalStorage = JSON.parse(localStorage.getItem("savedRooms"));
   useEffect(() => {
-    let savedroomsInLocalStoarge = JSON.parse(
+    let savedroomsInLocalStorage = JSON.parse(
       localStorage.getItem("savedRooms")
     );
-    if (savedroomsInLocalStoarge) {
-      setSavedRooms(savedroomsInLocalStoarge);
+    if (savedroomsInLocalStorage) {
+      setSavedRooms(savedroomsInLocalStorage);
     }
   }, [setSavedRooms]);
 
@@ -108,8 +105,8 @@ export default function Cta() {
           ) : (
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
               {rooms?.map((apartment, index) => {
-                 const includedInSavedRooms = savedrooms.includes(apartment);
-                 console.log(includedInSavedRooms, savedrooms);
+                const includedInSavedRooms = savedrooms?.includes(apartment);
+                console.log(includedInSavedRooms, savedrooms);
                 return (
                   <RoomCard
                     setSavedRooms={setSavedRooms}
