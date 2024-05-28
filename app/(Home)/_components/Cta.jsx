@@ -57,7 +57,7 @@ export default function Cta() {
   return (
     <div data-scroll className="py-32 w-full mt-20 z-50">
       <div className="w-[90%] mx-auto items-start m-auto max-w-custom  flex flex-col gap-4">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-custom gap-8 lg:gap-20">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-custom gap-8 lg:items-center lg:gap-20">
           <div className="w-full">
             <h3
               ref={ctaText_1}
@@ -82,7 +82,7 @@ export default function Cta() {
           <div className="w-full lg:w-[600px] flex flex-col gap-24">
             <h5
               ref={ctaText_4}
-              className=" w-full text-lg lg:text-lg flex flex-wrap gap-x-[8px] gap-y-[8px] md:gap-y-[4px]  leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
+              className=" w-full text-base flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
             >
               {ctatext4.split(" ").map((x, index) => {
                 return (
