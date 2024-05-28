@@ -32,7 +32,7 @@ export default function Cta() {
         <div className="w-full grid grid-cols-1 gap-2">
           <h3
             ref={ctaText_1}
-            className=" w-full text-6xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1.4] font-booking_font4 font-medium text-text_dark_1 "
+            className=" w-full text-5xl md:text-6xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1.4] font-booking_font4 font-medium text-text_dark_1 "
           >
             {ctaText1.split(" ").map((x, index) => {
               return (
@@ -90,7 +90,12 @@ export default function Cta() {
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {rooms?.map((apartment, index) => {
                 return (
-                  <RoomCard type={'trips'} apartment={apartment} index={index} key={index} />
+                  <RoomCard
+                    type={"trips"}
+                    apartment={apartment}
+                    index={index}
+                    key={index}
+                  />
                 );
               })}
             </div>

@@ -132,9 +132,9 @@ const Navbar = ({ currentUser }) => {
                       />
                     )}
                     {currentUser && (
-                      <h4 className="text-base font-booking_font_bold text-dark font-bold family1">
+                      <h4 className="text-sm font-booking_font_bold text-dark font-bold family1">
                         {currentUser?.name}
-                        <span className="block font-normal font-booking_font text-sm text-grey">
+                        <span className="block font-normal font-booking_font text-xs text-grey">
                           {currentUser?.email}
                         </span>
                       </h4>

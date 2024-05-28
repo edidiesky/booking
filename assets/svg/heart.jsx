@@ -8,6 +8,7 @@ const Heart = ({ active }) => {
         aria-hidden="true"
         role="presentation"
         focusable="false"
+        className="cursor-pointer"
         style={{
           display: "block",
           fill: active ? "var(--red)" : "rgba(0, 0, 0, 0.5)",
