@@ -1,20 +1,18 @@
+"use client";
 import { createSlice } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
 const initialState = {
-  savedRooms:[]
+  savedRooms:  [],
 };
 
 export const favouritesSlice = createSlice({
   name: "favourites",
   initialState,
   reducers: {
-    getBackgroundfavourites: (state, action) => {
-
-    }
+    handleFavouritesRooms: (state, action) =>{}
   },
 });
 
-export const {
-  getBackgroundfavourites,
-} = favouritesSlice.actions;
+export const { handleFavouritesRooms } = favouritesSlice.actions;
 
 export default favouritesSlice.reducer;

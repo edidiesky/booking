@@ -10,8 +10,7 @@ import Skeleton from "react-loading-skeleton";
 import useRooms from "@/app/hooks/useRooms";
 import RoomCard from "@/components/common/RoomCard";
 
-export default function Cta() {
-  const [savedrooms, setSavedRooms] = useState([]);
+export default function Cta({ currentUser }) {
   const ctaText_1 = useRef(null);
   const ctaText_4 = useRef(null);
   const inView = useInView(ctaText_1, {
@@ -26,15 +25,6 @@ export default function Cta() {
     "We've hand-picked the most inspirational and interesting homes from around the world in our Curated Collections. Start exploring and 'heart' your favorites to your 'Saved Homes' list.";
 
   const { loading, error, rooms } = useRooms();
-  let savedroomsInLocalStorage = JSON.parse(localStorage.getItem("savedRooms"));
-  useEffect(() => {
-    let savedroomsInLocalStorage = JSON.parse(
-      localStorage.getItem("savedRooms")
-    );
-    if (savedroomsInLocalStorage) {
-      setSavedRooms(savedroomsInLocalStorage);
-    }
-  }, [setSavedRooms]);
 
   return (
     <div data-scroll className="py-20 w-full z-50">
@@ -101,16 +91,12 @@ export default function Cta() {
           ) : (
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
               {rooms?.map((apartment, index) => {
-                const includedInSavedRooms = savedrooms?.includes(apartment);
-                console.log(includedInSavedRooms, savedrooms);
                 return (
                   <RoomCard
-                    setSavedRooms={setSavedRooms}
-                    savedrooms={savedrooms}
+                    currentUser={currentUser}
                     apartment={apartment}
                     index={index}
                     key={index}
-                    includedInSavedRooms={includedInSavedRooms}
                   />
                 );
               })}

@@ -1,24 +1,47 @@
 "use client";
 import moment from "moment";
+import axios from "axios";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MdArrowRightAlt } from "react-icons/md";
 import Heart from "@/assets/svg/heart";
-import { useRouter } from "next/navigation";
+
 import toast from "react-hot-toast";
-const RoomCard = ({
-  apartment,
-  index,
-  type,
-  setSavedRooms,
-  savedrooms,
-  includedInSavedRooms,
-}) => {
+const RoomCard = ({ apartment, index, type, currentUser }) => {
   const [tabindex, setTabIndex] = useState(0);
-  // const [savedrooms, setSavedRooms] = useState([]);
-  const router = useRouter();
+  const [liked, setLiked] = useState(false);
+  const [rooms, setRooms] = useState([]);
+  const handleSaveRoom = async () => {
+    try {
+      const { data } = await axios.post(
+        `/api/rooms/wish/${apartment?.id}`,
+        apartment
+      );
+      // console.log(data);
+      const { favourite, message } = data;
+      await axios.get(`/api/rooms`);
+      setLiked(favourite);
+      // console.log(user?.favourites?.includes(apartment));
+      toast.success(message);
+    } catch (error) {
+      toast.danger(error?.response?.data?.message);
+    } finally {
+    }
+  };
+  // useEffect(() => {
+  //   const handleSaveRoom = async () => {
+  //     try {
+  //       const { data } = await axios.get(`/api/rooms`);
+  //       setRooms(data);
+  //     } catch (error) {
+  //       toast.danger(error?.response?.data?.message);
+  //     }
+  //   };
+  //   handleSaveRoom();
+  // }, [setRooms, liked]);
+
   const handleImagePosition = (position) => {
     if (position === "left") {
       setTabIndex(tabindex < 0 ? apartment?.images?.length - 1 : tabindex - 1);
@@ -80,30 +103,9 @@ const RoomCard = ({
       </Link>
     );
   }
+  const active = JSON.parse(apartment?.favourites)?.includes(currentUser?.id);
+  // console.log(liked || active);
 
-  const handleSaveRoom = () => {
-    // router.refresh();
-    if (savedrooms.includes(apartment)) {
-      const newsavedrooms = savedrooms.filter(
-        (rooms) => rooms?.id !== apartment?.id
-      );
-      localStorage.setItem("savedRooms", JSON.stringify(newsavedrooms));
-      toast.success(
-        `${apartment?.title} has been removed from saved collections`
-      );
-      setSavedRooms(newsavedrooms);
-    } else {
-      setSavedRooms([...savedrooms, apartment]);
-      toast.success(`${apartment?.title} has been added to saved collections`);
-
-      localStorage.setItem(
-        "savedRooms",
-        JSON.stringify([...savedrooms, apartment])
-      );
-    }
-  };
-  // const includedInSavedRooms = savedrooms.includes(apartment);
-  // console.log(includedInSavedRooms, savedrooms);
   return (
     <div key={index} className="w-full flex flex-col">
       <div className="w-full h-[320px] relative">
@@ -111,7 +113,7 @@ const RoomCard = ({
           onClick={handleSaveRoom}
           className="absolute z-[30] top-[10%] right-[5%]"
         >
-          <Heart active={includedInSavedRooms} />
+          <Heart active={active} />
         </div>
         <div className="h-full z-20 absolute left-0 w-[80px] flex items-center justify-center">
           <div

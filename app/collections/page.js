@@ -10,7 +10,7 @@ export default async function Root() {
   return (
     <div>
       <Navbar currentUser={currentUser} />
-      <HomeIndex />
+      <HomeIndex currentUser={currentUser} />
       <Footer />
     </div>
   );
