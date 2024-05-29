@@ -11,17 +11,18 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
-  username       String
-  email          String?   @unique
-  emailVerified  DateTime?
-  image          String?
-  role           String?
-  hashedPassword String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  username        String
+  email           String?         @unique
+  emailVerified   DateTime?
+  image           String?
+  role            String?
+  hashedPassword  String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
   conversationIds String[]        @db.ObjectId
+  favouritesIds String[]        @db.ObjectId
   conversations   Conversations[] @relation(fields: [conversationIds], references: [id])
 
   seenMessageIds String[]  @db.ObjectId
@@ -31,6 +32,7 @@ model User {
   account     Account[]
   rooms       Rooms[]
   reservation Reservations[]
+  favourites  String[]        @db.ObjectId
 }
 
 model Account {
@@ -45,7 +47,6 @@ model Account {
   expires_at        Int?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  
 
   userid String @db.ObjectId
 
@@ -73,7 +74,7 @@ model Rooms {
   updatedAt   DateTime @updatedAt
 
   userid String @db.ObjectId
-  favourites    Json?
+
   user         User?          @relation(fields: [userid], references: [id], onDelete: Cascade)
   reservations Reservations[]
 }

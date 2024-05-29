@@ -16,31 +16,19 @@ const RoomCard = ({ apartment, index, type, currentUser }) => {
   const handleSaveRoom = async () => {
     try {
       const { data } = await axios.post(
-        `/api/rooms/wish/${apartment?.id}`,
+        `/api/favourites/${currentUser?.id}`,
         apartment
       );
       // console.log(data);
       const { favourite, message } = data;
-      await axios.get(`/api/rooms`);
       setLiked(favourite);
-      // console.log(user?.favourites?.includes(apartment));
       toast.success(message);
     } catch (error) {
       toast.danger(error?.response?.data?.message);
     } finally {
     }
   };
-  // useEffect(() => {
-  //   const handleSaveRoom = async () => {
-  //     try {
-  //       const { data } = await axios.get(`/api/rooms`);
-  //       setRooms(data);
-  //     } catch (error) {
-  //       toast.danger(error?.response?.data?.message);
-  //     }
-  //   };
-  //   handleSaveRoom();
-  // }, [setRooms, liked]);
+
 
   const handleImagePosition = (position) => {
     if (position === "left") {
@@ -103,8 +91,7 @@ const RoomCard = ({ apartment, index, type, currentUser }) => {
       </Link>
     );
   }
-  const active = JSON.parse(apartment?.favourites)?.includes(currentUser?.id);
-  // console.log(liked || active);
+  const active = false
 
   return (
     <div key={index} className="w-full flex flex-col">

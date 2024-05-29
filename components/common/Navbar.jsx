@@ -8,8 +8,12 @@ import Link from "next/link";
 import LoginModal from "../modals/Login";
 import RegisterModal from "../modals/Register";
 import { signOut } from "next-auth/react";
+import ModalsProvider from "@/app/providers/modalsProvider";
+import { useAppDispatch } from "@/app/hooks/useCustomRedux";
+import { onLoginModal, onRegisterModal } from "@/app/libs/features/modals/modalSlice";
 const Navbar = ({ currentUser }) => {
   const [bar, setBar] = React.useState(false);
+  const dispatch = useAppDispatch()
   const [active, setActive] = useState(false);
   const [loginmodal, setLoginModal] = useState(false);
   const [registermodal, setRegisterModal] = useState(false);
@@ -38,25 +42,7 @@ const Navbar = ({ currentUser }) => {
   ];
   return (
     <>
-      <AnimatePresence mode="wait">
-        {loginmodal && (
-          <LoginModal
-            registermodal={registermodal}
-            modal={loginmodal}
-            setModal={setLoginModal}
-            setRegisterModal={setRegisterModal}
-          />
-        )}
-      </AnimatePresence>
-      <AnimatePresence mode="wait">
-        {registermodal && (
-          <RegisterModal
-            setLoginModal={setLoginModal}
-            modal={registermodal}
-            setModal={setRegisterModal}
-          />
-        )}
-      </AnimatePresence>
+      <ModalsProvider />
       <div className={`bg-inherit w-full min-h-[80px] z-[500] py-4`}>
         <div className={`w-full mx-auto max-w-custom_2`}>
           <div className="w-[95%] mx-auto text-text_dark_1 flex items-center justify-between gap-2 lg:gap-4">
@@ -205,13 +191,13 @@ const Navbar = ({ currentUser }) => {
                       ) : (
                         <div className="flex profile_dropdown_bottom flex-col w-full">
                           <div
-                            onClick={() => setRegisterModal(true)}
+                                onClick={() => dispatch(onRegisterModal())}
                             className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                           >
                             Sign Up
                           </div>
                           <div
-                            onClick={() => setLoginModal(true)}
+                            onClick={() => dispatch(onLoginModal())}
                             className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                           >
                             Sign In

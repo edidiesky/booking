@@ -11,6 +11,15 @@ import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 import { LoginFormInputData } from "@/constants/data/formdata";
 import Loader from "../loader";
+import { useAppDispatch } from "@/app/hooks/useCustomRedux";
+import {
+  offLoginModal,
+  offRegisterModal,
+  onRegisterModal,
+} from "@/app/libs/features/modals/modalSlice";
+
+
+
 const ModalVariants = {
   initial: {
     opacity: 0,
@@ -28,10 +37,10 @@ const ModalVariants = {
     transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
   },
 };
-const LoginModal = ({ modal, setModal, setRegisterModal }) => {
+const LoginModal = ({ modal }) => {
   const router = useRouter()
   const handleClearAlert = () => {
-    setModal(false);
+   dispatch(offLoginModal());
   };
   const [loading, setLoading] = useState(false);
   const [formvalue, setFormValue] = useState({
@@ -47,8 +56,8 @@ const LoginModal = ({ modal, setModal, setRegisterModal }) => {
   };
 
   const handleLoginModal = () => {
-    setModal(false);
-    setRegisterModal(true);
+   dispatch(offLoginModal());
+   dispatch(onRegisterModal());
   };
   const handleFormSubmision = (e) => {
     e.preventDefault();
@@ -60,7 +69,7 @@ const LoginModal = ({ modal, setModal, setRegisterModal }) => {
         setLoading(false);
         if(callback?.ok) {
           toast.success('Login succesfully')
-          setModal(false)
+        dispatch(offLoginModal());
           router.refresh()
         }
         if (callback?.error) {

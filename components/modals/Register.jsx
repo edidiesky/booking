@@ -11,6 +11,10 @@ import { RegisterFormInputData } from "@/constants/data/formdata";
 import toast from "react-hot-toast";
 import Loader from "../loader";
 import { signIn } from "next-auth/react";
+import { useAppDispatch } from "@/app/hooks/useCustomRedux";
+import { offLoginModal, offRegisterModal, onRegisterModal } from "@/app/libs/features/modals/modalSlice";
+
+
 const ModalVariants = {
   initial: {
     opacity: 0,
@@ -28,9 +32,10 @@ const ModalVariants = {
     transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
   },
 };
-const RegisterModal = ({ modal, setModal, setLoginModal }) => {
+const RegisterModal = ({ modal}) => {
+  const dispatch = useAppDispatch()
   const handleClearAlert = () => {
-    setModal(false);
+   dispatch(offRegisterModal())
   };
   const [formvalue, setFormValue] = useState({
     name: "",
@@ -48,8 +53,8 @@ const RegisterModal = ({ modal, setModal, setLoginModal }) => {
     });
   };
   const handleLoginModal = () => {
-    setModal(false);
-    setLoginModal(true);
+    dispatch(offLoginModal());
+    dispatch(onRegisterModal());
   };
 
   const handleFormSubmision = (e) => {
@@ -58,7 +63,7 @@ const RegisterModal = ({ modal, setModal, setLoginModal }) => {
     axios
       .post("/api/register", formvalue)
       .then(() => {
-        setModal(false);
+          dispatch(offRegisterModal());
       })
       .catch((error) => {
         // toast.error(error);
