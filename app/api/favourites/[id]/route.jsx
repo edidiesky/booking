@@ -24,7 +24,7 @@ export async function POST(request, { params }) {
   }
 
   try {
-    const room = await prisma.user.findUnique({
+    const room = await prisma.rooms.findUnique({
       where: { id: id },
     });
 

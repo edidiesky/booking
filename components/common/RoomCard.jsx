@@ -2,34 +2,33 @@
 import moment from "moment";
 import axios from "axios";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MdArrowRightAlt } from "react-icons/md";
 import Heart from "@/assets/svg/heart";
-
-import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/app/hooks/useCustomRedux";
+import { addListToWish } from "@/app/libs/features/favourites/favouritesReducer";
+import { onLoginModal } from "@/app/libs/features/modals/modalSlice";
 const RoomCard = ({ apartment, index, type, currentUser }) => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const [tabindex, setTabIndex] = useState(0);
-  const [liked, setLiked] = useState(false);
-  const [rooms, setRooms] = useState([]);
-  const handleSaveRoom = async () => {
-    try {
-      const { data } = await axios.post(
-        `/api/favourites/${currentUser?.id}`,
-        apartment
-      );
-      // console.log(data);
-      const { favourite, message } = data;
-      setLiked(favourite);
-      toast.success(message);
-    } catch (error) {
-      toast.danger(error?.response?.data?.message);
-    } finally {
+  const handleFavouriteRooms = useCallback(() => {
+    // check if the user exists
+    // else perform wish lists
+    if (!currentUser) {
+      dispatch(onLoginModal());
+    } else {
+      dispatch(addListToWish(apartment?.id));
+      // router.refresh();
     }
-  };
+  }, [currentUser, router]);
 
-
+  const customerData = JSON.parse(localStorage.getItem("client"));
+  const active = customerData?.favourites?.includes(apartment?.id);
+  // console.log(customerData);
   const handleImagePosition = (position) => {
     if (position === "left") {
       setTabIndex(tabindex < 0 ? apartment?.images?.length - 1 : tabindex - 1);
@@ -91,13 +90,12 @@ const RoomCard = ({ apartment, index, type, currentUser }) => {
       </Link>
     );
   }
-  const active = false
 
   return (
     <div key={index} className="w-full flex flex-col">
       <div className="w-full h-[320px] relative">
         <div
-          onClick={handleSaveRoom}
+          onClick={handleFavouriteRooms}
           className="absolute z-[30] top-[10%] right-[5%]"
         >
           <Heart active={active} />

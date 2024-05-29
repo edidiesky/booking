@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
-import {useRouter} from 'next/navigation'
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence, Variant } from "framer-motion";
 import styled from "styled-components";
@@ -17,8 +17,6 @@ import {
   offRegisterModal,
   onRegisterModal,
 } from "@/app/libs/features/modals/modalSlice";
-
-
 
 const ModalVariants = {
   initial: {
@@ -38,9 +36,10 @@ const ModalVariants = {
   },
 };
 const LoginModal = ({ modal }) => {
-  const router = useRouter()
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const handleClearAlert = () => {
-   dispatch(offLoginModal());
+    dispatch(offLoginModal());
   };
   const [loading, setLoading] = useState(false);
   const [formvalue, setFormValue] = useState({
@@ -56,26 +55,26 @@ const LoginModal = ({ modal }) => {
   };
 
   const handleLoginModal = () => {
-   dispatch(offLoginModal());
-   dispatch(onRegisterModal());
+    dispatch(offLoginModal());
+    dispatch(onRegisterModal());
   };
   const handleFormSubmision = (e) => {
     e.preventDefault();
     setLoading(true);
-    signIn('credentials', {
+    signIn("credentials", {
       ...formvalue,
-      redirect:false
-    }).then((callback)=> {
-        setLoading(false);
-        if(callback?.ok) {
-          toast.success('Login succesfully')
+      redirect: false,
+    }).then((callback) => {
+      setLoading(false);
+      if (callback?.ok) {
+        toast.success("Login succesfully");
         dispatch(offLoginModal());
-          router.refresh()
-        }
-        if (callback?.error) {
-          toast.error("Login process failed!: Check username or password");
-        }
-    })
+        router.refresh();
+      }
+      if (callback?.error) {
+        toast.error("Login process failed!: Check username or password");
+      }
+    });
   };
   return (
     <LoginModalStyles
@@ -160,8 +159,8 @@ const LoginModal = ({ modal }) => {
               <div className="option text-dark">or</div>
 
               <div
-                onClick={() => signIn('google')}
-                className="p-4 px-8 items-center flex justify-center gap-4 w-full cursor-pointer btn text-[#000] rounded-[10px] font-booking_font_normal font-bold border border-[rgba(0,0,0,.9)]"
+                onClick={() => signIn("google")}
+                className="p-4 px-8 items-center flex justify-center gap-4 w-full cursor-pointer btn text-[#fff] rounded-[10px] font-booking_font_normal font-bold border border-[rgba(0,0,0,.9)]"
               >
                 <FcGoogle fontSize={"28px"} />
                 Continue with Google

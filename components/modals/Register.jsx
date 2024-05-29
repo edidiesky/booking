@@ -12,7 +12,12 @@ import toast from "react-hot-toast";
 import Loader from "../loader";
 import { signIn } from "next-auth/react";
 import { useAppDispatch } from "@/app/hooks/useCustomRedux";
-import { offLoginModal, offRegisterModal, onRegisterModal } from "@/app/libs/features/modals/modalSlice";
+import {
+  offLoginModal,
+  onLoginModal,
+  offRegisterModal,
+  onRegisterModal,
+} from "@/app/libs/features/modals/modalSlice";
 
 
 const ModalVariants = {
@@ -53,8 +58,8 @@ const RegisterModal = ({ modal}) => {
     });
   };
   const handleLoginModal = () => {
-    dispatch(offLoginModal());
-    dispatch(onRegisterModal());
+    dispatch(offRegisterModal());
+    dispatch(onLoginModal());
   };
 
   const handleFormSubmision = (e) => {
@@ -153,7 +158,7 @@ const RegisterModal = ({ modal}) => {
                 </div>
               </div>
               <div className="option text-dark">or</div>
-              <div onClick={() => signIn('google')} className="p-4 px-8 items-center flex justify-center gap-4 w-full cursor-pointer btn text-[#000] rounded-[10px] font-booking_font_normal font-bold border border-[rgba(0,0,0,.9)]">
+              <div onClick={() => signIn('google')} className="p-4 px-8 items-center flex justify-center gap-4 w-full cursor-pointer btn text-[#fff] rounded-[10px] font-booking_font_normal font-bold border border-[rgba(0,0,0,.9)]">
                 <FcGoogle fontSize={"28px"} />
                 Continue with Google
               </div>

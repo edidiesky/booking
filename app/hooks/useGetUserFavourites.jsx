@@ -4,6 +4,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
+import { useAppDispatch } from "./useCustomRedux";
+import { onLoginModal } from "../libs/features/modals/modalSlice";
 
 export default function useGetUserFavourites({
   currentUser,
@@ -12,28 +14,33 @@ export default function useGetUserFavourites({
   roomid,
 }) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [rooms, setRooms] = useState([]);
-  //   console.log(roomid);
-  //   useEffect(() => {
-  //     const getRooms = async () => {
-  //       try {
-  //         const response = await axios.get(`/api/reservation/user`);
-  //         setRooms(response.data);
-  //       } catch (err) {
-  //         setError(err);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-  //     getRooms();
-  //   }, [setLoading, setRooms, setError]);
 
-  const hasFavourited = useMemo(() => {
-    const room = currentUser?.favourites || [];
-    return room?.includes(roomid);
-  }, [currentUser, roomid]);
+  const handleFavouriteRooms = useCallback(async () => {
+    if (!currentUser) {
+      dispatch(onLoginModal());
+    } else {
+      try {
+        const { data } = await axios.post(
+          `/api/favourites/${roomid}`,
+          apartment
+        );
+        // console.log(data);
+        const { favourite, message } = data;
+        toast.success(message);
+        router.refresh();
+        // return favourite;
+      } catch (error) {
+        toast.error(error?.response?.data?.message);
+      } finally {
+      }
+    }
+  }, [currentUser, router, roomid]);
 
-  return { hasFavourited };
+  return {
+    handleFavouriteRooms,
+  };
 }
