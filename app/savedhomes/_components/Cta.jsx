@@ -1,15 +1,16 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState} from "react";
 import {
   slideup,
   slideup2,
 } from "@/constants/utils/framer";
 import { motion, useInView } from "framer-motion";
+import { apartmentDataList } from "@/constants/data/apartment";
+import Skeleton from "react-loading-skeleton";
 import useGetUserRoomsFavourites from "@/app/hooks/useGetUserRoomsFavourites";
 import RoomCard from "@/components/common/RoomCard";
 
 export default function Cta() {
-  const [savedrooms, setSavedRooms] = useState([]);
   const ctaText_1 = useRef(null);
   const ctaText_4 = useRef(null);
   const inView = useInView(ctaText_1, {

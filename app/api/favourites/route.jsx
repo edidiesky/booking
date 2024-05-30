@@ -15,21 +15,18 @@ export async function GET(request) {
 
   try {
     // find the user
-      const user = await prisma.user.findUnique({
-        where: { id: currentUser?.id },
-        select: {
-          favourites: true,
-        },
-      });
+    const user = await prisma.user.findUnique({
+      where: { id: currentUser?.id },
+      select: {
+        favourites: true,
+      },
+    });
 
-      if (!user) {
-        return NextResponse.json(
-          { message: "User not found" },
-          { status: 404 }
-        );
-      }
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
 
-    let userRoomFavourites = user?.favourites;
+    const userRoomFavourites = currentUser?.favourites || [];
     // get the rooms by using the in operator
     const rooms = await prisma.rooms.findMany({
       where: {
