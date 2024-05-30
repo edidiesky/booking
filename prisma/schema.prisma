@@ -22,7 +22,6 @@ model User {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   conversationIds String[]        @db.ObjectId
-  favouritesIds String[]        @db.ObjectId
   conversations   Conversations[] @relation(fields: [conversationIds], references: [id])
 
   seenMessageIds String[]  @db.ObjectId
