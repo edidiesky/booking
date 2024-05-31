@@ -16,7 +16,7 @@ import Skeleton from "react-loading-skeleton";
 import useRooms from "@/app/hooks/useRooms";
 import RoomCard from "@/components/common/RoomCard";
 
-export default function Cta() {
+export default function Cta({currentUser}) {
   const ctaText_1 = useRef(null);
   const ctaText_2 = useRef(null);
   const ctaText_3 = useRef(null);
@@ -164,7 +164,12 @@ export default function Cta() {
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
               {rooms?.map((apartment, index) => {
                 return (
-                  <RoomCard index={index} apartment={apartment} key={index} />
+                  <RoomCard
+                    index={index}
+                    apartment={apartment}
+                    currentUser={currentUser}
+                    key={index}
+                  />
                 );
               })}
             </div>

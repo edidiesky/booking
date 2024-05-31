@@ -8,8 +8,8 @@ export default async function Root() {
   return (
     <div className="relative">
       <Navbar currentUser={currentUser} />
-      <HomeIndex />
-      <Footer/>
+      <HomeIndex currentUser={currentUser} />
+      <Footer />
     </div>
   );
 }

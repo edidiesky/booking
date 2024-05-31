@@ -4,11 +4,11 @@ import Hero from "./Hero";
 import Work from "./Work";
 import Cta from "./Cta";
 
-export default function HomeIndex() {
+export default function HomeIndex({ currentUser }) {
   return (
     <div>
       <Hero />
-      <Cta />
+      <Cta currentUser={currentUser} />
       <Work />
     </div>
   );

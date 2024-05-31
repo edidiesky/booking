@@ -10,7 +10,7 @@ import Skeleton from "react-loading-skeleton";
 import useGetUserRoomsFavourites from "@/app/hooks/useGetUserRoomsFavourites";
 import RoomCard from "@/components/common/RoomCard";
 
-export default function Cta() {
+export default function Cta({ currentUser }) {
   const ctaText_1 = useRef(null);
   const ctaText_4 = useRef(null);
   const inView = useInView(ctaText_1, {

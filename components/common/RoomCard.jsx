@@ -15,6 +15,7 @@ const RoomCard = ({ apartment, index, type, currentUser }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [tabindex, setTabIndex] = useState(0);
+  console.log(currentUser);
   const handleFavouriteRooms = useCallback(() => {
     // check if the user exists
     // else perform wish lists
@@ -58,7 +59,7 @@ const RoomCard = ({ apartment, index, type, currentUser }) => {
               "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
           src={apartment?.rooms?.images[0]}
-          className="w-full h-[300px] object-cover hover:grayscale-[1] grayscale-0"
+          className="w-full min-h-[350px] object-cover hover:grayscale-[1] grayscale-0"
         />
         <div className="w-full flex flex-col py-3 bg-white gap-2">
           <h4
@@ -93,7 +94,7 @@ const RoomCard = ({ apartment, index, type, currentUser }) => {
 
   return (
     <div key={index} className="w-full flex flex-col">
-      <div className="w-full h-[320px] relative">
+      <div className="w-full min-h-[360px] relative">
         <div
           onClick={handleFavouriteRooms}
           className="absolute z-[30] top-[10%] right-[5%]"
@@ -118,7 +119,7 @@ const RoomCard = ({ apartment, index, type, currentUser }) => {
         </div>
         <div
           style={{ gridTemplateColumns: "repeat(4, 100%)" }}
-          className="w-full h-full absolute overflow-hidden grid"
+          className="w-full h-full absolute top-0 left-0 overflow-hidden grid"
         >
           {apartment.images.map((image, index) => {
             return (

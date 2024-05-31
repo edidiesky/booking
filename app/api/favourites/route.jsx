@@ -26,11 +26,11 @@ export async function GET(request) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    const userRoomFavourites = currentUser?.favourites || [];
+    const userRoomFavourites = user?.favourites || [];
     // get the rooms by using the in operator
     const rooms = await prisma.rooms.findMany({
       where: {
-        id: { in: { userRoomFavourites } },
+        id: { in: userRoomFavourites },
       },
     });
     return NextResponse.json(rooms);

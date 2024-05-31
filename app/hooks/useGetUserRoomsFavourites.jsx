@@ -7,18 +7,22 @@ export default function useGetUserRoomsFavourites() {
   const [loading, setLoading] = useState(true);
   const [rooms, setRooms] = useState([]);
 
-  useEffect(async () => {
-    try {
-      const { data } = await axios(`/api/favourites`);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios(`/api/favourites`);
+        setRooms(data);
+      } catch (error) {
+        toast.error(error?.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setRooms(data);
-      // return favourite;
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [setLoading, setRooms]);
+    fetchData();
+
+    // No cleanup needed in this useEffect
+  }, [setRooms, setLoading]);
 
   return {
     loading,

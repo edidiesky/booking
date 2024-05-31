@@ -4,7 +4,6 @@ import SmoothScroll from "@/constants/utils/SmoothScroll";
 import ToasterProvider from "./providers/ToasterProvider";
 import "react-loading-skeleton/dist/skeleton.css";
 import StoreProvider from "./storeProvider";
-import ModalsProvider from "./providers/modalsProvider";
 export const metadata = {
   title: "Okeke Booking Platform",
   description:
