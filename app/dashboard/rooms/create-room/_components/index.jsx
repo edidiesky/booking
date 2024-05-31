@@ -6,6 +6,8 @@ import RoomForms from "./roomsform";
 import toast from "react-hot-toast";
 import RoomDetail from "./roomdetail";
 import Loader from "@/components/loader";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/useCustomRedux";
+import { CreateRoom } from "@/app/libs/features/rooms/roomReducer";
 const DashboardIndex = () => {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState(0);
@@ -21,8 +23,10 @@ const DashboardIndex = () => {
   const [description, setDescription] = useState("");
   const [shortdescription, setShortDescription] = useState("");
 
-  const [roomcreationloading, setRoomCreationLoading] = useState(false);
-  const [roomcreationsuccess, setRoomCreationSuccess] = useState(false);
+  const dispatch = useAppDispatch();
+  const { creatingRoomisLoading, creatingRoomisSuccess } = useAppSelector(
+    (store) => store.room
+  );
   //  const [bookingdata, setBookingData] = useState(null);
   const roomData = {
     title: title,
@@ -36,30 +40,18 @@ const DashboardIndex = () => {
     bathroom: bathrooms,
     description: description,
   };
-  console.log(roomData);
-  const handleRoomCreation = async () => {
-    try {
-      setRoomCreationLoading(true);
-      const { data } = await axios.post(`/api/rooms`, roomData);
-      toast.success("Room has been created successfully");
-      setRoomCreationSuccess(true);
-    }catch(error) {
-  const erroMessage = error?.response?.data?.message || "An error occurred";
-      toast.error(erroMessage);
-    }
-    finally {
-      setRoomCreationLoading(false);
-       setRoomCreationSuccess(true);
-    }
+  // console.log(roomData);
+  const handleRoomCreation = () => {
+    dispatch(CreateRoom(roomData));
   };
   useEffect(() => {
-    if (roomcreationsuccess) {
+    if (creatingRoomisSuccess) {
       const timeout = setTimeout(() => {
         redirect(`/dashboard/rooms`);
       }, 3000);
       return () => clearTimeout(timeout);
     }
-  }, [roomcreationsuccess, redirect]);
+  }, [creatingRoomisSuccess, redirect]);
   return (
     <div className="w-full relative">
       <div className="w-full relative pb-20 flex flex-col gap-12">
@@ -74,11 +66,11 @@ const DashboardIndex = () => {
           </h3>
           <div className="flex items-center lg:justify-end">
             <button
-              disabled={roomcreationloading}
+              disabled={creatingRoomisLoading}
               onClick={handleRoomCreation}
               className="btn text-sm p-3 px-8 text-white rounded-lg"
             >
-              {roomcreationloading ? (
+              {creatingRoomisLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <Loader type="dots" />
                   Room Creating

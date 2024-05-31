@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import { CiWarning } from "react-icons/ci";
 import { motion, AnimatePresence, Variant } from "framer-motion";
@@ -10,26 +10,32 @@ import Loader from "../loader";
 import { useRouter } from "next/navigation";
 export default function DeleteModal({ type, modal, setModal, room }) {
   const [roomdeleteloading, setRoomDeleteLoading] = useState(false);
+  const [roomdeletesuccess, setRoomDeleteSuccess] = useState(false);
   const router = useRouter();
   const handleClearAlert = () => {
     setModal(false);
   };
-  const handleDeleteRoom = async () => {
+  const handleDeleteRoom = useCallback(async () => {
     try {
       setRoomDeleteLoading(true);
       await axios.delete(`/api/rooms/${room?.id}`);
       toast.success("Room has been succesfully deleted");
 
       router.refresh();
+      setRoomDeleteSuccess(true);
       setModal(false);
     } catch (error) {
       const erroMessage = error?.response?.data?.message || "An error occurred";
       toast.error(erroMessage);
     } finally {
       setRoomDeleteLoading(false);
+    }
+  }, [router]);
+  useEffect(() => {
+    if (roomdeletesuccess) {
       router.refresh();
     }
-  };
+  }, [router, roomdeletesuccess]);
   if (type === "rooms") {
     return (
       <DeleteContainer
