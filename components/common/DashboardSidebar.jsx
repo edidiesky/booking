@@ -78,7 +78,7 @@ const DashboardSidebar = ({ active, currentUser }) => {
               </div>
             </div>
           </div>
-          <div className="w-full my-4 flex flex-col">
+          <div className="w-full my-4 flex flex-col gap-1">
             {AdminSidebarData?.map((x, index) => {
               // console.log(pathname, `/dashboard${x.tab.path}`);
               return (
@@ -123,7 +123,7 @@ const DashboardSidebar = ({ active, currentUser }) => {
                   alt=""
                   className="w-10 rounded-full"
                 />
-                <h4 className="text-base text-dark font-booking_font4">
+                <h4 className="text-base text-dark font-booking_font_bold">
                   {currentUser?.name}
                   <span className="block font-booking_font text-sm text-grey">
                     {currentUser?.email}
@@ -143,7 +143,7 @@ export const HeaderStyles = styled.div`
   position: sticky;
   top: 0;
   height: 100vh;
-  background: #fff;
+  background: #f5f5f5;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   @media (max-width: 980px) {
     display: none;

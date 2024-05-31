@@ -174,8 +174,8 @@ const DeleteContainer = styled(motion.div)`
   top: 0;
   background: rgba(0, 0, 0, 0.4);
   .deleteCard {
-    max-width: 600px;
-    min-width: 500px;
+    max-width: 500px;
+    min-width: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -190,8 +190,8 @@ const DeleteContainer = styled(motion.div)`
     }
     .cross {
       position: absolute;
-      right: 10px;
-      top: 1.5%;
+      right: 15px;
+      top: 2%;
       width: 2rem;
       height: 2rem;
       border-radius: 50%;

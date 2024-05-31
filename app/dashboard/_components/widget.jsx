@@ -40,7 +40,7 @@ const Widget = () => {
           >
             <div className="flex flex-col">
               <h3 className="text-4xl font-bold font-booking_font_bold">
-                <span className="text-grey pb-4 font-booking_font block text-xl font-normal">
+                <span className="text-grey pb-4 font-booking_font block text-base font-normal">
                   {widget?.title}
                 </span>
                 {widget?.subtitle}

@@ -15,7 +15,7 @@ export default function Cta({ currentUser }) {
   const ctaText_4 = useRef(null);
   const inView = useInView(ctaText_1, {
     margin: "0px 100px -50px 0px",
-  });
+  }); 
   const inView4 = useInView(ctaText_4, {
     margin: "0px 100px -50px 0px",
   });

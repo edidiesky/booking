@@ -27,31 +27,33 @@ export default function Cta({ currentUser }) {
 
   return (
     <div data-scroll className="py-20 w-full z-50">
-      <div className="w-[90%] mx-auto max-w-custom_2 flex flex-col gap-4">
+      <div className="w-[90%] lg:w-[76%] mx-auto m-auto max-w-custom flex items-center justify-center flex-col gap-4">
         <div className="w-full grid grid-cols-1 gap-8">
-          <h3
-            ref={ctaText_1}
-            className=" w-full text-6xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
-          >
-            {ctaText1.split(" ").map((x, index) => {
-              return (
-                <span key={index} className="inline-flex hide relative">
-                  <motion.span
-                    variants={slideup2}
-                    custom={index}
-                    initial="initial"
-                    animate={inView ? "animate" : "exit"}
-                  >
-                    {x}
-                  </motion.span>
-                </span>
-              );
-            })}
-          </h3>
-          <div className="w-[60%] flex flex-col">
+          <div className="w-full">
+            <h3
+              ref={ctaText_1}
+              className=" w-full text-5xl md:text-6xl lg:text-7xl flex items-center justify-center flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
+            >
+              {ctaText1.split(" ").map((x, index) => {
+                return (
+                  <span key={index} className="inline-flex hide relative">
+                    <motion.span
+                      variants={slideup2}
+                      custom={index}
+                      initial="initial"
+                      animate={inView ? "animate" : "exit"}
+                    >
+                      {x}
+                    </motion.span>
+                  </span>
+                );
+              })}
+            </h3>
+          </div>
+          <div className="w-full lg:w-[600px] mx-auto flex flex-col items-center justify-center gap-24">
             <h5
               ref={ctaText_4}
-              className=" w-full text-base flex flex-wrap gap-[4px] leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
+              className=" w-full text-base md:text-lg flex flex-wrap items-center justify-center gap-[8px] leading-[.86] font-portfolio_bold1 font-medium text-text_dark_1 "
             >
               {ctatext4.split(" ").map((x, index) => {
                 return (

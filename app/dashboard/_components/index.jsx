@@ -7,11 +7,8 @@ const DashboardIndex = ({ currentUser }) => {
   return (
     <div className="w-full py-8">
       <div className="w-full flex flex-col gap-12">
-        <h2 className="text-4xl font-booking_font_bold font-bold">
-          <span className="block font-booking_font text-grey font-normal text-lg">
-            Welcome Back
-          </span>
-          {currentUser?.name}
+        <h2 className="text-3xl font-booking_font_bold font-bold">
+          Dashboard
         </h2>
         <Widget />
         <Statistics />
