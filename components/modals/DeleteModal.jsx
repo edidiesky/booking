@@ -8,34 +8,19 @@ import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 import Loader from "../loader";
 import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/useCustomRedux";
+import { DeleteRoom } from "@/app/libs/features/rooms/roomReducer";
 export default function DeleteModal({ type, modal, setModal, room }) {
-  const [roomdeleteloading, setRoomDeleteLoading] = useState(false);
-  const [roomdeletesuccess, setRoomDeleteSuccess] = useState(false);
-  const router = useRouter();
+  const { deleteRoomisLoading } = useAppSelector((store) => store.room);
+  const dispatch = useAppDispatch();
+  // const router = useRouter();
   const handleClearAlert = () => {
     setModal(false);
   };
-  const handleDeleteRoom = useCallback(async () => {
-    try {
-      setRoomDeleteLoading(true);
-      await axios.delete(`/api/rooms/${room?.id}`);
-      toast.success("Room has been succesfully deleted");
+  const handleDeleteRoom = useCallback(() => {
+    dispatch(DeleteRoom(room?.id));
+  }, []);
 
-      router.refresh();
-      setRoomDeleteSuccess(true);
-      setModal(false);
-    } catch (error) {
-      const erroMessage = error?.response?.data?.message || "An error occurred";
-      toast.error(erroMessage);
-    } finally {
-      setRoomDeleteLoading(false);
-    }
-  }, [router]);
-  useEffect(() => {
-    if (roomdeletesuccess) {
-      router.refresh();
-    }
-  }, [router, roomdeletesuccess]);
   if (type === "rooms") {
     return (
       <DeleteContainer
@@ -83,12 +68,12 @@ export default function DeleteModal({ type, modal, setModal, room }) {
               Cancel
             </button>
             <button
-              disabled={roomdeleteloading}
+              disabled={deleteRoomisLoading}
               onClick={handleDeleteRoom}
               className="deleteBtn family1 font-booking_font_bold flex items-center justify-center text-sm"
               // onClick={() => dispatch(AdminDeleteUserProfile({ Detailsdata: id }))}
             >
-              {roomdeleteloading ? (
+              {deleteRoomisLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <Loader type="dots" />
                   Deleting in process

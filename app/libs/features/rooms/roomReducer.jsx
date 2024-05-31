@@ -17,3 +17,38 @@ export const CreateRoom = createAsyncThunk(
     }
   }
 );
+
+export const GetAllRooms = createAsyncThunk(
+  "GetAllRooms",
+  async (roomdata, thunkAPI) => {
+    try {
+      const { data } = await axios.get(`/api/rooms`);
+
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      );
+    }
+  }
+);
+
+export const DeleteRoom = createAsyncThunk(
+  "DeleteRoom",
+  async (roomdataid, thunkAPI) => {
+    try {
+      const { data } = await axios.get(`/api/rooms/${roomdataid}`);
+
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      );
+    }
+  }
+);
+

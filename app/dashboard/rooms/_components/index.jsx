@@ -1,11 +1,22 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, Variant } from "framer-motion";
 import Link from "next/link";
 import ReservationRoomsModal from "@/components/modals/ReservationRoomsModal";
 import RoomsList from "./rooms";
+import { useAppSelector } from "@/app/hooks/useCustomRedux";
+import { useRouter } from "next/navigation";
 const DashboardIndex = () => {
   const [roommodal, setRoomModal] = useState(false);
+  const { deleteRoomisSuccess, creatingRoomisSuccess } = useAppSelector(
+    (store) => store.room
+  );
+  const router = useRouter();
+  useEffect(() => {
+    if (deleteRoomisSuccess) {
+      router.refresh();
+    }
+  }, [router, deleteRoomisSuccess]);
   return (
     <div className="w-full">
       <AnimatePresence mode="wait">
