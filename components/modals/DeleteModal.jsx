@@ -134,7 +134,7 @@ export default function DeleteModal({ type, modal, setModal, room }) {
           </h3>
         </div>
 
-        <div className="deleteCardBottom py-3 w-full flex items-center justify-end px-4 border-t">
+        <div className="deleteCardBottom py-3 w-full flex md:flex-row flex-col gap-2 items-center md:justify-end px-4 border-t">
           <button
             className="family1 font-booking_font_bold flex items-center justify-center text-sm"
             onClick={handleClearAlert}
@@ -150,7 +150,7 @@ export default function DeleteModal({ type, modal, setModal, room }) {
             {roomdeleteloading ? (
               <span className="flex items-center justify-center gap-2">
                 <Loader type="dots" />
-                Deleting in process
+                Deleting in progress
               </span>
             ) : (
               " Delete user"
