@@ -4,14 +4,17 @@ import { AnimatePresence, Variant } from "framer-motion";
 import Link from "next/link";
 import ReservationRoomsModal from "@/components/modals/ReservationRoomsModal";
 import RoomsList from "./rooms";
-import { useAppSelector } from "@/app/hooks/useCustomRedux";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/useCustomRedux";
 import { useRouter } from "next/navigation";
+import { GetAllRooms } from "@/app/libs/features/rooms/roomReducer";
 const DashboardIndex = () => {
   const [roommodal, setRoomModal] = useState(false);
-  const { deleteRoomisSuccess, creatingRoomisSuccess } = useAppSelector(
-    (store) => store.room
-  );
+  const { deleteRoomisSuccess } = useAppSelector((store) => store.room);
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(GetAllRooms());
+  }, []);
   useEffect(() => {
     if (deleteRoomisSuccess) {
       router.refresh();

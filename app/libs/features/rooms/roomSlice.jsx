@@ -24,7 +24,11 @@ export const roomSlice = createSlice({
   name: "room",
   initialState,
   reducers: {
-    handleroomRooms: (state, action) => {},
+    handleClearRoomAlert: (state, action) => {
+      state.creatingRoomisSuccess = false;
+      state.deleteRoomisSuccess = false;
+      state.creatingRoomisSuccess = false;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(CreateRoom.pending, (state, action) => {
@@ -46,6 +50,7 @@ export const roomSlice = createSlice({
     builder.addCase(GetAllRooms.fulfilled, (state, action) => {
       state.getallRoomisSuccess = true;
       state.getallRoomisLoading = false;
+      state.rooms = action.payload;
     });
     builder.addCase(GetAllRooms.rejected, (state, action) => {
       state.getallRoomisSuccess = false;
@@ -58,7 +63,8 @@ export const roomSlice = createSlice({
     builder.addCase(DeleteRoom.fulfilled, (state, action) => {
       state.deleteRoomisSuccess = true;
       state.deleteRoomisLoading = false;
-      toast.error(action.payload);
+      state.rooms = state.rooms.filter((room) => room.id !== action.payload);
+      toast.success("Room has been deleted");
     });
     builder.addCase(DeleteRoom.rejected, (state, action) => {
       state.deleteRoomisSuccess = false;
@@ -67,6 +73,6 @@ export const roomSlice = createSlice({
   },
 });
 
-export const { handleroomRooms } = roomSlice.actions;
+export const { handleClearRoomAlert } = roomSlice.actions;
 
 export default roomSlice.reducer;

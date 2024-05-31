@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAppSelector } from "@/app/hooks/useCustomRedux";
 
 import { BiSearch } from "react-icons/bi";
 import { AnimatePresence, Variant } from "framer-motion";
@@ -11,10 +12,13 @@ import Loader from "@/components/loader";
 
 const RoomsList = () => {
   //   const [roommodal, setRoomModal] = useState(false);
-  const { loading, error, rooms } = useRooms();
+  const {
+    rooms,
+    getallRoomisLoading,
+  } = useAppSelector((store) => store.room);
   return (
     <>
-      {loading && <Loader />}
+      {getallRoomisLoading && <Loader />}
       <div className="w-full p-4 px-6 border rounded-[20px]">
         <label
           htmlFor=""

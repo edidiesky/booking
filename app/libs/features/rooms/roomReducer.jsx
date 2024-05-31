@@ -39,9 +39,9 @@ export const DeleteRoom = createAsyncThunk(
   "DeleteRoom",
   async (roomdataid, thunkAPI) => {
     try {
-      const { data } = await axios.get(`/api/rooms/${roomdataid}`);
+      const { data } = await axios.delete(`/api/rooms/${roomdataid}`);
 
-      return data;
+      return roomdataid;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response && error.response.data.message

@@ -1,25 +1,34 @@
 "use client";
 import React, { useState, useCallback, useEffect } from "react";
-import axios from "axios";
 import { CiWarning } from "react-icons/ci";
-import { motion, AnimatePresence, Variant } from "framer-motion";
+import { motion } from "framer-motion";
 import styled from "styled-components";
 import { RxCross2 } from "react-icons/rx";
-import toast from "react-hot-toast";
 import Loader from "../loader";
-import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/useCustomRedux";
 import { DeleteRoom } from "@/app/libs/features/rooms/roomReducer";
+import { handleClearRoomAlert } from "@/app/libs/features/rooms/roomSlice";
 export default function DeleteModal({ type, modal, setModal, room }) {
-  const { deleteRoomisLoading } = useAppSelector((store) => store.room);
+  const { deleteRoomisLoading, deleteRoomisSuccess } = useAppSelector(
+    (store) => store.room
+  );
   const dispatch = useAppDispatch();
-  // const router = useRouter();
   const handleClearAlert = () => {
     setModal(false);
   };
   const handleDeleteRoom = useCallback(() => {
     dispatch(DeleteRoom(room?.id));
   }, []);
+  useEffect(() => {
+    dispatch(handleClearRoomAlert());
+  }, []);
+  useEffect(() => {
+    // dispatch(handleClearRoomAlert());
+    if (deleteRoomisSuccess) {
+      setModal(false);
+      dispatch(handleClearRoomAlert());
+    }
+  }, [setModal, deleteRoomisSuccess]);
 
   if (type === "rooms") {
     return (
