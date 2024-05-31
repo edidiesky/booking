@@ -144,7 +144,7 @@ export const HeaderStyles = styled.div`
   top: 0;
   height: 100vh;
   background: #f5f5f5;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  /* border-right: 1px solid rgba(0, 0, 0, 0.1); */
   @media (max-width: 980px) {
     display: none;
   }

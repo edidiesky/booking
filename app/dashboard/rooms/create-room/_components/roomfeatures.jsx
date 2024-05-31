@@ -7,7 +7,7 @@ const Roomfeatures = ({
   amenities,
 }) => {
   return (
-    <div className="w-full shadow-xl bg-[#fff] border p-6 px-2 rounded-md">
+    <div className="w-full bg-[#fff] border p-6 px-2 rounded-[10px]">
       <div className="w-[95%] md:w-[90%] mx-auto flex flex-col gap-8">
         <div className="w-full flex items-center justify-between">
           <h4 className="text-2xl font-booking_font_bold font-bold">
@@ -22,7 +22,7 @@ const Roomfeatures = ({
             <span className="font-bold font-booking_font_bold text-base block">
               Room Features
             </span>
-            <div className="w-full grid grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="w-full grid grid-cols-3 lg:grid-cols-3 gap-3">
               {RoomFeaturesList?.map((x, index) => {
                 const active = features.includes(x);
                 return (
@@ -35,7 +35,7 @@ const Roomfeatures = ({
                     } flex w-full cursor-pointer hover:bg-[#fafafa] p-4 rounded-lg flex-col gap-2`}
                   >
                     {x?.icon}
-                    <span className="text-xs font-booking_font_bold font-bold">
+                    <span className="text-sm font-booking_font_bold font-bold">
                       {x?.title}
                     </span>
                   </div>
@@ -48,7 +48,7 @@ const Roomfeatures = ({
             <span className="font-bold font-booking_font_bold text-base block">
               Room Amenities
             </span>
-            <div className="w-full grid grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="w-full grid grid-cols-3 lg:grid-cols-3 gap-3">
               {RoomFeaturesList2?.map((x, index) => {
                 const active = amenities.includes(x);
                 return (
@@ -61,7 +61,7 @@ const Roomfeatures = ({
                     } flex w-full cursor-pointer hover:bg-[#fafafa] p-4 rounded-lg flex-col gap-2`}
                   >
                     {x?.icon}
-                    <span className="text-xs font-booking_font_bold font-bold">
+                    <span className="text-sm font-booking_font_bold font-bold">
                       {x?.title}
                     </span>
                   </div>

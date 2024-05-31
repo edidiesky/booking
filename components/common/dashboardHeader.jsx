@@ -73,16 +73,11 @@ const DashboardHeader = ({ sidebar, setSidebar, currentUser }) => {
               <FaBars fontSize={"30px"} />
             )}
           </div>
-          <h4 className="text-lg text-dark font-booking_font_bold font-bold family1">
-            <span className="font-normal font-booking_font text-base text-dark">
-              Welcome back,
-            </span>{" "}
-            {currentUser?.name}
-          </h4>
-          {/* <label
+
+          <label
             htmlFor=""
-            className="hidden md:flex text-lg text-dark w-[200px] lg:w-[350px]
-             items-center gap-2 h-12 border rounded-[20px] bg-[#f9f9f9] px-4"
+            className="hidden md:flex text-lg text-dark w-[200px] lg:w-[250px]
+             items-center gap-2 h-12 border rounded-[10px] bg-[#f9f9f9] px-4"
           >
             <div className=" text-dark flex items-center justify-center">
               <BiSearch />
@@ -92,7 +87,7 @@ const DashboardHeader = ({ sidebar, setSidebar, currentUser }) => {
               placeholder="Search"
               className="bg-transparent border-none outline-none text-sm text-dark flex-1"
             />
-          </label> */}
+          </label>
         </div>
         <div className="flex w-full auto items-center justify-end gap-1">
           <div className="flex profile_wrapper relative items-center gap-2">

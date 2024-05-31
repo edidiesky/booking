@@ -14,7 +14,7 @@ const RoomDetail = ({
     image: "/images/images_1.jpg",
   };
   return (
-    <div className="w-full shadow-xl bg-[#fff] border p-6 rounded-md">
+    <div className="w-full bg-[#fff] border p-6 rounded-[10px]">
       <div className="w-full flex flex-col gap-8">
         <h4 className="text-2xl font-booking_font_bold font-bold">Preview</h4>
         <div className="w-full flex flex-col gap-4">
