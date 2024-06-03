@@ -8,17 +8,31 @@
 }
 
 @font-face {
+  font-display: swap;
+  font-family: "Neue Montreal";
+  font-style: normal;
+  font-weight: 200 800;
+  src: url(https://www.upwork.com/static/fonts-global/4.5.1/neue-montreal-variable.woff2)
+    format("woff2");
+}
+@font-face {
   font-family: "Proxima_Bold";
-  src: url("../assets/fonts/proxima-nova-bold.ttf") format("truetype");
+  font-weight: 800;
+  src: url(https://www.upwork.com/static/fonts-global/4.5.1/neue-montreal-variable.woff2)
+    format("woff2");
 }
 @font-face {
   font-family: "Proxima_Regular";
-  src: url("../assets/fonts/proxima-nova-regular.ttf") format("truetype");
+  font-weight: 400;
+  src: url(https://www.upwork.com/static/fonts-global/4.5.1/neue-montreal-variable.woff2)
+    format("woff2");
 }
 
 @font-face {
   font-family: "Proxima_SemiBold";
-  src: url("../assets/fonts/proxima-nova-semibold.ttf") format("truetype");
+  font-weight: 600;
+  src: url(https://www.upwork.com/static/fonts-global/4.5.1/neue-montreal-variable.woff2)
+    format("woff2");
 }
 * {
   text-decoration: none;
@@ -35,8 +49,8 @@
 }
 
 .shadow {
-  box-shadow: 0 2px 3px rgba(0, 0, 0, .1);
-  transition: all .4s;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s;
 }
 
 .shadow:hover {
@@ -48,7 +62,7 @@
   --dark-1: #0b2735;
   --primary: #e4c590;
   --background_2: #0e0d0c;
-    --red: rgb(255, 56, 92);
+  --red: rgb(255, 56, 92);
 }
 
 .text-grey {
@@ -122,7 +136,6 @@ html.lenis body {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
-
 
 .rdrMonth {
   width: 100% !important;
