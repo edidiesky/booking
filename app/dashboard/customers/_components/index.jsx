@@ -16,7 +16,7 @@ const DashboardIndex = () => {
         <div className="w-full grid lg:grid-cols-2 lg:items-center gap-4 justify-between">
           <h3 className="text-4xl font-booking_font4 font-bold">
             Customers List
-            <span className="block pt-4 text-base font-booking_font font-normal">
+            <span className="block text-grey pt-3 text-sm font-booking_font_normal">
               Make a review of your customers either by adding or modifying
               their content
             </span>

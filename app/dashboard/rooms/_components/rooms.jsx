@@ -3,15 +3,11 @@ import React, { useState, useEffect } from "react";
 import { useAppSelector } from "@/app/hooks/useCustomRedux";
 
 import { BiSearch } from "react-icons/bi";
-import { AnimatePresence, Variant } from "framer-motion";
-import ReservationRoomsModal from "@/components/modals/ReservationRoomsModal";
 import { Table } from "@/components/common/styles";
 import TableCard from "@/components/common/TableCard";
-import useRooms from "@/app/hooks/useRooms";
 import Loader from "@/components/loader";
 
 const RoomsList = () => {
-  //   const [roommodal, setRoomModal] = useState(false);
   const {
     rooms,
     getallRoomisLoading,
@@ -19,7 +15,7 @@ const RoomsList = () => {
   return (
     <>
       {getallRoomisLoading && <Loader />}
-      <div className="w-full p-4 px-6 border rounded-[20px]">
+      <div className="w-full bg-white shadows p-4 px-6 border rounded-[20px]">
         <label
           htmlFor=""
           className="hidden md:flex text-xl text-dark w-[200px] lg:w-[250px]
