@@ -45,7 +45,7 @@ const reservation = [
 const ReservationList = () => {
   //   const [roommodal, setRoomModal] = useState(false);
   return (
-    <div className="w-full border p-12 px-4 flex flex-col gap-4 shdow-xl rounded-[10px]">
+    <div className="w-full border bg-white p-12 px-4 flex flex-col gap-4 shdow-xl rounded-[10px]">
       <h3 className="text-2xl font-booking_font_bold font-bold">
         Transactions History
       </h3>

@@ -60,7 +60,7 @@ const DashboardHeader = ({ sidebar, setSidebar, currentUser }) => {
     window.location.reload();
   };
   return (
-    <HeaderStyles className="w-full z-[3000] flex relative items-center justify-center">
+    <HeaderStyles className="w-full z-[3000] bg-white border-b flex relative items-center justify-center">
       <div className="Header_wrapper w-[95%] mx-auto flex items-center justify-between">
         <div className="flex w-full items-center gap-3">
           <div
@@ -109,19 +109,19 @@ const DashboardHeader = ({ sidebar, setSidebar, currentUser }) => {
                 <div className="flex profile_dropdown_bottom flex-col w-full">
                   <Link
                     href={"/dashboard"}
-                    className="font-medium text-xl p-2 family1 w-full profile_list text-dark block"
+                    className="font-bold font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                   >
                     Dashboard
                   </Link>
                   <Link
                     href={"/dashboard/settings"}
-                    className="font-medium text-xl p-2 family1 w-full profile_list text-dark block"
+                    className="font-bold font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                   >
                     Profile
                   </Link>
                   <div
                     onClick={handleLogOut}
-                    className="font-medium text-xl p-2 family1 w-full profile_list text-dark block"
+                    className="font-bold font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                   >
                     Log Out
                   </div>
@@ -191,13 +191,13 @@ const DashboardHeader = ({ sidebar, setSidebar, currentUser }) => {
 };
 
 export const HeaderStyles = styled.div`
-  padding: 0.7rem 0;
-  min-height: 5rem;
+  padding: 0.5rem 0;
+  min-height: 4.8rem;
   width: 100%;
   position: sticky;
   top: 0;
   left: 0;
-  background: inherit;
+  background:#fff;
   .profile_wrapper:hover .profile_dropdown {
     opacity: 1;
     transform: scale(1);
@@ -230,9 +230,6 @@ export const HeaderStyles = styled.div`
 
     &:nth-last-child() {
       border-bottom: none;
-    }
-    &:hover {
-      background: #eee;
     }
   }
   .dropdown {

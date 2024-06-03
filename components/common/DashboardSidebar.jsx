@@ -52,11 +52,11 @@ const DashboardSidebar = ({ active, currentUser }) => {
   // const currentUser = {};
   const pathname = usePathname();
   return (
-    <HeaderStyles className={`w-full flex column gap-2`}>
+    <HeaderStyles className={`w-full border-r flex column gap-2`}>
       <div className="w-full h-full py-4 justify-between flex items-center flex-col gap-4">
         <div className="w-full h-[90%] flex flex-col gap-8">
           <div className="flex flex-col w-full items-start justify-between py-1">
-            {/* <h4 className="text-sm text-dark">RockTrading</h4> */}
+            {/* <h4 className="text-base text-dark">RockTrading</h4> */}
             <div className=" w-[90%] mx-auto relative flex gap-4 items-center flex-col justify-between">
               <div className="w-full flex items-center gap-1 justify-start">
                 <Image
@@ -68,7 +68,7 @@ const DashboardSidebar = ({ active, currentUser }) => {
                   src="https://www.hopper.com/assets/treasure-D-5S8iOp.svg"
                   className="w-14 h-14 rounded-full object-cover"
                 />
-                <h4 className="hidden md:flex flex-col text-lg font-booking_font4 font-bold text-dark">
+                <h4 className="hidden md:flex flex-col text-base font-booking_font_bold font-bold text-dark">
                   HOME & VILLAS{" "}
                   <span className="block text-xs font-booking_font">
                     {" "}
@@ -89,7 +89,7 @@ const DashboardSidebar = ({ active, currentUser }) => {
                   <Link
                     className={`
                       ${pathname === `/dashboard${x.tab.path}` ? "active" : ""}
-                      text-sm w-[90%] mx-auto text-dark family1`}
+                      text-base w-[90%] mx-auto text-dark family1`}
                     href={`/dashboard${x.tab.path}`}
                   >
                     <div className="flex items-center">
@@ -110,7 +110,7 @@ const DashboardSidebar = ({ active, currentUser }) => {
             <Link
               className={`${
                 pathname === `/dashboard/settings` ? "active" : ""
-              } text-sm flex items-center gap-4 p-[6px] px-4 font-booking_font_normal text-dark family1`}
+              } text-base flex items-center gap-4 p-[6px] px-4 font-booking_font_normal text-dark family1`}
               href={`/dashboard/settings`}
             >
               <FiSettings fontSize={"24px"} />
@@ -143,7 +143,7 @@ export const HeaderStyles = styled.div`
   position: sticky;
   top: 0;
   height: 100vh;
-  background: #f5f5f5;
+  background: #fff;
   /* border-right: 1px solid rgba(0, 0, 0, 0.1); */
   @media (max-width: 980px) {
     display: none;
@@ -168,20 +168,20 @@ export const HeaderStyles = styled.div`
     position: relative;
 
     &:hover {
-      background: #46466215;
-      color: #1f0a74;
+      background: #f5f5f5;
+      color: #000;
       svg {
-        color: #1f0a74;
+        color: #000;
       }
     }
     &.active {
       position: relative;
-      background: #46466215;
-      color: #1f0a74;
+      background: #f5f5f5;
+      color: #000;
 
       span {
         svg {
-          color: #1f0a74;
+          color: #000;
         }
       }
     }
