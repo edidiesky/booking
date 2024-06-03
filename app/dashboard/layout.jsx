@@ -12,7 +12,7 @@ export default async function DashboardLayout({
       <div className="w-full flex flex-col gap-8">
         <DashboardHeader currentUser={currentUser} />
         <div className="flex bg-[#f5f5f5] font-booking_font flex-col gap-8 w-full">
-          <div className="w-[95%] md:w-[90%] mx-auto"> {children}</div>
+          <div className="w-[95%] md:w-[95%] mx-auto"> {children}</div>
         </div>
       </div>
     </section>

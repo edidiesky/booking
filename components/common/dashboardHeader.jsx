@@ -76,7 +76,7 @@ const DashboardHeader = ({ sidebar, setSidebar, currentUser }) => {
 
           <label
             htmlFor=""
-            className="hidden md:flex text-lg text-dark w-[200px] lg:w-[250px]
+            className="hidden md:flex text-xl text-dark w-[200px] lg:w-[250px]
              items-center gap-2 h-12 border rounded-[10px] bg-[#f9f9f9] px-4"
           >
             <div className=" text-dark flex items-center justify-center">
@@ -85,7 +85,7 @@ const DashboardHeader = ({ sidebar, setSidebar, currentUser }) => {
             <input
               type="text"
               placeholder="Search"
-              className="bg-transparent border-none outline-none text-sm text-dark flex-1"
+              className="bg-transparent border-none outline-none text-base text-dark flex-1"
             />
           </label>
         </div>

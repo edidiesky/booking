@@ -85,7 +85,7 @@ export default function DeleteModal({ type, modal, setModal, room }) {
               {deleteRoomisLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <Loader type="dots" />
-                  Deleting in process
+                  Deleting in progress
                 </span>
               ) : (
                 " Delete Room"

@@ -56,7 +56,7 @@ const GrowthStat = () => {
     <div id="chart" className="w-full">
       <div className="w-full flex flex-col gap-8">
         <div className="p-12 w-full px-6 flex-col rounded-[10px] min-h-[500px] border bg-white flex 8ap-4">
-          <h3 className="text-2xl font-booking_font_bold font-bold">
+          <h3 className="text-2xl font-booking_booking_font_normal">
             This Year Growth
           </h3>
           <div className="flex w-full flex-col gap-8">
@@ -113,7 +113,7 @@ const SalesStat = () => {
     <div id="chart" className="w-full">
       <div className="w-full flex flex-col gap-8">
         <div className="p-12 w-full px-6 flex-col rounded-[10px] min-h-[500px] border bg-white flex gap-8">
-          <h3 className="text-2xl font-booking_font_bold font-bold">
+          <h3 className="text-2xl font-booking_booking_font_normal">
             Net Sales By Unit
           </h3>
           <div className="flex w-full flex-col gap-8">

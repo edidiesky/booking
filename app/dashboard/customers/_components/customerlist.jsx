@@ -40,7 +40,7 @@ const rooms = [
 const RoomsList = () => {
   //   const [roommodal, setRoomModal] = useState(false);
   return (
-    <div className="w-full p-4 px-6 border rounded-[20px]">
+    <div className="w-full p-4 px-6 bg-white border rounded-[20px]">
       <label
         htmlFor=""
         className="hidden md:flex text-xl text-dark w-[200px] lg:w-[250px]
