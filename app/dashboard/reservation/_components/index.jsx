@@ -22,13 +22,13 @@ const DashboardIndex = () => {
             My Reservation
           </h3>
           <div className="flex items-center lg:justify-end gap-2">
-            <div
+            {/* <div
               onClick={() => setReservationModal(true)}
               className="p-4 btn cursor-pointer text-base
              bg-[#000] px-8 font-booking_font rounded-[10px] font-bold text-white"
             >
               Add a reservation
-            </div>
+            </div> */}
           </div>
         </div>
         <ReservationCalendar/>

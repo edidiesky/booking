@@ -6,6 +6,7 @@ import { slideup, slideup3 } from "@/constants/utils/framer";
 
 import { FiSend } from "react-icons/fi";
 import { motion, useInView, AnimatePresence, Variant } from "framer-motion";
+
 import GuestsModal from "@/components/modals/Guests";
 import DateModal from "@/components/modals/Date";
 

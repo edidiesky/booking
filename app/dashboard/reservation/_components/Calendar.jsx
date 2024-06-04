@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
+import BookingReservationModal from "@/components/modals/BookingReservationModal";
 const Scheduler = dynamic(
   () => import("@bitnoi.se/react-scheduler").then((mod) => mod.Scheduler),
   {
@@ -8,40 +10,58 @@ const Scheduler = dynamic(
   }
 );
 
-// const SchedulerData = dynamic(
-//   () => import("@bitnoi.se/react-scheduler").then((mod) => mod.Scheduler),
-//   {
-//     ssr: false,
-//   }
-// );
 const ReservationCalendar = () => {
-   const [filterButtonState, setFilterButtonState] = useState(0);
-const isLoading = false
-   return (
-     <section className='relative p4 bg-white overflow-hidden shadow-lg border rounded-[10px] min-h-[450px]'>
-       <Scheduler
-         data={mockedSchedulerData}
-         isLoading={isLoading}
-         onRangeChange={(newRange) => console.log(newRange)}
-         onTileClick={(clickedResource) => console.log(clickedResource)}
-         onItemClick={(item) => console.log(item)}
-         onFilterData={() => {
-           // Some filtering logic...
-           setFilterButtonState(1);
-         }}
-         onClearFilterData={() => {
-           // Some clearing filters logic...
-           setFilterButtonState(0);
-         }}
-         config={{
-           zoom: 0,
-           filterButtonState,
-         }}
-       />
-     </section>
-   );
-};
+  const [filterButtonState, setFilterButtonState] = useState(0);
+  const isLoading = false;
 
+  const [reservationtab, setReservationTab] = useState({
+    modal: false,
+    data: null,
+  });
+  return (
+    <>
+      <AnimatePresence mode="wait">
+        {reservationtab?.modal && (
+          <BookingReservationModal
+            modal={reservationtab?.modal}
+            setModal={setReservationTab}
+          />
+        )}
+      </AnimatePresence>
+      <section className="relative p4 bg-white overflow-hidden shadow-lg border rounded-[10px] min-h-[450px]">
+        <Scheduler
+          data={mockedSchedulerData}
+          isLoading={isLoading}
+          onRangeChange={(newRange) => console.log(newRange)}
+          onTileClick={(item) =>
+            setReservationTab({
+              modal: true,
+              data: item,
+            })
+          }
+          onItemClick={(item) =>
+            setReservationTab({
+              modal: true,
+              data: item,
+            })
+          }
+          onFilterData={() => {
+            // Some filtering logic...
+            setFilterButtonState(1);
+          }}
+          onClearFilterData={() => {
+            // Some clearing filters logic...
+            setFilterButtonState(0);
+          }}
+          config={{
+            zoom: 0,
+            filterButtonState,
+          }}
+        />
+      </section>
+    </>
+  );
+};
 
 const mockedSchedulerData = [
   {
@@ -60,7 +80,7 @@ const mockedSchedulerData = [
         title: "Room",
         subtitle: "Subtitle A",
         description: "array indexing Salad West Account",
-        bgColor: "rgb(254,165,177)",
+        bgColor: "#0e7b10",
       },
       {
         id: "22fbe237-6344-4c8e-affb-64a1750f33bd",
@@ -70,7 +90,7 @@ const mockedSchedulerData = [
         title: "Project B",
         subtitle: "Subtitle B",
         description: "Tuna Home pascal IP drive",
-        bgColor: "rgb(254,165,177)",
+        bgColor: "#0e7b10",
       },
       {
         id: "3601c1cd-f4b5-46bc-8564-8c983919e3f5",
@@ -79,7 +99,7 @@ const mockedSchedulerData = [
         occupancy: 1800,
         title: "Project C",
         subtitle: "Subtitle C",
-        bgColor: "rgb(254,165,177)",
+        bgColor: "#0e7b10",
       },
       {
         id: "b088e4ac-9911-426f-aef3-843d75e714c2",
@@ -89,7 +109,7 @@ const mockedSchedulerData = [
         title: "Project D",
         subtitle: "Subtitle D",
         description: "Garden heavy an software Metal",
-        bgColor: "rgb(254,165,177)",
+        bgColor: "#0e7b10",
       },
     ],
   },
@@ -109,7 +129,7 @@ const mockedSchedulerData = [
         title: "Room A",
         subtitle: "Subtitle A",
         description: "array indexing Salad West Account",
-        bgColor: "rgb(254,165,177)",
+        bgColor: "#0e7b10",
       },
       {
         id: "22fbe237-6344-4c8e-affb-64a1750f33bd",
@@ -119,7 +139,7 @@ const mockedSchedulerData = [
         title: "Project B",
         subtitle: "Subtitle B",
         description: "Tuna Home pascal IP drive",
-        bgColor: "rgb(254,165,177)",
+        bgColor: "#0e7b10",
       },
       {
         id: "3601c1cd-f4b5-46bc-8564-8c983919e3f5",
@@ -128,7 +148,7 @@ const mockedSchedulerData = [
         occupancy: 1800,
         title: "Project C",
         subtitle: "Subtitle C",
-        bgColor: "rgb(254,165,177)",
+        bgColor: "#0e7b10",
       },
       {
         id: "b088e4ac-9911-426f-aef3-843d75e714c2",
@@ -138,7 +158,7 @@ const mockedSchedulerData = [
         title: "Project D",
         subtitle: "Subtitle D",
         description: "Garden heavy an software Metal",
-        bgColor: "rgb(254,165,177)",
+        bgColor: "#0e7b10",
       },
     ],
   },

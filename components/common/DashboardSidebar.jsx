@@ -56,7 +56,7 @@ const DashboardSidebar = ({ active, currentUser }) => {
       <div className="w-full h-full py-4 justify-between flex items-center flex-col gap-4">
         <div className="w-full h-[90%] flex flex-col gap-8">
           <div className="flex flex-col w-full items-start justify-between py-1">
-            {/* <h4 className="text-base text-dark">RockTrading</h4> */}
+            {/* <h4 className="text-sm text-dark">RockTrading</h4> */}
             <div className=" w-[90%] mx-auto relative flex gap-4 items-center flex-col justify-between">
               <div className="w-full flex items-center gap-1 justify-start">
                 <Image
@@ -68,7 +68,7 @@ const DashboardSidebar = ({ active, currentUser }) => {
                   src="https://www.hopper.com/assets/treasure-D-5S8iOp.svg"
                   className="w-14 h-14 rounded-full object-cover"
                 />
-                <h4 className="hidden md:flex flex-col text-base font-booking_font_bold font-bold text-dark">
+                <h4 className="hidden md:flex flex-col text-sm font-booking_font_bold font-bold text-dark">
                   HOME & VILLAS{" "}
                   <span className="block text-xs font-booking_font">
                     {" "}
@@ -89,7 +89,7 @@ const DashboardSidebar = ({ active, currentUser }) => {
                   <Link
                     className={`
                       ${pathname === `/dashboard${x.tab.path}` ? "active" : ""}
-                      text-base w-[90%] mx-auto text-dark family1`}
+                      text-sm w-[90%] mx-auto text-dark family1`}
                     href={`/dashboard${x.tab.path}`}
                   >
                     <div className="flex items-center">
@@ -110,7 +110,7 @@ const DashboardSidebar = ({ active, currentUser }) => {
             <Link
               className={`${
                 pathname === `/dashboard/settings` ? "active" : ""
-              } text-base flex items-center gap-4 p-[6px] px-4 font-booking_font_normal text-dark family1`}
+              } text-sm flex items-center gap-4 p-[6px] px-4 font-booking_font_normal text-dark family1`}
               href={`/dashboard/settings`}
             >
               <FiSettings fontSize={"24px"} />
@@ -123,7 +123,7 @@ const DashboardSidebar = ({ active, currentUser }) => {
                   alt=""
                   className="w-10 rounded-full"
                 />
-                <h4 className="text-base text-dark font-booking_font_bold">
+                <h4 className="text-sm text-dark font-booking_font_bold">
                   {currentUser?.name}
                   <span className="block font-booking_font text-sm text-grey">
                     {currentUser?.email}
