@@ -11,7 +11,7 @@
   font-display: swap;
   font-family: "Neue Montreal";
   font-style: normal;
-  font-weight: 200 800;
+  font-weight: 400 600 800;
   src: url(https://www.upwork.com/static/fonts-global/4.5.1/neue-montreal-variable.woff2)
     format("woff2");
 }
@@ -74,11 +74,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #fff;
-  font-family: "Proxima_Regular", sans-serif;
+
   font-weight: 400;
   line-height: 1.2;
 }
-
+#reactSchedulerOutsideWrapper {
+  font-family: "Neue Montreal", sans-serif !important;
+}
 .hide {
   overflow: hidden;
 }
