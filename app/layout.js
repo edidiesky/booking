@@ -1,4 +1,5 @@
 import "./globals.css";
+import "@bitnoi.se/react-scheduler/dist/style.css";
 import { Montserrat } from "next/font/google";
 import StyledComponentsRegistry from "@/utils/StylesComponentsRegistry";
 import SmoothScroll from "@/constants/utils/SmoothScroll";
