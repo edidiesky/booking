@@ -204,7 +204,7 @@ export const HeaderStyles = styled.div`
     visibility: visible;
   }
   .profile_dropdown {
-    width: 150px;
+    width: 130px;
     opacity: 0;
     transform: scale(0.8);
     transition: all 0.3s;
@@ -258,25 +258,21 @@ export const HeaderStyles = styled.div`
     }
 
     &:hover {
-      background: #635bff;
-      color: #fff;
+      background: #f5f5f5;
+      color: #000;
 
       svg {
-        color: #fff;
+        color: #000;
       }
     }
     &.active {
       position: relative;
-      background: #635bff;
-      color: #fff;
+      background: #f5f5f5;
+      color: #000;
       svg {
-        color: #fff;
+        color: #000;
       }
-      span {
-        svg {
-          color: #fff;
-        }
-      }
+     
     }
   }
 `;
