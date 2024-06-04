@@ -1,12 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";  
 import { AiOutlineBars } from "react-icons/ai";
 import styled from "styled-components";
 import Image from "next/image";
 import Link from "next/link";
-import LoginModal from "../modals/Login";
-import RegisterModal from "../modals/Register";
 import { signOut } from "next-auth/react";
 import ModalsProvider from "@/app/providers/modalsProvider";
 import { useAppDispatch } from "@/app/hooks/useCustomRedux";
@@ -14,9 +12,6 @@ import { onLoginModal, onRegisterModal } from "@/app/libs/features/modals/modalS
 const Navbar = ({ currentUser }) => {
   const [bar, setBar] = React.useState(false);
   const dispatch = useAppDispatch()
-  const [active, setActive] = useState(false);
-  const [loginmodal, setLoginModal] = useState(false);
-  const [registermodal, setRegisterModal] = useState(false);
 
   const linkData = [
     {

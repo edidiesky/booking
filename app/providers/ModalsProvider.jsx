@@ -1,10 +1,9 @@
 "use client";
-import { Toaster } from "react-hot-toast";
 import { AnimatePresence } from "framer-motion";
 import { useAppSelector } from "../hooks/useCustomRedux";
 import LoginModal from "@/components/modals/Login";
 import RegisterModal from "@/components/modals/Register";
-const ModalsProvider = ({}) => {
+const ModalsProvider = () => {
   const { loginmodal, registermodal } = useAppSelector((store) => store.modals);
   return (
     <>
