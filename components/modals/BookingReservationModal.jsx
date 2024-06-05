@@ -96,7 +96,7 @@ export default function BookingReservationModal({ setModal, room }) {
           </div>
         </div>
 
-        <div className="p-4 h-[300px] md:h-[350px] overflow-auto  px-4 grid w-full gap-8 md:grid-cols-2">
+        <div className="p-4 h-[300px] md:h-[350px] overflow-auto  px-4 grid w-full gap-8 md:grid-cols-3">
           <div className="w-full flex flex-col gap-8">
             <h3 className="text-sm w-full pb-4 border-b font-booking_font_normal family1">
               Room Terms
