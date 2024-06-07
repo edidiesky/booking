@@ -54,11 +54,13 @@ const RoomCard = ({ apartment, index, type, currentUser }) => {
           sizes="100vw"
           height={0}
           loading="lazy"
+          placeholder="blur"
           style={{
             transition:
               "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
           src={apartment?.rooms?.images[0]}
+          blurDataURL={apartment?.rooms?.images[0]}
           className="w-full min-h-[350px] object-cover hover:grayscale-[1] grayscale-0"
         />
         <div className="w-full flex flex-col py-3 bg-white gap-2">
@@ -138,10 +140,12 @@ const RoomCard = ({ apartment, index, type, currentUser }) => {
                   sizes="100vw"
                   height={0}
                   loading="lazy"
+                  placeholder="blur"
                   style={{
                     transition:
                       "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                   }}
+                  blurDataURL={image}
                   src={image}
                   className="w-full z-10 h-[100%] object-cover hover:grayscale-[1] grayscale-0"
                 />

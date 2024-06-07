@@ -16,7 +16,7 @@ import Skeleton from "react-loading-skeleton";
 import useRooms from "@/app/hooks/useRooms";
 import RoomCard from "@/components/common/RoomCard";
 
-export default function Cta({currentUser}) {
+export default function Cta({ currentUser }) {
   const ctaText_1 = useRef(null);
   const ctaText_2 = useRef(null);
   const ctaText_3 = useRef(null);
@@ -44,70 +44,20 @@ export default function Cta({currentUser}) {
     margin: "0px 100px -50px 0px",
   });
 
-  const ctaText1 = "BENNETH HOUSE – COMFORTABLE AND SUSTAINABLE STYLE";
-  const ctaText2 = "Seasonal Collections";
+  const ctaText2 = "Our Seasonal Collections";
   const ctaText3 =
-    "For tropical explorations, beachfront connections, and cherished family vacations";
-  const ctatext4 =
     "Welcome to LOVAT HOUSE BED & BREAKFAST, we are in Crieff, Perthshire in the heart of Strathearn, the start of the highlands. Relax in our calm and peaceful guest house and enjoy a great start to your day with our lovely fresh breakfast. We’re really looking forward to seeing you.";
-  const ctatext1 =
-    "I AM PASSIONATE ABOUT WEB TECHNOLOGIES AND ELECTRICAL ENGINEERING. I LOVE WORKING AT THE INTERSECTION OF CREATIVITY AND USER FRIENDLY INTERFACES . I CREATE MEMORABLE WEB EXPERIENCES.";
 
   const { loading, error, rooms } = useRooms();
   return (
-    <div data-scroll className="py-32 w-full mt-20 z-50">
-      <div className="w-[90%] mx-auto items-start m-auto max-w-custom  flex flex-col gap-4">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-custom gap-8 lg:items-center lg:gap-20">
-          <div className="w-full">
-            <h3
-              ref={ctaText_1}
-              className=" w-full text-5xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
-            >
-              {ctaText1.split(" ").map((x, index) => {
-                return (
-                  <span key={index} className="inline-flex hide relative">
-                    <motion.span
-                      variants={slideup2}
-                      custom={index}
-                      initial="initial"
-                      animate={inView ? "animate" : "exit"}
-                    >
-                      {x}
-                    </motion.span>
-                  </span>
-                );
-              })}
-            </h3>
-          </div>
-          <div className="w-full lg:w-[600px] flex flex-col gap-24">
-            <h5
-              ref={ctaText_4}
-              className=" w-full text-base flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
-            >
-              {ctatext4.split(" ").map((x, index) => {
-                return (
-                  <span key={index} className="inline-flex hide relative">
-                    <motion.span
-                      variants={slideup}
-                      custom={index}
-                      initial="initial"
-                      animate={inView4 ? "animate" : "exit"}
-                    >
-                      {x}
-                    </motion.span>
-                  </span>
-                );
-              })}
-            </h5>
-          </div>
-        </div>
-        {/* 1st apartment */}
-        <div className="w-full mt-20 md:mt-24 flex flex-col gap-20">
-          <div className="w-full  grid grid-cols-1 sm:grid-cols-1 gap-4 ">
+    <div data-scroll className="py-32 w-full z-50">
+      <div className="w-[90%] md:w-[80%] mx-auto items-start m-auto max-w-custom  flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-20">
+          <div className="w-full  grid grid-cols-1 gap-8 ">
             <div className="w-full">
-              <h4
+              <h2
                 ref={ctaText_5}
-                className=" w-full text-5xl lg:text-6xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
+                className=" w-full text-5xl lg:text-6xl flex md:items-center md:justify-center flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
               >
                 {ctaText2.split(" ").map((x, index) => {
                   return (
@@ -123,12 +73,14 @@ export default function Cta({currentUser}) {
                     </span>
                   );
                 })}
-              </h4>
+              </h2>
             </div>
             <div className="w-full flex flex-col gap-24">
               <h4
                 ref={ctaText_6}
-                className=" w-full text-lg lg:text-lg flex flex-wrap gap-x-[8px] gap-y-[8px] md:gap-y-[4px]  leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
+                className=" w-full md:w-[600px] md:mx-auto text-lg lg:text-base flex md:items-center
+                 md:justify-center flex-wrap gap-x-[8px] gap-y-[8px] 
+                 md:gap-y-[4px]  leading-[1] font-booking_font_normal text-text_dark_1 "
               >
                 {ctaText3.split(" ").map((x, index) => {
                   return (
@@ -149,9 +101,9 @@ export default function Cta({currentUser}) {
           </div>
           {loading ? (
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
-              {apartmentDataList?.map((apartment, index) => {
+              {apartmentDataList?.slice(0, 6).map((apartment, index) => {
                 return (
-                  <div className="w-full flex flex-col gap-2">
+                  <div key={index} className="w-full flex flex-col gap-2">
                     <Skeleton key={index} width={"100%"} height={300} />
                     <Skeleton key={index} width={"30%"} height={10} />
                     <Skeleton key={index} width={"60%"} height={30} />
@@ -162,7 +114,7 @@ export default function Cta({currentUser}) {
             </div>
           ) : (
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
-              {rooms?.map((apartment, index) => {
+              {rooms?.slice(0,4)?.map((apartment, index) => {
                 return (
                   <RoomCard
                     index={index}

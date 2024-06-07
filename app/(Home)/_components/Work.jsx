@@ -5,11 +5,7 @@ import { apartmentDataList } from "@/constants/data/apartment";
 import { motion, useInView } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import useRooms from "@/app/hooks/useRooms";
-import {
-  slideup,
-  slideup2,
-  slideup3,
-} from "@/constants/utils/framer";
+import { slideup, slideup2, slideup3 } from "@/constants/utils/framer";
 const destinationsList = [
   {
     image:
@@ -116,151 +112,102 @@ const Work = () => {
   const inView2 = useInView(ctaText_2, {
     margin: "0px 100px -50px 0px",
   });
-
-  const ctaText1 = "LOVAT HOUSE BED & BREAKFAST";
   const ctaText2 = "Popular Destinations";
   const ctaText5 = "Private Homes With The Assurances Of Marriott";
   const ctaText3 =
     "Check of some of our popular destinations selected by individuals";
   const ctatext4 =
     "We offer a selection of teas from the Wee tea company and coffee pods, in the bathroom you will find luxurious towels alongside gorgeous locally handmade soaps, but you should come and see for yourself and enjoy your time at Lovat House Bed and Breakfast.";
-// console.log(apartmentDataList?.slice(4,7))
-
- const { loading, error, rooms } = useRooms();
+  // console.log(apartmentDataList?.slice(4,7))
   return (
     <>
-      <div data-scroll className="pt-40 bg-[#f1e9dd] w-full relative">
-        <div className="w-[90%] pb-24 m-auto max-w-custom relative flex flex-col gap-16">
-          <div className="w-[80%] mx-auto flex flex-col items-center gap-4 justify-center">
-            <div className="w-[full]">
-              <h4
-                ref={ctaText_1}
-                className=" w-full text-6xl flex flex-wrap justify-center gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
-              >
-                {ctaText1.split(" ").map((x, index) => {
-                  return (
-                    <span key={index} className="inline-flex hide relative">
-                      <motion.span
-                        variants={slideup2}
-                        custom={index}
-                        initial="initial"
-                        animate={inView ? "animate" : "exit"}
-                      >
-                        {x}
-                      </motion.span>
-                    </span>
-                  );
-                })}
-              </h4>
-            </div>
-            <div className="w-full flex flex-col gap-24">
-              <h4
-                ref={ctaText_2}
-                className="w-full md:w-[80%] mx-0 md:mx-auto text-xl lg:text-lg flex flex-wrap md:items-center md:justify-center gap-x-[8px] gap-y-[7px] md:gap-y-[4px]  leading-[1] font-portfolio_bold1 font-medium text-text_dark_1 "
-              >
-                {ctatext4.split(" ").map((x, index) => {
-                  return (
-                    <span key={index} className="inline-flex hide relative">
-                      <motion.span
-                        variants={slideup}
-                        custom={index}
-                        initial="initial"
-                        animate={inView2 ? "animate" : "exit"}
-                      >
-                        {x}
-                      </motion.span>
-                    </span>
-                  );
-                })}
-              </h4>
-            </div>
-          </div>
-
-          <div ref={container} className="w-full flex flex-col">
-            {loading
-              ? apartmentDataList?.slice(4, 6)?.map((apartment, index) => {
-                  return <Skeleton key={index} width={"100%"} height={450} />;
-                })
-              : rooms?.slice(3, 5)?.map((apartment, index) => {
-                  return (
-                    <div key={index} className="w-full hide">
-                      <motion.div
-                        variants={slideup3}
-                        custom={index}
-                        initial="initial"
-                        animate={inView3 ? "animate" : "exit"}
-                        key={index}
-                        className={`${
-                          index % 2 === 0
-                            ? "flex-col md:flex-row-reverse"
-                            : "flex-col md:flex-row"
-                        } w-full flex `}
-                      >
-                        <div className="flex-[1] flex bg-white flex-col items-start justify-start py-20 md:justify-center gap-4">
-                          <div className="w-[80%] mx-auto flex flex-col items-start gap-4">
-                            <h3 className="text-5xl font-booking_font-bold font-medium text-text_dark_1 ">
-                              {apartment?.title}
-                            </h3>
-                            <h4 className="text-xl italic">
-                              {apartment?.description}
-                            </h4>
-                            <h3 className="text-lg font-normal font-booking_font1">
-                              Rates from{" "}
-                              <span className="font-bold text-3xl">
-                                £{apartment?.price}
-                              </span>{" "}
-                              per night
-                            </h3>
-
-                            <div className="p-4 mt-8 text-sm cursor-pointer uppercase bg-[#C5F244] px-8 rounded-[40px] font-bold text-dark">
-                              Book Now
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex-[1] cursor-pointer">
-                          <Image
-                            alt="Cotion"
-                            width={0}
-                            sizes="100vw"
-                            height={0}
-                            loading="lazy"
-                            style={{
-                              transition:
-                                "filter 0.2s cubic-bezier(0.4, 0, 0.2, 1), -webkit-filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                            }}
-                            src={apartment?.images[0]}
-                            className="w-full hover:grayscale-[1] grayscale-0"
-                          />
-                        </div>
-                      </motion.div>
-                    </div>
-                  );
-                })}
-          </div>
-        </div>
+      <div data-scroll className="w-full relative">
         <div className="bg-white w-full py-24 flex flex-col gap-12">
-          <div className=" w-[90%] flex flex-col gap-16 m-auto max-w-custom">
+          <div className="bg-[#f5f5f5] w-full py-32 flex flex-col items-center justify-center">
+            <div className="w-[90%] grid gap-24 m-auto max-w-custom">
+              <div className=" md:w-[80%] mx-auto flex flex-col items-center gap-8 justify-center">
+                <div className="w-[full]">
+                  <h4
+                    ref={ctaText_5}
+                    className="w-full text-4xl md:text-6xl flex flex-wrap md:justify-center md:items-center gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
+                  >
+                    {ctaText5.split(" ").map((x, index) => {
+                      return (
+                        <span key={index} className="inline-flex hide relative">
+                          <motion.span
+                            variants={slideup2}
+                            custom={index}
+                            initial="initial"
+                            animate={inView7 ? "animate" : "exit"}
+                          >
+                            {x}
+                          </motion.span>
+                        </span>
+                      );
+                    })}
+                  </h4>
+                </div>
+              </div>
+              <div
+                ref={container3}
+                className="w-full grid hide grid-cols-1 md:grid-cols-3"
+              >
+                {assuranceList?.map((data, index) => {
+                  return (
+                    <motion.div
+                      key={index}
+                      variants={slideup3}
+                      custom={index}
+                      initial="initial"
+                      animate={inView8 ? "animate" : "exit"}
+                      className="cursor-pointer hide rounded-lg p-12 px-6 
+                      border-b md:border-b-0 border-r-0 md:border-r-2
+                       border-[#D4AF37] flex flex-col
+                        justify-center items-center gap-8"
+                    >
+                      <Image
+                        alt="Cotion"
+                        width={0}
+                        sizes="100vw"
+                        height={0}
+                        loading="lazy"
+                        src={data.image}
+                        className="w-24 h-24"
+                      />
+                      <h4 className="text-2xl flex-1 leading-[1] text-center font-bold font-booking_font2">
+                        {data.title}
+                        <span className="block pt-6 text-base w-[80%] mx-auto text-center leading-[1.6] font-booking_font_normal">
+                          {data.description}
+                        </span>
+                      </h4>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          <div className="w-[90%] py-32 md:w-[80%] flex flex-col gap-16 m-auto max-w-custom">
             <div className="w-full flex flex-col gap-2">
               <div className="w-[full]">
-                <h4
+                <h3
                   ref={ctaText_3}
-                  className=" w-full text-6xl lg:text-7xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
+                  className=" w-full text-4xl md:text-5xl flex flex-wrap gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
                 >
                   {ctaText2.split(" ").map((x, index) => {
                     return (
                       <span key={index} className="inline-flex hide relative">
                         <motion.span
-                          variants={slideup2}
+                          // variants={slideup2}
                           custom={index}
                           initial="initial"
-                          animate={inView4 ? "animate" : "exit"}
+                          // animate={inView4 ? "animate" : "exit"}
                         >
                           {x}
                         </motion.span>
                       </span>
                     );
                   })}
-                </h4>
+                </h3>
               </div>
               <div className="w-full flex flex-col gap-24">
                 <h4
@@ -284,11 +231,8 @@ const Work = () => {
                 </h4>
               </div>
             </div>
-            <div
-              ref={container2}
-              className="w-full grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4"
-            >
-              {destinationsList?.map((data, index) => {
+            <div ref={container2} className="w-full grid gap-x-8 gap-y-4">
+              {/* {destinationsList?.map((data, index) => {
                 return (
                   <motion.div
                     key={index}
@@ -315,68 +259,7 @@ const Work = () => {
                     </h4>
                   </motion.div>
                 );
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white w-full py-24 flex flex-col items-center justify-center">
-          <div className="w-[90%] flex flex-col gap-16 m-auto max-w-custom">
-            <div className="w-[80%] mx-auto flex flex-col items-center gap-4 justify-center">
-              <div className="w-[full]">
-                <h4
-                  ref={ctaText_5}
-                  className=" w-full text-6xl lg:text-7xl flex flex-wrap md:justify-center md:items-center gap-x-[8px] gap-y-[8px]  leading-[1] font-booking_font4 font-medium text-text_dark_1 "
-                >
-                  {ctaText5.split(" ").map((x, index) => {
-                    return (
-                      <span key={index} className="inline-flex hide relative">
-                        <motion.span
-                          variants={slideup2}
-                          custom={index}
-                          initial="initial"
-                          animate={inView7 ? "animate" : "exit"}
-                        >
-                          {x}
-                        </motion.span>
-                      </span>
-                    );
-                  })}
-                </h4>
-              </div>
-            </div>
-            <div
-              ref={container3}
-              className="w-full grid grid-cols-1 md:grid-cols-3"
-            >
-              {assuranceList?.map((data, index) => {
-                return (
-                  <motion.div
-                    key={index}
-                    variants={slideup3}
-                    custom={index}
-                    initial="initial"
-                    animate={inView8 ? "animate" : "exit"}
-                    className="cursor-pointer rounded-lg p-20 px-6 border-b md:border-b-0 border-r-0 md:border-r-2 border-[#D4AF37] bg-white flex flex-col justify-center items-center gap-8"
-                  >
-                    <Image
-                      alt="Cotion"
-                      width={0}
-                      sizes="100vw"
-                      height={0}
-                      loading="lazy"
-                      src={data.image}
-                      className="w-24 h-24"
-                    />
-                    <h4 className="text-2xl flex-1 leading-[1] text-center font-bold font-booking_font2">
-                      {data.title}
-                      <span className="block pt-6 text-base w-[80%] mx-auto text-center leading-[1.6] font-booking_font4 font-light text-grey">
-                        {data.description}
-                      </span>
-                    </h4>
-                  </motion.div>
-                );
-              })}
+              })} */}
             </div>
           </div>
         </div>

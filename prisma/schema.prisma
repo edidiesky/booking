@@ -61,8 +61,8 @@ model Rooms {
   price       Int
   address     String
   city        String
-  latitude    Int?
-  longitude   Int?
+  // latitude    Int?
+  // longitude   Int?
   type        String?
   bedroom     Int
   bathroom    Int

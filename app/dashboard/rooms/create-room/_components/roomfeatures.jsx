@@ -26,7 +26,7 @@ const Roomfeatures = ({
               {RoomFeaturesList?.map((x, index) => {
                 const active = features.includes(x);
                 return (
-                  <div
+                  <divrd
                     onClick={() => handleFeatureSelection(x)}
                     className={`${
                       active

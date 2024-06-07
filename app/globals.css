@@ -82,7 +82,7 @@ body {
   font-family: "Neue Montreal", sans-serif !important;
 }
 .hide {
-  overflow: hidden;
+  overflow: hidden !important;
 }
 
 textarea {
