@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { AnimatePresence } from "framer-motion";  
+import { HiBars3BottomRight } from "react-icons/hi2";
 import { AiOutlineBars } from "react-icons/ai";
 import styled from "styled-components";
 import Image from "next/image";
@@ -38,7 +38,7 @@ const Navbar = ({ currentUser }) => {
   return (
     <>
       <ModalsProvider />
-      <div className={`bg-inherit w-full min-h-[80px] z-[500] py-4`}>
+      <div className={`bg-[var(--grey-1)] w-full min-h-[75px] z-[500] py-4`}>
         <div className={`w-full mx-auto max-w-custom_2`}>
           <div className="w-[95%] mx-auto text-text_dark_1 flex items-center justify-between gap-2 lg:gap-4">
             <Link href={"/"} className=" flex items-center gap-1 justify-start">
@@ -77,18 +77,11 @@ const Navbar = ({ currentUser }) => {
               })}
             </div>
             <div className="flex items-center justify-end gap-4">
-              <div className="flex lg:hidden backdrop:span">
-                <AiOutlineBars
-                  onClick={() => setBar(true)}
-                  fontSize={"25px"}
-                  color="#000"
-                />
-              </div>
               <ProfileDropdownStyles className=" relative flex items-end justify-end gap-4">
                 {/* <div className="w-12 lg:w-12 h-12 lg:h-12 rounded-full bg-[#000] flex items-center justify-center text-2xl text-white">
                 <BiCart />
               </div> */}
-                <div className="flex profile_wrapper relative items-center gap-2">
+                <div className="flex profile_wrapper relative items-center justify-end gap-2">
                   <div className="flex items-center gap-2">
                     {currentUser?.image ? (
                       <img
@@ -121,6 +114,17 @@ const Navbar = ({ currentUser }) => {
                       </h4>
                     )}
                   </div>
+                  <span className="flex items-center gap-4">
+                    <div className="btn text-xs text-center p-4 font-semibold text-white px-6 rounded-[40px]">
+                      Book Your Stay
+                    </div>
+                    <span
+                      onClick={() => setBar(true)}
+                      className="flex text-3xl lg:hidden"
+                    >
+                      <HiBars3BottomRight />
+                    </span>
+                  </span>
                   <div className="profile_dropdown shadow-2xl absolute">
                     <div className="w-full flex flex-col">
                       {currentUser?.role === "admin" ? (
@@ -186,7 +190,7 @@ const Navbar = ({ currentUser }) => {
                       ) : (
                         <div className="flex profile_dropdown_bottom flex-col w-full">
                           <div
-                                onClick={() => dispatch(onRegisterModal())}
+                            onClick={() => dispatch(onRegisterModal())}
                             className="font-booking_font_bold text-xl p-2 family1 w-full profile_list text-dark block"
                           >
                             Sign Up

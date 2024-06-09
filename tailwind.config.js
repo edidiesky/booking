@@ -21,10 +21,9 @@ module.exports = {
         custom_2: "1304px",
       },
       fontFamily: {
-        booking_font: ["Proxima_Regular", "sans-serif"],
-        booking_font_bold: ["Proxima_Bold", "sans-serif"],
-        booking_font_normal: ["Proxima_SemiBold", "sans-serif"],
-        booking_font2: ["playfair", "sans-serif"],
+        booking_font: ["Neue Montreal", "sans-serif"],
+        booking_font_bold: ["Neue Montreal", "sans-serif"],
+        booking_font_normal: ["Neue Montreal", "sans-serif"],
         booking_font4: ["playfair", "sans-serif"],
       },
       backgroundImage: {

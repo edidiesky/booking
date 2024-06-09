@@ -4,36 +4,18 @@
 
 @font-face {
   font-family: "playfair";
-  src: url("../assets/fonts/playfair.ttf") format("truetype");
+  src: url("./assets/fonts/booking_font.ttf") format("truetype");
 }
 
 @font-face {
   font-display: swap;
   font-family: "Neue Montreal";
   font-style: normal;
-  font-weight: 400 600 800;
-  src: url(https://www.upwork.com/static/fonts-global/4.5.1/neue-montreal-variable.woff2)
-    format("woff2");
-}
-@font-face {
-  font-family: "Proxima_Bold";
-  font-weight: 800;
-  src: url(https://www.upwork.com/static/fonts-global/4.5.1/neue-montreal-variable.woff2)
-    format("woff2");
-}
-@font-face {
-  font-family: "Proxima_Regular";
-  font-weight: 400;
+  font-weight: 400 600 700;
   src: url(https://www.upwork.com/static/fonts-global/4.5.1/neue-montreal-variable.woff2)
     format("woff2");
 }
 
-@font-face {
-  font-family: "Proxima_SemiBold";
-  font-weight: 600;
-  src: url(https://www.upwork.com/static/fonts-global/4.5.1/neue-montreal-variable.woff2)
-    format("woff2");
-}
 * {
   text-decoration: none;
   margin: 0;
@@ -58,10 +40,12 @@
 }
 
 :root {
-  --grey-1: rgb(167, 167, 167);
-  --dark-1: #0b2735;
+  --grey-1: #eae5df;
+  --dark-1: #000000;
   --primary: #e4c590;
   --background_2: #0e0d0c;
+  --gold-1:#BE9874;
+  --green-1: #00383c;
   --red: rgb(255, 56, 92);
 }
 
@@ -74,9 +58,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #fff;
-
   font-weight: 400;
   line-height: 1.2;
+  letter-spacing: 1px;
 }
 #reactSchedulerOutsideWrapper {
   font-family: "Neue Montreal", sans-serif !important;
@@ -95,26 +79,35 @@ input {
   outline: none;
 }
 input::placeholder {
-  font-size: 13px;
+  font-size: inherit;
   font-weight: normal;
   color: #000;
 }
 .input {
   border: 1px solid rgba(0, 0, 0, 0.2) !important;
-  height: 50px;
+  height: 55px;
   padding: 0 1rem;
   border-radius: 10px;
 }
 
 .btn {
   transition: all 0.5s;
-  background: #0b2735 !important;
-  font-family: "Proxima_SemiBold", sans-serif;
+  background: var(--green-1) !important;
+  cursor: pointer;
 }
 .btn:hover {
   opacity: 0.7;
 }
 
+.btn.btn_2 {
+  transition: all 0.5s;
+  border: 2px solid var(--green-1) !important;
+  background-color: transparent;
+  color: #fff;
+}
+.btn.btn_2:hover {
+  background: var(--green-1) !important;
+}
 .hide {
   overflow: hidden;
 }
