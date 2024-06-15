@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import { motion, useInView, AnimatePresence, Variant } from "framer-motion";
+
 import {
   opacity,
   slideup,

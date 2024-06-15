@@ -1,12 +1,34 @@
-
+"use client";
 import React from "react";
-import RoomInfo from "./Top";
-import getCurrentUserSession from "@/app/actions/getCurrentUser";
-export default async function BookingItem({ roomid }) {
-  const currentUser = await getCurrentUserSession();
+import Hero from "./Hero";
+import RoomLists from "./RoomLists";
+import RecommendedList from "./RecommendedList";
+import Loader from "@/components/loader";
+import useGetRoomById from "@/app/hooks/useGetRoomById";
+import Navbar from "@/components/common/Navbar";
+import Footer from "@/components/common/Footer";
+export default function BookingItem({ roomid, currentUser }) {
+  const { loading, room } = useGetRoomById(roomid);
+  if (loading) {
+    return <Loader />;
+  }
   return (
-    <div className="bg-white">
-      <RoomInfo currentUser={currentUser} roomid={roomid} />
+    <div>
+      <Navbar currentUser={currentUser} />
+      <Hero room={room} />
+      {/* <RoomLists currentUser={currentUser} loading={loading} room={room} />
+      <RecommendedList
+        currentUser={currentUser}
+        loading={loading}
+        room={room}
+      /> */}
+      <RoomLists currentUser={currentUser} loading={loading} room={room} />
+      <RecommendedList
+        currentUser={currentUser}
+        loading={loading}
+        room={room}
+      />
+      <Footer />
     </div>
   );
 }

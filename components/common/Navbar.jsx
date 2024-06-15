@@ -8,10 +8,13 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import ModalsProvider from "@/app/providers/modalsProvider";
 import { useAppDispatch } from "@/app/hooks/useCustomRedux";
-import { onLoginModal, onRegisterModal } from "@/app/libs/features/modals/modalSlice";
+import {
+  onLoginModal,
+  onRegisterModal,
+} from "@/app/libs/features/modals/modalSlice";
 const Navbar = ({ currentUser }) => {
   const [bar, setBar] = React.useState(false);
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   const linkData = [
     {
@@ -51,7 +54,7 @@ const Navbar = ({ currentUser }) => {
                 src="https://www.hopper.com/assets/treasure-D-5S8iOp.svg"
                 className="w-14 h-14 rounded-full object-cover"
               />
-              <h4 className="hidden lg:flex flex-col text-xl font-bold font-booking_font_bold text-dark">
+              <h4 className="hidden lg:flex flex-col text-xl font-bold font-booking_font4 text-dark">
                 HOME & VILLAS{" "}
                 <span className="block font-bold text-xs font-booking_font">
                   {" "}
@@ -69,7 +72,7 @@ const Navbar = ({ currentUser }) => {
                     style={{ transition: "all .4s" }}
                     key={index}
                     href={`/${link?.path}`}
-                    className="font-booking_font_normal hover:text-[#706f6f] text-base"
+                    className="font-booking_font font-semibold hover:text-[#706f6f] text-sm"
                   >
                     {link?.title}
                   </Link>
@@ -82,38 +85,40 @@ const Navbar = ({ currentUser }) => {
                 <BiCart />
               </div> */}
                 <div className="flex profile_wrapper relative items-center justify-end gap-2">
-                  <div className="flex items-center gap-2">
-                    {currentUser?.image ? (
-                      <img
-                        src={currentUser?.image}
-                        alt=""
-                        className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
-                      />
-                    ) : currentUser?.username ? (
-                      // <div className="w-12 h-12 text-white rounded-full bg-[#000] text-2xl flex items-center justify-center ">
-                      //   {currentUser?.username[0]}{" "}
-                      // </div>
-                      <img
-                        src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
-                        alt=""
-                        className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
-                      />
-                    ) : (
-                      <img
-                        src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
-                        alt=""
-                        className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
-                      />
-                    )}
-                    {currentUser && (
-                      <h4 className="text-sm font-booking_font_bold text-dark font-bold family1">
-                        {currentUser?.name}
-                        <span className="block font-normal font-booking_font text-xs text-grey">
-                          {currentUser?.email}
-                        </span>
-                      </h4>
-                    )}
-                  </div>
+                  {currentUser && (
+                    <div className="hidden lg:flex items-center gap-2">
+                      {currentUser?.image ? (
+                        <img
+                          src={currentUser?.image}
+                          alt=""
+                          className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
+                        />
+                      ) : currentUser?.username ? (
+                        // <div className="w-12 h-12 text-white rounded-full bg-[#000] text-2xl flex items-center justify-center ">
+                        //   {currentUser?.username[0]}{" "}
+                        // </div>
+                        <img
+                          src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
+                          alt=""
+                          className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
+                        />
+                      ) : (
+                        <img
+                          src="https://fundednext.fra1.digitaloceanspaces.com/dashboard/demo-avatar.jpg"
+                          alt=""
+                          className="w-12 lg:w-12 h-12 lg:h-12 rounded-full"
+                        />
+                      )}
+                      {currentUser && (
+                        <h4 className="text-sm font-booking_font_bold text-dark font-bold family1">
+                          {currentUser?.name}
+                          <span className="block font-normal font-booking_font text-xs text-grey">
+                            {currentUser?.email}
+                          </span>
+                        </h4>
+                      )}
+                    </div>
+                  )}
                   <span className="flex items-center gap-4">
                     <div className="btn text-xs text-center p-4 font-semibold text-white px-6 rounded-[40px]">
                       Book Your Stay

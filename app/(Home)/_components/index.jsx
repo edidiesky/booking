@@ -1,17 +1,17 @@
 "use client";
 import React from "react";
 import { BiCheck, BiChevronDown } from "react-icons/bi";
-import { apartmentDataList } from "../../../data/apartmentData";
 import RoomCard from "@/components/common/RoomCard";
 import Image from "next/image";
 import useRooms from "@/app/hooks/useRooms";
 import Skeleton from "react-loading-skeleton";
-const MainContent = () => {
+import { apartmentDataList } from "@/constants/data/apartment";
+const MainContent = ({ currentUser }) => {
   return (
     <div className="w-full flex flex-col gap-8">
       <Hero />
       <About />
-      <Collections />
+      <Collections currentUser={currentUser} />
       <RoomsPrice />
       <RoomStructure />
       <RoomsBanner />
@@ -148,7 +148,7 @@ const Hero = () => {
 const About = () => {
   return (
     <div className="w-full flex py-20 flex-col gap-8">
-      <div className="w-[90%] mx-auto gap-24 md:gap-16 max-w-custom_1 grid lg:grid-cols-custom_4">
+      <div className="w-[90%] mx-auto gap-24 md:gap-16 max-w-custom_1 md:items-center grid lg:grid-cols-custom_4">
         <div className="w-full lg:w-[450px] h-[400px] md:h-[650px] relative">
           <Image
             alt="Cotion"
@@ -206,26 +206,30 @@ const About = () => {
   );
 };
 
-const Collections = () => {
+const Collections = ({ currentUser }) => {
   const { loading, error, rooms } = useRooms();
   return (
     <div className="w-full py-16 flex flex-col gap-32 md:gap-40">
-      <div className="w-[90%] mx-auto gap-4 max-w-custom_1 grid md:grid-cols-2 lg:grid-cols-3">
+      <div className="w-[90%] mx-auto gap-4 max-w-custom_1 ">
         {loading ? (
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-8">
             {apartmentDataList?.slice(0, 6).map((apartment, index) => {
               return (
                 <div key={index} className="w-full flex flex-col gap-2">
-                  <Skeleton key={index} width={"100%"} height={300} />
-                  <Skeleton key={index} width={"30%"} height={10} />
-                  <Skeleton key={index} width={"60%"} height={30} />
-                  <Skeleton key={index} width={"30%"} height={10} />
+                  <Skeleton key={index} width={"100%"} height={200} />
+                  <div className="border bg-white p-6 flex flex-col gap-3">
+                    <Skeleton key={index} width={"30%"} height={10} />
+                    <Skeleton key={index} width={"60%"} height={30} />
+                    <Skeleton key={index} width={"30%"} height={10} />
+                    <Skeleton key={index} width={"20%"} height={10} />
+                    <Skeleton key={index} width={"10%"} height={10} />
+                  </div>
                 </div>
               );
             })}
           </div>
         ) : (
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {rooms?.slice(0, 6)?.map((apartment, index) => {
               return (
                 <RoomCard
@@ -585,7 +589,7 @@ const RoomsPrice = () => {
           The Best Prices
         </h1>
 
-        <div className="w-[90%] mx-auto py-4 lg:flex-row gap-4 flex-col items-center justify-center flex">
+        <div className="w-[90%] mx-auto max-w-custom_1 py-4 lg:flex-row gap-4 flex-col items-center justify-center flex">
           {roompriceData.map((room, index) => {
             return (
               <div

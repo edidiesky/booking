@@ -14,10 +14,10 @@ import getCurrentUserSession from "@/app/actions/getCurrentUser";
 export default async function Home({params}) {
     const currentUser = await getCurrentUserSession();
   return (
-    <div className={`${karla.variable}`}>
-      <Navbar currentUser={currentUser} />
-      <HomeIndex roomid={params} />
-      <Footer />
+    <div>
+      {/* <Navbar currentUser={currentUser} /> */}
+      <HomeIndex roomid={params} currentUser={currentUser} />
+    
     </div>
   );
 }

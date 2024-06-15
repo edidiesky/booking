@@ -1,9 +1,7 @@
 "use client";
 import React, { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import {
-  slideup,
-} from "@/constants/utils/framer";
+import { slideup } from "@/constants/utils/framer";
 import RoomPaymentTab from "./RoomPaymentTab";
 import { BiCheck, BiChevronLeft } from "react-icons/bi";
 import { useSearchParams } from "next/navigation";
@@ -11,7 +9,6 @@ import moment from "moment";
 import Skeleton from "react-loading-skeleton";
 import useGetReservationById from "@/app/hooks/useGetReservationById";
 export default function RoomInfo() {
-
   const searchParams = useSearchParams();
   const reservationId = searchParams.get("reservationId");
   //  console.log(reservationId);

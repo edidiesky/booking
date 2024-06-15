@@ -2,71 +2,119 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Link from "next/link";
 const Footer = () => {
+  const navbarCenterList = [
+    {
+      title: "Home",
+      icon: "./images/home.png",
+    },
+    {
+      title: "Rooms",
+      icon: "./images/svg_1.png",
+    },
+    {
+      title: "Schedule",
+      icon: "./About/svg_4.png",
+    },
+
+    {
+      title: "Contact",
+      icon: "./images/svg_2.png",
+    },
+
+    // {
+    //   title: "Transaction",
+    //   icon: "./images/svg_3.png",
+    // },
+  ];
   return (
-    <div className="relative min-h-[40vh] flex flex-col items-center justify-center bg-[#000]">
-      <div className="w-[95%] px-4 max-w-custom_1 mx-auto py-20 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
-        <div className="flex-1 gap-2 flex items-center justify-start md:justify-center">
-          <Image
-            alt="Cotion"
-            width={0}
-            sizes="100vw"
-            height={0}
-            loading="lazy"
-            src="https://www.hopper.com/assets/treasure-D-5S8iOp.svg"
-            className="w-14 h-14 rounded-full object-cover"
-          />
-          <h4 className="text-2xl font-bold font-booking_font4 text-white">
-            HOME & VILLAS{" "}
-            <span className="block font-normal text-base font-booking_font">
-              {" "}
-              Benneth Okeke
-            </span>
-          </h4>
-        </div>
-        <div className="w-100 flex md:flex-row flex-col items-start gap-20">
-          <div className="flex flex-col gap-4">
-            <h4 className="text-sm font-normal text-white font-booking_font">
-              Destinations
-            </h4>
-            <h4 className="text-sm font-normal text-white font-booking_font">
-              Search Homes
-            </h4>
-            <h4 className="text-sm font-normal text-white font-booking_font">
-              Offers
-            </h4>
-            <h4 className="text-sm font-normal text-white font-booking_font">
-              Collection Pages
-            </h4>
-            <h4 className="text-sm font-normal text-white font-booking_font">
-              Sitemap
-            </h4>
+    <>
+      <div
+        className="w-full  py-16 relative bg-[#1D1D1D] flex items-center justify-center
+   gap-8"
+      >
+        <div
+          className="w-[90%] mx-auto max-w-custom_1 justify-between z-40 grid md:grid-cols-2 lg:grid-cols-3
+      gap-8 md:gap-2"
+        >
+          <div className="flex flex-col gap-6">
+            <img
+              src="https://www.nicdarkthemes.com/themes/hotel-booking/wp/demo/hotel/wp-content/uploads/sites/2/2022/04/icon-20.png"
+              alt=""
+              className="w-12 md:w-16"
+            />
+            <h3 className="text-2xl text-white font-booking_font4">
+              Phone Support
+              <span className="block uppercase text-sm font-booking_font text-grey">
+                SOCIAL MEDIA CHANNELS
+              </span>
+            </h3>
+            <h3 className="text-2xl text-white font-booking_font4">
+              + 01 345 647 745
+            </h3>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <h4 className="text-sm font-normal text-white font-booking_font">
-              Marriott.com
-            </h4>
-            <h4 className="text-sm font-normal text-white font-booking_font">
-              Marriott BonvoyTM
-            </h4>
-            <h4 className="text-sm font-normal text-white font-booking_font">
-              Tours & Activities
-            </h4>
-            <h4 className="text-sm font-normal text-white font-booking_font">
-              Collection Connectivity Partners
-            </h4>
+          <div className="flex flex-col gap-6">
+            <img
+              src="https://www.nicdarkthemes.com/themes/hotel-booking/wp/demo/hotel/wp-content/uploads/sites/2/2022/04/icon-19.png"
+              alt=""
+              className="w-12 md:w-16"
+            />
+            <h3 className="text-2xl text-white font-booking_font4">
+              Connect With Us
+              <span className="block uppercase text-sm font-booking_font text-grey">
+                24 HOURS A DAY
+              </span>
+            </h3>
+            <h3 className="text-2xl text-white font-booking_font4">
+              + 01 345 647 745
+            </h3>
+          </div>
+          <div className="flex flex-col gap-6">
+            <img
+              src="https://www.nicdarkthemes.com/themes/hotel-booking/wp/demo/hotel/wp-content/uploads/sites/2/2022/04/icon-20.png"
+              alt=""
+              className="w-12 md:w-16"
+            />
+            <h3 className="text-2xl flex flex-col gap-4 text-white font-booking_font4">
+              Contact Us
+              <span className="block leading-[1.5]  text-base font-booking_font text-grey">
+                Reservation : + 202 303 404
+              </span>
+              <span className="block leading-[1.5]  text-base font-booking_font text-grey">
+                Booking : + 414 123 404
+              </span>
+            </h3>
           </div>
         </div>
       </div>
-      <div className="w-[95%] pt-4 border-t border-[rgba(255,255,255,.3)] max-w-custom mx-auto py-4 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
-        <div className="flex-1 gap-2 flex items-start justify-start">
-          <h4 className="text-sm font-normal font-booking_font text-white">
-            © Copyright 2024, Victor Essien, All rights reserved.
-          </h4>
+      <div
+        className="w-full  py-4 relative bg-[#000] flex items-center justify-center
+   gap-8"
+      >
+        <div
+          className="w-[90%] mx-auto max-w-custom_1 flex items-center justify-between
+       gap-4"
+        >
+          <div className="items-center justify-start flex gap-1">
+            {navbarCenterList?.map((list, index) => {
+              return (
+                <Link
+                  href={"#"}
+                  key={index}
+                  className={`text-sm 
+                font-normal  text-white flex items-center gap-2 p-3 px-4 rounded-[40px]`}
+                >
+                  {/* <img src={list?.icon} className="w-4" alt="" /> */}
+                  {list?.title}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
