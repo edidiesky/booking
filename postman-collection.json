@@ -1,0 +1,959 @@
+{
+  "info": {
+    "name": "Booking Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:4000" },
+    { "key": "tenant_slug", "value": "test-hotel" },
+    { "key": "access_token", "value": "" },
+    { "key": "refresh_token", "value": "" },
+    { "key": "booking_id", "value": "" },
+    { "key": "property_id", "value": "" },
+    { "key": "room_type_id", "value": "" },
+    { "key": "payment_id", "value": "" },
+    { "key": "role_id", "value": "" },
+    { "key": "permission_id", "value": "" },
+    { "key": "user_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/health"
+          }
+        },
+        {
+          "name": "Metrics",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/metrics"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1. Initiate Onboarding",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.debug) pm.collectionVariables.set('otp', r.debug);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/auth/onboarding/initiate",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"guest@test.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2. Confirm Email OTP",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/auth/onboarding/confirm",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"guest@test.com\",\n  \"token\": \"{{otp}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3. Resend OTP",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/auth/onboarding/resend",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"guest@test.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "4. Register Guest",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data) {",
+                  "  pm.collectionVariables.set('access_token', r.data.accessToken);",
+                  "  pm.collectionVariables.set('refresh_token', r.data.refreshToken);",
+                  "  pm.collectionVariables.set('user_id', r.data.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/auth/register/guest",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"guest@test.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phone\": \"+2348012345678\"\n}"
+            }
+          }
+        },
+        {
+          "name": "4b. Register Host",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data) {",
+                  "  pm.collectionVariables.set('access_token', r.data.accessToken);",
+                  "  pm.collectionVariables.set('refresh_token', r.data.refreshToken);",
+                  "  pm.collectionVariables.set('user_id', r.data.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/auth/register/host",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"host@test.com\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"phone\": \"+2348012345679\",\n  \"tenantName\": \"Test Hotel\",\n  \"tenantSlug\": \"test-hotel\",\n  \"platformFeePct\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "5. Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data) {",
+                  "  pm.collectionVariables.set('access_token', r.data.accessToken);",
+                  "  pm.collectionVariables.set('refresh_token', r.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"guest@test.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "6. Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data) pm.collectionVariables.set('access_token', r.data.accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/auth/refresh",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "7. Me",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/auth/me",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        },
+        {
+          "name": "8. Logout",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/auth/logout",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/profile",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/v1/profile",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"displayName\": \"John Doe\",\n  \"bio\": \"Avid traveller\",\n  \"address\": {\n    \"city\": \"Lagos\",\n    \"state\": \"Lagos\",\n    \"country\": \"Nigeria\"\n  }\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenant",
+      "item": [
+        {
+          "name": "Get My Tenant",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/tenants/me",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Update Tenant Settings",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/v1/tenants/me/settings",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"timezone\": \"Africa/Lagos\",\n  \"currency\": \"NGN\",\n  \"locale\": \"en-NG\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Cancellation Policy",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/v1/tenants/me/policy",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"policy\": [\n    { \"hours_before\": 48, \"refund_pct\": 100 },\n    { \"hours_before\": 24, \"refund_pct\": 50 },\n    { \"hours_before\": 0,  \"refund_pct\": 0 }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "List All Tenants (Platform Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/tenants",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        },
+        {
+          "name": "Suspend Tenant (Platform Admin)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/v1/tenants/{{tenant_id}}/suspend",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        },
+        {
+          "name": "Activate Tenant (Platform Admin)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/v1/tenants/{{tenant_id}}/activate",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Properties",
+      "item": [
+        {
+          "name": "Create Property",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data) pm.collectionVariables.set('property_id', r.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/properties",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Grand Hotel Lagos\",\n  \"description\": \"A luxury hotel in the heart of Lagos\",\n  \"propertyType\": \"hotel\",\n  \"address\": {\n    \"street\": \"1 Adeola Odeku Street\",\n    \"city\": \"Lagos\",\n    \"state\": \"Lagos\",\n    \"country\": \"Nigeria\",\n    \"lat\": 6.4281,\n    \"lng\": 3.4219\n  },\n  \"amenities\": [\"wifi\", \"pool\", \"gym\", \"restaurant\"],\n  \"checkInTime\": \"14:00\",\n  \"checkOutTime\": \"11:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Properties",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties?page=1&limit=20",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get Property",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/properties/{{property_id}}",
+            "header": [
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Create Room Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data) pm.collectionVariables.set('room_type_id', r.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/properties/{{property_id}}/room-types",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Deluxe King Room\",\n  \"description\": \"Spacious room with king bed and city view\",\n  \"maxOccupancy\": 2,\n  \"basePriceNgn\": 50000,\n  \"quantity\": 10,\n  \"amenities\": [\"ac\", \"tv\", \"minibar\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Seed Availability Calendar",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/properties/room-types/{{room_type_id}}/calendar",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-12-31\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Availability",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/room-types/{{room_type_id}}/availability?checkIn=2025-12-01&checkOut=2025-12-05",
+              "query": [
+                { "key": "checkIn", "value": "2025-12-01" },
+                { "key": "checkOut", "value": "2025-12-05" }
+              ]
+            },
+            "header": [
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Block Dates",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/v1/properties/room-types/{{room_type_id}}/block",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startDate\": \"2025-12-24\",\n  \"endDate\": \"2025-12-26\",\n  \"block\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Unblock Dates",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/v1/properties/room-types/{{room_type_id}}/block",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startDate\": \"2025-12-24\",\n  \"endDate\": \"2025-12-26\",\n  \"block\": false\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Initiate Booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data) {",
+                  "  pm.collectionVariables.set('booking_id', r.data.bookingId);",
+                  "  pm.collectionVariables.set('session_id', r.data.sessionId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/bookings",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": \"{{property_id}}\",\n  \"roomTypeId\": \"{{room_type_id}}\",\n  \"checkIn\": \"2025-12-01\",\n  \"checkOut\": \"2025-12-05\",\n  \"roomsCount\": 1,\n  \"guestCount\": 2,\n  \"specialRequests\": \"Late check-in please\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Bookings",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/bookings/mine?page=1&limit=20",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get Tenant Bookings",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/bookings/tenant?page=1&limit=20&status=confirmed",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "status", "value": "confirmed" }
+              ]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get Booking",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/bookings/{{booking_id}}",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/v1/bookings/{{booking_id}}/cancel",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Change of plans\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Check In (Host)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/v1/bookings/{{booking_id}}/checkin",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Check Out (Host)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/v1/bookings/{{booking_id}}/checkout",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Initialize Payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data) {",
+                  "  pm.collectionVariables.set('payment_id', r.data.paymentId);",
+                  "  pm.collectionVariables.set('redirect_url', r.data.redirectUrl);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/payments/initialize",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{booking_id}}\",\n  \"gateway\": \"paystack\",\n  \"callbackUrl\": \"http://localhost:3000/payment/callback\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Payment By Booking",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/payments/booking/{{booking_id}}",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get Tenant Payments (Host)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/payments/tenant?page=1&limit=20",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Webhook - Paystack (simulate)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/webhooks/paystack",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-paystack-signature", "value": "test_sig" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"charge.success\",\n  \"data\": {\n    \"reference\": \"{{transaction_id}}\",\n    \"status\": \"success\",\n    \"amount\": 5000000,\n    \"id\": 1234567,\n    \"channel\": \"card\",\n    \"paid_at\": \"2025-01-01T12:00:00Z\",\n    \"metadata\": {}\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Webhook - Flutterwave (simulate)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/webhooks/flutterwave",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "verif-hash", "value": "test_hash" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"charge.completed\",\n  \"data\": {\n    \"tx_ref\": \"{{transaction_id}}\",\n    \"status\": \"successful\",\n    \"amount\": 50000\n  }\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Escrow",
+      "item": [
+        {
+          "name": "Get Tenant Escrow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/escrow?page=1&limit=20",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get Escrow By Booking",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/escrow/booking/{{booking_id}}",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "List All Roles",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data && r.data[0]) pm.collectionVariables.set('role_id', r.data[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/roles",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        },
+        {
+          "name": "Get Tenant Role Assignments",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/roles/tenant",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get User Role",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/roles/tenant/users/{{user_id}}",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Assign Role",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/roles/tenant/assign",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{user_id}}\",\n  \"roleSlug\": \"host:staff\",\n  \"reason\": \"Promoted to staff\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Revoke Role",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/v1/roles/tenant/users/{{user_id}}/revoke",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Grant User Permission Override",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/roles/tenant/users/permissions",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{user_id}}\",\n  \"permissionId\": \"{{permission_id}}\",\n  \"granted\": true,\n  \"reason\": \"Temporary access for audit\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get User Permission Overrides",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/roles/tenant/users/{{user_id}}/permissions",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get Resolved Permissions",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/roles/tenant/users/{{user_id}}/permissions/resolved",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Revoke User Permission Override",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/v1/roles/tenant/users/{{user_id}}/permissions/{{permission_id}}",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Permissions",
+      "item": [
+        {
+          "name": "List All Permissions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data && r.data[0]) pm.collectionVariables.set('permission_id', r.data[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/permissions",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get Permissions By Role",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/permissions/role/{{role_id}}",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Add Permission To Role (Platform Admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/permissions/role/add",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleId\": \"{{role_id}}\",\n  \"permissionId\": \"{{permission_id}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove Permission From Role (Platform Admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/permissions/role/remove",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleId\": \"{{role_id}}\",\n  \"permissionId\": \"{{permission_id}}\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit",
+      "item": [
+        {
+          "name": "Get Tenant Audit Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/audit/tenant?page=1&limit=50",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "50" }
+              ]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get My Audit Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/audit/me?page=1&limit=50",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "50" }
+              ]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "SSE",
+      "item": [
+        {
+          "name": "Connect SSE Stream",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/sse/connect",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-tenant-slug", "value": "{{tenant_slug}}" },
+              { "key": "Accept", "value": "text/event-stream" },
+              { "key": "Cache-Control", "value": "no-cache" }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
