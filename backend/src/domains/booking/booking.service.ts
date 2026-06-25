@@ -1,0 +1,346 @@
+import { v4 as uuid }          from "uuid";
+import { withTransaction }        from "../../config/database";
+import { bookingRepository, Booking } from "./booking.repository";
+import { availabilityRepository } from "../availability/availability.repository";
+import { propertyRepository }     from "../property/property.repository";
+import { tenantRepository }       from "../tenant/tenant.repository";
+import { escrowRepository }       from "../escrow/escrow.repository";
+import { outboxRepository }       from "../outbox/outbox.repository";
+import { auditRepository }        from "../audit/audit.repository";
+import { sseService }             from "../sse/sse.service";
+import { AppError }               from "../../utils/AppError";
+import logger                     from "../../utils/logger";
+import { requestContext }         from "../../context/requestContext";
+import { CancellationPolicyTier, BookingStatus } from "../../types";
+import { bookingCreatedCounter, bookingConfirmedCounter, bookingCancelledCounter } from "../../utils/metrics";
+
+export interface InitiateBookingInput {
+  tenantId:        string;
+  propertyId:      string;
+  roomTypeId:      string;
+  guestUserId:     string;
+  roomsCount:      number;
+  checkIn:         string;
+  checkOut:        string;
+  guestCount:      number;
+  specialRequests?: string;
+}
+
+export interface BookingDto {
+  bookingId:       string;
+  bookingRef:      string;
+  status:          BookingStatus;
+  guestUserId:     string;
+  checkIn:         string;
+  checkOut:        string;
+  nights:          number;
+  roomsCount:      number;
+  guestCount:      number;
+  totalAmountNgn:  number;
+  platformFeeNgn:  number;
+  hostPayoutNgn:   number;
+  propertyId:      string;
+  roomTypeId:      string;
+  tenantId:        string;
+  sessionId:       string;
+  specialRequests?: string;
+  createdAt:       Date;
+}
+
+function toDto(b: Booking, sessionId = ""): BookingDto {
+  return {
+    bookingId:      b.id,
+    bookingRef:     b.booking_ref,
+    status:         b.status,
+    guestUserId:    b.guest_user_id,
+    checkIn:        b.check_in,
+    checkOut:       b.check_out,
+    nights:         b.nights,
+    roomsCount:     b.rooms_count,
+    guestCount:     b.guest_count,
+    totalAmountNgn: Number(b.total_amount_ngn),
+    platformFeeNgn: Number(b.platform_fee_ngn),
+    hostPayoutNgn:  Number(b.host_payout_ngn),
+    propertyId:     b.property_id,
+    roomTypeId:     b.room_type_id,
+    tenantId:       b.tenant_id,
+    sessionId,
+    specialRequests: b.special_requests,
+    createdAt:      b.created_at,
+  };
+}
+
+function computeRefundAmount(
+  totalPaid:          number,
+  cancellationPolicy: CancellationPolicyTier[],
+  checkInDate:        string
+): number {
+  const hoursUntilCheckIn =
+    (new Date(checkInDate).getTime() - Date.now()) / 3_600_000;
+
+  const sorted = [...cancellationPolicy].sort((a, b) => b.hours_before - a.hours_before);
+  for (const tier of sorted) {
+    if (hoursUntilCheckIn >= tier.hours_before) {
+      return parseFloat(((totalPaid * tier.refund_pct) / 100).toFixed(2));
+    }
+  }
+  return 0;
+}
+
+export const bookingService = {
+  /**
+   * Step 1 - Guest initiates booking.
+   * Validates availability, acquires pessimistic lock (15 min),
+   * creates booking in pending_payment, enqueues outbox event.
+   */
+  async initiateBooking(input: InitiateBookingInput): Promise<BookingDto> {
+    const { tenantId, propertyId, roomTypeId, guestUserId,
+            roomsCount, checkIn, checkOut, guestCount, specialRequests } = input;
+
+    const checkInDate  = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+
+    if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
+      throw AppError.badRequest("Invalid check-in or check-out date.");
+    }
+    if (checkInDate <= new Date()) throw AppError.badRequest("Check-in date must be in the future.");
+    if (checkOutDate <= checkInDate) throw AppError.badRequest("Check-out must be after check-in.");
+
+    const [roomType, property, tenant] = await Promise.all([
+      propertyRepository.findRoomTypeById(roomTypeId, tenantId),
+      propertyRepository.findPropertyById(propertyId, tenantId),
+      tenantRepository.findById(tenantId),
+    ]);
+
+    if (!property || property.status !== "active") throw AppError.notFound("Property not found or unavailable.");
+    if (!roomType  || roomType.status  !== "active") throw AppError.notFound("Room type not found or unavailable.");
+    if (!tenant    || tenant.status    !== "active") throw AppError.notFound("Tenant not found.");
+    if (roomsCount > roomType.quantity) {
+      throw AppError.badRequest(`Cannot book more than ${roomType.quantity} rooms of this type.`);
+    }
+
+    const sessionId = uuid();
+    let booking!: Booking;
+
+    await withTransaction(async (client) => {
+      const available = await availabilityRepository.isAvailable(roomTypeId, checkIn, checkOut, roomsCount, client);
+      if (!available) throw AppError.conflict("Selected dates are not available for the requested rooms.");
+
+      await availabilityRepository.acquireLock({ roomTypeId, checkIn, checkOut, roomsHeld: roomsCount, sessionId }, client);
+
+      const nights        = Math.round((checkOutDate.getTime() - checkInDate.getTime()) / 86_400_000);
+      const pricePerNight = Number(roomType.base_price_ngn);
+      const totalAmount   = parseFloat((pricePerNight * nights * roomsCount).toFixed(2));
+      const platformFee   = parseFloat(((totalAmount * Number(tenant.platform_fee_pct)) / 100).toFixed(2));
+      const hostPayout    = parseFloat((totalAmount - platformFee).toFixed(2));
+
+      booking = await bookingRepository.create({
+        tenantId, propertyId, roomTypeId, guestUserId,
+        roomsCount, checkIn, checkOut, guestCount,
+        totalAmountNgn: totalAmount, platformFeeNgn: platformFee, hostPayoutNgn: hostPayout,
+        specialRequests, metadata: { sessionId, lockAcquiredAt: new Date().toISOString() },
+      }, client);
+
+      await outboxRepository.create("booking.created", {
+        bookingId:   booking.id,
+        bookingRef:  booking.booking_ref,
+        tenantId,
+        guestUserId,
+        status:      "pending_payment",
+        propertyId,
+        roomTypeId,
+        checkIn,
+        checkOut,
+        totalAmount,
+      }, client);
+    });
+
+    bookingCreatedCounter.inc({ tenant_id: tenantId, property_type: property.property_type });
+    await auditRepository.log({ action: "created", resource: "booking", resourceId: booking.id, tenantId, userId: guestUserId });
+
+    logger.info("booking_initiated", {
+      event:     "booking_initiated",
+      bookingId: booking.id,
+      tenantId,
+      guestUserId,
+      requestId: requestContext.get()?.requestId,
+    });
+
+    return toDto(booking, sessionId);
+  },
+
+  /**
+   * Step 2 - Called by webhook service after Paystack/Flutterwave confirms payment.
+   * Transitions pending_payment -> confirmed, decrements availability, creates escrow, enqueues outbox.
+   */
+  async confirmBookingByPayment(bookingId: string, transactionId: string): Promise<Booking> {
+    const booking = await bookingRepository.findById(bookingId);
+    if (!booking) throw AppError.notFound("Booking not found.");
+    if (booking.status !== "pending_payment") {
+      if (booking.status === "confirmed") return booking; // already confirmed, idempotent
+      throw AppError.conflict(`Booking is already in status: ${booking.status}`);
+    }
+
+    let confirmed!: Booking;
+
+    await withTransaction(async (client) => {
+      confirmed = (await bookingRepository.updateStatus(bookingId, "confirmed", undefined, client))!;
+
+      await availabilityRepository.decrementAvailability(
+        booking.room_type_id, booking.check_in, booking.check_out, booking.rooms_count, client
+      );
+
+      await escrowRepository.create({
+        bookingId,
+        tenantId:      booking.tenant_id,
+        amountNgn:     Number(booking.total_amount_ngn),
+        platformFeeNgn: Number(booking.platform_fee_ngn),
+        hostPayoutNgn:  Number(booking.host_payout_ngn),
+      }, client);
+
+      await outboxRepository.create("booking.confirmed", {
+        bookingId, bookingRef: booking.booking_ref, tenantId: booking.tenant_id,
+        guestUserId: booking.guest_user_id, status: "confirmed",
+        propertyId: booking.property_id, roomTypeId: booking.room_type_id,
+        checkIn: booking.check_in, checkOut: booking.check_out,
+        totalAmount: Number(booking.total_amount_ngn),
+      }, client);
+    });
+
+    const sessionId = (booking.metadata as Record<string, string>)["sessionId"] ?? "";
+    if (sessionId) await availabilityRepository.releaseLock(sessionId).catch(() => null);
+
+    bookingConfirmedCounter.inc({ tenant_id: booking.tenant_id });
+    await auditRepository.log({ action: "status_changed", resource: "booking", resourceId: bookingId, tenantId: booking.tenant_id, newValue: { status: "confirmed", transactionId } });
+
+    await sseService.pushToUser(booking.guest_user_id, {
+      type:    "booking.confirmed",
+      payload: { bookingId, bookingRef: booking.booking_ref, transactionId },
+    });
+    await sseService.pushToTenant(booking.tenant_id, {
+      type:    "booking.new",
+      payload: { bookingId, bookingRef: booking.booking_ref, guestUserId: booking.guest_user_id },
+    });
+
+    logger.info("booking_confirmed", { event: "booking_confirmed", bookingId, tenantId: booking.tenant_id });
+    return confirmed;
+  },
+
+  async cancelBooking(bookingId: string, requestingUserId: string, reason?: string): Promise<BookingDto> {
+    const booking = await bookingRepository.findById(bookingId);
+    if (!booking) throw AppError.notFound("Booking not found.");
+
+    const cancelable: BookingStatus[] = ["pending_payment", "confirmed"];
+    if (!cancelable.includes(booking.status)) {
+      throw AppError.conflict(`Cannot cancel a booking with status: ${booking.status}`);
+    }
+    if (booking.guest_user_id !== requestingUserId) throw AppError.forbidden("You can only cancel your own bookings.");
+
+    const tenant       = await tenantRepository.findById(booking.tenant_id);
+    const refundAmount = tenant
+      ? computeRefundAmount(
+          Number(booking.total_amount_ngn),
+          tenant.cancellation_policy as CancellationPolicyTier[],
+          booking.check_in
+        )
+      : 0;
+
+    let cancelled!: Booking;
+
+    await withTransaction(async (client) => {
+      cancelled = (await bookingRepository.updateStatus(
+        bookingId, "cancelled", { cancellation_reason: reason, cancelled_at: new Date() }, client
+      ))!;
+
+      if (booking.status === "confirmed") {
+        await availabilityRepository.incrementAvailability(
+          booking.room_type_id, booking.check_in, booking.check_out, booking.rooms_count, client
+        );
+        await escrowRepository.initiateRefund(bookingId, refundAmount, client);
+      }
+
+      await outboxRepository.create("booking.cancelled", {
+        bookingId, bookingRef: booking.booking_ref, tenantId: booking.tenant_id,
+        guestUserId: booking.guest_user_id, status: "cancelled",
+        propertyId: booking.property_id, roomTypeId: booking.room_type_id,
+        checkIn: booking.check_in, checkOut: booking.check_out,
+        totalAmount: Number(booking.total_amount_ngn), reason,
+      }, client);
+    });
+
+    if (booking.status === "pending_payment") {
+      const sessionId = (booking.metadata as Record<string, string>)["sessionId"] ?? "";
+      if (sessionId) await availabilityRepository.releaseLock(sessionId).catch(() => null);
+    }
+
+    bookingCancelledCounter.inc({ tenant_id: booking.tenant_id, reason_type: reason ? "guest_reason" : "no_reason" });
+    await auditRepository.log({ action: "status_changed", resource: "booking", resourceId: bookingId, tenantId: booking.tenant_id, newValue: { status: "cancelled", reason, refundAmount } });
+
+    await sseService.pushToUser(booking.guest_user_id, {
+      type:    "booking.cancelled",
+      payload: { bookingId, bookingRef: booking.booking_ref, refundAmount },
+    });
+
+    logger.info("booking_cancelled", { event: "booking_cancelled", bookingId, refundAmount, requestingUserId });
+    return toDto(cancelled);
+  },
+
+  async checkIn(bookingId: string, hostUserId: string): Promise<BookingDto> {
+    const booking = await bookingRepository.findById(bookingId);
+    if (!booking) throw AppError.notFound("Booking not found.");
+    if (booking.status !== "confirmed") throw AppError.conflict("Only confirmed bookings can be checked in.");
+
+    const updated = await withTransaction(async (client) => {
+      const b = (await bookingRepository.updateStatus(bookingId, "checked_in", undefined, client))!;
+      await outboxRepository.create("booking.checked_in", {
+        bookingId, bookingRef: booking.booking_ref, tenantId: booking.tenant_id,
+        guestUserId: booking.guest_user_id, status: "checked_in",
+        propertyId: booking.property_id, roomTypeId: booking.room_type_id,
+        checkIn: booking.check_in, checkOut: booking.check_out, totalAmount: Number(booking.total_amount_ngn),
+      }, client);
+      return b;
+    });
+
+    await sseService.pushToUser(booking.guest_user_id, { type: "booking.checked_in", payload: { bookingId, bookingRef: booking.booking_ref } });
+    await auditRepository.log({ action: "status_changed", resource: "booking", resourceId: bookingId, tenantId: booking.tenant_id, userId: hostUserId, newValue: { status: "checked_in" } });
+
+    logger.info("booking_checked_in", { event: "booking_checked_in", bookingId, hostUserId });
+    return toDto(updated);
+  },
+
+  async checkOut(bookingId: string, hostUserId: string): Promise<BookingDto> {
+    const booking = await bookingRepository.findById(bookingId);
+    if (!booking) throw AppError.notFound("Booking not found.");
+    if (booking.status !== "checked_in") throw AppError.conflict("Only checked-in bookings can be checked out.");
+
+    const updated = await withTransaction(async (client) => {
+      const b = (await bookingRepository.updateStatus(bookingId, "checked_out", undefined, client))!;
+      await escrowRepository.release(bookingId, client);
+      await outboxRepository.create("booking.checked_out", {
+        bookingId, bookingRef: booking.booking_ref, tenantId: booking.tenant_id,
+        guestUserId: booking.guest_user_id, status: "checked_out",
+        propertyId: booking.property_id, roomTypeId: booking.room_type_id,
+        checkIn: booking.check_in, checkOut: booking.check_out, totalAmount: Number(booking.total_amount_ngn),
+      }, client);
+      return b;
+    });
+
+    await auditRepository.log({ action: "status_changed", resource: "booking", resourceId: bookingId, tenantId: booking.tenant_id, userId: hostUserId, newValue: { status: "checked_out" } });
+    logger.info("booking_checked_out", { event: "booking_checked_out", bookingId, hostUserId });
+    return toDto(updated);
+  },
+
+  async getBookingById(id: string): Promise<BookingDto> {
+    const b = await bookingRepository.findById(id);
+    if (!b) throw AppError.notFound("Booking not found.");
+    return toDto(b);
+  },
+
+  async getGuestBookings(guestUserId: string, page = 1, limit = 20): Promise<BookingDto[]> {
+    return (await bookingRepository.listByGuest(guestUserId, page, limit)).map((b) => toDto(b));
+  },
+
+  async getTenantBookings(tenantId: string, opts: { status?: BookingStatus; page?: number; limit?: number } = {}): Promise<BookingDto[]> {
+    return (await bookingRepository.listByTenant(tenantId, opts)).map((b) => toDto(b));
+  },
+};

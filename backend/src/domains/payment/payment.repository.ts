@@ -1,0 +1,168 @@
+import { PoolClient } from "pg";
+import { query, queryOne } from "../../config/database";
+import { PaymentStatus, PaymentGateway } from "../../types";
+import { trackError } from "../../utils/metrics";
+import { requestContext } from "../../context/requestContext";
+import logger from "../../utils/logger";
+
+export interface Payment {
+  id:              string;
+  booking_id:      string;
+  tenant_id:       string;
+  guest_user_id:   string;
+  gateway:         PaymentGateway;
+  transaction_id?: string;
+  amount_ngn:      number;
+  status:          PaymentStatus;
+  channel?:        string;
+  paid_at?:        Date;
+  refunded_at?:    Date;
+  idempotency_key: string;
+  metadata:        Record<string, unknown>;
+  created_at:      Date;
+  updated_at:      Date;
+}
+
+function ctx() { return requestContext.get() ?? {}; }
+
+export const paymentRepository = {
+  async create(data: {
+    bookingId:      string;
+    tenantId:       string;
+    guestUserId:    string;
+    gateway:        PaymentGateway;
+    transactionId?: string;
+    amountNgn:      number;
+    idempotencyKey: string;
+    metadata?:      Record<string, unknown>;
+  }, client?: PoolClient): Promise<Payment> {
+    const sql = `
+      INSERT INTO payments (booking_id, tenant_id, guest_user_id, gateway, transaction_id, amount_ngn, idempotency_key, metadata)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb)
+      RETURNING *`;
+    const params = [
+      data.bookingId, data.tenantId, data.guestUserId, data.gateway,
+      data.transactionId ?? null, data.amountNgn, data.idempotencyKey,
+      JSON.stringify(data.metadata ?? {}),
+    ];
+
+    try {
+      const row = client
+        ? (await client.query(sql, params)).rows[0] as Payment
+        : (await queryOne<Payment>(sql, params))!;
+
+      logger.info("payment_repository_create", {
+        event:     "payment_repository_create",
+        paymentId: row.id,
+        bookingId: data.bookingId,
+        gateway:   data.gateway,
+        ...ctx(),
+      });
+
+      return row;
+    } catch (err) {
+      trackError("payment_create_failed", "payment_repository", "high");
+      logger.error("payment_repository_create_failed", {
+        event:     "payment_repository_create_failed",
+        bookingId: data.bookingId,
+        gateway:   data.gateway,
+        error:     (err as Error).message,
+        ...ctx(),
+      });
+      throw err;
+    }
+  },
+
+  async findByIdempotencyKey(key: string): Promise<Payment | null> {
+    try {
+      return await queryOne<Payment>(`SELECT * FROM payments WHERE idempotency_key = $1`, [key]);
+    } catch (err) {
+      trackError("payment_find_failed", "payment_repository", "medium");
+      throw err;
+    }
+  },
+
+  async findByTransactionId(transactionId: string): Promise<Payment | null> {
+    try {
+      return await queryOne<Payment>(`SELECT * FROM payments WHERE transaction_id = $1`, [transactionId]);
+    } catch (err) {
+      trackError("payment_find_failed", "payment_repository", "medium");
+      throw err;
+    }
+  },
+
+  async findByBookingId(bookingId: string): Promise<Payment | null> {
+    try {
+      return await queryOne<Payment>(
+        `SELECT * FROM payments WHERE booking_id = $1 ORDER BY created_at DESC LIMIT 1`, [bookingId]
+      );
+    } catch (err) {
+      trackError("payment_find_failed", "payment_repository", "medium");
+      throw err;
+    }
+  },
+
+  async updateStatus(data: {
+    id:             string;
+    status:         PaymentStatus;
+    transactionId?: string;
+    channel?:       string;
+    paidAt?:        Date;
+    refundedAt?:    Date;
+    metadata?:      Record<string, unknown>;
+  }, client?: PoolClient): Promise<Payment | null> {
+    const fields: string[]  = ["status = $1", "updated_at = now()"];
+    const values: unknown[] = [data.status];
+    let idx = 2;
+
+    if (data.transactionId !== undefined) { fields.push(`transaction_id = $${idx++}`); values.push(data.transactionId); }
+    if (data.channel       !== undefined) { fields.push(`channel = $${idx++}`);        values.push(data.channel); }
+    if (data.paidAt        !== undefined) { fields.push(`paid_at = $${idx++}`);        values.push(data.paidAt); }
+    if (data.refundedAt    !== undefined) { fields.push(`refunded_at = $${idx++}`);    values.push(data.refundedAt); }
+    if (data.metadata      !== undefined) { fields.push(`metadata = metadata || $${idx++}::jsonb`); values.push(JSON.stringify(data.metadata)); }
+
+    values.push(data.id);
+    const sql = `UPDATE payments SET ${fields.join(", ")} WHERE id = $${idx} RETURNING *`;
+
+    try {
+      const row = client
+        ? (await client.query(sql, values)).rows[0] as Payment | null ?? null
+        : await queryOne<Payment>(sql, values);
+
+      logger.info("payment_repository_status_updated", {
+        event:     "payment_repository_status_updated",
+        paymentId: data.id,
+        status:    data.status,
+        ...ctx(),
+      });
+
+      return row;
+    } catch (err) {
+      trackError("payment_update_failed", "payment_repository", "high");
+      logger.error("payment_repository_update_failed", {
+        event:     "payment_repository_update_failed",
+        paymentId: data.id,
+        status:    data.status,
+        error:     (err as Error).message,
+        ...ctx(),
+      });
+      throw err;
+    }
+  },
+
+  async listByTenant(tenantId: string, page = 1, limit = 20): Promise<Payment[]> {
+    const offset = (page - 1) * limit;
+    try {
+      return await query<Payment>(
+        `SELECT p.*, b.booking_ref FROM payments p
+         JOIN bookings b ON b.id = p.booking_id
+         WHERE p.tenant_id = $1
+         ORDER BY p.created_at DESC LIMIT $2 OFFSET $3`,
+        [tenantId, limit, offset]
+      );
+    } catch (err) {
+      trackError("payment_list_failed", "payment_repository", "low");
+      throw err;
+    }
+  },
+};
