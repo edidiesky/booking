@@ -1,50 +1,57 @@
-import { v4 as uuid }          from "uuid";
-import { withTransaction }        from "../../config/database";
+import { v4 as uuid }             from "uuid";
+import { withTransaction }         from "../../config/database";
 import { bookingRepository, Booking } from "./booking.repository";
-import { availabilityRepository } from "../availability/availability.repository";
-import { propertyRepository }     from "../property/property.repository";
-import { tenantRepository }       from "../tenant/tenant.repository";
-import { escrowRepository }       from "../escrow/escrow.repository";
-import { outboxRepository }       from "../outbox/outbox.repository";
-import { auditRepository }        from "../audit/audit.repository";
-import { sseService }             from "../sse/sse.service";
-import { AppError }               from "../../utils/AppError";
-import logger                     from "../../utils/logger";
-import { requestContext }         from "../../context/requestContext";
+import { availabilityRepository }  from "../availability/availability.repository";
+import { propertyRepository }      from "../property/property.repository";
+import { tenantRepository }        from "../tenant/tenant.repository";
+import { escrowRepository }        from "../escrow/escrow.repository";
+import { outboxRepository }        from "../outbox/outbox.repository";
+import { auditRepository }         from "../audit/audit.repository";
+import { sseService }              from "../sse/sse.service";
+import { userRepository }          from "../auth/auth.repository";
+import { AppError }                from "../../utils/AppError";
+import logger                      from "../../utils/logger";
+import { requestContext }          from "../../context/requestContext";
 import { CancellationPolicyTier, BookingStatus } from "../../types";
 import { bookingCreatedCounter, bookingConfirmedCounter, bookingCancelledCounter } from "../../utils/metrics";
+import {
+  publishNotifyBookingConfirmed,
+  publishNotifyBookingCancelled,
+  publishNotifyBookingCheckedIn,
+  publishNotifyBookingCheckedOut,
+} from "../../messaging/publisher";
 
 export interface InitiateBookingInput {
-  tenantId:        string;
-  propertyId:      string;
-  roomTypeId:      string;
-  guestUserId:     string;
-  roomsCount:      number;
-  checkIn:         string;
-  checkOut:        string;
-  guestCount:      number;
+  tenantId:         string;
+  propertyId:       string;
+  roomTypeId:       string;
+  guestUserId:      string;
+  roomsCount:       number;
+  checkIn:          string;
+  checkOut:         string;
+  guestCount:       number;
   specialRequests?: string;
 }
 
 export interface BookingDto {
-  bookingId:       string;
-  bookingRef:      string;
-  status:          BookingStatus;
-  guestUserId:     string;
-  checkIn:         string;
-  checkOut:        string;
-  nights:          number;
-  roomsCount:      number;
-  guestCount:      number;
-  totalAmountNgn:  number;
-  platformFeeNgn:  number;
-  hostPayoutNgn:   number;
-  propertyId:      string;
-  roomTypeId:      string;
-  tenantId:        string;
-  sessionId:       string;
+  bookingId:        string;
+  bookingRef:       string;
+  status:           BookingStatus;
+  guestUserId:      string;
+  checkIn:          string;
+  checkOut:         string;
+  nights:           number;
+  roomsCount:       number;
+  guestCount:       number;
+  totalAmountNgn:   number;
+  platformFeeNgn:   number;
+  hostPayoutNgn:    number;
+  propertyId:       string;
+  roomTypeId:       string;
+  tenantId:         string;
+  sessionId:        string;
   specialRequests?: string;
-  createdAt:       Date;
+  createdAt:        Date;
 }
 
 function toDto(b: Booking, sessionId = ""): BookingDto {
@@ -75,9 +82,7 @@ function computeRefundAmount(
   cancellationPolicy: CancellationPolicyTier[],
   checkInDate:        string
 ): number {
-  const hoursUntilCheckIn =
-    (new Date(checkInDate).getTime() - Date.now()) / 3_600_000;
-
+  const hoursUntilCheckIn = (new Date(checkInDate).getTime() - Date.now()) / 3_600_000;
   const sorted = [...cancellationPolicy].sort((a, b) => b.hours_before - a.hours_before);
   for (const tier of sorted) {
     if (hoursUntilCheckIn >= tier.hours_before) {
@@ -87,12 +92,31 @@ function computeRefundAmount(
   return 0;
 }
 
+// Resolves display-level data needed by notification handlers.
+// Runs after the DB write so it never blocks the critical path.
+async function resolveNotificationContext(booking: Booking): Promise<{
+  guestEmail:    string;
+  guestName:     string;
+  guestPhone?:   string;
+  propertyName:  string;
+  roomTypeName:  string;
+}> {
+  const [guest, property, roomType] = await Promise.all([
+    userRepository.findById(booking.guest_user_id),
+    propertyRepository.findPropertyById(booking.property_id),
+    propertyRepository.findRoomTypeById(booking.room_type_id),
+  ]);
+
+  return {
+    guestEmail:   guest?.email   ?? "",
+    guestName:    [guest?.first_name, guest?.last_name].filter(Boolean).join(" ") || "Guest",
+    guestPhone:   undefined, // not stored on user model — extend if needed
+    propertyName: property?.name  ?? "the property",
+    roomTypeName: roomType?.name  ?? "room",
+  };
+}
+
 export const bookingService = {
-  /**
-   * Step 1 - Guest initiates booking.
-   * Validates availability, acquires pessimistic lock (15 min),
-   * creates booking in pending_payment, enqueues outbox event.
-   */
   async initiateBooking(input: InitiateBookingInput): Promise<BookingDto> {
     const { tenantId, propertyId, roomTypeId, guestUserId,
             roomsCount, checkIn, checkOut, guestCount, specialRequests } = input;
@@ -142,16 +166,10 @@ export const bookingService = {
       }, client);
 
       await outboxRepository.create("booking.created", {
-        bookingId:   booking.id,
-        bookingRef:  booking.booking_ref,
-        tenantId,
-        guestUserId,
-        status:      "pending_payment",
-        propertyId,
-        roomTypeId,
-        checkIn,
-        checkOut,
-        totalAmount,
+        bookingId:  booking.id,
+        bookingRef: booking.booking_ref,
+        tenantId, guestUserId, status: "pending_payment",
+        propertyId, roomTypeId, checkIn, checkOut, totalAmount,
       }, client);
     });
 
@@ -169,15 +187,11 @@ export const bookingService = {
     return toDto(booking, sessionId);
   },
 
-  /**
-   * Step 2 - Called by webhook service after Paystack/Flutterwave confirms payment.
-   * Transitions pending_payment -> confirmed, decrements availability, creates escrow, enqueues outbox.
-   */
   async confirmBookingByPayment(bookingId: string, transactionId: string): Promise<Booking> {
     const booking = await bookingRepository.findById(bookingId);
     if (!booking) throw AppError.notFound("Booking not found.");
     if (booking.status !== "pending_payment") {
-      if (booking.status === "confirmed") return booking; // already confirmed, idempotent
+      if (booking.status === "confirmed") return booking;
       throw AppError.conflict(`Booking is already in status: ${booking.status}`);
     }
 
@@ -192,8 +206,8 @@ export const bookingService = {
 
       await escrowRepository.create({
         bookingId,
-        tenantId:      booking.tenant_id,
-        amountNgn:     Number(booking.total_amount_ngn),
+        tenantId:       booking.tenant_id,
+        amountNgn:      Number(booking.total_amount_ngn),
         platformFeeNgn: Number(booking.platform_fee_ngn),
         hostPayoutNgn:  Number(booking.host_payout_ngn),
       }, client);
@@ -211,7 +225,10 @@ export const bookingService = {
     if (sessionId) await availabilityRepository.releaseLock(sessionId).catch(() => null);
 
     bookingConfirmedCounter.inc({ tenant_id: booking.tenant_id });
-    await auditRepository.log({ action: "status_changed", resource: "booking", resourceId: bookingId, tenantId: booking.tenant_id, newValue: { status: "confirmed", transactionId } });
+    await auditRepository.log({
+      action: "status_changed", resource: "booking", resourceId: bookingId,
+      tenantId: booking.tenant_id, newValue: { status: "confirmed", transactionId },
+    });
 
     await sseService.pushToUser(booking.guest_user_id, {
       type:    "booking.confirmed",
@@ -221,6 +238,36 @@ export const bookingService = {
       type:    "booking.new",
       payload: { bookingId, bookingRef: booking.booking_ref, guestUserId: booking.guest_user_id },
     });
+
+    // Resolve guest/property display data then publish notification
+    void resolveNotificationContext(booking).then(({ guestEmail, guestName, guestPhone, propertyName, roomTypeName }) => {
+      const nights = Math.round(
+        (new Date(booking.check_out).getTime() - new Date(booking.check_in).getTime()) / 86_400_000
+      );
+      void Promise.allSettled([
+        publishNotifyBookingConfirmed({
+          notificationId: uuid(),
+          guestEmail,
+          guestName,
+          guestPhone,
+          bookingRef:     booking.booking_ref,
+          propertyName,
+          roomTypeName,
+          checkIn:        booking.check_in,
+          checkOut:       booking.check_out,
+          nights,
+          totalAmountNgn: Number(booking.total_amount_ngn),
+          tenantId:       booking.tenant_id,
+          bookingId,
+        }),
+      ]);
+    }).catch((err) =>
+      logger.error("notify_booking_confirmed_failed", {
+        event:     "notify_booking_confirmed_failed",
+        bookingId,
+        error:     (err as Error).message,
+      })
+    );
 
     logger.info("booking_confirmed", { event: "booking_confirmed", bookingId, tenantId: booking.tenant_id });
     return confirmed;
@@ -274,12 +321,42 @@ export const bookingService = {
     }
 
     bookingCancelledCounter.inc({ tenant_id: booking.tenant_id, reason_type: reason ? "guest_reason" : "no_reason" });
-    await auditRepository.log({ action: "status_changed", resource: "booking", resourceId: bookingId, tenantId: booking.tenant_id, newValue: { status: "cancelled", reason, refundAmount } });
+    await auditRepository.log({
+      action: "status_changed", resource: "booking", resourceId: bookingId,
+      tenantId: booking.tenant_id, newValue: { status: "cancelled", reason, refundAmount },
+    });
 
     await sseService.pushToUser(booking.guest_user_id, {
       type:    "booking.cancelled",
       payload: { bookingId, bookingRef: booking.booking_ref, refundAmount },
     });
+
+    // Resolve and publish cancellation notification
+    void resolveNotificationContext(booking).then(({ guestEmail, guestName, propertyName }) => {
+      void Promise.allSettled([
+        publishNotifyBookingCancelled({
+          notificationId: uuid(),
+          guestEmail,
+          guestName,
+          bookingRef:     booking.booking_ref,
+          propertyName,
+          roomTypeName:   "",       // not needed in cancelled template
+          checkIn:        booking.check_in,
+          checkOut:       booking.check_out,
+          nights:         0,        // not needed in cancelled template
+          totalAmountNgn: Number(booking.total_amount_ngn),
+          tenantId:       booking.tenant_id,
+          bookingId,
+          reason,
+        }),
+      ]);
+    }).catch((err) =>
+      logger.error("notify_booking_cancelled_failed", {
+        event:     "notify_booking_cancelled_failed",
+        bookingId,
+        error:     (err as Error).message,
+      })
+    );
 
     logger.info("booking_cancelled", { event: "booking_cancelled", bookingId, refundAmount, requestingUserId });
     return toDto(cancelled);
@@ -296,13 +373,43 @@ export const bookingService = {
         bookingId, bookingRef: booking.booking_ref, tenantId: booking.tenant_id,
         guestUserId: booking.guest_user_id, status: "checked_in",
         propertyId: booking.property_id, roomTypeId: booking.room_type_id,
-        checkIn: booking.check_in, checkOut: booking.check_out, totalAmount: Number(booking.total_amount_ngn),
+        checkIn: booking.check_in, checkOut: booking.check_out,
+        totalAmount: Number(booking.total_amount_ngn),
       }, client);
       return b;
     });
 
-    await sseService.pushToUser(booking.guest_user_id, { type: "booking.checked_in", payload: { bookingId, bookingRef: booking.booking_ref } });
-    await auditRepository.log({ action: "status_changed", resource: "booking", resourceId: bookingId, tenantId: booking.tenant_id, userId: hostUserId, newValue: { status: "checked_in" } });
+    await sseService.pushToUser(booking.guest_user_id, {
+      type:    "booking.checked_in",
+      payload: { bookingId, bookingRef: booking.booking_ref },
+    });
+    await auditRepository.log({
+      action: "status_changed", resource: "booking", resourceId: bookingId,
+      tenantId: booking.tenant_id, userId: hostUserId, newValue: { status: "checked_in" },
+    });
+
+    void resolveNotificationContext(booking).then(({ guestEmail, guestName, propertyName }) => {
+      void Promise.allSettled([
+        publishNotifyBookingCheckedIn({
+          notificationId: uuid(),
+          guestEmail,
+          guestName,
+          bookingRef:     booking.booking_ref,
+          propertyName,
+          roomTypeName:   "",
+          checkIn:        booking.check_in,
+          checkOut:       booking.check_out,
+          nights:         0,
+          totalAmountNgn: Number(booking.total_amount_ngn),
+          tenantId:       booking.tenant_id,
+          bookingId,
+        }),
+      ]);
+    }).catch((err) =>
+      logger.error("notify_checkin_failed", {
+        event: "notify_checkin_failed", bookingId, error: (err as Error).message,
+      })
+    );
 
     logger.info("booking_checked_in", { event: "booking_checked_in", bookingId, hostUserId });
     return toDto(updated);
@@ -320,12 +427,40 @@ export const bookingService = {
         bookingId, bookingRef: booking.booking_ref, tenantId: booking.tenant_id,
         guestUserId: booking.guest_user_id, status: "checked_out",
         propertyId: booking.property_id, roomTypeId: booking.room_type_id,
-        checkIn: booking.check_in, checkOut: booking.check_out, totalAmount: Number(booking.total_amount_ngn),
+        checkIn: booking.check_in, checkOut: booking.check_out,
+        totalAmount: Number(booking.total_amount_ngn),
       }, client);
       return b;
     });
 
-    await auditRepository.log({ action: "status_changed", resource: "booking", resourceId: bookingId, tenantId: booking.tenant_id, userId: hostUserId, newValue: { status: "checked_out" } });
+    await auditRepository.log({
+      action: "status_changed", resource: "booking", resourceId: bookingId,
+      tenantId: booking.tenant_id, userId: hostUserId, newValue: { status: "checked_out" },
+    });
+
+    void resolveNotificationContext(booking).then(({ guestEmail, guestName, propertyName }) => {
+      void Promise.allSettled([
+        publishNotifyBookingCheckedOut({
+          notificationId: uuid(),
+          guestEmail,
+          guestName,
+          bookingRef:     booking.booking_ref,
+          propertyName,
+          roomTypeName:   "",
+          checkIn:        booking.check_in,
+          checkOut:       booking.check_out,
+          nights:         0,
+          totalAmountNgn: Number(booking.total_amount_ngn),
+          tenantId:       booking.tenant_id,
+          bookingId,
+        }),
+      ]);
+    }).catch((err) =>
+      logger.error("notify_checkout_failed", {
+        event: "notify_checkout_failed", bookingId, error: (err as Error).message,
+      })
+    );
+
     logger.info("booking_checked_out", { event: "booking_checked_out", bookingId, hostUserId });
     return toDto(updated);
   },
