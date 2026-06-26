@@ -19,6 +19,15 @@ export const ROUTING_KEYS = {
   ESCROW_RELEASED:    "escrow.released",
   ESCROW_REFUNDED:    "escrow.refunded",
   NOTIFICATION_EMAIL: "notification.email",
+  NOTIFY_BOOKING_CONFIRMED:  "notify.booking.confirmed",
+  NOTIFY_BOOKING_CANCELLED:  "notify.booking.cancelled",
+  NOTIFY_BOOKING_CHECKED_IN: "notify.booking.checkin",
+  NOTIFY_BOOKING_CHECKED_OUT:"notify.booking.checkout",
+  NOTIFY_PAYMENT_CONFIRMED:  "notify.payment.confirmed",
+  NOTIFY_PAYMENT_FAILED:     "notify.payment.failed",
+  NOTIFY_AUTH_OTP:           "notify.auth.otp",
+  NOTIFY_AUTH_REGISTERED:    "notify.auth.registered",
+  NOTIFY_ESCROW_RELEASED:    "notify.escrow.released",
 } as const;
 
 let _connection: amqp.ChannelModel | null = null;
