@@ -358,6 +358,38 @@ const migrations: string[] = [
   );
   CREATE INDEX IF NOT EXISTS idx_user_perm_user   ON user_permissions(user_id, tenant_id);
   CREATE INDEX IF NOT EXISTS idx_user_perm_perm   ON user_permissions(permission_id);`,
+  
+  /* 022 notifications */
+  `DO $$ BEGIN
+    CREATE TYPE notification_type AS ENUM (
+      'booking_confirmed','booking_cancelled','booking_checked_in',
+      'booking_checked_out','payment_confirmed','payment_failed',
+      'auth_otp','auth_registered','escrow_released','escrow_refunded'
+    );
+    CREATE TYPE notification_channel AS ENUM ('email','sms','email_and_sms');
+    CREATE TYPE notification_status  AS ENUM ('pending','sent','failed','skipped');
+  EXCEPTION WHEN duplicate_object THEN NULL; END $$;`,
+
+  `CREATE TABLE IF NOT EXISTS notifications (
+    id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    type             notification_type    NOT NULL,
+    channel          notification_channel NOT NULL,
+    status           notification_status  NOT NULL DEFAULT 'pending',
+    recipient_email  VARCHAR(255),
+    recipient_phone  VARCHAR(30),
+    tenant_id        UUID REFERENCES tenants(id) ON DELETE SET NULL,
+    user_id          UUID REFERENCES users(id)   ON DELETE SET NULL,
+    subject          TEXT,
+    message          TEXT                NOT NULL,
+    metadata         JSONB               NOT NULL DEFAULT '{}',
+    sent_at          TIMESTAMPTZ,
+    failure_reason   TEXT,
+    created_at       TIMESTAMPTZ         NOT NULL DEFAULT now(),
+    updated_at       TIMESTAMPTZ         NOT NULL DEFAULT now()
+  );
+  CREATE INDEX IF NOT EXISTS idx_notif_type_status ON notifications(type, status);
+  CREATE INDEX IF NOT EXISTS idx_notif_tenant      ON notifications(tenant_id, created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_notif_user        ON notifications(user_id, created_at DESC);`,
 ];
 
 async function run(): Promise<void> {
