@@ -1,30 +1,35 @@
-
 import { paymentRepository } from "./payment.repository";
 import { bookingRepository } from "../booking/booking.repository";
 import { paymentStrategies } from "../../strategies";
 import { outboxRepository }  from "../outbox/outbox.repository";
 import { auditRepository }   from "../audit/audit.repository";
+import { userRepository }    from "../auth/auth.repository";
 import { AppError }          from "../../utils/AppError";
 import logger                from "../../utils/logger";
 import { requestContext }    from "../../context/requestContext";
 import { withTransaction }   from "../../config/database";
-import { PaymentGateway } from "../../types";
+import { PaymentGateway }    from "../../types";
 import { paymentInitializedCounter, trackError, webhookProcessedCounter } from "../../utils/metrics";
+import { v4 as uuid }        from "uuid";
+import {
+  publishNotifyPaymentConfirmed,
+  publishNotifyPaymentFailed,
+} from "../../messaging/publisher";
 
 export interface InitializePaymentInput {
-  bookingId:    string;
-  guestUserId:  string;
-  email:        string;
-  gateway:      PaymentGateway;
-  callbackUrl:  string;
-  phone?:       string;
+  bookingId:   string;
+  guestUserId: string;
+  email:       string;
+  gateway:     PaymentGateway;
+  callbackUrl: string;
+  phone?:      string;
 }
 
 export interface InitializePaymentResult {
-  paymentId:    string;
+  paymentId:     string;
   transactionId: string;
-  redirectUrl:  string;
-  amountNgn:    number;
+  redirectUrl:   string;
+  amountNgn:     number;
 }
 
 export const paymentService = {
@@ -32,13 +37,12 @@ export const paymentService = {
     const { bookingId, guestUserId, email, gateway, callbackUrl, phone } = input;
 
     const booking = await bookingRepository.findById(bookingId);
-    if (!booking)                          throw AppError.notFound("Booking not found.");
+    if (!booking)                              throw AppError.notFound("Booking not found.");
     if (booking.guest_user_id !== guestUserId) throw AppError.forbidden("Access denied.");
     if (booking.status !== "pending_payment") {
       throw AppError.conflict(`Booking is in status: ${booking.status}. Cannot initiate payment.`);
     }
 
-    // Idempotency: same booking + gateway combination
     const idempotencyKey = `pay:${bookingId}:${gateway}`;
     const existing       = await paymentRepository.findByIdempotencyKey(idempotencyKey);
     if (existing && existing.status === "pending" && existing.transaction_id) {
@@ -98,21 +102,22 @@ export const paymentService = {
     });
 
     logger.info("payment_initialized", {
-      event:         "payment_initialized",
+      event:     "payment_initialized",
       paymentId,
       bookingId,
       gateway,
-      amount:        Number(booking.total_amount_ngn),
-      requestId:     requestContext.get()?.requestId,
+      amount:    Number(booking.total_amount_ngn),
+      requestId: requestContext.get()?.requestId,
     });
 
-    return { paymentId, transactionId: transactionId!, redirectUrl: redirectUrl!, amountNgn: Number(booking.total_amount_ngn) };
+    return {
+      paymentId,
+      transactionId: transactionId!,
+      redirectUrl:   redirectUrl!,
+      amountNgn:     Number(booking.total_amount_ngn),
+    };
   },
 
-  /**
-   * Called by webhook service inside a pg transaction after signature verified.
-   * Mirrors processWebhookSuccess from your existing payment service exactly.
-   */
   async processWebhookSuccess(data: {
     transactionId: string;
     amount:        number;
@@ -128,7 +133,11 @@ export const paymentService = {
       await paymentRepository.updateStatus({
         id:       payment.id,
         status:   "failed",
-        metadata: { failureReason: "Amount mismatch", receivedAmount: data.amount, expectedAmount: Number(payment.amount_ngn) },
+        metadata: {
+          failureReason:  "Amount mismatch",
+          receivedAmount: data.amount,
+          expectedAmount: Number(payment.amount_ngn),
+        },
       }, client);
 
       await outboxRepository.create("payment.failed", {
@@ -141,6 +150,32 @@ export const paymentService = {
       }, client);
 
       webhookProcessedCounter.inc({ gateway: data.gateway, status: "amount_mismatch" });
+
+      // Notify guest of failed payment (amount mismatch)
+      void userRepository.findById(payment.guest_user_id).then((guest) => {
+        if (!guest) return;
+        void Promise.allSettled([
+          publishNotifyPaymentFailed({
+            notificationId: uuid(),
+            guestEmail:     guest.email,
+            guestName:      [guest.first_name, guest.last_name].filter(Boolean).join(" ") || "Guest",
+            bookingRef:     payment.booking_id, // best effort - swap for real ref if available
+            amountNgn:      Number(payment.amount_ngn),
+            gateway:        data.gateway,
+            transactionId:  data.transactionId,
+            tenantId:       payment.tenant_id,
+            bookingId:      payment.booking_id,
+            failureReason:  "Payment amount received did not match the booking amount.",
+          }),
+        ]);
+      }).catch((err) =>
+        logger.error("notify_payment_failed_publish_error", {
+          event:         "notify_payment_failed_publish_error",
+          transactionId: data.transactionId,
+          error:         (err as Error).message,
+        })
+      );
+
       throw AppError.badRequest("Payment amount mismatch.");
     }
 
@@ -150,7 +185,13 @@ export const paymentService = {
       transactionId: data.transactionId,
       channel:       data.channel,
       paidAt:        new Date(),
-      metadata:      { gatewayConfirmation: { webhookPayload: data.rawPayload, receivedAmount: data.amount, metadata: data.metadata } },
+      metadata: {
+        gatewayConfirmation: {
+          webhookPayload: data.rawPayload,
+          receivedAmount: data.amount,
+          metadata:       data.metadata,
+        },
+      },
     }, client);
 
     await outboxRepository.create("payment.confirmed", {
@@ -164,6 +205,30 @@ export const paymentService = {
     }, client);
 
     webhookProcessedCounter.inc({ gateway: data.gateway, status: "success" });
+
+    // Notify guest of successful payment
+    void userRepository.findById(payment.guest_user_id).then((guest) => {
+      if (!guest) return;
+      void Promise.allSettled([
+        publishNotifyPaymentConfirmed({
+          notificationId: uuid(),
+          guestEmail:     guest.email,
+          guestName:      [guest.first_name, guest.last_name].filter(Boolean).join(" ") || "Guest",
+          bookingRef:     payment.booking_id,
+          amountNgn:      Number(payment.amount_ngn),
+          gateway:        data.gateway,
+          transactionId:  data.transactionId,
+          tenantId:       payment.tenant_id,
+          bookingId:      payment.booking_id,
+        }),
+      ]);
+    }).catch((err) =>
+      logger.error("notify_payment_confirmed_publish_error", {
+        event:         "notify_payment_confirmed_publish_error",
+        transactionId: data.transactionId,
+        error:         (err as Error).message,
+      })
+    );
 
     logger.info("webhook_payment_success_committed", {
       event:         "webhook_payment_success_committed",
@@ -201,6 +266,31 @@ export const paymentService = {
     }, client);
 
     webhookProcessedCounter.inc({ gateway: data.gateway, status: "failed" });
+
+    // Notify guest of failed payment
+    void userRepository.findById(payment.guest_user_id).then((guest) => {
+      if (!guest) return;
+      void Promise.allSettled([
+        publishNotifyPaymentFailed({
+          notificationId: uuid(),
+          guestEmail:     guest.email,
+          guestName:      [guest.first_name, guest.last_name].filter(Boolean).join(" ") || "Guest",
+          bookingRef:     payment.booking_id,
+          amountNgn:      Number(payment.amount_ngn),
+          gateway:        data.gateway,
+          transactionId:  data.transactionId,
+          tenantId:       payment.tenant_id,
+          bookingId:      payment.booking_id,
+          failureReason:  (data.metadata["gateway_response"] as string) ?? undefined,
+        }),
+      ]);
+    }).catch((err) =>
+      logger.error("notify_payment_failed_publish_error", {
+        event:         "notify_payment_failed_publish_error",
+        transactionId: data.transactionId,
+        error:         (err as Error).message,
+      })
+    );
 
     logger.info("webhook_payment_failure_committed", {
       event:         "webhook_payment_failure_committed",
