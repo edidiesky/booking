@@ -1,117 +1,94 @@
-import amqp from "amqplib";
+import amqp                          from "amqplib";
 import { getRabbitMQConnection, EXCHANGES, ROUTING_KEYS } from "../connection";
-import logger         from "../../utils/logger";
-import { trackError } from "../../utils/metrics";
-import { BookingEventPayload, PaymentEventPayload } from "../publisher";
+import { bookingConfirmedHandler }   from "../../infra/handlers/booking-confirmed.handler";
+import { bookingCancelledHandler }   from "../../infra/handlers/booking-cancelled.handler";
+import { bookingCheckinHandler }     from "../../infra/handlers/booking-checkin.handler";
+import { bookingCheckoutHandler }    from "../../infra/handlers/booking-checkout.handler";
+import { paymentConfirmedHandler }   from "../../infra/handlers/payment-confirmed.handler";
+import { paymentFailedHandler }      from "../../infra/handlers/payment-failed.handler";
+import { authOtpHandler }            from "../../infra/handlers/auth-otp.handler";
+import { authRegisteredHandler }     from "../../infra/handlers/auth-registered.handler";
+import { BaseNotificationHandler }   from "../../infra/handlers/base.handler";
+import { requestContext }            from "../../context/requestContext";
+import { randomUUID }               from "crypto";
+import logger                        from "../../utils/logger";
+import { trackError }                from "../../utils/metrics";
 
-// In a real implementation this would call your notification service.
-// Here we log and publish to the NOTIFICATION exchange for a downstream
-// notification service to consume (email/SMS/push).
+const HANDLER_MAP: Record<string, BaseNotificationHandler> = {
+  [ROUTING_KEYS.NOTIFY_BOOKING_CONFIRMED]:  bookingConfirmedHandler,
+  [ROUTING_KEYS.NOTIFY_BOOKING_CANCELLED]:  bookingCancelledHandler,
+  [ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_IN]: bookingCheckinHandler,
+  [ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_OUT]:bookingCheckoutHandler,
+  [ROUTING_KEYS.NOTIFY_PAYMENT_CONFIRMED]:  paymentConfirmedHandler,
+  [ROUTING_KEYS.NOTIFY_PAYMENT_FAILED]:     paymentFailedHandler,
+  [ROUTING_KEYS.NOTIFY_AUTH_OTP]:           authOtpHandler,
+  [ROUTING_KEYS.NOTIFY_AUTH_REGISTERED]:    authRegisteredHandler,
+};
 
-async function bindAndConsume(
-  channel:    amqp.Channel,
-  exchange:   string,
-  routingKey: string,
-  queue:      string,
-  handler:    (msg: amqp.ConsumeMessage, ch: amqp.Channel) => Promise<void>
-): Promise<void> {
-  await channel.assertQueue(queue, { durable: true });
-  await channel.bindQueue(queue, exchange, routingKey);
-  await channel.consume(
-    queue,
-    async (msg) => {
-      if (!msg) return;
-      try {
-        await handler(msg, channel);
-        channel.ack(msg);
-      } catch (err) {
-        trackError("notification_worker_error", queue, "medium");
-        logger.error("notification_worker_error", { event: "notification_worker_error", queue, error: (err as Error).message });
-        channel.nack(msg, false, true); // requeue once for notifications
-      }
-    },
-    { noAck: false }
-  );
-}
-
-async function handleBookingConfirmed(msg: amqp.ConsumeMessage, channel: amqp.Channel): Promise<void> {
-  const payload = JSON.parse(msg.content.toString()) as BookingEventPayload;
-
-  // Publish to notification exchange for the notification service to consume
-  channel.publish(
-    EXCHANGES.NOTIFICATION,
-    ROUTING_KEYS.NOTIFICATION_EMAIL,
-    Buffer.from(JSON.stringify({
-      template:  "booking_confirmed",
-      userId:    payload.guestUserId,
-      tenantId:  payload.tenantId,
-      data: {
-        bookingRef: payload.bookingRef,
-        checkIn:    payload.checkIn,
-        checkOut:   payload.checkOut,
-        totalAmount: payload.totalAmount,
-      },
-    })),
-    { persistent: true }
-  );
-
-  logger.info("notification_booking_confirmed_queued", {
-    event:      "notification_booking_confirmed_queued",
-    bookingId:  payload.bookingId,
-    guestUserId: payload.guestUserId,
-  });
-}
-
-async function handleBookingCancelled(msg: amqp.ConsumeMessage, channel: amqp.Channel): Promise<void> {
-  const payload = JSON.parse(msg.content.toString()) as BookingEventPayload;
-
-  channel.publish(
-    EXCHANGES.NOTIFICATION,
-    ROUTING_KEYS.NOTIFICATION_EMAIL,
-    Buffer.from(JSON.stringify({
-      template: "booking_cancelled",
-      userId:   payload.guestUserId,
-      tenantId: payload.tenantId,
-      data: {
-        bookingRef: payload.bookingRef,
-        checkIn:    payload.checkIn,
-        checkOut:   payload.checkOut,
-        reason:     payload.reason,
-      },
-    })),
-    { persistent: true }
-  );
-}
-
-async function handlePaymentConfirmed(msg: amqp.ConsumeMessage, channel: amqp.Channel): Promise<void> {
-  const payload = JSON.parse(msg.content.toString()) as PaymentEventPayload;
-
-  channel.publish(
-    EXCHANGES.NOTIFICATION,
-    ROUTING_KEYS.NOTIFICATION_EMAIL,
-    Buffer.from(JSON.stringify({
-      template:  "payment_confirmed",
-      userId:    payload.guestUserId,
-      tenantId:  payload.tenantId,
-      data: {
-        bookingId:     payload.bookingId,
-        amountNgn:     payload.amountNgn,
-        transactionId: payload.transactionId,
-        gateway:       payload.gateway,
-      },
-    })),
-    { persistent: true }
-  );
-}
+const NOTIFY_QUEUES: Record<string, string> = {
+  [ROUTING_KEYS.NOTIFY_BOOKING_CONFIRMED]:   "notify.q.booking.confirmed",
+  [ROUTING_KEYS.NOTIFY_BOOKING_CANCELLED]:   "notify.q.booking.cancelled",
+  [ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_IN]:  "notify.q.booking.checkin",
+  [ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_OUT]: "notify.q.booking.checkout",
+  [ROUTING_KEYS.NOTIFY_PAYMENT_CONFIRMED]:   "notify.q.payment.confirmed",
+  [ROUTING_KEYS.NOTIFY_PAYMENT_FAILED]:      "notify.q.payment.failed",
+  [ROUTING_KEYS.NOTIFY_AUTH_OTP]:            "notify.q.auth.otp",
+  [ROUTING_KEYS.NOTIFY_AUTH_REGISTERED]:     "notify.q.auth.registered",
+};
 
 export async function startNotificationWorker(): Promise<void> {
   const connection = getRabbitMQConnection();
   const channel    = await connection.createChannel();
   await channel.prefetch(5);
 
-  await bindAndConsume(channel, EXCHANGES.BOOKING, ROUTING_KEYS.BOOKING_CONFIRMED, "notify.booking.confirmed", handleBookingConfirmed);
-  await bindAndConsume(channel, EXCHANGES.BOOKING, ROUTING_KEYS.BOOKING_CANCELLED, "notify.booking.cancelled", handleBookingCancelled);
-  await bindAndConsume(channel, EXCHANGES.PAYMENT, ROUTING_KEYS.PAYMENT_CONFIRMED,  "notify.payment.confirmed", handlePaymentConfirmed);
+  for (const [routingKey, queue] of Object.entries(NOTIFY_QUEUES)) {
+    await channel.assertQueue(queue, { durable: true });
+    await channel.bindQueue(queue, EXCHANGES.NOTIFICATION, routingKey);
 
-  logger.info("notification_worker_started", { event: "notification_worker_started" });
+    await channel.consume(queue, async (msg: amqp.ConsumeMessage | null) => {
+      if (!msg) return;
+
+      const routingKey = msg.fields.routingKey;
+      let data: unknown;
+
+      try {
+        data = JSON.parse(msg.content.toString());
+      } catch (err) {
+        logger.error("notification_worker_parse_error", {
+          event: "notification_worker_parse_error",
+          queue,
+          error: (err as Error).message,
+        });
+        channel.nack(msg, false, false);
+        return;
+      }
+
+      const notificationId = (data as Record<string, string>)["notificationId"] ?? randomUUID();
+
+      requestContext.run({ requestId: notificationId, eventType: routingKey }, async () => {
+        const handler = HANDLER_MAP[routingKey];
+
+        if (!handler) {
+          logger.warn("notification_worker_no_handler", { event: "notification_worker_no_handler", routingKey, queue });
+          channel.nack(msg, false, false);
+          return;
+        }
+
+        try {
+          await handler.process(data, channel, msg);
+        } catch (err) {
+          trackError("notification_handler_unhandled", routingKey, "high");
+          logger.error("notification_handler_unhandled", {
+            event:      "notification_handler_unhandled",
+            routingKey,
+            error:      (err as Error).message,
+          });
+        }
+      });
+    }, { noAck: false });
+
+    logger.info("notification_queue_bound", { event: "notification_queue_bound", queue, routingKey });
+  }
+
+  logger.info("notification_worker_started", { event: "notification_worker_started", queues: Object.values(NOTIFY_QUEUES).length });
 }
