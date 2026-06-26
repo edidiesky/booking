@@ -57,6 +57,67 @@ export interface EscrowEventPayload {
   refundAmountNgn?: number;
 }
 
+export interface NotifyBookingPayload {
+  notificationId: string;
+  guestEmail:     string;
+  guestName:      string;
+  guestPhone?:    string;
+  bookingRef:     string;
+  propertyName:   string;
+  roomTypeName:   string;
+  checkIn:        string;
+  checkOut:       string;
+  nights:         number;
+  totalAmountNgn: number;
+  tenantId:       string;
+  bookingId:      string;
+  reason?:        string;
+}
+
+export interface NotifyPaymentPayload {
+  notificationId: string;
+  guestEmail:     string;
+  guestName:      string;
+  bookingRef:     string;
+  amountNgn:      number;
+  gateway:        string;
+  transactionId:  string;
+  tenantId:       string;
+  bookingId:      string;
+  failureReason?: string;
+}
+
+export interface NotifyAuthOtpPayload {
+  notificationId: string;
+  email:          string;
+  firstName:      string;
+  phone?:         string;
+  otp:            string;
+}
+
+export interface NotifyAuthRegisteredPayload {
+  notificationId: string;
+  email:          string;
+  firstName:      string;
+  lastName:       string;
+  tenantName?:    string;
+  tenantSlug?:    string;
+  userType:       string;
+}
+
+export interface NotifyEscrowPayload {
+  notificationId: string;
+  hostEmail:      string;
+  hostName:       string;
+  bookingRef:     string;
+  propertyName:   string;
+  checkIn:        string;
+  checkOut:       string;
+  hostPayoutNgn:  number;
+  tenantId:       string;
+  refundAmountNgn?: number;
+}
+
 export function publishBookingCreated(p: BookingEventPayload):    void { publish(EXCHANGES.BOOKING, ROUTING_KEYS.BOOKING_CREATED,    p); }
 export function publishBookingConfirmed(p: BookingEventPayload):  void { publish(EXCHANGES.BOOKING, ROUTING_KEYS.BOOKING_CONFIRMED,  p); }
 export function publishBookingCancelled(p: BookingEventPayload):  void { publish(EXCHANGES.BOOKING, ROUTING_KEYS.BOOKING_CANCELLED,  p); }
@@ -67,3 +128,15 @@ export function publishPaymentFailed(p: PaymentEventPayload):     void { publish
 export function publishPaymentInitiated(p: PaymentEventPayload):  void { publish(EXCHANGES.PAYMENT, ROUTING_KEYS.PAYMENT_INITIATED,  p); }
 export function publishEscrowReleased(p: EscrowEventPayload):     void { publish(EXCHANGES.BOOKING, ROUTING_KEYS.ESCROW_RELEASED,    p); }
 export function publishEscrowRefunded(p: EscrowEventPayload):     void { publish(EXCHANGES.BOOKING, ROUTING_KEYS.ESCROW_REFUNDED,    p); }
+
+
+
+export function publishNotifyBookingConfirmed(p: NotifyBookingPayload):   void { publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_BOOKING_CONFIRMED,  p); }
+export function publishNotifyBookingCancelled(p: NotifyBookingPayload):   void { publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_BOOKING_CANCELLED,  p); }
+export function publishNotifyBookingCheckedIn(p: NotifyBookingPayload):   void { publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_IN, p); }
+export function publishNotifyBookingCheckedOut(p: NotifyBookingPayload):  void { publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_OUT,p); }
+export function publishNotifyPaymentConfirmed(p: NotifyPaymentPayload):   void { publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_PAYMENT_CONFIRMED,  p); }
+export function publishNotifyPaymentFailed(p: NotifyPaymentPayload):      void { publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_PAYMENT_FAILED,     p); }
+export function publishNotifyAuthOtp(p: NotifyAuthOtpPayload):            void { publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_AUTH_OTP,            p); }
+export function publishNotifyAuthRegistered(p: NotifyAuthRegisteredPayload): void { publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_AUTH_REGISTERED, p); }
+export function publishNotifyEscrowReleased(p: NotifyEscrowPayload):      void { publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_ESCROW_RELEASED,    p); }
