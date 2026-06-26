@@ -1,6 +1,7 @@
 import bcrypt  from "bcryptjs";
 import jwt     from "jsonwebtoken";
 import { nanoid } from "nanoid";
+import { v4 as uuid } from "uuid";
 import redisClient from "../../config/redis";
 import { userRepository }     from "./auth.repository";
 import { profileRepository }  from "../profile/profile.repository";
@@ -11,24 +12,26 @@ import logger                 from "../../utils/logger";
 import { requestContext }     from "../../context/requestContext";
 import { JWTPayload, UserType } from "../../types";
 import { withTransaction }    from "../../config/database";
+import {
+  publishNotifyAuthOtp,
+  publishNotifyAuthRegistered,
+} from "../../messaging/publisher";
 
 const JWT_EXPIRY_SEC     = 15 * 60;
 const REFRESH_EXPIRY_SEC = 7 * 24 * 60 * 60;
-const ONBOARDING_TTL_SEC = 60 * 60;        // 1 hour for email verify session
+const ONBOARDING_TTL_SEC = 60 * 60;
 
-// --- Redis key helpers (matching your existing pattern) ---
-const onboardingKey  = (email: string) => `onboarding:${email}`;
-const refreshKey     = (token: string) => `refresh:${token}`;
-const blocklistKey   = (userId: string) => `blocklist:${userId}`;
+const onboardingKey = (email: string) => `onboarding:${email}`;
+const refreshKey    = (token: string) => `refresh:${token}`;
+const blocklistKey  = (userId: string) => `blocklist:${userId}`;
 
 interface OnboardingState {
-  step:         "email_sent" | "email_verified" | "complete";
-  passwordHash: string;
-  token?:       string;
+  step:           "email_sent" | "email_verified" | "complete";
+  passwordHash:   string;
+  token?:         string;
   tokenExpiresAt?: number;
 }
 
-// --- Token generation ---
 function signAccessToken(payload: JWTPayload): string {
   return jwt.sign({ user: payload }, process.env.JWT_SECRET!, {
     expiresIn: JWT_EXPIRY_SEC,
@@ -37,7 +40,6 @@ function signAccessToken(payload: JWTPayload): string {
   });
 }
 
-// --- DTOs ---
 export interface InitiateOnboardingInput {
   email:    string;
   password: string;
@@ -70,24 +72,16 @@ export interface AuthTokens {
   accessToken:  string;
   refreshToken: string;
   user: {
-    id:        string;
-    email:     string;
+    id:         string;
+    email:      string;
     firstName?: string;
     lastName?:  string;
-    userType:  UserType;
-    tenantId?: string;
+    userType:   UserType;
+    tenantId?:  string;
   };
 }
 
-// =========================================================
-// Auth Service
-// =========================================================
 export const authService = {
-  /**
-   * Step 1: Guest/Host begins registration.
-   * Stores hashed password + 6-digit OTP in Redis.
-   * In production you'd send the OTP via email - here we return it (dev mode) or call your email service.
-   */
   async initiateOnboarding(input: InitiateOnboardingInput): Promise<{ message: string; debug?: string }> {
     const email = input.email.toLowerCase().trim();
 
@@ -102,7 +96,7 @@ export const authService = {
       step:           "email_sent",
       passwordHash,
       token,
-      tokenExpiresAt: Date.now() + 15 * 60 * 1_000, // 15 min
+      tokenExpiresAt: Date.now() + 15 * 60 * 1_000,
     };
 
     await redisClient.set(onboardingKey(email), JSON.stringify(state), "EX", ONBOARDING_TTL_SEC);
@@ -113,8 +107,17 @@ export const authService = {
       requestId: requestContext.get()?.requestId,
     });
 
-    // TODO: call your notification service to send OTP email
-    // For dev: return token directly
+    // Fire-and-forget: publish OTP notification
+    // Promise.allSettled ensures a publish failure never breaks registration
+    void Promise.allSettled([
+      publishNotifyAuthOtp({
+        notificationId: uuid(),
+        email,
+        firstName:      email.split("@")[0], // best guess before we have a name
+        otp:            token,
+      }),
+    ]);
+
     const isDev = process.env.NODE_ENV !== "production";
     return {
       message: "OTP sent to your email. Please verify to continue.",
@@ -122,10 +125,6 @@ export const authService = {
     };
   },
 
-  /**
-   * Step 2: Verify OTP.
-   * Advances onboarding state to email_verified.
-   */
   async confirmEmail(input: ConfirmEmailInput): Promise<void> {
     const email = input.email.toLowerCase().trim();
     const raw   = await redisClient.get(onboardingKey(email));
@@ -144,13 +143,13 @@ export const authService = {
     state.step = "email_verified";
     await redisClient.set(onboardingKey(email), JSON.stringify(state), "EX", ONBOARDING_TTL_SEC);
 
-    logger.info("email_confirmed", { event: "email_confirmed", email, requestId: requestContext.get()?.requestId });
+    logger.info("email_confirmed", {
+      event:     "email_confirmed",
+      email,
+      requestId: requestContext.get()?.requestId,
+    });
   },
 
-  /**
-   * Step 3a: Complete guest registration.
-   * Requires email_verified step in Redis.
-   */
   async registerGuest(input: RegisterGuestInput): Promise<AuthTokens> {
     const email = input.email.toLowerCase().trim();
     const raw   = await redisClient.get(onboardingKey(email));
@@ -163,8 +162,7 @@ export const authService = {
     }
 
     const { passwordHash } = state;
-
-    let userId: string;
+    let userId!: string;
 
     await withTransaction(async (client) => {
       if (await userRepository.emailExists(email)) {
@@ -185,23 +183,34 @@ export const authService = {
     });
 
     await redisClient.del(onboardingKey(email));
+    await auditRepository.log({ action: "created", resource: "user", resourceId: userId, userId });
 
-    await auditRepository.log({ action: "created", resource: "user", resourceId: userId!, userId: userId! });
+    // Publish welcome notification after successful registration
+    void Promise.allSettled([
+      publishNotifyAuthRegistered({
+        notificationId: uuid(),
+        email,
+        firstName:      input.firstName,
+        lastName:       input.lastName,
+        userType:       "guest",
+      }),
+    ]);
 
-    logger.info("guest_registered", { event: "guest_registered", userId: userId!, requestId: requestContext.get()?.requestId });
+    logger.info("guest_registered", {
+      event:     "guest_registered",
+      userId,
+      requestId: requestContext.get()?.requestId,
+    });
 
-    return authService._buildTokens(userId!, "guest", `${input.firstName} ${input.lastName}`, email, undefined);
+    return authService._buildTokens(userId, "guest", `${input.firstName} ${input.lastName}`, email, undefined);
   },
 
-  /**
-   * Step 3b: Complete host registration.
-   * Creates user + tenant atomically.
-   */
   async registerHost(input: RegisterHostInput): Promise<AuthTokens> {
     const email = input.email.toLowerCase().trim();
     const raw   = await redisClient.get(onboardingKey(email));
 
     if (!raw) throw AppError.badRequest("Please verify your email before completing registration.");
+
     const state = JSON.parse(raw) as OnboardingState;
     if (state.step !== "email_verified") {
       throw AppError.badRequest("Please verify your email before completing registration.");
@@ -212,7 +221,7 @@ export const authService = {
     }
 
     const { passwordHash } = state;
-    let userId!: string;
+    let userId!:  string;
     let tenantId!: string;
 
     await withTransaction(async (client) => {
@@ -225,8 +234,10 @@ export const authService = {
       userId = user.id;
 
       const tenant = await tenantRepository.create({
-        slug: input.tenantSlug, name: input.tenantName,
-        ownerUserId: userId, platformFeePct: input.platformFeePct ?? 10.00,
+        slug:           input.tenantSlug,
+        name:           input.tenantName,
+        ownerUserId:    userId,
+        platformFeePct: input.platformFeePct ?? 10.00,
       }, client);
       tenantId = tenant.id;
 
@@ -237,7 +248,25 @@ export const authService = {
     await redisClient.del(onboardingKey(email));
     await auditRepository.log({ action: "created", resource: "tenant", resourceId: tenantId, userId });
 
-    logger.info("host_registered", { event: "host_registered", userId, tenantId, requestId: requestContext.get()?.requestId });
+    // Publish host welcome notification after successful registration
+    void Promise.allSettled([
+      publishNotifyAuthRegistered({
+        notificationId: uuid(),
+        email,
+        firstName:      input.firstName,
+        lastName:       input.lastName,
+        userType:       "host:admin",
+        tenantName:     input.tenantName,
+        tenantSlug:     input.tenantSlug,
+      }),
+    ]);
+
+    logger.info("host_registered", {
+      event:     "host_registered",
+      userId,
+      tenantId,
+      requestId: requestContext.get()?.requestId,
+    });
 
     return authService._buildTokens(userId, "host:admin", `${input.firstName} ${input.lastName}`, email, tenantId);
   },
@@ -253,10 +282,14 @@ export const authService = {
     if (!user.is_email_verified)     throw AppError.forbidden("Please verify your email before logging in.");
 
     await userRepository.updateById(user.id, { last_active_at: new Date() });
-
     await auditRepository.log({ action: "login", resource: "user", resourceId: user.id, userId: user.id });
 
-    logger.info("user_logged_in", { event: "user_logged_in", userId: user.id, userType: user.user_type, requestId: requestContext.get()?.requestId });
+    logger.info("user_logged_in", {
+      event:     "user_logged_in",
+      userId:    user.id,
+      userType:  user.user_type,
+      requestId: requestContext.get()?.requestId,
+    });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
     return authService._buildTokens(user.id, user.user_type, name, user.email, user.tenant_id);
@@ -267,9 +300,15 @@ export const authService = {
     if (!raw) throw AppError.unauthorized("Invalid or expired refresh token.");
 
     const data = JSON.parse(raw) as { userId: string; userType: UserType; name: string; email: string; tenantId?: string };
-    const accessToken = signAccessToken({ userId: data.userId, userType: data.userType, email: data.email, name: data.name, tenantId: data.tenantId });
+    const accessToken = signAccessToken({
+      userId:   data.userId,
+      userType: data.userType,
+      email:    data.email,
+      name:     data.name,
+      tenantId: data.tenantId,
+    });
 
-    // Rotate
+    // Rotate refresh token
     await redisClient.del(refreshKey(token));
     const newToken = nanoid(32);
     await redisClient.set(refreshKey(newToken), raw, "EX", REFRESH_EXPIRY_SEC);
@@ -287,7 +326,11 @@ export const authService = {
     await redisClient.set(blocklistKey(userId), "1", "EX", ttl);
     await auditRepository.log({ action: "logout", resource: "user", resourceId: userId, userId });
 
-    logger.info("user_logged_out", { event: "user_logged_out", userId, requestId: requestContext.get()?.requestId });
+    logger.info("user_logged_out", {
+      event:     "user_logged_out",
+      userId,
+      requestId: requestContext.get()?.requestId,
+    });
   },
 
   async resendOtp(email: string): Promise<{ message: string; debug?: string }> {
@@ -303,7 +346,21 @@ export const authService = {
 
     await redisClient.set(onboardingKey(normalised), JSON.stringify(state), "EX", ONBOARDING_TTL_SEC);
 
-    logger.info("otp_resent", { event: "otp_resent", email: normalised, requestId: requestContext.get()?.requestId });
+    // Re-publish OTP notification
+    void Promise.allSettled([
+      publishNotifyAuthOtp({
+        notificationId: uuid(),
+        email:          normalised,
+        firstName:      normalised.split("@")[0],
+        otp:            token,
+      }),
+    ]);
+
+    logger.info("otp_resent", {
+      event:     "otp_resent",
+      email:     normalised,
+      requestId: requestContext.get()?.requestId,
+    });
 
     const isDev = process.env.NODE_ENV !== "production";
     return {
@@ -312,7 +369,6 @@ export const authService = {
     };
   },
 
-  // Internal helper
   async _buildTokens(
     userId:   string,
     userType: UserType,
@@ -320,10 +376,10 @@ export const authService = {
     email:    string,
     tenantId: string | undefined
   ): Promise<AuthTokens> {
-    const payload: JWTPayload    = { userId, userType, email, name, tenantId };
-    const accessToken            = signAccessToken(payload);
-    const refreshToken           = nanoid(32);
-    const refreshData            = JSON.stringify({ userId, userType, name, email, tenantId });
+    const payload: JWTPayload = { userId, userType, email, name, tenantId };
+    const accessToken         = signAccessToken(payload);
+    const refreshToken        = nanoid(32);
+    const refreshData         = JSON.stringify({ userId, userType, name, email, tenantId });
 
     await redisClient.set(refreshKey(refreshToken), refreshData, "EX", REFRESH_EXPIRY_SEC);
 
