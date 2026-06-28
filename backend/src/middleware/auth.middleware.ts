@@ -86,30 +86,35 @@ export function requireTenantMember(
   next: NextFunction,
 ): void {
   if (!req.user) throw AppError.unauthorized();
-  if (!req.tenantId) {
-    res
-      .status(400)
-      .json({ success: false, message: "Tenant context required." });
-    return;
-  }
+
   const hostTypes: UserType[] = [
     "host:admin",
     "host:staff",
     "host:inspector",
     "platform:admin",
   ];
+
   if (!hostTypes.includes(req.user.userType)) {
     res.status(403).json({ success: false, message: "Host access required." });
     return;
   }
-  if (
-    req.user.userType !== "platform:admin" &&
-    req.user.tenantId !== req.tenantId
-  ) {
-    res
-      .status(403)
-      .json({ success: false, message: "Access denied to this tenant." });
+
+  const tenantId = req.user.tenantId ?? req.tenantId;
+
+  if (!tenantId) {
+    res.status(400).json({ success: false, message: "Tenant context required." });
     return;
   }
+
+  if (
+    req.user.userType !== "platform:admin" &&
+    req.user.tenantId !== tenantId
+  ) {
+    res.status(403).json({ success: false, message: "Access denied to this tenant." });
+    return;
+  }
+
+  req.tenantId = tenantId;
+
   next();
 }
