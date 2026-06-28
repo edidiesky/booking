@@ -1,40 +1,48 @@
-import { useDispatch, useSelector }  from "react-redux";
-import { selectOnboardingStep, selectOnboardingShowVerify,
-         selectOnboardingPendingEmail, setOnboardingStep } from "@/redux/slices/authSlice";
-import AuthLayout         from "@/components/common/AuthLayout";
-import StepInitiate       from "./steps/StepInitiate";
-import StepConfirmOtp     from "./steps/StepConfirmOtp";
-import StepGuestDetails   from "./steps/StepGuestDetails";
-import StepHostDetails    from "./steps/StepHostDetails";
-import VerifyInterstitial from "./steps/VerifyInterstitial";
-import { useOnboarding }  from "./hooks/useOnboarding";
-import { useAppSelector } from "@/hooks/useAppSelector";
+import { useDispatch, useSelector }       from "react-redux";
+import { useLocation }                    from "react-router-dom";
+import {
+  selectOnboardingStep,
+  selectOnboardingShowVerify,
+  selectOnboardingPendingEmail,
+  setOnboardingStep,
+} from "@/redux/slices/authSlice";
+import AuthLayout          from "@/components/common/AuthLayout";
+import StepInitiate        from "./steps/StepInitiate";
+import StepConfirmOtp      from "./steps/StepConfirmOtp";
+import StepGuestDetails    from "./steps/StepGuestDetails";
+import StepHostDetails     from "./steps/StepHostDetails";
+import StepCreateProperty  from "./steps/StepCreateProperty";
+import VerifyInterstitial  from "./steps/VerifyInterstitial";
+import { useOnboarding, type UserChoice } from "./hooks/useOnboarding";
 
 const GUEST_STEPS = ["Create account", "Verify email", "Your details"];
-const HOST_STEPS  = ["Create account", "Verify email", "Your property"];
+const HOST_STEPS  = ["Create account", "Verify email", "Your details", "Your property"];
 
 export default function Onboarding() {
-  const dispatch      = useDispatch();
-  const step          = useSelector(selectOnboardingStep);
-  const showVerify    = useSelector(selectOnboardingShowVerify);
-  const pendingEmail  = useSelector(selectOnboardingPendingEmail);
-  const userChoice    = useAppSelector((s) => s.auth.onboardingPendingEmail ? "guest" : "guest") as "guest" | "host";
+  const dispatch     = useDispatch();
+  const location     = useLocation();
+  const step         = useSelector(selectOnboardingStep);
+  const showVerify   = useSelector(selectOnboardingShowVerify);
+  const pendingEmail = useSelector(selectOnboardingPendingEmail);
+
+  const userChoice: UserChoice =
+    (location.state as { userChoice?: UserChoice } | null)?.userChoice ?? "guest";
 
   const {
-    handleInitiate, initiating,
-    handleConfirmOtp, confirming,
-    handleResend, resending,
-    handleGuestDetails, guestReg,
-    handleHostDetails, hostReg,
-  } = useOnboarding();
-
+    handleInitiate,       initiating,
+    handleConfirmOtp,     confirming,
+    handleResend,         resending,
+    handleGuestDetails,   guestReg,
+    handleHostDetails,
+    handleCreateProperty, hostReg,
+  } = useOnboarding(userChoice);
   if (showVerify) {
     return (
       <VerifyInterstitial
         email={pendingEmail}
+        onContinue={() => dispatch(setOnboardingStep(2))}
         onResend={handleResend}
         isResending={resending}
-        onContinue={() => dispatch(setOnboardingStep(2))}
       />
     );
   }
@@ -43,7 +51,10 @@ export default function Onboarding() {
 
   return (
     <AuthLayout stepLabels={stepLabels} currentStep={step}>
-      {step === 1 && <StepInitiate onSubmit={handleInitiate} isLoading={initiating} />}
+      {step === 1 && (
+        <StepInitiate onSubmit={handleInitiate} isLoading={initiating} />
+      )}
+
       {step === 2 && (
         <StepConfirmOtp
           email={pendingEmail}
@@ -53,12 +64,25 @@ export default function Onboarding() {
           isResending={resending}
         />
       )}
-      {step === 3 && userChoice === "host" && <StepHostDetails onSubmit={handleHostDetails} isLoading={hostReg} />}
-      {step === 3 && userChoice === "guest" && <StepGuestDetails onSubmit={handleGuestDetails} isLoading={guestReg} />}
+
+      {step === 3 && userChoice === "guest" && (
+        <StepGuestDetails onSubmit={handleGuestDetails} isLoading={guestReg} />
+      )}
+
+      {step === 3 && userChoice === "host" && (
+        <StepHostDetails onSubmit={handleHostDetails} isLoading={false} />
+      )}
+
+      {step === 4 && userChoice === "host" && (
+        <StepCreateProperty onSubmit={handleCreateProperty} isLoading={hostReg} />
+      )}
+
       {step > 1 && (
-        <button onClick={() => dispatch(setOnboardingStep(step - 1))}
-          className="mt-6 text-sm transition-opacity hover:opacity-60"
-          style={{ color: "var(--color-muted-stone)" }}>
+        <button
+          onClick={() => dispatch(setOnboardingStep(step - 1))}
+          className="mt-6 text-sm transition-opacity hover:opacity-60 flex items-center gap-1"
+          style={{ color: "var(--color-muted-stone)" }}
+        >
           ← Back
         </button>
       )}
