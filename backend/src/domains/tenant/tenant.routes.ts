@@ -24,8 +24,9 @@ const cancellationPolicySchema = Joi.object({
 });
 
 const GetMyTenantHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
-  const tenant = await tenantRepository.findById(req.tenantId);
+  const tenantId = req.user?.tenantId;       
+  if (!tenantId) throw AppError.badRequest("Tenant context required.");
+  const tenant = await tenantRepository.findById(tenantId);
   if (!tenant) throw AppError.notFound("Tenant not found.");
   res.status(200).json({ success: true, data: tenant });
 });
@@ -87,7 +88,7 @@ const ActivateTenantHandler = asyncHandler(async (req: Request, res: Response): 
 
 const router = Router();
 
-router.get("/me",              authenticate, requireTenantMember,                                       GetMyTenantHandler);
+router.get("/me",              authenticate,                                       GetMyTenantHandler);
 router.patch("/me/settings",   authenticate, requireTenantMember, validate(updateSettingsSchema),      UpdateTenantSettingsHandler);
 router.patch("/me/policy",     authenticate, requireTenantMember, validate(cancellationPolicySchema),  UpdateCancellationPolicyHandler);
 router.get("/",                authenticate, authorize("platform:admin"),                              ListTenantsHandler);
