@@ -1,0 +1,541 @@
+//  Shared 
+
+export interface ApiSuccessResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface PaginationMeta {
+  page:       number;
+  limit:      number;
+  total:      number;
+  totalPages: number;
+}
+
+export interface PaginatedResponse<T> {
+  success: boolean;
+  data:    T[];
+  meta:    PaginationMeta;
+}
+
+//  Auth 
+
+export type UserType =
+  | "guest"
+  | "host:admin"
+  | "host:staff"
+  | "host:inspector"
+  | "platform:admin";
+
+export interface User {
+  id:               string;
+  email:            string;
+  firstName:        string;
+  lastName:         string;
+  userType:         UserType;
+  tenantId?:        string;
+  phone?:           string;
+  status:           "draft" | "active" | "inactive" | "suspended";
+  isEmailVerified:  boolean;
+  lastActiveAt?:    string;
+  createdAt:        string;
+}
+
+export interface AuthTokens {
+  accessToken:  string;
+  refreshToken: string;
+  user: {
+    id:        string;
+    email:     string;
+    firstName?: string;
+    lastName?:  string;
+    userType:  UserType;
+    tenantId?: string;
+  };
+}
+
+export interface InitiateOnboardingPayload {
+  email:    string;
+  password: string;
+}
+
+export interface InitiateOnboardingResponse {
+  success: boolean;
+  message: string;
+  debug?:  string;        // OTP returned in dev mode only
+}
+
+export interface ConfirmEmailPayload {
+  email: string;
+  token: string;
+}
+
+export interface ResendOtpPayload {
+  email: string;
+}
+
+export interface RegisterGuestPayload {
+  email:     string;
+  firstName: string;
+  lastName:  string;
+  phone?:    string;
+}
+
+export interface RegisterHostPayload {
+  email:           string;
+  firstName:       string;
+  lastName:        string;
+  phone?:          string;
+  tenantName:      string;
+  tenantSlug:      string;
+  platformFeePct?: number;
+}
+
+export interface LoginPayload {
+  email:    string;
+  password: string;
+}
+
+export interface RefreshPayload {
+  refreshToken: string;
+}
+
+export interface LogoutPayload {
+  refreshToken: string;
+}
+
+//  Profile 
+
+export interface Profile {
+  userId:       string;
+  displayName:  string;
+  bio?:         string;
+  avatarUrl?:   string;
+  address?: {
+    city?:    string;
+    state?:   string;
+    country?: string;
+  };
+  updatedAt: string;
+}
+
+export interface UpdateProfilePayload {
+  displayName?: string;
+  bio?:         string;
+  avatarUrl?:   string;
+  address?: {
+    city?:    string;
+    state?:   string;
+    country?: string;
+  };
+}
+
+//  Tenant 
+
+export interface TenantSettings {
+  timezone: string;
+  currency: string;
+  locale:   string;
+}
+
+export interface CancellationPolicyTier {
+  hours_before: number;
+  refund_pct:   number;
+}
+
+export interface Tenant {
+  id:                  string;
+  slug:                string;
+  name:                string;
+  ownerUserId:         string;
+  platformFeePct:      number;
+  status:              "draft" | "active" | "suspended";
+  settings:            TenantSettings;
+  cancellationPolicy:  CancellationPolicyTier[];
+  createdAt:           string;
+  updatedAt:           string;
+}
+
+export interface UpdateTenantSettingsPayload {
+  timezone?: string;
+  currency?: string;
+  locale?:   string;
+}
+
+export interface UpdateCancellationPolicyPayload {
+  policy: CancellationPolicyTier[];
+}
+
+//  Property 
+
+export type PropertyType   = "shortlet" | "hotel" | "guesthouse";
+export type PropertyStatus = "draft" | "active" | "paused" | "archived";
+
+export interface PropertyAddress {
+  street:  string;
+  city:    string;
+  state:   string;
+  country: string;
+  lat?:    number;
+  lng?:    number;
+}
+
+export interface Property {
+  id:            string;
+  tenantId:      string;
+  name:          string;
+  description:   string;
+  propertyType:  PropertyType;
+  status:        PropertyStatus;
+  address:       PropertyAddress;
+  amenities:     string[];
+  images:        string[];
+  checkInTime:   string;
+  checkOutTime:  string;
+  createdAt:     string;
+  updatedAt:     string;
+}
+
+export interface CreatePropertyPayload {
+  name:          string;
+  description:   string;
+  propertyType:  PropertyType;
+  address:       PropertyAddress;
+  amenities?:    string[];
+  checkInTime?:  string;
+  checkOutTime?: string;
+}
+
+export interface UpdatePropertyPayload {
+  name?:         string;
+  description?:  string;
+  status?:       PropertyStatus;
+  amenities?:    string[];
+  checkInTime?:  string;
+  checkOutTime?: string;
+}
+
+//  Room Type 
+
+export type RoomStatus = "active" | "inactive";
+
+export interface RoomType {
+  id:              string;
+  propertyId:      string;
+  tenantId:        string;
+  name:            string;
+  description:     string;
+  maxOccupancy:    number;
+  basePriceNgn:    number;
+  quantity:        number;
+  status:          RoomStatus;
+  amenities:       string[];
+  createdAt:       string;
+  updatedAt:       string;
+}
+
+export interface CreateRoomTypePayload {
+  name:           string;
+  description?:   string;
+  maxOccupancy:   number;
+  basePriceNgn:   number;
+  quantity:       number;
+  amenities?:     string[];
+}
+
+export interface SeedCalendarPayload {
+  startDate: string;
+  endDate:   string;
+}
+
+export interface AvailabilitySlot {
+  date:            string;
+  availableCount:  number;
+  isBlocked:       boolean;
+  priceOverrideNgn?: number;
+}
+
+export interface BlockDatesPayload {
+  startDate: string;
+  endDate:   string;
+  block:     boolean;
+}
+
+//  Booking 
+
+export type BookingStatus =
+  | "pending_payment"
+  | "confirmed"
+  | "checked_in"
+  | "checked_out"
+  | "cancelled"
+  | "refunded";
+
+export interface Booking {
+  bookingId:        string;
+  bookingRef:       string;
+  status:           BookingStatus;
+  guestUserId:      string;
+  tenantId:         string;
+  propertyId:       string;
+  roomTypeId:       string;
+  checkIn:          string;
+  checkOut:         string;
+  nights:           number;
+  roomsCount:       number;
+  guestCount:       number;
+  totalAmountNgn:   number;
+  platformFeeNgn:   number;
+  hostPayoutNgn:    number;
+  specialRequests?: string;
+  sessionId?:       string;
+  createdAt:        string;
+}
+
+export interface InitiateBookingPayload {
+  propertyId:       string;
+  roomTypeId:       string;
+  checkIn:          string;
+  checkOut:         string;
+  roomsCount:       number;
+  guestCount:       number;
+  specialRequests?: string;
+}
+
+export interface InitiateBookingResponse {
+  success:   boolean;
+  data: {
+    bookingId:  string;
+    bookingRef: string;
+    sessionId:  string;
+    status:     BookingStatus;
+    totalAmountNgn: number;
+  };
+}
+
+export interface CancelBookingPayload {
+  reason?: string;
+}
+
+export interface BookingListResponse {
+  success: boolean;
+  data:    Booking[];
+}
+
+export interface TenantBookingQueryParams {
+  status?: BookingStatus;
+  page?:   number;
+  limit?:  number;
+}
+
+//  Payment 
+
+export type PaymentStatus  = "pending" | "success" | "failed" | "refunded";
+export type PaymentGateway = "paystack" | "flutterwave";
+
+export interface Payment {
+  id:            string;
+  bookingId:     string;
+  tenantId:      string;
+  guestUserId:   string;
+  gateway:       PaymentGateway;
+  transactionId: string;
+  amountNgn:     number;
+  status:        PaymentStatus;
+  redirectUrl?:  string;
+  paidAt?:       string;
+  createdAt:     string;
+}
+
+export interface InitializePaymentPayload {
+  bookingId:   string;
+  gateway:     PaymentGateway;
+  callbackUrl: string;
+  phone?:      string;
+}
+
+export interface InitializePaymentResponse {
+  success: boolean;
+  data: {
+    paymentId:     string;
+    transactionId: string;
+    redirectUrl:   string;
+    amountNgn:     number;
+  };
+}
+
+export interface PaymentListResponse {
+  success: boolean;
+  data:    Payment[];
+}
+
+//  Escrow 
+
+export type EscrowStatus =
+  | "held"
+  | "released"
+  | "refunded"
+  | "partially_refunded";
+
+export interface Escrow {
+  id:              string;
+  bookingId:       string;
+  tenantId:        string;
+  amountNgn:       number;
+  platformFeeNgn:  number;
+  hostPayoutNgn:   number;
+  status:          EscrowStatus;
+  releasedAt?:     string;
+  refundedAt?:     string;
+  createdAt:       string;
+}
+
+export interface EscrowListResponse {
+  success: boolean;
+  data:    Escrow[];
+}
+
+//  Audit 
+
+export type AuditAction =
+  | "created"
+  | "updated"
+  | "deleted"
+  | "status_changed"
+  | "payment"
+  | "login"
+  | "logout";
+
+export interface AuditLog {
+  id:         string;
+  action:     AuditAction;
+  resource:   string;
+  resourceId: string;
+  tenantId?:  string;
+  userId:     string;
+  newValue?:  Record<string, unknown>;
+  oldValue?:  Record<string, unknown>;
+  createdAt:  string;
+}
+
+export interface AuditListResponse {
+  success: boolean;
+  data:    AuditLog[];
+}
+
+//  Notification 
+
+export type NotificationType =
+  | "booking_confirmed"
+  | "booking_cancelled"
+  | "booking_checked_in"
+  | "booking_checked_out"
+  | "payment_confirmed"
+  | "payment_failed"
+  | "auth_otp"
+  | "auth_registered"
+  | "escrow_released"
+  | "escrow_refunded";
+
+export type NotificationStatus = "pending" | "sent" | "failed" | "skipped";
+
+export interface Notification {
+  id:               string;
+  type:             NotificationType;
+  channel:          "email" | "sms" | "email_and_sms";
+  status:           NotificationStatus;
+  recipientEmail?:  string;
+  recipientPhone?:  string;
+  tenantId?:        string;
+  userId?:          string;
+  subject?:         string;
+  message:          string;
+  metadata:         Record<string, unknown>;
+  sentAt?:          string;
+  failureReason?:   string;
+  createdAt:        string;
+}
+
+export interface NotificationListResponse {
+  success: boolean;
+  data:    Notification[];
+}
+
+//  RBAC 
+
+export type RoleSlug =
+  | "platform:admin"
+  | "host:admin"
+  | "host:staff"
+  | "host:inspector"
+  | "guest";
+
+export interface Role {
+  id:          string;
+  name:        string;
+  slug:        RoleSlug;
+  description: string;
+  isSystem:    boolean;
+  createdAt:   string;
+}
+
+export interface UserRoleAssignment {
+  id:          string;
+  userId:      string;
+  tenantId:    string;
+  roleId:      string;
+  roleName:    string;
+  roleSlug:    RoleSlug;
+  assignedBy:  string;
+  assignedAt:  string;
+  reason?:     string;
+  isActive:    boolean;
+}
+
+export interface Permission {
+  id:           string;
+  resource:     string;
+  action:       string;
+  description?: string;
+}
+
+export interface UserPermissionOverride {
+  id:           string;
+  userId:       string;
+  tenantId:     string;
+  permissionId: string;
+  permission:   Permission;
+  granted:      boolean;
+  assignedBy:   string;
+  assignedAt:   string;
+  reason?:      string;
+}
+
+export interface AssignRolePayload {
+  userId:   string;
+  roleSlug: RoleSlug;
+  reason?:  string;
+}
+
+export interface GrantPermissionPayload {
+  userId:       string;
+  permissionId: string;
+  granted:      boolean;
+  reason?:      string;
+}
+
+export interface ResolvedPermissions {
+  userId:   string;
+  tenantId: string;
+  granted:  string[];
+}
+
+export interface RoleListResponse {
+  success: boolean;
+  data:    Role[];
+}
+
+export interface PermissionListResponse {
+  success: boolean;
+  data:    Permission[];
+}
