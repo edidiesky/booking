@@ -10,6 +10,7 @@ interface AuthState {
   onboardingStep:          number;
   onboardingShowVerify:    boolean;
   onboardingPendingEmail:  string;
+  tenantSlug: string | null;
 }
 
 const initialState: AuthState = {
@@ -20,6 +21,7 @@ const initialState: AuthState = {
   onboardingStep:         1,
   onboardingShowVerify:   false,
   onboardingPendingEmail: "",
+  tenantSlug: null,
 };
 
 const authSlice = createSlice({
@@ -28,12 +30,13 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ user: User; accessToken: string; refreshToken?: string }>
+      action: PayloadAction<{ user: User; accessToken: string; refreshToken?: string ; tenantSlug?: string}>
     ) => {
       state.user            = action.payload.user;
       state.accessToken     = action.payload.accessToken;
       state.refreshToken    = action.payload.refreshToken ?? state.refreshToken;
       state.isAuthenticated = true;
+      state.tenantSlug  = action.payload.tenantSlug ?? state.tenantSlug; 
 
       try {
         localStorage.setItem("auth:accessToken",  action.payload.accessToken);
@@ -52,6 +55,7 @@ const authSlice = createSlice({
       state.onboardingStep         = 1;
       state.onboardingShowVerify   = false;
       state.onboardingPendingEmail = "";
+      state.tenantSlug = null;
 
       try {
         localStorage.removeItem("auth:accessToken");
@@ -99,3 +103,4 @@ export const selectIsAuthenticated     = (s: RootState) => s.auth.isAuthenticate
 export const selectOnboardingStep      = (s: RootState) => s.auth.onboardingStep;
 export const selectOnboardingShowVerify    = (s: RootState) => s.auth.onboardingShowVerify;
 export const selectOnboardingPendingEmail  = (s: RootState) => s.auth.onboardingPendingEmail;
+export const selectTenantSlug = (s: RootState) => s.auth.tenantSlug;

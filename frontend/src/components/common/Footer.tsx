@@ -16,17 +16,17 @@ export default function Footer() {
       <div className="mx-auto px-6 lg:px-8 py-12" style={{ maxWidth: "1280px" }}>
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-8">
           <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-            <span className="text-base bold" style={{ color: "var(--color-ink)" }}>
+            <span className="text-xl lg:text-2xl bold" style={{ color: "var(--color-ink)" }}>
               Booking
             </span>
-            <p className="text-sm leading-relaxed" style={{ color: "var(--color-light-steel)" }}>
+            <p className="text-base leading-relaxed" style={{ color: "var(--color-light-steel)" }}>
               Find and book extraordinary stays with ease.
             </p>
           </div>
 
           {Object.entries(LINKS).map(([group, items]) => (
             <div key={group} className="flex flex-col gap-3">
-              <p className="text-xs uppercase tracking-widest bold"
+              <p className="text-sm uppercase tracking-widest bold"
                  style={{ color: "var(--color-hint-of-grey)" }}>
                 {group}
               </p>
@@ -34,7 +34,7 @@ export default function Footer() {
                 <Link
                   key={item}
                   to="/"
-                  className="text-sm transition-opacity hover:opacity-60"
+                  className="text-base transition-opacity hover:opacity-60"
                   style={{ color: "var(--color-muted-stone)" }}
                 >
                   {item}

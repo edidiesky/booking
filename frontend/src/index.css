@@ -327,6 +327,10 @@ html.lenis body {
   pointer-events: none;
 }
 
+.max-w-custom {
+  max-width: 1200px;
+}
+
 
 .custom-toast {
   display: flex;

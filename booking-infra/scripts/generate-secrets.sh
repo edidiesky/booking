@@ -37,5 +37,5 @@ REDIS_PW=$(generate_url_safe_password)
 RABBIT_PW=$(generate_url_safe_password)
 echo "# NOTE: run the script again and copy REDIS_PASSWORD and RABBITMQ_PASSWORD"
 echo "# then build the URLs manually like:"
-echo "# REDIS_URL=redis://:<REDIS_PASSWORD>@proptytax_redis:6379"
-echo "# RABBITMQ_URL=amqp://akirs:<RABBITMQ_PASSWORD>@proptytax_rabbitmq:5672"
+echo "# REDIS_URL=redis://:<REDIS_PASSWORD>@Booking_redis:6379"
+echo "# RABBITMQ_URL=amqp://akirs:<RABBITMQ_PASSWORD>@Booking_rabbitmq:5672"

@@ -19,6 +19,10 @@ export const propertyApi = apiSlice.injectEndpoints({
       providesTags: ["Property"],
     }),
 
+     getMyProperties: builder.query<PropertiesResponse, { page?: number; limit?: number }>({
+      query: ({ page = 1, limit = 20 } = {}) => ({ url: `${PROPERTY_URL}/mine?page=${page}&limit=${limit}` }),
+      providesTags: ["Property"],
+    }),
     getPropertyById: builder.query<PropertyResponse, string>({
       query: (id) => ({ url: `${PROPERTY_URL}/${id}` }),
       providesTags: (_r, _e, id) => [{ type: "Property", id }],
@@ -75,4 +79,5 @@ export const {
   useSeedCalendarMutation,
   useGetAvailabilityQuery,
   useBlockDatesMutation,
+  useGetMyPropertiesQuery
 } = propertyApi;

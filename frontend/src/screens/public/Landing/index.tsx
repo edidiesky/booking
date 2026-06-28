@@ -4,6 +4,10 @@ import Footer              from "@/components/common/Footer";
 import Hero from "./Hero";
 import Features from "./Features";
 import HowItWorks from "./HowItWorks";
+import Listing from "./Listings";
+import About from "./About";
+import Expert from "./Expert";
+import Blog from "./Blog";
 
 export default function Landing() {
   return (
@@ -17,8 +21,10 @@ export default function Landing() {
 
       <main className="flex-1 flex-col gap-14">
         <Hero/>
-        <Features/>
-        <HowItWorks/>
+        <Listing/>
+        <About/>
+        <Expert/>
+        <Blog/>
       </main>
 
       <Footer />

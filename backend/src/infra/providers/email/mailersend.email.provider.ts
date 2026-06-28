@@ -15,7 +15,7 @@ export class MailerSendEmailProvider implements IEmailProvider {
     }
     this.apiKey    = process.env.MAILERSEND_API_TOKEN;
     this.fromEmail = process.env.EMAIL_FROM!;
-    this.fromName  = process.env.EMAIL_FROM_NAME ?? "ProptyTax";
+    this.fromName  = process.env.EMAIL_FROM_NAME ?? "Booking";
   }
 
   async sendEmail(options: SendEmailOptions): Promise<void> {

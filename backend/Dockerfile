@@ -15,6 +15,8 @@ COPY tsconfig.json ./
 
 RUN npx tsc
 
+RUN cp -r src/domains/notification/templates dist/domains/notification/templates
+
 # Production stage
 FROM node:20-alpine
 

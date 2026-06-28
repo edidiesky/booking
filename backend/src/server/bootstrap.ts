@@ -9,6 +9,7 @@ import { startWebhookRetryWorker } from "../messaging/workers/webhookRetryWorker
 import { availabilityRepository } from "../domains/availability/availability.repository";
 import { serverHealthGauge, trackError } from "../utils/metrics";
 import { seedService } from "../domains/role/seed.service";
+import { runMigrations } from "../migrations/runner";
 
 interface InitStep {
   name: string;
@@ -33,6 +34,7 @@ export async function bootstrapServer(): Promise<void> {
     { name: "postgres",              fn: connectDB },
     { name: "redis",                 fn: async () => { await redisClient.ping(); } },
     { name: "rabbitmq",              fn: connectRabbitMQ },
+    { name: "migrations",          fn: runMigrations },    
     { name: "outbox_poller",         fn: async () => { startOutboxPoller(); } },
     { name: "seed_rbac",             fn: async () => { await seedService.seedAll(); } },
     { name: "sse_fanout_worker",     fn: startSseFanoutWorker },

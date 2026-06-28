@@ -1,4 +1,4 @@
-import type { BookingStatus, PaymentStatus, EscrowStatus, NotificationStatus } from "@/types/api";
+import type { BookingStatus, PaymentStatus, EscrowStatus, NotificationStatus, PropertyStatus } from "@/types/api";
 
 type AnyStatus = BookingStatus | PaymentStatus | EscrowStatus | NotificationStatus;
 
@@ -27,7 +27,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
 };
 
 interface Props {
-  status: AnyStatus;
+  status: AnyStatus & PropertyStatus;
   size?:  "sm" | "md";
 }
 

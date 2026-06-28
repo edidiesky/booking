@@ -15,10 +15,14 @@ const rawBaseQuery = fetchBaseQuery({
   baseUrl: "/",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.accessToken;
+    const state = getState() as RootState;
+    const token = state.auth.accessToken;
+    const slug  = state.auth.tenantSlug;   
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
+      
     }
+    if (slug)  headers.set("x-tenant-slug", slug);   
     return headers;
   },
 });

@@ -5,7 +5,6 @@ import PageLoader           from "@/components/common/PageLoader";
 
 const Login          = lazy(() => import("@/screens/auth/login"));
 const Onboarding     = lazy(() => import("@/screens/auth/onboarding"));
-const SelectUserType = lazy(() => import("@/screens/auth/SelectUserType"));
 
 const wrap = (el: React.ReactNode) => (
   <GuestOnlyRoute>
@@ -16,5 +15,4 @@ const wrap = (el: React.ReactNode) => (
 export const authRoutes: RouteObject[] = [
   { path: "/login",            element: wrap(<Login />)          },
   { path: "/onboarding",       element: wrap(<Onboarding />)     },
-  { path: "/select-user-type", element: wrap(<SelectUserType />) },
 ];

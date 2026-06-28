@@ -5,7 +5,7 @@ import logger from "../../../utils/logger";
 const FROM_ADDRESS =
   process.env.EMAIL_FROM_NAME
     ? `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`
-    : `ProptyTax <${process.env.EMAIL_FROM}>`;
+    : `Booking <${process.env.EMAIL_FROM}>`;
 
 export class ResendEmailProvider implements IEmailProvider {
   private readonly client: Resend;

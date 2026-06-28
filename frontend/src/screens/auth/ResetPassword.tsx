@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 import { Mail } from "lucide-react";
 import AuthLayout from "./shared/AuthLayout";
 import { Input } from "@/components/ui/input";
-import { useRequestResetMutation } from "@/redux/services/authApi";
 import toast from "react-hot-toast";
 import React from "react";
+import { useRequestPasswordResetMutation } from "@/redux/services/authApi";
 
 const schema = z.object({
   email: z.string().email("Enter a valid email address"),
@@ -18,7 +18,7 @@ type FormData = z.infer<typeof schema>;
 export default function ResetPassword() {
   const [sent, setSent] = React.useState(false);
   const [submittedEmail, setSubmittedEmail] = React.useState("");
-  const [requestReset, { isLoading }] = useRequestResetMutation();
+  const [requestReset, { isLoading }] = useRequestPasswordResetMutation();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),

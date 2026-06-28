@@ -6,9 +6,9 @@ import PageLoader           from "@/components/common/PageLoader";
 
 const DashboardLayout      = lazy(() => import("@/screens/dashboard/layout"));
 const DashboardHome        = lazy(() => import("@/screens/dashboard/Home"));
-const DashboardProperties  = lazy(() => import("@/screens/dashboard/Properties"));
+const DashboardProperties  = lazy(() => import("@/screens/dashboard/Properties/index"));
 const DashboardBookings    = lazy(() => import("@/screens/dashboard/Bookings"));
-const DashboardPayments    = lazy(() => import("@/screens/dashboard/Payments"));
+const DashboardPayments    = lazy(() => import("@/screens/dashboard/Payment"));
 const DashboardEscrow      = lazy(() => import("@/screens/dashboard/Escrow"));
 const DashboardRoles       = lazy(() => import("@/screens/dashboard/Roles"));
 const DashboardAccount     = lazy(() => import("@/screens/dashboard/Account"));

@@ -1,3 +1,4 @@
+import logger from "../utils/logger";
 import "dotenv/config";
 import { Pool } from "pg";
 
@@ -392,7 +393,7 @@ const migrations: string[] = [
   CREATE INDEX IF NOT EXISTS idx_notif_user        ON notifications(user_id, created_at DESC);`,
 ];
 
-async function run(): Promise<void> {
+export async function runMigrations(): Promise<void> {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -400,20 +401,11 @@ async function run(): Promise<void> {
       await client.query(sql);
     }
     await client.query("COMMIT");
-    console.log(
-      `[migration] ${migrations.length} migrations applied successfully.`,
-    );
+    logger.info("migrations_complete", { event: "migrations_complete", count: migrations.length });
   } catch (err) {
     await client.query("ROLLBACK");
-    console.error("[migration] FAILED:", err);
     throw err;
   } finally {
     client.release();
-    await pool.end();
   }
 }
-
-run().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});

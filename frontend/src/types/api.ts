@@ -20,6 +20,23 @@ export interface PaginatedResponse<T> {
 
 //  Auth 
 
+export interface AuthTokens {
+  success: boolean;
+  message: string;
+  data: {
+    accessToken:  string;
+    refreshToken: string;
+    user: {
+      id:        string;
+      email:     string;
+      firstName: string;
+      lastName:  string;
+      userType:  string;
+      tenantId:  string | null;
+    };
+  };
+}
+
 export type UserType =
   | "guest"
   | "host:admin"
@@ -39,19 +56,6 @@ export interface User {
   isEmailVerified:  boolean;
   lastActiveAt?:    string;
   createdAt:        string;
-}
-
-export interface AuthTokens {
-  accessToken:  string;
-  refreshToken: string;
-  user: {
-    id:        string;
-    email:     string;
-    firstName?: string;
-    lastName?:  string;
-    userType:  UserType;
-    tenantId?: string;
-  };
 }
 
 export interface InitiateOnboardingPayload {
