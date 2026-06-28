@@ -24,11 +24,11 @@ export default function Features() {
     <section className="w-full py-20" style={{ backgroundColor: "var(--color-fog)" }}>
       <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
         <div className="flex flex-col gap-3 mb-14">
-          <p className="text-xs uppercase tracking-widest font-semibold"
+          <p className="text-xs uppercase tracking-widest bold"
              style={{ color: "var(--color-hint-of-grey)" }}>
             Why Booking Platform
           </p>
-          <h2 className="text-3xl lg:text-4xl font-semibold"
+          <h2 className="text-3xl lg:text-4xl bold"
               style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
             Everything you need for a great stay.
           </h2>
@@ -50,7 +50,7 @@ export default function Features() {
                 <Icon size={18} style={{ color: "var(--color-terracotta)" }} />
               </div>
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-base font-semibold" style={{ color: "var(--color-ink)" }}>
+                <h3 className="text-base bold" style={{ color: "var(--color-ink)" }}>
                   {title}
                 </h3>
                 <p className="text-sm leading-relaxed" style={{ color: "var(--color-light-steel)" }}>

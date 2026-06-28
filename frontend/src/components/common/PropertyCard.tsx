@@ -39,7 +39,7 @@ export default function PropertyCard({ property }: Props) {
 
       <div className="flex flex-col gap-1">
         <div className="flex items-start justify-between gap-2">
-          <p className="text-sm font-semibold leading-tight line-clamp-1" style={{ color: "var(--color-ink)" }}>
+          <p className="text-sm bold leading-tight line-clamp-1" style={{ color: "var(--color-ink)" }}>
             {property.name}
           </p>
         </div>
@@ -47,9 +47,9 @@ export default function PropertyCard({ property }: Props) {
           <MapPin size={10} />
           {property.address.city}, {property.address.country}
         </p>
-        <p className="text-sm font-semibold mt-1" style={{ color: "var(--color-ink)" }}>
+        <p className="text-sm bold mt-1" style={{ color: "var(--color-ink)" }}>
           {formatCurrency(0)}{" "}
-          <span className="font-normal text-xs" style={{ color: "var(--color-light-steel)" }}>/ night</span>
+          <span className=" text-xs" style={{ color: "var(--color-light-steel)" }}>/ night</span>
         </p>
       </div>
     </div>

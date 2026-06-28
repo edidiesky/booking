@@ -28,7 +28,7 @@ function SlotCell({ slot, isCheckIn, isCheckOut, isInRange }: {
       className="flex flex-col items-center justify-center p-2 rounded-lg border text-center transition-colors"
       style={{ backgroundColor: bg, color, borderColor: border, minHeight: "60px" }}
     >
-      <span className="text-xs font-semibold">
+      <span className="text-xs bold">
         {new Date(slot.date).getDate()}
       </span>
       {!isBlocked && (
@@ -60,7 +60,7 @@ export default function AvailabilityCalendar({ slots, checkIn, checkOut }: Props
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <p className="text-sm font-semibold" style={{ color: "var(--color-ink)" }}>
+        <p className="text-sm bold" style={{ color: "var(--color-ink)" }}>
           Availability
         </p>
         <p className="text-xs" style={{ color: "var(--color-light-steel)" }}>
@@ -76,7 +76,7 @@ export default function AvailabilityCalendar({ slots, checkIn, checkOut }: Props
 
         return (
           <div key={monthKey} className="flex flex-col gap-3">
-            <p className="text-xs font-semibold uppercase tracking-widest"
+            <p className="text-xs bold uppercase tracking-widest"
                style={{ color: "var(--color-hint-of-grey)" }}>
               {monthLabel}
             </p>
@@ -84,7 +84,7 @@ export default function AvailabilityCalendar({ slots, checkIn, checkOut }: Props
             {/* Day of week header */}
             <div className="grid grid-cols-7 gap-1">
               {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
-                <div key={d} className="text-center text-[10px] font-semibold pb-1"
+                <div key={d} className="text-center text-[10px] bold pb-1"
                      style={{ color: "var(--color-hint-of-grey)" }}>
                   {d}
                 </div>

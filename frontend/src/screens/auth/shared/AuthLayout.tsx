@@ -19,7 +19,7 @@ function DefaultLeftPanel() {
   return (
     <div className="flex flex-col gap-4">
       <h2
-        className="text-[28px] font-semibold leading-[1.1] text-[#17191c]"
+        className="text-[28px] bold leading-[1.1] text-[#17191c]"
         style={{ letterSpacing: "-0.5px" }}
       >
         Start selling in minutes.
@@ -103,7 +103,7 @@ export default function AuthLayout({
                 {leftContent ?? (
                   <>
                     <h2
-                      className="text-[22px] font-semibold"
+                      className="text-[22px] bold"
                       style={{ color: "#17191c", letterSpacing: "-0.3px" }}
                     >
                       Create Account
@@ -140,7 +140,7 @@ export default function AuthLayout({
         >
           <Link
             to="/"
-            className="text-base font-semibold mb-8 block lg:hidden"
+            className="text-base bold mb-8 block lg:hidden"
             style={{ color: "#17191c" }}
           >
             Selleasi

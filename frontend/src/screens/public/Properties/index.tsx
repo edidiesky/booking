@@ -26,7 +26,7 @@ export default function Properties() {
       <main className="flex-1">
         <div className="mx-auto px-6 lg:px-8 py-12" style={{ maxWidth: "1280px" }}>
           <div className="flex flex-col gap-2 mb-10">
-            <h1 className="text-3xl font-semibold"
+            <h1 className="text-3xl bold"
                 style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
               Browse Properties
             </h1>

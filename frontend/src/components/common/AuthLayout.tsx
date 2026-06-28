@@ -58,7 +58,7 @@ export default function AuthLayout({ children, leftContent, stepLabels, currentS
               <div className="flex flex-col gap-1">
                 {leftContent ?? (
                   <>
-                    <h2 className="text-[22px] font-semibold" style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
+                    <h2 className="text-[22px] bold" style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
                       Create Account
                     </h2>
                     {remaining != null && remaining > 0 && (
@@ -74,7 +74,7 @@ export default function AuthLayout({ children, leftContent, stepLabels, currentS
           ) : (
             leftContent ?? (
               <div className="flex flex-col gap-4">
-                <h2 className="text-[28px] font-semibold leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}>
+                <h2 className="text-[28px] bold leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}>
                   Book your next stay.
                 </h2>
                 <p className="text-[15px] leading-relaxed" style={{ color: "#6b7280" }}>
@@ -96,7 +96,7 @@ export default function AuthLayout({ children, leftContent, stepLabels, currentS
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <Link to="/" className="text-base font-semibold mb-8 block lg:hidden" style={{ color: "var(--color-ink)" }}>
+          <Link to="/" className="text-base bold mb-8 block lg:hidden" style={{ color: "var(--color-ink)" }}>
             Booking
           </Link>
           {children}

@@ -25,9 +25,9 @@ export default function DashboardEscrow() {
         ].map(({ label, value, color, bg }) => (
           <div key={label} className="p-5 rounded-xl border flex flex-col gap-1"
                style={{ borderColor: "#e8e6e3", backgroundColor: bg }}>
-            <p className="text-xs font-semibold uppercase tracking-widest"
+            <p className="text-xs bold uppercase tracking-widest"
                style={{ color }}>{label}</p>
-            <p className="text-2xl font-semibold" style={{ color }}>{value}</p>
+            <p className="text-2xl bold" style={{ color }}>{value}</p>
           </div>
         ))}
       </div>

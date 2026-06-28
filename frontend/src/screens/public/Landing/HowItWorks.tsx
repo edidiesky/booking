@@ -11,11 +11,11 @@ export default function HowItWorks() {
     <section className="w-full py-20" style={{ backgroundColor: "var(--color-canvas)" }}>
       <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
         <div className="flex flex-col gap-3 mb-14">
-          <p className="text-xs uppercase tracking-widest font-semibold"
+          <p className="text-xs uppercase tracking-widest bold"
              style={{ color: "var(--color-hint-of-grey)" }}>
             How it works
           </p>
-          <h2 className="text-3xl lg:text-4xl font-semibold"
+          <h2 className="text-3xl lg:text-4xl bold"
               style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
             Book a stay in three steps.
           </h2>
@@ -32,12 +32,12 @@ export default function HowItWorks() {
               className="flex flex-col gap-4 p-8 border-b lg:border-b-0 lg:border-r last:border-r-0 last:border-b-0"
               style={{ borderColor: "#e8e6e3" }}
             >
-              <span className="text-4xl font-semibold"
+              <span className="text-4xl bold"
                     style={{ color: "var(--color-warm-mist)", fontFamily: "'Georgia', serif" }}>
                 {num}
               </span>
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-base font-semibold" style={{ color: "var(--color-ink)" }}>
+                <h3 className="text-base bold" style={{ color: "var(--color-ink)" }}>
                   {title}
                 </h3>
                 <p className="text-sm leading-relaxed" style={{ color: "var(--color-light-steel)" }}>

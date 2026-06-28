@@ -1,26 +1,47 @@
-import { useSelector } from "react-redux";
+import { motion }            from "framer-motion";
+import { useSelector }       from "react-redux";
+import Title                 from "@/components/dashboard/common/Title";
+import StatsGrid             from "./StatsGrid";
+import RecentBookings        from "./RecentBookings";
+import { useDashboardHome }  from "./hooks/useDashboardHome";
 import { selectCurrentUser } from "@/redux/slices/authSlice";
-import Title from "@/components/dashboard/common/Title";
-import Stats from "@/components/dashboard/home/stats";
-import Growth from "@/components/dashboard/home/growth";
 
 export default function DashboardHome() {
   const currentUser = useSelector(selectCurrentUser);
+  const {
+    recentBookings, totalRevenue,
+    confirmedCount, checkedInCount, cancelledCount,
+    isLoading,
+  } = useDashboardHome();
 
   return (
-    <div className="w-full p-6 lg:p-10 flex flex-col gap-8">
-      {/* welcome */}
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full p-6 lg:p-10 flex flex-col gap-8"
+    >
       <Title
-        title={`Welcome ${currentUser?.firstName || "Victor"}`}
-        description="This is your store home base. Review recent activity, monitor key usage,
-        and jump back into your top actions quickly."
+        title={`Welcome back, ${currentUser?.firstName ?? "Host"}`}
+        description="Here's an overview of your property activity. Review bookings, monitor revenue, and manage your guests."
       />
 
-      {/* stats grid */}
-      <Stats />
-      {/* analytics placeholder */}
-      <Growth/>
-
-    </div>
+      {isLoading ? (
+        <div className="flex flex-col gap-6">
+          <div className="h-40 rounded-xl animate-pulse" style={{ backgroundColor: "#f2f0ed" }} />
+          <div className="h-64 rounded-xl animate-pulse" style={{ backgroundColor: "#f2f0ed" }} />
+        </div>
+      ) : (
+        <>
+          <StatsGrid
+            totalRevenue={totalRevenue}
+            confirmedCount={confirmedCount}
+            checkedInCount={checkedInCount}
+            cancelledCount={cancelledCount}
+          />
+          <RecentBookings bookings={recentBookings} />
+        </>
+      )}
+    </motion.div>
   );
 }

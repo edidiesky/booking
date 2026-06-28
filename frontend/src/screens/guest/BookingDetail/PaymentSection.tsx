@@ -16,7 +16,7 @@ export default function PaymentSection({ booking, payment, onPay, isPaying }: Pr
   return (
     <div className="flex flex-col gap-4 p-6 border rounded-2xl"
          style={{ borderColor: "#e8e6e3" }}>
-      <p className="text-sm font-semibold" style={{ color: "var(--color-ink)" }}>
+      <p className="text-sm bold" style={{ color: "var(--color-ink)" }}>
         Payment
       </p>
 

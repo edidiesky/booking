@@ -8,7 +8,7 @@ export default function Title({ title, description, action }: Props) {
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <h4 className="text-xl lg:text-2xl font-semibold" style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
+        <h4 className="text-xl lg:text-2xl bold" style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
           {title}
         </h4>
         {description && (

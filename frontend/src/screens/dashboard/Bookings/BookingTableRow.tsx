@@ -15,7 +15,7 @@ export default function BookingTableRow({ booking, onCheckIn, onCheckOut, isChec
   return (
     <tr className="border-b last:border-0 hover:bg-[#fafaf9] transition-colors"
         style={{ borderColor: "#f2f0ed" }}>
-      <td className="px-5 py-3 font-semibold text-sm whitespace-nowrap"
+      <td className="px-5 py-3 bold text-sm whitespace-nowrap"
           style={{ color: "var(--color-ink)" }}>
         {booking.bookingRef}
       </td>

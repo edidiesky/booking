@@ -39,7 +39,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           style={{ backgroundColor: "var(--color-fog)", border: "1px solid #e8e6e3" }}
         >
           <p
-            className="text-xs uppercase tracking-widest font-semibold"
+            className="text-xs uppercase tracking-widest bold"
             style={{ color: "var(--color-muted-stone)" }}
           >
             What to do next

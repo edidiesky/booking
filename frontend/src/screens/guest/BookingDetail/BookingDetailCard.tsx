@@ -12,9 +12,9 @@ export default function BookingDetailCard({ booking }: Props) {
          style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <p className="text-xs uppercase tracking-widest font-semibold"
+          <p className="text-xs uppercase tracking-widest bold"
              style={{ color: "var(--color-hint-of-grey)" }}>Booking Reference</p>
-          <p className="text-2xl font-semibold"
+          <p className="text-2xl bold"
              style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
             {booking.bookingRef}
           </p>
@@ -35,7 +35,7 @@ export default function BookingDetailCard({ booking }: Props) {
                style={{ color: "var(--color-hint-of-grey)" }}>
               <Icon size={11} /> {label}
             </p>
-            <p className="text-sm font-semibold" style={{ color: "var(--color-ink)" }}>
+            <p className="text-sm bold" style={{ color: "var(--color-ink)" }}>
               {value}
             </p>
           </div>

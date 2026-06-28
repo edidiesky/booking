@@ -17,7 +17,7 @@ export default function CancelBookingModal({ bookingRef, isLoading, onConfirm, o
       <div className="w-full max-w-md bg-white rounded-2xl p-6 flex flex-col gap-5"
            style={{ boxShadow: "var(--shadow-steep)" }}>
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold" style={{ color: "var(--color-ink)" }}>
+          <h2 className="text-base bold" style={{ color: "var(--color-ink)" }}>
             Cancel booking
           </h2>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#f2f0ed] transition-colors">
@@ -32,7 +32,7 @@ export default function CancelBookingModal({ bookingRef, isLoading, onConfirm, o
         </p>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold uppercase tracking-widest"
+          <label className="text-xs bold uppercase tracking-widest"
                  style={{ color: "var(--color-hint-of-grey)" }}>
             Reason (optional)
           </label>

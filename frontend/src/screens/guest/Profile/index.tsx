@@ -18,7 +18,7 @@ export default function GuestProfile() {
       <main className="flex-1">
         <div className="mx-auto px-6 lg:px-8 py-12" style={{ maxWidth: "640px" }}>
           <div className="flex flex-col gap-2 mb-8">
-            <h1 className="text-2xl font-semibold"
+            <h1 className="text-2xl bold"
                 style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
               My Profile
             </h1>

@@ -13,7 +13,7 @@ export default function EscrowTableRow({ escrow }: Props) {
           style={{ color: "var(--color-hint-of-grey)" }}>
         {escrow.bookingId}
       </td>
-      <td className="px-5 py-3 font-semibold whitespace-nowrap"
+      <td className="px-5 py-3 bold whitespace-nowrap"
           style={{ color: "var(--color-ink)" }}>
         {formatCurrency(escrow.amountNgn)}
       </td>

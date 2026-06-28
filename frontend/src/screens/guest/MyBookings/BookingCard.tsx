@@ -22,7 +22,7 @@ export default function BookingCard({ booking, onCancel }: Props) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-0.5">
-          <p className="text-sm font-semibold" style={{ color: "var(--color-ink)" }}>
+          <p className="text-sm bold" style={{ color: "var(--color-ink)" }}>
             {booking.bookingRef}
           </p>
           <p className="text-xs flex items-center gap-1"
@@ -45,7 +45,7 @@ export default function BookingCard({ booking, onCancel }: Props) {
 
       <div className="flex items-center justify-between pt-3 border-t"
            style={{ borderColor: "#f2f0ed" }}>
-        <p className="text-sm font-semibold" style={{ color: "var(--color-ink)" }}>
+        <p className="text-sm bold" style={{ color: "var(--color-ink)" }}>
           {formatCurrency(booking.totalAmountNgn)}
         </p>
         <div className="flex items-center gap-2">

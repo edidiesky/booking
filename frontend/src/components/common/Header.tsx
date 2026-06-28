@@ -12,7 +12,7 @@ export default function Header() {
       style={{ backgroundColor: "var(--color-canvas)", boxShadow: "rgba(0,0,0,0.04) 0px 0px 0px 1px" }}
     >
       <div className="mx-auto px-6 lg:px-8 h-16 flex items-center justify-between" style={{ maxWidth: "1280px" }}>
-        <Link to="/" className="text-base tracking-tight font-semibold" style={{ color: "var(--color-ink)" }}>
+        <Link to="/" className="text-xl tracking-tight bold" style={{ color: "var(--color-ink)" }}>
           Booking
         </Link>
 
@@ -21,7 +21,7 @@ export default function Header() {
             <Link
               key={item}
               to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="text-sm transition-opacity hover:opacity-60"
+              className="text-base lg:text-lg transition-opacity hover:opacity-60"
               style={{ color: "var(--color-ink)" }}
             >
               {item}
@@ -33,7 +33,7 @@ export default function Header() {
           {isAuthenticated && currentUser ? (
             <Link
               to={currentUser.userType.startsWith("host:") ? "/dashboard" : "/trips"}
-              className="h-9 px-5 text-sm transition-opacity hover:opacity-80 flex items-center rounded-full"
+              className="h-9 px-5 text-base lg:text-base  transition-opacity hover:opacity-80 flex items-center rounded-full"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
             >
               {currentUser.userType.startsWith("host:") ? "Dashboard" : "My Trips"}
@@ -42,14 +42,14 @@ export default function Header() {
             <>
               <Link
                 to="/login"
-                className="h-9 px-5 text-sm border transition-opacity hover:opacity-70 flex items-center rounded-full"
+                className="h-9 px-5 text-base lg:text-base  border transition-opacity hover:opacity-70 flex items-center rounded-full"
                 style={{ color: "var(--color-ink)", borderColor: "var(--color-ink)" }}
               >
                 Log in
               </Link>
               <Link
                 to="/onboarding"
-                className="h-9 px-5 text-sm transition-opacity hover:opacity-80 flex items-center rounded-full"
+                className="h-9 px-5 text-base lg:text-base  transition-opacity hover:opacity-80 flex items-center rounded-full"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 Get started
