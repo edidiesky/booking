@@ -1,85 +1,88 @@
-import { Mail, ExternalLink } from "lucide-react";
+import { Mail, RefreshCw } from "lucide-react";
 
 interface Props {
-  email: string;
-  onResend: () => void;
+  email:       string;
+  onContinue:  () => void;
+  onResend:    () => void;
   isResending: boolean;
 }
 
-export default function StepEmailSent({ email, onResend, isResending }: Props) {
+export default function VerifyInterstitial({ email, onContinue, onResend, isResending }: Props) {
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1
-          className="text-[32px]  leading-[1.1]"
-          style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
-        >
-          Check your inbox
-        </h1>
-        <p
-          className="text-[15px]"
-          style={{ color: "var(--color-muted-stone)" }}
-        >
-          We sent a verification link to{" "}
-          <span
-            className=""
-            style={{ color: "var(--color-ink)" }}
-          >
-            {email}
-          </span>
-        </p>
-      </div>
-
-      <div
-        className="rounded-[16px] p-6 flex items-start gap-4"
-        style={{ backgroundColor: "var(--color-fog)" }}
-      >
+    <div
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{ backgroundColor: "var(--color-fog)" }}
+    >
+      <div className="max-w-md w-full bg-white p-10 flex flex-col gap-6 rounded-2xl shadow-sm">
         <div
-          className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+          className="w-14 h-14 flex items-center justify-center rounded-xl"
           style={{ backgroundColor: "var(--color-warm-mist)" }}
         >
-          <Mail size={18} style={{ color: "var(--color-terracotta)" }} />
+          <Mail size={24} style={{ color: "var(--color-terracotta)" }} />
         </div>
-        <div className="flex flex-col gap-1">
-          <p
-            className="text-sm "
-            style={{ color: "var(--color-ink)" }}
+
+        <div className="flex flex-col gap-2">
+          <h1
+            className="text-[28px] leading-[1.1]"
+            style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}
           >
-            Verification link sent
+            Check your email
+          </h1>
+          <p className="text-sm leading-relaxed" style={{ color: "var(--color-muted-stone)" }}>
+            We sent a 6-digit verification code to{" "}
+            <span style={{ color: "var(--color-ink)" }}>{email}</span>.
           </p>
+        </div>
+
+        <div
+          className="flex flex-col gap-3 p-4"
+          style={{ backgroundColor: "var(--color-fog)", border: "1px solid #e8e6e3" }}
+        >
           <p
-            className="text-sm"
+            className="text-xs uppercase tracking-widest font-semibold"
             style={{ color: "var(--color-muted-stone)" }}
           >
-            Click the link in the email to confirm your address. The link
-            expires in 15 minutes.
+            What to do next
           </p>
+          {[
+            "Open your email inbox",
+            "Find the email from Booking Platform",
+            "Click the button below and enter the 6-digit code",
+          ].map((step, i) => (
+            <div key={step} className="flex items-start gap-3">
+              <span
+                className="w-5 h-5 flex items-center justify-center text-xs shrink-0 mt-0.5"
+                style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+              >
+                {i + 1}
+              </span>
+              <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>{step}</p>
+            </div>
+          ))}
         </div>
+
+        <button
+          onClick={onContinue}
+          className="w-full h-12 flex items-center justify-center text-sm transition-opacity hover:opacity-80 rounded-full"
+          style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+        >
+          Enter the code →
+        </button>
+
+        <button
+          onClick={onResend}
+          disabled={isResending}
+          className="flex items-center justify-center gap-2 text-sm transition-opacity hover:opacity-60 disabled:opacity-40"
+          style={{ color: "var(--color-muted-stone)" }}
+        >
+          <RefreshCw size={13} className={isResending ? "animate-spin" : ""} />
+          {isResending ? "Resending..." : "Didn't receive it? Resend"}
+        </button>
+
+        <p className="text-xs text-center" style={{ color: "var(--color-hint-of-grey)" }}>
+          Code expires in 15 minutes.
+        </p>
       </div>
-
-      <a
-        href="https://mail.google.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="w-full h-12 flex items-center justify-center gap-2 text-sm  border transition-opacity hover:opacity-70"
-        style={{
-          color: "var(--color-ink)",
-          borderColor: "var(--color-ink)",
-          borderRadius: "9999px",
-        }}
-      >
-        Open Gmail
-        <ExternalLink size={14} />
-      </a>
-
-      <button
-        onClick={onResend}
-        disabled={isResending}
-        className="text-sm text-center transition-opacity hover:opacity-60 disabled:opacity-40"
-        style={{ color: "var(--color-muted-stone)" }}
-      >
-        {isResending ? "Resending..." : "Didn't receive it? Resend"}
-      </button>
     </div>
   );
 }
