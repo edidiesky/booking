@@ -1,55 +1,43 @@
 import { z } from "zod";
 
-export const emailSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email address"),
-});
-
-export const passwordSchema = z
+export const initiateSchema = z
   .object({
-    password: z
+    email:           z.string().email("Enter a valid email address"),
+    password:        z
       .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-      .regex(/[0-9]/, "Must contain at least one number"),
+      .min(8,         "Minimum 8 characters")
+      .regex(/[A-Z]/, "Must contain one uppercase letter")
+      .regex(/[0-9]/, "Must contain one number"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((d) => d.password === d.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"],
+    path:    ["confirmPassword"],
   });
 
-export const detailsSchema = z.object({
+export const guestDetailsSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName:  z.string().min(1, "Last name is required"),
-  phone:     z.string().min(1, "Phone is required"),
-  gender:    z.enum(["Male", "Female"]).optional(),
-  userType:  z.enum([
-    "seller:admin",
-    "seller:member",
-    "seller:viewer",
-    "platform:admin",
-    "platform:staff",
-    "customer",
-    "investor",
-    "advisor",
-    "system",
-  ]),
+  phone:     z.string().optional(),
 });
 
-export const storeSchema = z.object({
-  name: z.string().min(2, "Store name must be at least 2 characters"),
-  subdomain: z
+export const hostDetailsSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName:  z.string().min(1, "Last name is required"),
+  phone:     z.string().optional(),
+});
+
+export const createPropertySchema = z.object({
+  tenantName: z.string().min(2, "Property name must be at least 2 characters"),
+  tenantSlug: z
     .string()
-    .min(2, "Subdomain must be at least 2 characters")
-    .regex(
-      /^[a-z0-9-]+$/,
-      "Only lowercase letters, numbers, and hyphens allowed"
-    ),
-  description: z.string(),
-  email: z.string().min(1, "Email is required").email("Invalid email address"),
+    .min(3,  "URL must be at least 3 characters")
+    .max(50, "URL too long")
+    .regex(/^[a-z0-9-]+$/, "Only lowercase letters, numbers and hyphens"),
+  platformFeePct: z.number().min(0).max(100).optional(),
 });
 
-export type EmailFormData = z.infer<typeof emailSchema>;
-export type PasswordFormData = z.infer<typeof passwordSchema>;
-export type DetailsFormData = z.infer<typeof detailsSchema>;
-export type StoreFormData = z.infer<typeof storeSchema>;
+export type InitiateFormData       = z.infer<typeof initiateSchema>;
+export type GuestDetailsFormData   = z.infer<typeof guestDetailsSchema>;
+export type HostDetailsFormData    = z.infer<typeof hostDetailsSchema>;
+export type CreatePropertyFormData = z.infer<typeof createPropertySchema>;
