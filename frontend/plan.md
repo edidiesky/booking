@@ -39,7 +39,7 @@ Stage 3 — Redux Store (done)
 3.6  src/redux/middleware/errorMiddleware.ts
        → rtkQueryErrorLogger catching 403/500
 
-Stage 4 — API Slices (one file per domain)
+Stage 4 — API Slices (one file per domain) (done)
 4.01  src/redux/services/authApi.ts
         → initiateOnboarding, confirmEmail, resendOtp
         → registerGuest, registerHost
@@ -81,7 +81,7 @@ Stage 4 — API Slices (one file per domain)
 4.11  src/redux/services/permissionApi.ts
         → listPermissions, getPermissionsByRole
 
-Stage 5 — Route Guards & Router
+Stage 5 — Route Guards & Router (done)
 5.1  src/routes/guards/ProtectRoute.tsx
        → checks accessToken + currentUser from store
        → Navigate to /login if missing
@@ -102,7 +102,7 @@ Stage 5 — Route Guards & Router
 5.7  src/routes/adminRoutes.tsx
 5.8  src/routes/index.tsx          → createBrowserRouter merging all route arrays
 
-Stage 6 — Providers & App Shell
+Stage 6 — Providers & App Shell (done)
 6.1  src/providers/StoreProvider.tsx    → <Provider store={store}>
 6.2  src/providers/ToasterProvider.tsx  → react-hot-toast <Toaster> config
 6.3  src/providers/ModalProvider.tsx    → renders all portal modals from modalSlice

@@ -1,38 +1,55 @@
-import React from "react";
-import AnimateTextWord from "@/components/common/AnimateTextWord";
-import Logo from "@/assets/svg/logo";
+import { Link } from "react-router-dom";
 
-const Footer = () => {
-  return (
-    <div className="relative w-full pb-8 py-4">
-      <div className="h-full max-w-custom md:w-[90%] relative rounded-b-[100px] min-h-[600px] rounded-t-xl mx-auto px-4 pb-8 flex flex-col gap-8 items-center justify-end w-full bg-[#F4F3EE]">
-        <div className="w-[300px] h-24 rounded-3xl bg-white absolute -top-14"></div>
-        <div className="w-full px-4 flex flex-col lg:items-center lg:justify-center gap-12 lg:gap-20">
-          <h2 className="text-3xl lg:text-[55px] max-w-[800px] lg:mx-auto lg:text-center text-dark leading-[60px]">
-            <span className="block text-base pb-8 uppercase">
-              {/* <AnimateTextWord type="bigtext_Center">
-                WHAT WE DO AT NEXTSTORE
-              </AnimateTextWord> */}
-              WHAT WE DO AT NEXTSTORE
-            </span>
-            <AnimateTextWord type="bigtext_Center">
-              Get in touch & take your store to the next-level
-            </AnimateTextWord>
-          </h2>
-          <div className="w-full rounded-full relative h-[140px] bg-[var(--dark-1)] flex items-center justify-center">
-            <div className="absolute w-full p-2 h-full top-0 left-0">
-              <div className="w-40 cursor-pointer h-full p-3 bg-white rounded-full flex items-center justify-center">
-                <Logo />
-              </div>
-            </div>
-            <h2 className="text-3xl lg:text-5xl text-white leading-[60px]">
-              Build your next shop
-            </h2>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+const LINKS = {
+  Product:  ["Properties", "How it works", "Pricing"],
+  Guests:   ["Find a stay", "My Trips", "Support"],
+  Hosts:    ["List your property", "Host dashboard", "Resources"],
+  Company:  ["About", "Privacy", "Terms"],
 };
 
-export default Footer;
+export default function Footer() {
+  return (
+    <footer
+      className="w-full border-t mt-auto"
+      style={{ backgroundColor: "var(--color-fog)", borderColor: "#e8e6e3" }}
+    >
+      <div className="mx-auto px-6 lg:px-8 py-12" style={{ maxWidth: "1280px" }}>
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+            <span className="text-base font-semibold" style={{ color: "var(--color-ink)" }}>
+              Booking
+            </span>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--color-light-steel)" }}>
+              Find and book extraordinary stays with ease.
+            </p>
+          </div>
+
+          {Object.entries(LINKS).map(([group, items]) => (
+            <div key={group} className="flex flex-col gap-3">
+              <p className="text-xs uppercase tracking-widest font-semibold"
+                 style={{ color: "var(--color-hint-of-grey)" }}>
+                {group}
+              </p>
+              {items.map((item) => (
+                <Link
+                  key={item}
+                  to="/"
+                  className="text-sm transition-opacity hover:opacity-60"
+                  style={{ color: "var(--color-muted-stone)" }}
+                >
+                  {item}
+                </Link>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div className="border-t mt-10 pt-6 flex items-center justify-between" style={{ borderColor: "#e8e6e3" }}>
+          <p className="text-xs" style={{ color: "var(--color-hint-of-grey)" }}>
+            © {new Date().getFullYear()} Booking Platform. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}

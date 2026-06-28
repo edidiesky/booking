@@ -1,165 +1,84 @@
-import { useDispatch, useSelector } from "react-redux";
-import { NavLink, Link, useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector }          from "react-redux";
+import { NavLink, Link, useNavigate }        from "react-router-dom";
 import {
-  LuLayoutDashboard,
-  LuPackage,
-  LuShoppingCart,
-  LuUsers,
-  LuMessageSquare,
-  LuMegaphone,
-  LuSettings,
-  LuLogOut,
-  LuWallet,
-  LuBoxes,
-  LuCreditCard,
+  LuLayoutDashboard, LuBuilding, LuCalendar,
+  LuCreditCard, LuVault, LuUsers, LuSettings,
+  LuLogOut, LuShield,
 } from "react-icons/lu";
 import { selectCurrentUser, clearCredentials } from "@/redux/slices/authSlice";
-import { useLogoutMutation } from "@/redux/services/authApi";
-import toast from "react-hot-toast";
+import { useLogoutMutation }                 from "@/redux/services/authApi";
+import { selectRefreshToken }                from "@/redux/slices/authSlice";
+import toast                                 from "react-hot-toast";
+import NavGroup                              from "./NavGroup";
+import SidebarFooter                         from "./SidebarFooter";
 
-const NAV_GROUPS = [
+export const NAV_GROUPS = [
   {
     label: "Overview",
     items: [
-      { icon: LuLayoutDashboard, text: "Dashboard", path: "",          tour: "nav-dashboard"  },
-      { icon: LuBoxes,           text: "Analytics", path: "analytics", tour: "nav-analytics"  },
+      { icon: LuLayoutDashboard, text: "Dashboard",   path: "",            tour: "nav-dashboard"   },
     ],
   },
   {
-    label: "Store",
+    label: "Property",
     items: [
-      { icon: LuPackage,     text: "Products",  path: "products",  tour: "nav-products"  },
-      { icon: LuCreditCard,  text: "Payments",  path: "payments",  tour: "nav-payments"  },
-      { icon: LuBoxes,       text: "Inventory", path: "inventory", tour: "nav-inventory" },
-      { icon: LuShoppingCart,text: "Orders",    path: "orders",    tour: "nav-orders"    },
-    ],
-  },
-  {
-    label: "Customers",
-    items: [
-      { icon: LuUsers,        text: "Customers", path: "customers", tour: "nav-customers" },
-      { icon: LuMessageSquare,text: "Messages",  path: "messages",  tour: "nav-messages"  },
-      { icon: LuMegaphone,    text: "Marketing", path: "marketing", tour: "nav-marketing" },
+      { icon: LuBuilding,  text: "Properties", path: "properties", tour: "nav-properties" },
+      { icon: LuCalendar,  text: "Bookings",   path: "bookings",   tour: "nav-bookings"   },
     ],
   },
   {
     label: "Finance",
-    items: [{ icon: LuWallet, text: "Payouts", path: "payouts", tour: "nav-payouts" }],
+    items: [
+      { icon: LuCreditCard, text: "Payments", path: "payments", tour: "nav-payments" },
+      { icon: LuVault,      text: "Escrow",   path: "escrow",   tour: "nav-escrow"   },
+    ],
+  },
+  {
+    label: "Team",
+    items: [
+      { icon: LuUsers,  text: "Roles",   path: "roles",   tour: "nav-roles"   },
+      { icon: LuShield, text: "Account", path: "account", tour: "nav-account" },
+    ],
   },
 ];
 
 export default function Sidebar() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const currentUser = useSelector(selectCurrentUser);
-  const [logout] = useLogoutMutation();
-
-  const base = `/dashboard/store/${id}`;
+  const dispatch      = useDispatch();
+  const navigate      = useNavigate();
+  const currentUser   = useSelector(selectCurrentUser);
+  const refreshToken  = useSelector(selectRefreshToken);
+  const [logout]      = useLogoutMutation();
 
   const handleSignOut = async () => {
     try {
-      await logout().unwrap();
+      if (refreshToken) await logout({ refreshToken }).unwrap();
       dispatch(clearCredentials());
       navigate("/");
       toast.success("Signed out successfully.");
     } catch {
-      toast.error("Sign out failed. Please try again.");
+      dispatch(clearCredentials());
+      navigate("/");
     }
   };
 
   return (
     <aside
       className="hidden lg:flex flex-col w-[220px] h-screen shrink-0 border-r"
-      style={{
-        backgroundColor: "#ffffff",
-        borderColor: "#ebebeb",
-      }}
+      style={{ backgroundColor: "var(--color-canvas)", borderColor: "#ebebeb" }}
     >
-      {/* nav */}
-      <nav className="flex-1 overflow-y-auto py-8 px-3">
+      <div className="px-4 py-5 border-b" style={{ borderColor: "#ebebeb" }}>
+        <Link to="/" className="text-base font-semibold" style={{ color: "var(--color-ink)" }}>
+          Booking
+        </Link>
+      </div>
+
+      <nav className="flex-1 overflow-y-auto py-4 px-3">
         {NAV_GROUPS.map((group) => (
-          <div key={group.label} className="mb-5">
-            <p
-              className="text-sm uppercase bold tracking-widest px-2 mb-1.5"
-              style={{ color: "#a3a6af" }}
-            >
-              {group.label}
-            </p>
-            {group.items.map((item) => {
-              const Icon = item.icon;
-              const to = item.path ? `${base}/${item.path}` : base;
-              return (
-                <NavLink
-                  key={to}
-                  to={to}
-                  end={!item.path}
-                  data-tour={item.tour}
-                  className={({ isActive }) =>
-                    [
-                      "flex items-center gap-2.5 px-2.5 py-2 rounded-[8px] text-base transition-colors w-full mb-0.5",
-                      isActive
-                        ? "bg-[#f5f5f3] text-[#17191c]"
-                        : "text-[#4c4c4c] hover:bg-[#f5f5f3] hover:text-[#17191c]",
-                    ].join(" ")
-                  }
-                >
-                  <Icon size={15} className="shrink-0" />
-                  {item.text}
-                </NavLink>
-              );
-            })}
-          </div>
+          <NavGroup key={group.label} group={group} />
         ))}
       </nav>
 
-      {/* user + signout */}
-      <div className="border-t p-3 shrink-0" style={{ borderColor: "#ebebeb" }}>
-        <Link
-          to={`${base}/account`}
-          className="flex items-center gap-2.5 px-2 py-2 rounded-[8px] hover:bg-[#f5f5f3] transition-colors mb-1 w-full"
-        >
-          {currentUser?.profileImage ? (
-            <img
-              src={currentUser.profileImage}
-              alt="avatar"
-              className="w-7 h-7 rounded-full object-cover shrink-0"
-            />
-          ) : (
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center text-sm text-white shrink-0"
-              style={{ backgroundColor: "#17191c" }}
-            >
-              {currentUser?.firstName?.charAt(0).toUpperCase()}
-            </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <p
-              className="text-[13px] truncate"
-              style={{ color: "#17191c" }}
-            >
-              {currentUser?.firstName} {currentUser?.lastName}
-            </p>
-            <p className="text-[11px] truncate" style={{ color: "#a3a6af" }}>
-              {currentUser?.email}
-            </p>
-          </div>
-          <LuSettings
-            size={13}
-            style={{ color: "#a3a6af" }}
-            className="shrink-0"
-          />
-        </Link>
-
-        <button
-          onClick={handleSignOut}
-          className="flex items-center gap-2.5 px-2.5 py-2 rounded-[8px] text-[13px] transition-colors w-full hover:bg-[#fff0f0]"
-          style={{ color: "#777b86" }}
-        >
-          <LuLogOut size={14} className="shrink-0" />
-          Sign out
-        </button>
-      </div>
+      <SidebarFooter currentUser={currentUser} onSignOut={handleSignOut} />
     </aside>
   );
 }
