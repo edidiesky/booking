@@ -1,48 +1,125 @@
-import { useForm }      from "react-hook-form";
-import { zodResolver }  from "@hookform/resolvers/zod";
-import { Input }        from "@/components/ui/input";
-import { otpSchema, type OtpFormData } from "../schema/onboarding.schema";
+import { useState, useEffect, useRef } from "react";
+import { motion }                      from "framer-motion";
+
+const OTP_LENGTH      = 6;
+const RESEND_COOLDOWN = 60;
 
 interface Props {
-  email:      string;
-  onSubmit:   (d: OtpFormData) => Promise<void>;
-  onResend:   () => void;
-  isLoading:  boolean;
+  email:       string;
+  onSubmit:    (token: string) => Promise<void>;
+  onResend:    () => void;
+  isLoading:   boolean;
   isResending: boolean;
 }
 
 export default function StepConfirmOtp({ email, onSubmit, onResend, isLoading, isResending }: Props) {
-  const { register, handleSubmit, formState: { errors } } = useForm<OtpFormData>({ resolver: zodResolver(otpSchema) });
+  const [otp,       setOtp]       = useState<string[]>(Array(OTP_LENGTH).fill(""));
+  const [countdown, setCountdown] = useState(RESEND_COOLDOWN);
+  const inputRefs                 = useRef<(HTMLInputElement | null)[]>([]);
+
+  useEffect(() => { inputRefs.current[0]?.focus(); }, []);
+
+  useEffect(() => {
+    if (countdown <= 0) return;
+    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [countdown]);
+
+  const handleChange = (i: number, val: string) => {
+    if (!/^\d*$/.test(val)) return;
+    const next = [...otp];
+    next[i]    = val.slice(-1);
+    setOtp(next);
+    if (val && i < OTP_LENGTH - 1) inputRefs.current[i + 1]?.focus();
+    if (next.every((d) => d !== "") && next.join("").length === OTP_LENGTH) {
+      void onSubmit(next.join(""));
+    }
+  };
+
+  const handleKeyDown = (i: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace" && !otp[i] && i > 0) inputRefs.current[i - 1]?.focus();
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").slice(0, OTP_LENGTH);
+    if (!/^\d+$/.test(pasted)) return;
+    const next = pasted.split("").concat(Array(OTP_LENGTH).fill("")).slice(0, OTP_LENGTH);
+    setOtp(next);
+    inputRefs.current[Math.min(pasted.length, OTP_LENGTH - 1)]?.focus();
+    if (pasted.length === OTP_LENGTH) void onSubmit(pasted);
+  };
+
+  const handleResend = () => {
+    onResend();
+    setCountdown(RESEND_COOLDOWN);
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="text-[28px] leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}>
-          Check your email
+        <h1
+          className="text-[32px] leading-[1.1]"
+          style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
+        >
+          Enter your code
         </h1>
         <p className="text-[15px]" style={{ color: "var(--color-muted-stone)" }}>
-          We sent a 6-digit code to <span style={{ color: "var(--color-ink)" }}>{email}</span>.
+          We sent a 6-digit code to{" "}
+          <span style={{ color: "var(--color-ink)" }}>{email}</span>.
         </p>
       </div>
 
-      <Input label="Verification code" type="text" inputMode="numeric" maxLength={6}
-        placeholder="123456" error={errors.token?.message} {...register("token")} />
+      <div className="flex gap-2" onPaste={handlePaste}>
+        {otp.map((digit, i) => (
+          <motion.input
+            key={i}
+            ref={(el) => { inputRefs.current[i] = el; }}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleChange(i, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(i, e)}
+            whileFocus={{ scale: 1.04 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="flex-1 h-14 text-center text-xl rounded-[12px] border-2 transition-all outline-none"
+            style={{
+              borderColor:     digit ? "var(--color-ink)" : "#e5e7eb",
+              backgroundColor: digit ? "var(--color-fog)" : "var(--color-canvas)",
+              color:           "var(--color-ink)",
+            }}
+          />
+        ))}
+      </div>
 
-      <button type="submit" disabled={isLoading}
-        className="w-full h-12 rounded-full flex items-center justify-center text-sm transition-opacity hover:opacity-80 disabled:opacity-50"
-        style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
-        {isLoading ? "Verifying..." : "Verify email"}
+      {isLoading && (
+        <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
+          Verifying...
+        </p>
+      )}
+
+      <button
+        onClick={handleResend}
+        disabled={countdown > 0 || isResending}
+        className="text-sm transition-opacity disabled:opacity-40 text-left"
+        style={{ color: "var(--color-muted-stone)" }}
+      >
+        {countdown > 0
+          ? `Resend code in ${countdown}s`
+          : isResending ? "Sending..." : "Resend code"}
       </button>
 
-      <button type="button" onClick={onResend} disabled={isResending}
-        className="text-sm text-center transition-opacity hover:opacity-60 disabled:opacity-40"
-        style={{ color: "var(--color-muted-stone)" }}>
-        {isResending ? "Resending..." : "Didn't receive it? Resend"}
-      </button>
-
-      <p className="text-xs text-center" style={{ color: "var(--color-hint-of-grey)" }}>
-        Code expires in 15 minutes.
+      <p className="text-xs" style={{ color: "var(--color-hint-of-grey)" }}>
+        Wrong email?{" "}
+        <button
+          onClick={() => history.back()}
+          className="underline underline-offset-4"
+          style={{ color: "var(--color-ink)" }}
+        >
+          Go back
+        </button>
       </p>
-    </form>
+    </div>
   );
 }
