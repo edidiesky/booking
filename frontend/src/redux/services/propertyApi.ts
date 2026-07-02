@@ -1,26 +1,53 @@
-import { apiSlice }       from "./apiSlice";
-import { PROPERTY_URL }   from "@/constants/api";
+import { apiSlice } from "./apiSlice";
+import { PROPERTY_URL } from "@/constants/api";
 import type {
-  Property, CreatePropertyPayload, UpdatePropertyPayload,
-  RoomType, CreateRoomTypePayload,
-  SeedCalendarPayload, AvailabilitySlot, BlockDatesPayload,
+  Property,
+  CreatePropertyPayload,
+  UpdatePropertyPayload,
+  RoomType,
+  CreateRoomTypePayload,
+  SeedCalendarPayload,
+  AvailabilitySlot,
+  BlockDatesPayload,
   ApiSuccessResponse,
 } from "@/types/api";
 
-interface PropertiesResponse   { success: boolean; data: Property[];         }
-interface PropertyResponse     { success: boolean; data: Property;           }
-interface RoomTypeResponse     { success: boolean; data: RoomType;           }
-interface AvailabilityResponse { success: boolean; data: AvailabilitySlot[]; }
+interface PropertiesResponse {
+  success: boolean;
+  data: Property[];
+}
+interface PropertyResponse {
+  success: boolean;
+  data: Property;
+}
+interface RoomTypeResponse {
+  success: boolean;
+  data: RoomType;
+}
+interface AvailabilityResponse {
+  success: boolean;
+  data: AvailabilitySlot[];
+}
 
 export const propertyApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getProperties: builder.query<PropertiesResponse, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 20 } = {}) => ({ url: `${PROPERTY_URL}?page=${page}&limit=${limit}` }),
+    getProperties: builder.query<
+      PropertiesResponse,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 20 } = {}) => ({
+        url: `${PROPERTY_URL}?page=${page}&limit=${limit}`,
+      }),
       providesTags: ["Property"],
     }),
 
-     getMyProperties: builder.query<PropertiesResponse, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 20 } = {}) => ({ url: `${PROPERTY_URL}/mine?page=${page}&limit=${limit}` }),
+    getMyProperties: builder.query<
+      PropertiesResponse,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 20 } = {}) => ({
+        url: `${PROPERTY_URL}/mine?page=${page}&limit=${limit}`,
+      }),
       providesTags: ["Property"],
     }),
     getPropertyById: builder.query<PropertyResponse, string>({
@@ -33,39 +60,70 @@ export const propertyApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Property"],
     }),
 
-    updateProperty: builder.mutation<PropertyResponse, { id: string; body: UpdatePropertyPayload }>({
-      query: ({ id, body }) => ({ url: `${PROPERTY_URL}/${id}`, method: "PATCH", body }),
-      invalidatesTags: (_r, _e, { id }) => [{ type: "Property", id }, "Property"],
+    updateProperty: builder.mutation<
+      PropertyResponse,
+      { id: string; body: UpdatePropertyPayload }
+    >({
+      query: ({ id, body }) => ({
+        url: `${PROPERTY_URL}/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (_r, _e, { id }) => [
+        { type: "Property", id },
+        "Property",
+      ],
     }),
 
-    createRoomType: builder.mutation<RoomTypeResponse, { propertyId: string; body: CreateRoomTypePayload }>({
-      query: ({ propertyId, body }) => ({ url: `${PROPERTY_URL}/${propertyId}/room-types`, method: "POST", body }),
+    createRoomType: builder.mutation<
+      RoomTypeResponse,
+      { propertyId: string; body: CreateRoomTypePayload }
+    >({
+      query: ({ propertyId, body }) => ({
+        url: `${PROPERTY_URL}/${propertyId}/room-types`,
+        method: "POST",
+        body,
+      }),
       invalidatesTags: ["RoomType"],
     }),
 
-    seedCalendar: builder.mutation<ApiSuccessResponse, { roomTypeId: string; body: SeedCalendarPayload }>({
+    seedCalendar: builder.mutation<
+      ApiSuccessResponse,
+      { roomTypeId: string; body: SeedCalendarPayload }
+    >({
       query: ({ roomTypeId, body }) => ({
-        url:    `${PROPERTY_URL}/room-types/${roomTypeId}/calendar`,
+        url: `${PROPERTY_URL}/room-types/${roomTypeId}/calendar`,
         method: "POST",
         body,
       }),
       invalidatesTags: ["Availability"],
     }),
 
-    getAvailability: builder.query<AvailabilityResponse, { roomTypeId: string; checkIn: string; checkOut: string }>({
+    getAvailability: builder.query<
+      AvailabilityResponse,
+      { roomTypeId: string; checkIn: string; checkOut: string }
+    >({
       query: ({ roomTypeId, checkIn, checkOut }) => ({
         url: `${PROPERTY_URL}/room-types/${roomTypeId}/availability?checkIn=${checkIn}&checkOut=${checkOut}`,
       }),
       providesTags: ["Availability"],
     }),
 
-    blockDates: builder.mutation<ApiSuccessResponse, { roomTypeId: string; body: BlockDatesPayload }>({
+    blockDates: builder.mutation<
+      ApiSuccessResponse,
+      { roomTypeId: string; body: BlockDatesPayload }
+    >({
       query: ({ roomTypeId, body }) => ({
-        url:    `${PROPERTY_URL}/room-types/${roomTypeId}/block`,
+        url: `${PROPERTY_URL}/room-types/${roomTypeId}/block`,
         method: "PATCH",
         body,
       }),
       invalidatesTags: ["Availability"],
+    }),
+
+    deleteProperty: builder.mutation<{ success: boolean }, string>({
+      query: (id) => ({ url: `${PROPERTY_URL}/${id}`, method: "DELETE" }),
+      invalidatesTags: ["Property"],
     }),
   }),
 });
@@ -79,5 +137,6 @@ export const {
   useSeedCalendarMutation,
   useGetAvailabilityQuery,
   useBlockDatesMutation,
-  useGetMyPropertiesQuery
+  useDeletePropertyMutation,
+  useGetMyPropertiesQuery,
 } = propertyApi;

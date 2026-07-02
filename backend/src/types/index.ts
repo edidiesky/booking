@@ -24,7 +24,6 @@ export interface JWTPayload {
   userId:    string;
   userType:  UserType;
   tenantId?: string;
-  email:     string;
   name:      string;
 }
 

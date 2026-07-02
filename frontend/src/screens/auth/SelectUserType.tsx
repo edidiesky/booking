@@ -57,7 +57,7 @@ export default function StepSelectUserType({ onSelect }: Props) {
               <Icon size={18} style={{ color: "var(--color-ink)" }} />
             </div>
             <div className="flex flex-col gap-0.5">
-              <p className="text-sm font-semibold" style={{ color: "var(--color-ink)" }}>
+              <p className="text-sm " style={{ color: "var(--color-ink)" }}>
                 {label}
               </p>
               <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>

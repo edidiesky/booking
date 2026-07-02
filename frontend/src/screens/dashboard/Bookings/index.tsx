@@ -52,7 +52,7 @@ export default function DashboardBookings() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h4 className="text-xl lg:text-2xl font-semibold text-[#17191c]">Bookings</h4>
+            <h4 className="text-xl lg:text-2xl bold  text-[#17191c]">Bookings</h4>
             <p className="text-sm text-[#64645f] mt-1 max-w-[420px]">
               Manage guest reservations. Click a row to view details and take actions.
             </p>
@@ -113,7 +113,7 @@ export default function DashboardBookings() {
                     onClick={() => setSelected(b)}
                     className="border-b border-[#f2f0ed] last:border-0 hover:bg-[#fafaf9] transition-colors cursor-pointer"
                   >
-                    <td className="px-5 py-3 text-[#17191c] font-semibold whitespace-nowrap">
+                    <td className="px-5 py-3 text-[#17191c]  whitespace-nowrap">
                       {b.bookingRef}
                     </td>
                     <td className="px-5 py-3 text-xs text-[#777b86] whitespace-nowrap max-w-[140px] truncate">
@@ -123,7 +123,7 @@ export default function DashboardBookings() {
                       {b.checkIn} - {b.checkOut}
                     </td>
                     <td className="px-5 py-3 text-[#4c4c4c]">{b.roomsCount}</td>
-                    <td className="px-5 py-3 text-[#17191c] font-semibold whitespace-nowrap">
+                    <td className="px-5 py-3 text-[#17191c]  whitespace-nowrap">
                       ₦{b.totalAmountNgn.toLocaleString("en-NG")}
                     </td>
                     <td className="px-5 py-3">

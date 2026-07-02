@@ -10,3 +10,4 @@
     "docker:ps": "docker compose -f  booking-infra/docker-compose.dev.yml ps"
   }
 }
+

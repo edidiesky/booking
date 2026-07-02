@@ -4,6 +4,7 @@ import redisClient from "../config/redis";
 import { JWTPayload, UserType } from "../types";
 import { AppError } from "../utils/AppError";
 import { requestContext } from "../context/requestContext";
+import logger from "../utils/logger";
 
 export function authenticate(
   req: Request,
@@ -36,6 +37,9 @@ export function authenticate(
       });
     return;
   }
+  logger.info("decoded", {
+    decoded
+  })
 
   redisClient
     .get(`blocklist:${decoded.user.userId}`)

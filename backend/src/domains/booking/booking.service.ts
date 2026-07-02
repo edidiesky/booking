@@ -92,8 +92,6 @@ function computeRefundAmount(
   return 0;
 }
 
-// Resolves display-level data needed by notification handlers.
-// Runs after the DB write so it never blocks the critical path.
 async function resolveNotificationContext(booking: Booking): Promise<{
   guestEmail:    string;
   guestName:     string;
@@ -110,7 +108,7 @@ async function resolveNotificationContext(booking: Booking): Promise<{
   return {
     guestEmail:   guest?.email   ?? "",
     guestName:    [guest?.first_name, guest?.last_name].filter(Boolean).join(" ") || "Guest",
-    guestPhone:   undefined, // not stored on user model — extend if needed
+    guestPhone:   undefined,
     propertyName: property?.name  ?? "the property",
     roomTypeName: roomType?.name  ?? "room",
   };

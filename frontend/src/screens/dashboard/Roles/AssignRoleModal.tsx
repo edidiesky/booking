@@ -44,7 +44,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
            style={{ backgroundColor: "var(--color-canvas)" }}>
 
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold" style={{ color: "var(--color-ink)" }}>Assign Role</h2>
+          <h2 className="text-lg " style={{ color: "var(--color-ink)" }}>Assign Role</h2>
           <button onClick={onClose} className="text-2xl leading-none opacity-40 hover:opacity-100">×</button>
         </div>
 

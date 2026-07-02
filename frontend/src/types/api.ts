@@ -184,41 +184,46 @@ export interface PropertyAddress {
   lng?:    number;
 }
 
+// src/types/api.ts
 export interface Property {
   id:            string;
   tenantId:      string;
   name:          string;
   description:   string;
-  propertyType:  PropertyType;
+  property_type:  PropertyType;
   status:        PropertyStatus;
   address:       PropertyAddress;
   amenities:     string[];
   images:        string[];
   checkInTime:   string;
   checkOutTime:  string;
+  roomTypes:     RoomType[];   // add this
   createdAt:     string;
   updatedAt:     string;
 }
-
 export interface CreatePropertyPayload {
   name:          string;
   description:   string;
-  propertyType:  PropertyType;
+  property_type:  PropertyType;
   address:       PropertyAddress;
   amenities?:    string[];
+  images?:       string[];
   checkInTime?:  string;
   checkOutTime?: string;
 }
 
-export interface UpdatePropertyPayload {
-  name?:         string;
+
+
+export interface CreateRoomTypePayload {
+  name:          string;
   description?:  string;
-  status?:       PropertyStatus;
+  maxOccupancy:  number;
+  basePriceNgn:  number;
+  quantity:      number;
   amenities?:    string[];
-  checkInTime?:  string;
-  checkOutTime?: string;
+  images?:       string[];
+  status?:       RoomStatus;
 }
-
 //  Room Type 
 
 export type RoomStatus = "active" | "inactive";
@@ -236,16 +241,21 @@ export interface RoomType {
   amenities:       string[];
   createdAt:       string;
   updatedAt:       string;
+  images?:       string[];
 }
 
-export interface CreateRoomTypePayload {
-  name:           string;
-  description?:   string;
-  maxOccupancy:   number;
-  basePriceNgn:   number;
-  quantity:       number;
-  amenities?:     string[];
+
+
+export interface UpdatePropertyPayload {
+  name?:         string;
+  description?:  string;
+  status?:       PropertyStatus;
+  amenities?:    string[];
+  images?:       string[];
+  checkInTime?:  string;
+  checkOutTime?: string;
 }
+
 
 export interface SeedCalendarPayload {
   startDate: string;

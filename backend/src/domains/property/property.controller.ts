@@ -3,29 +3,8 @@ import { Request, Response } from "express";
 import { propertyService }   from "./property.service";
 import { AppError }          from "../../utils/AppError";
 import { PropertyAddress, PropertyType } from "../../types";
+import { propertyRepository } from "./property.repository";
 
-export const ListPublicPropertiesHandler = asyncHandler(async (req: Request, res: Response) => {
-  const page  = Number(req.query["page"]  ?? 1);
-  const limit = Number(req.query["limit"] ?? 20);
-  const data  = await propertyService.listPublicProperties(page, limit);
-  res.status(200).json({ success: true, data });
-});
-
-export const GetTenantPropertiesHandler = asyncHandler(async (req: Request, res: Response) => {
-  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
-  const page  = Number(req.query["page"]  ?? 1);
-  const limit = Number(req.query["limit"] ?? 20);
-  const data  = await propertyService.listTenantProperties(req.tenantId, page, limit);
-  res.status(200).json({ success: true, data });
-});
-
-export const GetPropertyHandler = asyncHandler(async (req: Request, res: Response) => {
-  const data = await propertyService.getPropertyById(
-    req.params["propertyId"] as string,
-    req.tenantId,
-  );
-  res.status(200).json({ success: true, data });
-});
 
 export const CreatePropertyHandler = asyncHandler(async (req: Request, res: Response) => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
@@ -83,5 +62,35 @@ export const GetAvailabilityHandler = asyncHandler(async (req: Request, res: Res
   const { checkIn, checkOut } = req.query  as Record<string, string>;
   if (!checkIn || !checkOut)  throw AppError.badRequest("checkIn and checkOut are required.");
   const data = await propertyService.getAvailability(roomTypeId, checkIn, checkOut);
+  res.status(200).json({ success: true, data });
+});
+
+export const DeletePropertyHandler = asyncHandler(async (req, res) => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  await propertyRepository.deleteProperty(req.params["propertyId"] as string, req.tenantId);
+  res.status(200).json({ success: true, message: "Property deleted." });
+});
+
+export const ListPublicPropertiesHandler = asyncHandler(async (req, res) => {
+  const page  = Number(req.query["page"]  ?? 1);
+  const limit = Number(req.query["limit"] ?? 20);
+  const data  = await propertyRepository.listPublicPropertiesWithRoomTypes(page, limit);
+  res.status(200).json({ success: true, data });
+});
+
+export const GetTenantPropertiesHandler = asyncHandler(async (req, res) => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const page  = Number(req.query["page"]  ?? 1);
+  const limit = Number(req.query["limit"] ?? 20);
+  const data  = await propertyRepository.listPropertiesWithRoomTypes(req.tenantId, page, limit);
+  res.status(200).json({ success: true, data });
+});
+
+export const GetPropertyHandler = asyncHandler(async (req, res) => {
+  const data = await propertyRepository.findPropertyWithRoomTypes(
+    req.params["propertyId"] as string,
+    req.tenantId,
+  );
+  if (!data) throw AppError.notFound("Property not found.");
   res.status(200).json({ success: true, data });
 });

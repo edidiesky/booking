@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticate, requireTenantMember } from "../../middleware/auth.middleware";
-import { validate }                          from "../../middleware/validate.middleware";
+import { validate } from "../../middleware/validate.middleware";
 import {
   ListPublicPropertiesHandler,
   GetTenantPropertiesHandler,
@@ -10,23 +10,29 @@ import {
   SeedCalendarHandler,
   BlockDatesHandler,
   GetAvailabilityHandler,
+  DeletePropertyHandler,
 } from "./property.controller";
-import { blockDatesSchema, createPropertySchema, createRoomTypeSchema, seedCalendarSchema } from "./property.validator";
-
-//  Routes 
+import {
+  blockDatesSchema,
+  createPropertySchema,
+  createRoomTypeSchema,
+  seedCalendarSchema,
+} from "./property.validator";
 
 const propertyRouter = Router();
 
-// Public: no auth required
-propertyRouter.get("/",                                    ListPublicPropertiesHandler);
-propertyRouter.get("/:propertyId",                         GetPropertyHandler);
+propertyRouter.get("/mine", authenticate, requireTenantMember, GetTenantPropertiesHandler);
 propertyRouter.get("/room-types/:roomTypeId/availability", GetAvailabilityHandler);
 
-// Host: tenant context required
-propertyRouter.get(   "/mine",                                  authenticate, requireTenantMember, GetTenantPropertiesHandler);
-propertyRouter.post(  "/",                                      authenticate, requireTenantMember, validate(createPropertySchema),  CreatePropertyHandler);
-propertyRouter.post(  "/:propertyId/room-types",                authenticate, requireTenantMember, validate(createRoomTypeSchema),  CreateRoomTypeHandler);
-propertyRouter.post(  "/room-types/:roomTypeId/calendar",       authenticate, requireTenantMember, validate(seedCalendarSchema),    SeedCalendarHandler);
-propertyRouter.patch( "/room-types/:roomTypeId/block",          authenticate, requireTenantMember, validate(blockDatesSchema),      BlockDatesHandler);
+propertyRouter.get("/", ListPublicPropertiesHandler);
+propertyRouter.get("/:propertyId", GetPropertyHandler);
+
+
+// Host mutations
+propertyRouter.post("/", authenticate, requireTenantMember, validate(createPropertySchema), CreatePropertyHandler);
+propertyRouter.delete("/:propertyId", authenticate, requireTenantMember, DeletePropertyHandler);
+propertyRouter.post("/:propertyId/room-types", authenticate, requireTenantMember, validate(createRoomTypeSchema), CreateRoomTypeHandler);
+propertyRouter.post("/room-types/:roomTypeId/calendar", authenticate, requireTenantMember, validate(seedCalendarSchema), SeedCalendarHandler);
+propertyRouter.patch("/room-types/:roomTypeId/block", authenticate, requireTenantMember, validate(blockDatesSchema), BlockDatesHandler);
 
 export default propertyRouter;

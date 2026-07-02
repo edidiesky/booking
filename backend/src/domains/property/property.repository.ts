@@ -8,73 +8,132 @@ import {
 } from "../../types";
 
 export interface Property {
-  id: string;
-  tenant_id: string;
-  name: string;
-  description?: string;
-  property_type: PropertyType;
-  address: PropertyAddress;
-  amenities: string[];
-  images: string[];
-  check_in_time: string;
+  id:             string;
+  tenant_id:      string;
+  name:           string;
+  description?:   string;
+  property_type:  PropertyType;
+  address:        PropertyAddress;
+  amenities:      string[];
+  images:         string[];
+  check_in_time:  string;
   check_out_time: string;
-  status: PropertyStatus;
-  created_at: Date;
-  updated_at: Date;
+  status:         PropertyStatus;
+  created_at:     Date;
+  updated_at:     Date;
 }
 
 export interface RoomType {
-  id: string;
-  property_id: string;
-  tenant_id: string;
-  name: string;
-  description?: string;
-  max_occupancy: number;
+  id:             string;
+  property_id:    string;
+  tenant_id:      string;
+  name:           string;
+  description?:   string;
+  max_occupancy:  number;
   base_price_ngn: number;
-  images: string[];
-  amenities: string[];
-  quantity: number;
-  status: RoomStatus;
-  created_at: Date;
-  updated_at: Date;
+  images:         string[];
+  amenities:      string[];
+  quantity:       number;
+  status:         RoomStatus;
+  created_at:     Date;
+  updated_at:     Date;
 }
 
 export const propertyRepository = {
-  async listPublicProperties(page = 1, limit = 20): Promise<Property[]> {
-    const offset = (page - 1) * limit;
-    return query<Property>(
+
+  async listPublicPropertiesWithRoomTypes(
+    page  = 1,
+    limit = 20,
+  ): Promise<(Property & { roomTypes: RoomType[] })[]> {
+    const offset     = (page - 1) * limit;
+    const properties = await query<Property>(
       `SELECT * FROM properties WHERE status = 'active'
-     ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
+       ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
       [limit, offset],
     );
+    if (!properties.length) return [];
+    const ids   = properties.map((p) => p.id);
+    const rooms = await query<RoomType>(
+      `SELECT * FROM room_types WHERE property_id = ANY($1::uuid[]) AND status = 'active'
+       ORDER BY base_price_ngn ASC`,
+      [ids],
+    );
+    return properties.map((p) => ({
+      ...p,
+      roomTypes: rooms.filter((r) => r.property_id === p.id),
+    }));
   },
+
+  async listPropertiesWithRoomTypes(
+    tenantId: string,
+    page  = 1,
+    limit = 20,
+  ): Promise<(Property & { roomTypes: RoomType[] })[]> {
+    const offset     = (page - 1) * limit;
+    const properties = await query<Property>(
+      `SELECT * FROM properties WHERE tenant_id = $1 AND status != 'archived'
+       ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
+      [tenantId, limit, offset],
+    );
+    if (!properties.length) return [];
+    const ids   = properties.map((p) => p.id);
+    const rooms = await query<RoomType>(
+      `SELECT * FROM room_types WHERE property_id = ANY($1::uuid[])  AND status = 'active'
+       ORDER BY base_price_ngn ASC`,
+      [ids],
+    );
+    return properties.map((p) => ({
+      ...p,
+      roomTypes: rooms.filter((r) => r.property_id === p.id),
+    }));
+  },
+
+  async findPropertyWithRoomTypes(
+    id:        string,
+    tenantId?: string,
+  ): Promise<(Property & { roomTypes: RoomType[] }) | null> {
+    const sql      = tenantId
+      ? `SELECT * FROM properties WHERE id = $1 AND tenant_id = $2`
+      : `SELECT * FROM properties WHERE id = $1`;
+    const property = await queryOne<Property>(sql, tenantId ? [id, tenantId] : [id]);
+    if (!property) return null;
+    const roomTypes = await query<RoomType>(
+      `SELECT * FROM room_types WHERE property_id = $1 AND status = 'active'
+       ORDER BY base_price_ngn ASC`,
+      [id],
+    );
+    return { ...property, roomTypes };
+  },
+
   async createProperty(
     data: {
-      tenantId: string;
-      name: string;
-      description?: string;
-      propertyType: PropertyType;
-      address: PropertyAddress;
-      amenities?: string[];
-      images?: string[];
-      checkInTime?: string;
+      tenantId:      string;
+      name:          string;
+      description?:  string;
+      propertyType:  PropertyType;
+      address:       PropertyAddress;
+      amenities?:    string[];
+      images?:       string[];
+      checkInTime?:  string;
       checkOutTime?: string;
     },
     client?: PoolClient,
   ): Promise<Property> {
     const sql = `
-      INSERT INTO properties (tenant_id, name, description, property_type, address, amenities, images, check_in_time, check_out_time)
-      VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9) RETURNING *`;
+      INSERT INTO properties
+        (tenant_id, name, description, property_type, address, amenities, images, check_in_time, check_out_time, status)
+      VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,'active')
+      RETURNING *`;
     const params = [
       data.tenantId,
       data.name,
-      data.description ?? null,
+      data.description    ?? null,
       data.propertyType,
       JSON.stringify(data.address),
-      data.amenities ?? [],
-      data.images ?? [],
-      data.checkInTime ?? "14:00",
-      data.checkOutTime ?? "11:00",
+      data.amenities      ?? [],
+      data.images         ?? [],
+      data.checkInTime    ?? "14:00",
+      data.checkOutTime   ?? "11:00",
     ];
     const row = client
       ? ((await client.query(sql, params)).rows[0] as Property)
@@ -83,7 +142,7 @@ export const propertyRepository = {
   },
 
   async findPropertyById(
-    id: string,
+    id:        string,
     tenantId?: string,
   ): Promise<Property | null> {
     const sql = tenantId
@@ -94,7 +153,7 @@ export const propertyRepository = {
 
   async listProperties(
     tenantId: string,
-    page = 1,
+    page  = 1,
     limit = 20,
   ): Promise<Property[]> {
     const offset = (page - 1) * limit;
@@ -106,22 +165,19 @@ export const propertyRepository = {
   },
 
   async updateProperty(
-    id: string,
+    id:       string,
     tenantId: string,
-    data: Partial<
-      Pick<
-        Property,
-        | "name"
-        | "description"
-        | "amenities"
-        | "images"
-        | "check_in_time"
-        | "check_out_time"
-        | "status"
-      >
-    >,
+    data: Partial<Pick<Property,
+      | "name"
+      | "description"
+      | "amenities"
+      | "images"
+      | "check_in_time"
+      | "check_out_time"
+      | "status"
+    >>,
   ): Promise<Property | null> {
-    const fields: string[] = [];
+    const fields: string[]  = [];
     const values: unknown[] = [];
     let idx = 1;
     for (const [key, val] of Object.entries(data)) {
@@ -134,25 +190,37 @@ export const propertyRepository = {
     fields.push("updated_at = now()");
     values.push(id, tenantId);
     return queryOne<Property>(
-      `UPDATE properties SET ${fields.join(", ")} WHERE id = $${idx} AND tenant_id = $${idx + 1} RETURNING *`,
+      `UPDATE properties SET ${fields.join(", ")}
+       WHERE id = $${idx} AND tenant_id = $${idx + 1}
+       RETURNING *`,
       values,
     );
   },
 
+  async deleteProperty(id: string, tenantId: string): Promise<void> {
+  await query(
+    `DELETE FROM properties WHERE id = $1 AND tenant_id = $2`,
+    [id, tenantId],
+  );
+},
+
   async createRoomType(data: {
-    propertyId: string;
-    tenantId: string;
-    name: string;
-    description?: string;
-    maxOccupancy: number;
-    basePriceNgn: number;
-    images?: string[];
-    amenities?: string[];
-    quantity: number;
+    propertyId:    string;
+    tenantId:      string;
+    name:          string;
+    description?:  string;
+    maxOccupancy:  number;
+    basePriceNgn:  number;
+    images?:       string[];
+    amenities?:    string[];
+    quantity:      number;
+    status?:       RoomStatus;
   }): Promise<RoomType> {
     return (await queryOne<RoomType>(
-      `INSERT INTO room_types (property_id, tenant_id, name, description, max_occupancy, base_price_ngn, images, amenities, quantity)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+      `INSERT INTO room_types
+         (property_id, tenant_id, name, description, max_occupancy, base_price_ngn, images, amenities, quantity, status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+       RETURNING *`,
       [
         data.propertyId,
         data.tenantId,
@@ -160,15 +228,16 @@ export const propertyRepository = {
         data.description ?? null,
         data.maxOccupancy,
         data.basePriceNgn,
-        data.images ?? [],
-        data.amenities ?? [],
+        data.images      ?? [],
+        data.amenities   ?? [],
         data.quantity,
+        data.status      ?? "active",
       ],
     ))!;
   },
 
   async findRoomTypeById(
-    id: string,
+    id:        string,
     tenantId?: string,
   ): Promise<RoomType | null> {
     const sql = tenantId
@@ -179,7 +248,8 @@ export const propertyRepository = {
 
   async listRoomTypes(propertyId: string): Promise<RoomType[]> {
     return query<RoomType>(
-      `SELECT * FROM room_types WHERE property_id = $1 AND status = 'active' ORDER BY base_price_ngn ASC`,
+      `SELECT * FROM room_types WHERE property_id = $1 AND status = 'active'
+       ORDER BY base_price_ngn ASC`,
       [propertyId],
     );
   },

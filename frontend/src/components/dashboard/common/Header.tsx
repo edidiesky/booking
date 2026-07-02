@@ -19,7 +19,7 @@ export default function Header() {
       className="w-full sticky top-0 z-40 border-b"
       style={{ backgroundColor: "var(--color-canvas)", borderColor: "var(--color-fog)" }}
     >
-      <div className="max-w-[1280px] mx-auto px-4 lg:px-8 h-[50px] flex items-center justify-between">
+      <div className="max-w-[1280px] mx-auto px-4 lg:px-8 h-[60px] flex items-center justify-between">
 
         {/* Search */}
         <button
@@ -47,25 +47,25 @@ export default function Header() {
             to="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-opacity hover:opacity-70"
+            className="hidden sm:flex items-center gap-1.5 text-sm bold px-4 py-1.5 rounded-full border transition-opacity hover:opacity-70"
             style={{
               color:       "var(--color-muted-stone)",
               borderColor: "var(--color-fog)",
             }}
           >
-            View site ↗
+            View site 
           </Link>
 
           {/* User avatar */}
           <div className="flex items-center gap-2">
             <div
-              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-sm bold  shrink-0"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
             >
               {initials}
             </div>
             <span
-              className="text-sm hidden md:block truncate max-w-[140px]"
+              className="text-base bold hidden md:block truncate max-w-[140px]"
               style={{ color: "var(--color-ink)" }}
             >
               {displayName}

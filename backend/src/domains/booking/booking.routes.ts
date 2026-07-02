@@ -7,7 +7,7 @@ import { validate }           from "../../middleware/validate.middleware";
 import { AppError }           from "../../utils/AppError";
 import { BookingStatus }      from "../../types";
 
-// -- Validators --
+//  Validators
 const initiateSchema = Joi.object({
   propertyId:      Joi.string().uuid().required(),
   roomTypeId:      Joi.string().uuid().required(),
@@ -28,7 +28,7 @@ const listQuerySchema = Joi.object({
   limit:  Joi.number().integer().min(1).max(100).default(20),
 });
 
-// -- Handlers --
+//  Handlers 
 const InitiateBookingHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.user)     throw AppError.unauthorized();
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
@@ -100,7 +100,7 @@ const CheckOutHandler = asyncHandler(async (req: Request, res: Response): Promis
   res.status(200).json({ success: true, message: "Guest checked out. Escrow released.", data: result });
 });
 
-// -- Router --
+//  Router 
 const router = Router();
 
 router.post("/",                     authenticate, authorize("guest"),    validate(initiateSchema),    InitiateBookingHandler);

@@ -16,6 +16,7 @@ export const createPropertySchema = Joi.object({
   images:       Joi.array().items(Joi.string().uri()).optional(),
   checkInTime:  Joi.string().pattern(/^\d{2}:\d{2}$/).optional(),
   checkOutTime: Joi.string().pattern(/^\d{2}:\d{2}$/).optional(),
+  status: Joi.string().valid("active", "inactive").default("active").optional(),
 });
 
 export const createRoomTypeSchema = Joi.object({

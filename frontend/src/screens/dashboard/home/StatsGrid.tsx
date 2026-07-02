@@ -72,7 +72,7 @@ export default function StatsGrid({ totalRevenue, confirmedCount, checkedInCount
             </div>
           </div>
           <div>
-            <p className="text-2xl font-semibold" style={{ color: "var(--color-ink)" }}>
+            <p className="text-2xl " style={{ color: "var(--color-ink)" }}>
               {value}
             </p>
             <p className="text-xs mt-0.5" style={{ color: "var(--color-muted-stone)" }}>

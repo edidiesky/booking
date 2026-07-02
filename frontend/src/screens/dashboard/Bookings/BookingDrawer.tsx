@@ -67,7 +67,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
         {/* header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           <div>
-            <p className="text-sm font-semibold text-[#17191c]">Booking details</p>
+            <p className="text-sm  text-[#17191c]">Booking details</p>
             <p className="text-xs text-[#777b86] mt-0.5">{booking.bookingRef}</p>
           </div>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center hover:bg-[#f2f0ed] transition-colors">

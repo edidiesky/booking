@@ -73,7 +73,6 @@ export interface AuthTokens {
   refreshToken: string;
   user: {
     id:         string;
-    email:      string;
     firstName?: string;
     lastName?:  string;
     userType:   UserType;
@@ -202,7 +201,7 @@ export const authService = {
       requestId: requestContext.get()?.requestId,
     });
 
-    return authService._buildTokens(userId, "guest", `${input.firstName} ${input.lastName}`, email, undefined);
+    return authService._buildTokens(userId, "guest", `${input.firstName} ${input.lastName}`, undefined);
   },
 
   async registerHost(input: RegisterHostInput): Promise<AuthTokens> {
@@ -268,7 +267,7 @@ export const authService = {
       requestId: requestContext.get()?.requestId,
     });
 
-    return authService._buildTokens(userId, "host:admin", `${input.firstName} ${input.lastName}`, email, tenantId);
+    return authService._buildTokens(userId, "host:admin", `${input.firstName} ${input.lastName}`, tenantId);
   },
 
   async login(input: LoginInput): Promise<AuthTokens> {
@@ -292,7 +291,7 @@ export const authService = {
     });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    return authService._buildTokens(user.id, user.user_type, name, user.email, user.tenant_id);
+    return authService._buildTokens(user.id, user.user_type, name, user.tenant_id);
   },
 
   async refreshToken(token: string): Promise<Pick<AuthTokens, "accessToken">> {
@@ -303,7 +302,6 @@ export const authService = {
     const accessToken = signAccessToken({
       userId:   data.userId,
       userType: data.userType,
-      email:    data.email,
       name:     data.name,
       tenantId: data.tenantId,
     });
@@ -373,13 +371,12 @@ export const authService = {
     userId:   string,
     userType: UserType,
     name:     string,
-    email:    string,
     tenantId: string | undefined
   ): Promise<AuthTokens> {
-    const payload: JWTPayload = { userId, userType, email, name, tenantId };
+    const payload: JWTPayload = { userId, userType, name, tenantId };
     const accessToken         = signAccessToken(payload);
     const refreshToken        = nanoid(32);
-    const refreshData         = JSON.stringify({ userId, userType, name, email, tenantId });
+    const refreshData         = JSON.stringify({ userId, userType, name, tenantId });
 
     await redisClient.set(refreshKey(refreshToken), refreshData, "EX", REFRESH_EXPIRY_SEC);
 
@@ -387,7 +384,7 @@ export const authService = {
     return {
       accessToken,
       refreshToken,
-      user: { id: userId, email, firstName: user?.first_name, lastName: user?.last_name, userType, tenantId },
+      user: { id: userId, firstName: user?.first_name, lastName: user?.last_name, userType, tenantId },
     };
   },
 };

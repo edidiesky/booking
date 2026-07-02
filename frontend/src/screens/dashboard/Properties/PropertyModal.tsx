@@ -112,18 +112,18 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
   const inputClass = "h-[42px] border border-[#e8e6e3] px-3 text-sm outline-none focus:border-[#17191c] transition-colors w-full";
 
   return (
-    <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-end z-50">
+    <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-end p-4 z-50">
       <motion.div
         initial={{ x: 800 }}
         animate={isOpen ? { x: 0 } : { x: 800 }}
         exit={{ x: 800 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
-        className="bg-white w-full rounded-l-2xl overflow-hidden relative flex flex-col lg:w-[750px] h-full"
+        className="bg-white w-full rounded-2xl overflow-hidden relative flex flex-col lg:w-[750px] h-full"
       >
         {/* header */}
         <div className="border-b flex items-center justify-between px-8 h-[72px] shrink-0">
           <div>
-            <h4 className="text-lg font-semibold text-[#17191c]">
+            <h4 className="text-lg bold text-[#17191c]">
               {isEdit ? "Edit Property" : "Create Property"}
             </h4>
             <p className="text-sm text-[#777b86] mt-0.5">
@@ -163,12 +163,12 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                 {/* name + type */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-[#17191c]">Property Name</label>
+                    <label className="text-sm  text-[#17191c]">Property Name</label>
                     <Input {...register("name")} className={inputClass} placeholder="e.g. Lekki Heights Shortlet" />
                     {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-[#17191c]">Property Type</label>
+                    <label className="text-sm  text-[#17191c]">Property Type</label>
                     <select {...register("propertyType")} className={inputClass}>
                       <option value="shortlet">Shortlet</option>
                       <option value="hotel">Hotel</option>
@@ -179,7 +179,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
 
                 {/* description */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-[#17191c]">Description</label>
+                  <label className="text-sm  text-[#17191c]">Description</label>
                   <textarea
                     {...register("description")}
                     rows={4}
@@ -190,7 +190,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
 
                 {/* address */}
                 <div className="flex flex-col gap-1.5">
-                  <p className="text-xs text-[#a3a6af] uppercase tracking-widest font-semibold">Address</p>
+                  <p className="text-xs text-[#a3a6af] uppercase tracking-widest ">Address</p>
                   <div className="grid grid-cols-2 gap-3">
                     {([
                       ["street",  "Street",  "5 Admiralty Way"],
@@ -199,7 +199,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                       ["country", "Country", "Nigeria"],
                     ] as const).map(([key, label, ph]) => (
                       <div key={key} className="flex flex-col gap-1.5">
-                        <label className="text-sm font-semibold text-[#17191c]">{label}</label>
+                        <label className="text-sm  text-[#17191c]">{label}</label>
                         <Input {...register(key)} className={inputClass} placeholder={ph} />
                         {errors[key] && <p className="text-xs text-red-500">{errors[key]?.message}</p>}
                       </div>
@@ -210,18 +210,18 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                 {/* times */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-[#17191c]">Check-in Time</label>
+                    <label className="text-sm  text-[#17191c]">Check-in Time</label>
                     <Input {...register("checkInTime")} type="time" className={inputClass} />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-[#17191c]">Check-out Time</label>
+                    <label className="text-sm  text-[#17191c]">Check-out Time</label>
                     <Input {...register("checkOutTime")} type="time" className={inputClass} />
                   </div>
                 </div>
 
                 {/* amenities */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-[#17191c]">Amenities</label>
+                  <label className="text-sm  text-[#17191c]">Amenities</label>
                   <Input
                     {...register("amenities")}
                     className={inputClass}

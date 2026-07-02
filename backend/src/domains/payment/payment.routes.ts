@@ -19,12 +19,12 @@ export const InitializePaymentHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     if (!req.user) throw AppError.unauthorized();
 
-    const body = req.body as { bookingId: string; gateway: PaymentGateway; callbackUrl: string; phone?: string };
+    const body = req.body as { bookingId: string; gateway: PaymentGateway; callbackUrl: string; phone?: string , email: string};
 
     const result = await paymentService.initializePayment({
       bookingId:   body.bookingId,
       guestUserId: req.user.userId,
-      email:       req.user.email ?? "",
+      email:      body.email ?? "",
       gateway:     body.gateway,
       callbackUrl: body.callbackUrl,
       phone:       body.phone,

@@ -26,7 +26,7 @@ export default function PaymentSuccess() {
         </div>
 
         <div>
-          <h1 className="text-2xl font-semibold text-[#171717]">Payment Successful</h1>
+          <h1 className="text-2xl  text-[#171717]">Payment Successful</h1>
           <p className="text-sm text-[#666] mt-2 leading-relaxed">
             Your booking is confirmed. You will receive a confirmation email shortly.
           </p>
@@ -41,15 +41,15 @@ export default function PaymentSuccess() {
 
         {booking && !isLoading && (
           <div className="w-full bg-[#f4f3ee] p-4 text-left flex flex-col gap-2">
-            <p className="text-xs text-[#888] uppercase font-semibold">Booking summary</p>
-            <p className="text-sm font-semibold text-[#171717]">{booking.bookingRef}</p>
+            <p className="text-xs text-[#888] uppercase ">Booking summary</p>
+            <p className="text-sm  text-[#171717]">{booking.bookingRef}</p>
             <p className="text-sm text-[#666]">
               {booking.checkIn} - {booking.checkOut} ({booking.nights} night{booking.nights !== 1 ? "s" : ""})
             </p>
-            <p className="text-sm font-semibold text-[#171717]">
+            <p className="text-sm  text-[#171717]">
               ₦{booking.totalAmountNgn.toLocaleString("en-NG")}
             </p>
-            <span className="text-xs font-semibold px-2 py-0.5 bg-green-50 text-green-700 w-fit capitalize">
+            <span className="text-xs  px-2 py-0.5 bg-green-50 text-green-700 w-fit capitalize">
               {booking.status.replace("_", " ")}
             </span>
           </div>
@@ -61,13 +61,13 @@ export default function PaymentSuccess() {
               sessionStorage.removeItem("pending_booking_id");
               navigate("/trips");
             }}
-            className="w-full rounded-full h-12 bg-[#171717] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+            className="w-full rounded-full h-12 bg-[#171717] text-white text-sm  hover:opacity-90 transition-opacity"
           >
             View My Trips
           </button>
           <button
             onClick={() => navigate("/")}
-            className="w-full rounded-full h-12 border border-black/10 text-sm font-semibold hover:bg-[#f4f3ee] transition-colors"
+            className="w-full rounded-full h-12 border border-black/10 text-sm  hover:bg-[#f4f3ee] transition-colors"
           >
             Browse More Properties
           </button>

@@ -6,7 +6,7 @@ import { PropertyAddress, PropertyType } from "../../types";
 export const propertyService = {
 
   async listPublicProperties(page: number, limit: number) {
-    return propertyRepository.listPublicProperties(page, limit);
+    return propertyRepository.listPublicPropertiesWithRoomTypes(page, limit);
   },
 
   async listTenantProperties(tenantId: string, page: number, limit: number) {

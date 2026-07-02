@@ -47,7 +47,7 @@ export default function DashboardPayments() {
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h4 className="text-xl lg:text-2xl font-semibold text-[#17191c]">Payments</h4>
+          <h4 className="text-xl lg:text-2xl bold  text-[#17191c]">Payments</h4>
           <p className="text-sm text-[#64645f] mt-1 max-w-[420px]">
             View all payment transactions across your property bookings.
           </p>
@@ -93,7 +93,7 @@ export default function DashboardPayments() {
                 <tr key={p.id} className="border-b border-[#f2f0ed] last:border-0 hover:bg-[#fafaf9] transition-colors">
                   <td className="px-5 py-3 text-xs text-[#a3a6af] whitespace-nowrap">{p.id}</td>
                   <td className="px-5 py-3 text-xs text-[#777b86] whitespace-nowrap">{p.bookingId}</td>
-                  <td className="px-5 py-3 font-semibold text-[#17191c] whitespace-nowrap">
+                  <td className="px-5 py-3  text-[#17191c] whitespace-nowrap">
                     ₦{p.amountNgn.toLocaleString("en-NG")}
                   </td>
                   <td className="px-5 py-3">
