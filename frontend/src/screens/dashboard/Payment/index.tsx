@@ -1,200 +1,134 @@
-import { useState }                    from "react";
-import { useGetTenantPaymentsQuery }   from "@/redux/services/paymentApi";
+import { useState }            from "react";
+import { motion }              from "framer-motion";
+import { useGetTenantPaymentsQuery } from "@/redux/services/paymentApi";
+import { ChartSelect }         from "@/components/common/charts/Chartselect";
 import type { Payment, PaymentStatus, PaymentGateway } from "@/types/api";
 
 const ROWS_PER_PAGE = 10;
 
-const statusConfig: Record<PaymentStatus, { label: string; className: string }> = {
+const STATUS_CONFIG: Record<PaymentStatus, { label: string; className: string }> = {
   pending:  { label: "Pending",  className: "bg-yellow-50 text-yellow-800" },
   success:  { label: "Success",  className: "bg-green-50 text-green-700"   },
   failed:   { label: "Failed",   className: "bg-red-50 text-red-700"       },
   refunded: { label: "Refunded", className: "bg-[#f2f0ed] text-[#4c4c4c]" },
 };
 
-const gatewayConfig: Record<PaymentGateway, { label: string; className: string }> = {
+const GATEWAY_CONFIG: Record<PaymentGateway, { label: string; className: string }> = {
   paystack:    { label: "Paystack",    className: "bg-blue-50 text-blue-700"      },
   flutterwave: { label: "Flutterwave", className: "bg-orange-50 text-orange-700"  },
 };
 
-const STATUS_OPTIONS  = ["pending", "success", "failed", "refunded"] as PaymentStatus[];
-const GATEWAY_OPTIONS = ["paystack", "flutterwave"] as PaymentGateway[];
+const STATUS_OPTIONS:  PaymentStatus[]  = ["pending", "success", "failed", "refunded"];
+const GATEWAY_OPTIONS: PaymentGateway[] = ["paystack", "flutterwave"];
 
-export default function Payments() {
-  const [currentPage,    setCurrentPage]    = useState(1);
-  const [statusFilter,   setStatusFilter]   = useState<PaymentStatus | "">("");
-  const [gatewayFilter,  setGatewayFilter]  = useState<PaymentGateway | "">("");
+export default function DashboardPayments() {
+  const [currentPage,   setCurrentPage]   = useState(1);
+  const [statusFilter,  setStatusFilter]  = useState<PaymentStatus  | "">("");
+  const [gatewayFilter, setGatewayFilter] = useState<PaymentGateway | "">("");
 
-  const { data, isLoading } = useGetTenantPaymentsQuery({
-    page:  currentPage,
-    limit: ROWS_PER_PAGE,
+  const { data, isLoading } = useGetTenantPaymentsQuery({ page: currentPage, limit: ROWS_PER_PAGE });
+
+  const allPayments: Payment[] = data?.data ?? [];
+
+  const payments = allPayments.filter((p) => {
+    const matchStatus  = !statusFilter  || p.status  === statusFilter;
+    const matchGateway = !gatewayFilter || p.gateway === gatewayFilter;
+    return matchStatus && matchGateway;
   });
 
-  // Client-side filter until backend supports query params
-  const allPayments: Payment[] = data?.data ?? [];
-  const filtered = allPayments
-    .filter((p) => !statusFilter  || p.status  === statusFilter)
-    .filter((p) => !gatewayFilter || p.gateway === gatewayFilter);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE));
-  const paginated  = filtered.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(payments.length / ROWS_PER_PAGE));
 
   return (
-    <div className="w-full p-4 py-8 lg:p-12 mx-auto">
-      <div className="w-full flex flex-col gap-8">
-
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h4 className="text-xl lg:text-2xl font-semibold" style={{ color: "var(--color-ink)" }}>
-              Payments
-            </h4>
-            <p className="text-sm mt-1 max-w-[420px]" style={{ color: "var(--color-muted-stone)" }}>
-              View all payment transactions across your properties.
-            </p>
-          </div>
-          <span className="text-xs mt-2" style={{ color: "var(--color-muted-stone)" }}>
-            {filtered.length} total
-          </span>
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h4 className="text-xl lg:text-2xl font-semibold text-[#17191c]">Payments</h4>
+          <p className="text-sm text-[#64645f] mt-1 max-w-[420px]">
+            View all payment transactions across your property bookings.
+          </p>
         </div>
-
-        {/* Filters */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <select
-            value={statusFilter}
-            onChange={(e) => { setStatusFilter(e.target.value as PaymentStatus | ""); setCurrentPage(1); }}
-            className="h-9 px-3 text-sm border rounded-lg outline-none"
-            style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
-          >
-            <option value="">All statuses</option>
-            {STATUS_OPTIONS.map((s) => (
-              <option key={s} value={s}>{statusConfig[s].label}</option>
-            ))}
-          </select>
-
-          <select
-            value={gatewayFilter}
-            onChange={(e) => { setGatewayFilter(e.target.value as PaymentGateway | ""); setCurrentPage(1); }}
-            className="h-9 px-3 text-sm border rounded-lg outline-none"
-            style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
-          >
-            <option value="">All gateways</option>
-            {GATEWAY_OPTIONS.map((g) => (
-              <option key={g} value={g}>{gatewayConfig[g].label}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Table */}
-        <div className="border overflow-x-auto rounded-lg" style={{ borderColor: "var(--color-fog)" }}>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b" style={{ borderColor: "var(--color-fog)" }}>
-                {["Transaction ID", "Booking ID", "Amount", "Gateway", "Status", "Paid At"].map((h) => (
-                  <th key={h} className="px-5 py-3 text-left text-xs uppercase whitespace-nowrap"
-                      style={{ color: "var(--color-muted-stone)" }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-sm"
-                      style={{ color: "var(--color-muted-stone)" }}>
-                    Loading payments...
-                  </td>
-                </tr>
-              ) : paginated.length > 0 ? (
-                paginated.map((payment) => {
-                  const sCfg = statusConfig[payment.status];
-                  const gCfg = gatewayConfig[payment.gateway];
-                  return (
-                    <tr key={payment.id} className="border-b last:border-0 transition-colors"
-                        style={{ borderColor: "var(--color-fog)" }}>
-                      <td className="px-5 py-3 text-xs whitespace-nowrap font-mono"
-                          style={{ color: "var(--color-muted-stone)" }}>
-                        {payment.transactionId ?? "—"}
-                      </td>
-                      <td className="px-5 py-3 text-xs whitespace-nowrap font-mono"
-                          style={{ color: "var(--color-muted-stone)" }}>
-                        {payment.bookingId}
-                      </td>
-                      <td className="px-5 py-3 font-semibold whitespace-nowrap"
-                          style={{ color: "var(--color-ink)" }}>
-                        ₦{payment.amountNgn.toLocaleString("en-NG")}
-                      </td>
-                      <td className="px-5 py-3">
-                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap ${gCfg.className}`}>
-                          {gCfg.label}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3">
-                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap ${sCfg.className}`}>
-                          {sCfg.label}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3 whitespace-nowrap"
-                          style={{ color: "var(--color-muted-stone)" }}>
-                        {payment.paidAt
-                          ? new Date(payment.paidAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })
-                          : "—"}
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-sm"
-                      style={{ color: "var(--color-muted-stone)" }}>
-                    No payments found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
-            Page {currentPage} of {totalPages} — {filtered.length} payments
-          </span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="h-8 px-3 text-sm border rounded disabled:opacity-40"
-              style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
-            >
-              Prev
-            </button>
-            {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className="h-8 w-8 text-xs border rounded"
-                style={{
-                  borderColor:     currentPage === page ? "var(--color-ink)" : "var(--color-fog)",
-                  backgroundColor: currentPage === page ? "var(--color-ink)" : "transparent",
-                  color:           currentPage === page ? "var(--color-canvas)" : "var(--color-ink)",
-                }}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="h-8 px-3 text-xs border rounded disabled:opacity-40"
-              style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
-            >
-              Next
-            </button>
-          </div>
-        </div>
-
+        <span className="text-xs text-[#a3a6af] mt-2">{allPayments.length} total</span>
       </div>
-    </div>
+
+      <div className="flex items-center gap-3 flex-wrap">
+        <ChartSelect
+          value={statusFilter}
+          onValueChange={(v) => { setStatusFilter(v as PaymentStatus | ""); setCurrentPage(1); }}
+          options={[
+            { label: "All statuses", value: "" },
+            ...STATUS_OPTIONS.map((s) => ({ label: STATUS_CONFIG[s].label, value: s })),
+          ]}
+        />
+        <ChartSelect
+          value={gatewayFilter}
+          onValueChange={(v) => { setGatewayFilter(v as PaymentGateway | ""); setCurrentPage(1); }}
+          options={[
+            { label: "All gateways", value: "" },
+            ...GATEWAY_OPTIONS.map((g) => ({ label: GATEWAY_CONFIG[g].label, value: g })),
+          ]}
+        />
+      </div>
+
+      <div className="border border-[#e8e6e3] overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-[#e8e6e3]">
+              {["Payment ID", "Booking ID", "Amount", "Gateway", "Status", "Date"].map((h) => (
+                <th key={h} className="px-5 py-3 text-left text-xs text-[#a3a6af] uppercase whitespace-nowrap">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr><td colSpan={6} className="px-5 py-10 text-center text-sm text-[#a3a6af]">Loading payments...</td></tr>
+            ) : payments.length > 0 ? payments.map((p) => {
+              const sCfg = STATUS_CONFIG[p.status];
+              const gCfg = GATEWAY_CONFIG[p.gateway];
+              return (
+                <tr key={p.id} className="border-b border-[#f2f0ed] last:border-0 hover:bg-[#fafaf9] transition-colors">
+                  <td className="px-5 py-3 text-xs text-[#a3a6af] whitespace-nowrap">{p.id}</td>
+                  <td className="px-5 py-3 text-xs text-[#777b86] whitespace-nowrap">{p.bookingId}</td>
+                  <td className="px-5 py-3 font-semibold text-[#17191c] whitespace-nowrap">
+                    ₦{p.amountNgn.toLocaleString("en-NG")}
+                  </td>
+                  <td className="px-5 py-3">
+                    <span className={`text-sm px-3 py-1 whitespace-nowrap ${gCfg.className}`}>{gCfg.label}</span>
+                  </td>
+                  <td className="px-5 py-3">
+                    <span className={`text-sm px-3 py-1 whitespace-nowrap ${sCfg.className}`}>{sCfg.label}</span>
+                  </td>
+                  <td className="px-5 py-3 text-[#777b86] whitespace-nowrap">
+                    {new Date(p.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                  </td>
+                </tr>
+              );
+            }) : (
+              <tr><td colSpan={6} className="px-5 py-10 text-center text-sm text-[#a3a6af]">No payments found</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-[#a3a6af]">Page {currentPage} of {totalPages} - {allPayments.length} payments</span>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
+            className="h-8 px-3 text-sm border border-[#e8e6e3] text-[#4c4c4c] disabled:opacity-40 hover:bg-[#f2f0ed]">Prev</button>
+          {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => i + 1).map((page) => (
+            <button key={page} onClick={() => setCurrentPage(page)}
+              className={`h-8 w-8 text-xs border ${currentPage === page ? "bg-[#17191c] text-white border-[#17191c]" : "border-[#e8e6e3] text-[#4c4c4c] hover:bg-[#f2f0ed]"}`}>
+              {page}
+            </button>
+          ))}
+          <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+            className="h-8 px-3 text-sm border border-[#e8e6e3] text-[#4c4c4c] disabled:opacity-40 hover:bg-[#f2f0ed]">Next</button>
+        </div>
+      </div>
+    </motion.div>
   );
 }
