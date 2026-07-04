@@ -1,57 +1,189 @@
+import { useRef }        from "react";
 import { useNavigate }   from "react-router-dom";
-import { MapPin }        from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { MapPin, Bath, Wifi, BedDouble } from "lucide-react";
+import { IoStar }        from "react-icons/io5";
 import type { Property } from "@/types/api";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 interface Props {
   property: Property;
+  index?:   number;
 }
 
-export default function PropertyCard({ property }: Props) {
+const AMENITY_ICONS: Record<string, React.ReactNode> = {
+  wifi:       <Wifi      size={13} />,
+  "wi-fi":    <Wifi      size={13} />,
+  bathroom:   <Bath      size={13} />,
+  bath:       <Bath      size={13} />,
+  bedroom:    <BedDouble size={13} />,
+  bed:        <BedDouble size={13} />,
+};
+
+function AmenityIcon({ label }: { label: string }) {
+  const key  = label.toLowerCase();
+  const icon = Object.entries(AMENITY_ICONS).find(([k]) => key.includes(k))?.[1];
+  return (
+    <span className="flex items-center gap-1 text-sm" style={{ color: "var(--color-light-steel)" }}>
+      {icon ?? <span className="w-1 h-1 rounded-full bg-current inline-block" />}
+      {label}
+    </span>
+  );
+}
+
+export default function PropertyCard({ property, index = 0 }: Props) {
   const navigate = useNavigate();
+  const ref      = useRef<HTMLDivElement>(null);
+  const inView   = useInView(ref, { margin: "0px 100px -120px 0px", once: true });
+
+  const primaryImage   = property.images?.[0]
+    ?? property.roomTypes?.[0]?.images?.[0]
+    ?? null;
+
+  const secondaryImage = property.images?.[1]
+    ?? property.roomTypes?.[0]?.images?.[1]
+    ?? null;
+
+  const lowestPrice = property.roomTypes?.length
+    ? Math.min(...property.roomTypes.map((r) => Number(r.base_price_ngn)))
+    : null;
+
+  const visibleAmenities = (property.amenities ?? []).slice(0, 3);
+
+  const TYPE_COLORS: Record<string, string> = {
+    shortlet:   "bg-[#deddff] text-[#3e3aff]",
+    hotel:      "bg-[#cdeed3] text-[#347345]",
+    guesthouse: "bg-[#f3f3f1] text-[#a37d18]",
+  };
+
+  const typeClass = TYPE_COLORS[property.property_type ?? property.propertyType ?? "shortlet"]
+    ?? "bg-[#f3f3f1] text-[#a37d18]";
 
   return (
-    <div
+    <motion.div
+      ref={ref}
+      custom={index}
+      variants={{
+        initial: { opacity: 0, y: "70px" },
+        animate: (i: number) => ({
+          opacity: 1,
+          y: "0%",
+          transition: { duration: 0.5, delay: i * 0.01 },
+        }),
+        exit: { opacity: 0, y: "70px" },
+      }}
+      initial="initial"
+      animate={inView ? "animate" : "exit"}
       onClick={() => navigate(`/properties/${property.id}`)}
-      className="flex flex-col gap-3 cursor-pointer group"
+      className="w-full flex flex-col rounded-xl overflow-hidden border cursor-pointer group"
     >
-      <div className="relative overflow-hidden rounded-xl bg-[#f2f0ed]" style={{ aspectRatio: "4/5" }}>
-        {property.images[0] ? (
-          <img
-            src={property.images[0]}
-            alt={property.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+      {/* image area */}
+      <div className="w-full h-[340px] overflow-hidden relative">
+
+        {primaryImage ? (
+          <motion.div
+            initial="initial"
+            whileHover="hover"
+            className="w-full h-full relative"
+          >
+            {/* primary image */}
+            <motion.div
+              variants={{
+                initial: { opacity: 1 },
+                hover:   { opacity: secondaryImage ? 0 : 1 },
+              }}
+              transition={{ delay: 0.025, duration: 0.25, ease: "easeInOut" }}
+              className="w-full h-full absolute inset-0"
+            >
+              <img
+                src={primaryImage}
+                alt={property.name}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+
+            {/* secondary image crossfade */}
+            {secondaryImage && (
+              <motion.div
+                variants={{
+                  initial: { opacity: 0 },
+                  hover:   { opacity: 1 },
+                }}
+                transition={{ delay: 0.035, duration: 0.25, ease: "easeInOut" }}
+                className="w-full h-full absolute inset-0"
+              >
+                <img
+                  src={secondaryImage}
+                  alt={property.name}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            )}
+          </motion.div>
         ) : (
-          <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: "var(--color-fog)" }}>
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{ backgroundColor: "var(--color-fog)" }}
+          >
             <MapPin size={24} style={{ color: "var(--color-hint-of-grey)" }} />
           </div>
         )}
-        <div className="absolute top-3 left-3">
-          <span
-            className="text-xs px-2 py-1 rounded-full capitalize"
-            style={{ backgroundColor: "var(--color-canvas)", color: "var(--color-ink)" }}
-          >
-            {property.propertyType}
+
+        {/* property type badge */}
+        <div className="absolute top-3 left-3 z-10">
+          <span className={`text-sm bold px-3 py-1 rounded-full capitalize font-medium ${typeClass}`}>
+            {property.property_type ?? property.propertyType}
           </span>
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
+      {/* card body */}
+      <div className="w-full flex flex-col p-4 gap-1.5">
+
+        {/* name + price */}
         <div className="flex items-start justify-between gap-2">
-          <p className="text-sm bold leading-tight line-clamp-1" style={{ color: "var(--color-ink)" }}>
+          <h3
+            className="text-xl bold leading-snug line-clamp-1 flex-1"
+            style={{ color: "var(--color-ink)" }}
+          >
             {property.name}
-          </p>
+          </h3>
+          {lowestPrice !== null && (
+            <p className="text-base lg:text-lg bold shrink-0" style={{ color: "var(--color-ink)" }}>
+              {formatCurrency(lowestPrice)}
+              <span className="text-sm font-normal" style={{ color: "var(--color-light-steel)" }}>
+                /night
+              </span>
+            </p>
+          )}
         </div>
-        <p className="text-xs flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
+
+        {/* location */}
+        <p className="text-sm flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
           <MapPin size={10} />
           {property.address.city}, {property.address.country}
         </p>
-        <p className="text-sm bold mt-1" style={{ color: "var(--color-ink)" }}>
-          {formatCurrency(0)}{" "}
-          <span className=" text-xs" style={{ color: "var(--color-light-steel)" }}>/ night</span>
-        </p>
+
+        {/* star rating placeholder */}
+        <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-0.5">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <IoStar key={i} className="text-[13px] text-[#f5a623]" />
+            ))}
+          </div>
+          <span className="text-sm bold" style={{ color: "var(--color-ink)" }}>4.7</span>
+          <span className="text-sm" style={{ color: "var(--color-light-steel)" }}>87 reviews</span>
+        </div>
+
+        {/* amenities */}
+        {visibleAmenities.length > 0 && (
+          <div className="flex flex-wrap items-center gap-3 pt-0.5">
+            {visibleAmenities.map((a) => (
+              <AmenityIcon key={a} label={a} />
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </motion.div>
   );
 }
