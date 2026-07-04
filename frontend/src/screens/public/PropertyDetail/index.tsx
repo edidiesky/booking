@@ -3,20 +3,21 @@ import { ArrowLeft }           from "lucide-react";
 import { useNavigate }         from "react-router-dom";
 import Header                  from "@/components/common/Header";
 import Footer                  from "@/components/common/Footer";
-import PropertyImages          from "./PropertyImages";
-import PropertyInfo            from "./PropertyInfo";
+import PropertyGallery         from "./PropertyGallery";
+import PropertyHeader          from "./PropertyHeader";
+import PropertyDescription     from "./PropertyDescription";
+import PropertyAmenities       from "./PropertyAmenities";
+import PropertyCalendar        from "./PropertyCalendar";
 import BookingForm             from "./BookingForm";
 import { usePropertyDetail }   from "./hooks/usePropertyDetail";
 
-function PropertyDetailSkeleton() {
+function Skeleton() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10">
-      <div className="flex flex-col gap-6">
-        <div className="w-full h-[420px] rounded-2xl animate-pulse" style={{ backgroundColor: "#f2f0ed" }} />
-        <div className="h-8 w-2/3 rounded animate-pulse" style={{ backgroundColor: "#f2f0ed" }} />
-        <div className="h-4 w-1/2 rounded animate-pulse" style={{ backgroundColor: "#f2f0ed" }} />
-      </div>
-      <div className="h-[400px] rounded-2xl animate-pulse" style={{ backgroundColor: "#f2f0ed" }} />
+    <div className="flex flex-col gap-6 w-full animate-pulse">
+      <div className="w-full h-[420px] rounded-xl bg-[#f2f0ed]" />
+      <div className="h-10 w-2/3 rounded bg-[#f2f0ed]" />
+      <div className="h-4  w-1/2 rounded bg-[#f2f0ed]" />
+      <div className="h-32 w-full rounded bg-[#f2f0ed]" />
     </div>
   );
 }
@@ -25,11 +26,15 @@ export default function PropertyDetail() {
   const navigate = useNavigate();
   const {
     property, isLoading,
-    checkIn, setCheckIn, checkOut, setCheckOut,
-    roomsCount, setRoomsCount, guestCount, setGuestCount,
-    selectedRoomTypeId, setSelectedRoomTypeId,
+    dateRange, setDateRange,
+    nights,
+    selectedRoomType, setSelectedRoomType,
+    guestCount, setGuestCount,
+    totalAmount,
     handleBook, booking,
   } = usePropertyDetail();
+
+  const roomTypes = property?.roomTypes ?? [];
 
   return (
     <motion.div
@@ -40,37 +45,69 @@ export default function PropertyDetail() {
     >
       <Header />
 
-      <main className="flex-1">
-        <div className="mx-auto px-6 lg:px-8 py-10" style={{ maxWidth: "1280px" }}>
+      <main className="flex-1 pb-24 lg:pb-0">
+        <div className="w-full md:w-[90%] max-w-[1280px] mx-auto py-6 px-4 md:px-0">
+
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-sm mb-6 transition-opacity hover:opacity-60"
-            style={{ color: "var(--color-muted-stone)" }}
+            className="flex items-center gap-2 text-sm text-[#777b86] mb-6 hover:text-[#17191c] transition-colors"
           >
             <ArrowLeft size={16} /> Back to properties
           </button>
 
           {isLoading || !property ? (
-            <PropertyDetailSkeleton />
+            <Skeleton />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10">
-              <div className="flex flex-col gap-8">
-                <PropertyImages images={property.images} name={property.name} />
-                <PropertyInfo property={property} />
+            <>
+              {/* gallery - full width */}
+              <div className="w-full mb-10">
+                <PropertyGallery
+                  images={[
+                    ...(property.images ?? []),
+                    ...(roomTypes.flatMap((r) => r.images ?? [])),
+                  ]}
+                  name={property.name}
+                />
               </div>
 
-              <BookingForm
-                roomTypes={[]}
-                selectedRoomTypeId={selectedRoomTypeId}
-                onSelectRoomType={setSelectedRoomTypeId}
-                checkIn={checkIn}   onCheckIn={setCheckIn}
-                checkOut={checkOut} onCheckOut={setCheckOut}
-                roomsCount={roomsCount} onRoomsCount={setRoomsCount}
-                guestCount={guestCount} onGuestCount={setGuestCount}
-                onBook={handleBook}
-                isBooking={booking}
-              />
-            </div>
+              {/* two-column layout */}
+              <div className="w-full z-40 flex flex-col-reverse lg:grid lg:grid-cols-[1fr_400px] items-start gap-16">
+
+                {/* ── left column ── */}
+                <div className="flex flex-col gap-12 w-full">
+                  <PropertyHeader
+                    property={property}
+                    roomTypes={roomTypes}
+                  />
+
+                  <PropertyDescription property={property} />
+
+                  <PropertyAmenities property={property} />
+
+                  <PropertyCalendar
+                    nights={nights}
+                    name={property.name}
+                    dateRange={dateRange}
+                    onChange={setDateRange}
+                  />
+                </div>
+
+                {/* ── right column ── */}
+                <BookingForm
+                  roomTypes={roomTypes}
+                  selectedRoomType={selectedRoomType}
+                  onSelectRoomType={setSelectedRoomType}
+                  dateRange={dateRange}
+                  onDateChange={setDateRange}
+                  guestCount={guestCount}
+                  onGuestCount={setGuestCount}
+                  nights={nights}
+                  totalAmount={totalAmount}
+                  onBook={handleBook}
+                  isBooking={booking}
+                />
+              </div>
+            </>
           )}
         </div>
       </main>
