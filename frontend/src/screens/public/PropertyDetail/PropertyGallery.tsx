@@ -23,6 +23,8 @@ export default function PropertyGallery({ images, name }: Props) {
   }
 
   const count = images.length;
+  const rightSideImages = images.slice(1, 3);
+  const rightRowCount = Math.min(count, 4);
 
   return (
     <>
@@ -46,18 +48,16 @@ export default function PropertyGallery({ images, name }: Props) {
 
             <div
               className="grid gap-2 h-[210px]"
-              style={{
-                gridTemplateRows: `repeat(${Math.min(count - 1, 4)}, 1fr)`,
-              }}
+              style={{ gridTemplateRows: `repeat(${rightRowCount}, 1fr)` }}
             >
-              {images.slice(1, 5).map((src, i) => (
+              {rightSideImages.map((src, i) => (
                 <div
                   key={i}
                   className={`w-full h-[${210}px] overflow-hidden rounded-xl`}
                 >
                   <LazyImage src={src} alt={`${name} ${i + 2}`} />
                   {i === 3 && count > 5 && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-semibold">
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-bold">
                       +{count - 5} more
                     </div>
                   )}

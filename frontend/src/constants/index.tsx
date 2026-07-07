@@ -82,7 +82,7 @@ export const PasswordFormData: ProfilePasswordDataItem[] = [
 ];
 
 // API REQUEST ROUTE
-const BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
  
 // auth service (port 4001)
 export const AUTH_URL         = `${BASE_URL}/auth/api/v1/auth`;

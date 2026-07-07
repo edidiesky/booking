@@ -2,8 +2,8 @@ import { motion }                    from "framer-motion";
 import Title                         from "@/components/dashboard/common/Title";
 import ProfileSection                from "./ProfileSection";
 import TenantSettingsSection         from "./TenantSettingsSection";
-import CancellationPolicySection     from "./CancellationPolicySection";
 import { useAccount }                from "./hooks/useAccount";
+import CancellationPolicySection from "./CancellationPolicySection";
 
 function Section({ title, description, children }: {
   title: string; description: string; children: React.ReactNode;

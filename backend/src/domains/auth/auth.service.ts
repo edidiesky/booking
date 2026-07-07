@@ -294,25 +294,24 @@ export const authService = {
     return authService._buildTokens(user.id, user.user_type, name, user.tenant_id);
   },
 
-  async refreshToken(token: string): Promise<Pick<AuthTokens, "accessToken">> {
-    const raw = await redisClient.get(refreshKey(token));
-    if (!raw) throw AppError.unauthorized("Invalid or expired refresh token.");
+async refreshToken(token: string): Promise<{ accessToken: string; refreshToken: string }> {
+  const raw = await redisClient.get(refreshKey(token));
+  if (!raw) throw AppError.unauthorized("Invalid or expired refresh token.");
 
-    const data = JSON.parse(raw) as { userId: string; userType: UserType; name: string; email: string; tenantId?: string };
-    const accessToken = signAccessToken({
-      userId:   data.userId,
-      userType: data.userType,
-      name:     data.name,
-      tenantId: data.tenantId,
-    });
+  const data = JSON.parse(raw) as { userId: string; userType: UserType; name: string; email: string; tenantId?: string };
+  const accessToken = signAccessToken({
+    userId:   data.userId,
+    userType: data.userType,
+    name:     data.name,
+    tenantId: data.tenantId,
+  });
 
-    // Rotate refresh token
-    await redisClient.del(refreshKey(token));
-    const newToken = nanoid(32);
-    await redisClient.set(refreshKey(newToken), raw, "EX", REFRESH_EXPIRY_SEC);
+  await redisClient.del(refreshKey(token));
+  const newRefreshToken = nanoid(32);
+  await redisClient.set(refreshKey(newRefreshToken), raw, "EX", REFRESH_EXPIRY_SEC);
 
-    return { accessToken };
-  },
+  return { accessToken, refreshToken: newRefreshToken };
+},
 
   async logout(userId: string, accessToken: string): Promise<void> {
     let ttl = JWT_EXPIRY_SEC;

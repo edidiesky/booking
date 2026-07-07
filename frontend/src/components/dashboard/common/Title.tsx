@@ -12,7 +12,7 @@ export default function Title({ title, description, action }: Props) {
           {title}
         </h4>
         {description && (
-          <p className="text-sm mt-1 max-w-[520px] leading-[1.6]" style={{ color: "#64645f" }}>
+          <p className="text-sm lg:text-base medium mt-1 max-w-[520px]" style={{ color: "#64645f" }}>
             {description}
           </p>
         )}

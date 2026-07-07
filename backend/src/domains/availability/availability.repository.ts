@@ -27,32 +27,35 @@ export interface BookingLock {
 function ctx() { return requestContext.get() ?? {}; }
 
 export const availabilityRepository = {
-  async seedCalendar(data: {
+async seedCalendar(
+  data: {
     roomTypeId: string;
     tenantId:   string;
     startDate:  string;
     endDate:    string;
     totalRooms: number;
-  }): Promise<void> {
-    try {
-      await query(
-        `INSERT INTO availability_calendar (room_type_id, tenant_id, date, available_count)
-         SELECT $1, $2, generate_series($3::date, $4::date, '1 day'::interval)::date, $5
-         ON CONFLICT (room_type_id, date) DO NOTHING`,
-        [data.roomTypeId, data.tenantId, data.startDate, data.endDate, data.totalRooms]
-      );
-      logger.info("availability_calendar_seeded", {
-        event:      "availability_calendar_seeded",
-        roomTypeId: data.roomTypeId,
-        startDate:  data.startDate,
-        endDate:    data.endDate,
-        ...ctx(),
-      });
-    } catch (err) {
-      trackError("availability_seed_failed", "availability_repository", "medium");
-      throw err;
-    }
   },
+  client?: PoolClient,
+): Promise<void> {
+  const sql = `INSERT INTO availability_calendar (room_type_id, tenant_id, date, available_count)
+               SELECT $1, $2, generate_series($3::date, $4::date, '1 day'::interval)::date, $5
+               ON CONFLICT (room_type_id, date) DO NOTHING`;
+  const params = [data.roomTypeId, data.tenantId, data.startDate, data.endDate, data.totalRooms];
+  try {
+    if (client) await client.query(sql, params);
+    else        await query(sql, params);
+    logger.info("availability_calendar_seeded", {
+      event: "availability_calendar_seeded",
+      roomTypeId: data.roomTypeId,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      ...ctx(),
+    });
+  } catch (err) {
+    trackError("availability_seed_failed", "availability_repository", "medium");
+    throw err;
+  }
+},
 
   async getAvailability(roomTypeId: string, checkIn: string, checkOut: string): Promise<AvailabilitySlot[]> {
     try {

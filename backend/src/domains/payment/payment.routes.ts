@@ -7,6 +7,7 @@ import { authenticate, requireTenantMember } from "../../middleware/auth.middlew
 import { validate }        from "../../middleware/validate.middleware";
 import { AppError }        from "../../utils/AppError";
 import { PaymentGateway }  from "../../types";
+import { userRepository } from "../auth/auth.repository";
 
 const initPaymentSchema = Joi.object({
   bookingId:   Joi.string().uuid().required(),
@@ -19,12 +20,16 @@ export const InitializePaymentHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     if (!req.user) throw AppError.unauthorized();
 
-    const body = req.body as { bookingId: string; gateway: PaymentGateway; callbackUrl: string; phone?: string , email: string};
+    const body = req.body as { bookingId: string; gateway: PaymentGateway; callbackUrl: string; phone?: string };
+    const guest = await userRepository.findById(req.user.userId);
+    if (!guest?.email) {
+      throw AppError.badRequest("Your account has no email on file. Please update your profile before paying.");
+    }
 
     const result = await paymentService.initializePayment({
       bookingId:   body.bookingId,
       guestUserId: req.user.userId,
-      email:      body.email ?? "",
+      email:       guest.email,
       gateway:     body.gateway,
       callbackUrl: body.callbackUrl,
       phone:       body.phone,

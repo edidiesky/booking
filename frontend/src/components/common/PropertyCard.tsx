@@ -159,8 +159,8 @@ export default function PropertyCard({ property, index = 0 }: Props) {
         </div>
 
         {/* location */}
-        <p className="text-sm flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
-          <MapPin size={10} />
+        <p className="text-base bold flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
+          <MapPin size={16} />
           {property.address.city}, {property.address.country}
         </p>
 
@@ -171,8 +171,8 @@ export default function PropertyCard({ property, index = 0 }: Props) {
               <IoStar key={i} className="text-[13px] text-[#f5a623]" />
             ))}
           </div>
-          <span className="text-sm bold" style={{ color: "var(--color-ink)" }}>4.7</span>
-          <span className="text-sm" style={{ color: "var(--color-light-steel)" }}>87 reviews</span>
+          <span className="text-base bold" style={{ color: "var(--color-ink)" }}>4.7</span>
+          <span className="text-base" style={{ color: "var(--color-light-steel)" }}>87 reviews</span>
         </div>
 
         {/* amenities */}

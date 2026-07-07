@@ -7,6 +7,7 @@ import {
 import { Mutex } from "async-mutex";
 import type { RootState } from "@/redux/store";
 import { setCredentials, clearCredentials } from "@/redux/slices/authSlice";
+import { AUTH_URL } from "@/constants";
 const refreshMutex = new Mutex();
 
 const rawBaseQuery = fetchBaseQuery({
@@ -63,7 +64,7 @@ export const baseQueryWithReauth: BaseQueryFn<
 
     const refreshResult = await rawBaseQuery(
       {
-        url:    `/api/v1/auth/refresh-token`,
+        url:    `${AUTH_URL}/refresh`,
         method: "POST",
         body:   { refreshToken: storedRefreshToken },
         headers: { "Content-Type": "application/json" },

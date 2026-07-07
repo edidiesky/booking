@@ -1,9 +1,8 @@
 import { useDispatch, useSelector }          from "react-redux";
-import { NavLink, Link, useNavigate }        from "react-router-dom";
+import { Link, useNavigate }        from "react-router-dom";
 import {
   LuLayoutDashboard, LuBuilding, LuCalendar,
-  LuCreditCard, LuVault, LuUsers, LuSettings,
-  LuLogOut, LuShield,
+  LuCreditCard, LuVault, LuUsers, LuShield,
 } from "react-icons/lu";
 import { selectCurrentUser, clearCredentials } from "@/redux/slices/authSlice";
 import { useLogoutMutation }                 from "@/redux/services/authApi";

@@ -73,11 +73,11 @@ export function authorize(...roles: UserType[]) {
     if (!req.user) {
       res
         .status(401)
-        .json({ success: false, message: "Authentication required." });
+        .json({ success: false, message: "Authentication required. Please kindly register if you do not have an account or you can login." });
       return;
     }
     if (!roles.includes(req.user.userType)) {
-      res.status(403).json({ success: false, message: "Permission denied." });
+      res.status(403).json({ success: false, message: "Access denied.  Please kindly register if you do not have an account or you can login" });
       return;
     }
     next();

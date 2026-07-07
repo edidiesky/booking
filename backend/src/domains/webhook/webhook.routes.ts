@@ -24,7 +24,6 @@ export const HandleWebhookHandler = asyncHandler(
       ? (req.headers[signatureHeader] as string | undefined)
       : undefined;
 
-    // ACK immediately (Paystack/Flutterwave expect 200 within 5s)
     res.status(200).json({ received: true });
 
     // Process async - errors are logged internally by webhookService
@@ -40,7 +39,6 @@ export const HandleWebhookHandler = asyncHandler(
 
 const router = Router();
 
-// Single route for all gateways - /api/v1/webhooks/:gateway
 router.post("/:gateway", HandleWebhookHandler);
 
 export default router;

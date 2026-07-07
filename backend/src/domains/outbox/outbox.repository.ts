@@ -9,6 +9,7 @@ export type OutboxEventType =
   | "booking.cancelled"
   | "booking.checked_in"
   | "booking.checked_out"
+  | "booking.receipt.requested"   
   | "payment.confirmed"
   | "payment.failed"
   | "payment.initiated"

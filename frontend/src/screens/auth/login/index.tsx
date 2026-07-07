@@ -45,7 +45,7 @@ export default function Login() {
         </div>
 
         <button type="submit" disabled={isLoading}
-          className="w-full h-12 flex items-center justify-center text-sm rounded-full transition-opacity hover:opacity-80 disabled:opacity-50"
+          className="w-full h-12 flex items-center justify-center text-base bold rounded-full transition-opacity hover:opacity-80 disabled:opacity-50"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
           {isLoading ? "Signing in..." : "Sign in"}
         </button>

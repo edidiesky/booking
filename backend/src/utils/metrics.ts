@@ -76,6 +76,23 @@ export const outboxProcessedCounter = new client.Counter({
   registers:  [register],
 });
 
+
+export const circuitBreakerCounter = new client.Counter({
+  name: "booking_circuit_breaker_events_total",
+  help: "Circuit breaker state transitions and outcomes",
+  labelNames: ["name", "event"] as const,
+});
+
+export const idempotencyStateCounter = new client.Counter({
+  name: "booking_idempotency_state_total",
+  help: "Idempotency key state transitions",
+  labelNames: ["status"] as const,
+});
+
+export function trackCircuitBreakerEvent(name: string, event: string): void {
+  circuitBreakerCounter.inc({ name, event });
+}
+
 export const escrowHeldGauge = new client.Gauge({
   name:       "escrow_held_amount_ngn",
   help:       "Total amount currently held in escrow (NGN)",

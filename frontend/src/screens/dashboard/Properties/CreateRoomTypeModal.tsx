@@ -93,14 +93,14 @@ function ImageSection({ images, onChange }: ImageSectionProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-sm text-[#17191c]">Room Photos</span>
+      <span className="text-sm bold text-[#17191c]">Room Photos</span>
 
       {hasAny ? (
         <div className="grid grid-cols-4 gap-3">
           {images.map((src, i) => (
             <div
               key={src}
-              className="relative group aspect-square border border-[#e8e6e3] overflow-hidden"
+              className="relative group aspect-square border rounded-2xl border-[#e8e6e3] overflow-hidden"
             >
               <img
                 src={src}
@@ -121,7 +121,7 @@ function ImageSection({ images, onChange }: ImageSectionProps) {
           {pending.map((p) => (
             <div
               key={p.preview}
-              className="relative aspect-square border border-[#e8e6e3] overflow-hidden"
+              className="relative aspect-square border rounded-2xl border-[#e8e6e3] overflow-hidden"
             >
               <img
                 src={p.preview}
@@ -396,7 +396,7 @@ export default function CreateRoomTypeModal({
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm text-[#17191c]">Status</label>
+                <label className="text-sm bold text-[#17191c]">Status</label>
                 <Select
                   value={form.status}
                   onValueChange={(v) =>
@@ -464,7 +464,7 @@ export default function CreateRoomTypeModal({
           <button
             onClick={handleSave}
             disabled={isBusy}
-            className="bg-[#17191c] text-white text-sm px-6 h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="bg-[#17191c] text-white text-sm rounded-full px-6 h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {isBusy ? "Saving..." : "Save room type"}
           </button>

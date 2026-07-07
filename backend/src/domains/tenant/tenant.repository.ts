@@ -24,20 +24,20 @@ export const tenantRepository = {
     return queryOne<Tenant>(`SELECT * FROM tenants WHERE id = $1`, [id]);
   },
 
-  async create(data: {
-    slug:           string;
-    name:           string;
-    ownerUserId:    string;
-    platformFeePct?: number;
-  }, client?: PoolClient): Promise<Tenant> {
-    const sql = `INSERT INTO tenants (slug, name, owner_user_id, platform_fee_pct)
-                 VALUES ($1, $2, $3, $4) RETURNING *`;
-    const params = [data.slug, data.name, data.ownerUserId, data.platformFeePct ?? 10.00];
-    const row = client
-      ? (await client.query(sql, params)).rows[0] as Tenant
-      : await queryOne<Tenant>(sql, params);
-    return row!;
-  },
+async create(data: {
+  slug:           string;
+  name:           string;
+  ownerUserId:    string;
+  platformFeePct?: number;
+}, client?: PoolClient): Promise<Tenant> {
+  const sql = `INSERT INTO tenants (slug, name, owner_user_id, platform_fee_pct, status)
+               VALUES ($1, $2, $3, $4, 'active') RETURNING *`;
+  const params = [data.slug, data.name, data.ownerUserId, data.platformFeePct ?? 10.00];
+  const row = client
+    ? (await client.query(sql, params)).rows[0] as Tenant
+    : await queryOne<Tenant>(sql, params);
+  return row!;
+},
 
   async updateStatus(id: string, status: TenantStatus): Promise<Tenant | null> {
     return queryOne<Tenant>(

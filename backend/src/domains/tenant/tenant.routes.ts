@@ -56,6 +56,7 @@ const UpdateCancellationPolicyHandler = asyncHandler(async (req: Request, res: R
   res.status(200).json({ success: true, data: updated });
 });
 
+
 const ListTenantsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const tenants = await tenantRepository.listAll(
     Number(req.query["page"] ?? 1),

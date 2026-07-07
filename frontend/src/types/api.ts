@@ -190,7 +190,7 @@ export interface Property {
   tenantId:      string;
   name:          string;
   description:   string;
-  property_type:  PropertyType;
+  propertyType:  PropertyType;
   status:        PropertyStatus;
   address:       PropertyAddress;
   amenities:     string[];
@@ -200,11 +200,12 @@ export interface Property {
   roomTypes:     RoomType[];   // add this
   createdAt:     string;
   updatedAt:     string;
+  property_type?:string
 }
 export interface CreatePropertyPayload {
   name:          string;
   description:   string;
-  property_type:  PropertyType;
+  propertyType:  PropertyType;
   address:       PropertyAddress;
   amenities?:    string[];
   images?:       string[];
@@ -235,7 +236,7 @@ export interface RoomType {
   name:            string;
   description:     string;
   maxOccupancy:    number;
-  basePriceNgn:    number;
+  base_price_ngn:    number;
   quantity:        number;
   status:          RoomStatus;
   amenities:       string[];
@@ -290,9 +291,6 @@ export interface Booking {
   bookingRef:       string;
   status:           BookingStatus;
   guestUserId:      string;
-  tenantId:         string;
-  propertyId:       string;
-  roomTypeId:       string;
   checkIn:          string;
   checkOut:         string;
   nights:           number;
@@ -301,9 +299,14 @@ export interface Booking {
   totalAmountNgn:   number;
   platformFeeNgn:   number;
   hostPayoutNgn:    number;
+  propertyId:       string;
+  roomTypeId:       string;
+  tenantId:         string;
+  sessionId:        string;
   specialRequests?: string;
-  sessionId?:       string;
-  createdAt:        string;
+  createdAt:        Date;
+  propertyName?:    string;
+  roomTypeImage?:   string;
 }
 
 export interface InitiateBookingPayload {
@@ -349,12 +352,12 @@ export type PaymentGateway = "paystack" | "flutterwave";
 
 export interface Payment {
   id:            string;
-  bookingId:     string;
+  booking_id:     string;
   tenantId:      string;
   guestUserId:   string;
   gateway:       PaymentGateway;
   transactionId: string;
-  amountNgn:     number;
+  amount_ngn:     number;
   status:        PaymentStatus;
   redirectUrl?:  string;
   paidAt?:       string;

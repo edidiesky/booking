@@ -1,10 +1,13 @@
-import { Link }      from "react-router-dom";
+import { Link }        from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Calendar, User } from "lucide-react";
 import { selectCurrentUser, selectIsAuthenticated } from "@/redux/slices/authSlice";
+import AccountDropdown from "@/components/common/AccountDropdown";
 
 export default function Header() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const currentUser     = useSelector(selectCurrentUser);
+  const isHost          = currentUser?.userType.startsWith("host:") ?? false;
 
   return (
     <nav
@@ -16,12 +19,12 @@ export default function Header() {
           Booking
         </Link>
 
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-4">
           {["Properties", "How it works", "About"].map((item) => (
             <Link
               key={item}
               to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="text-base lg:text-lg transition-opacity hover:opacity-60"
+              className="text-sm lg:text-base transition-opacity px-4 py-2 rounded-full hover:bg-[#f5f5f3]"
               style={{ color: "var(--color-ink)" }}
             >
               {item}
@@ -31,25 +34,36 @@ export default function Header() {
 
         <div className="flex items-center gap-3">
           {isAuthenticated && currentUser ? (
-            <Link
-              to={currentUser.userType.startsWith("host:") ? "/dashboard" : "/trips"}
-              className="h-9 px-5 text-base lg:text-base  transition-opacity hover:opacity-80 flex items-center rounded-full"
-              style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
-            >
-              {currentUser.userType.startsWith("host:") ? "Dashboard" : "My Trips"}
-            </Link>
+            isHost ? (
+              <Link
+                to="/dashboard"
+                className="h-9 px-5 text-base transition-opacity hover:opacity-80 flex items-center rounded-full"
+                style={{ backgroundColor: "#f5f5f3", color: "var(--color-canvas)" }}
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <AccountDropdown
+                triggerLabel="My Account"
+                profilePath="/profile"
+                items={[
+                  { label: "My Trips", to: "/trips",   icon: Calendar, group: 0 },
+                  { label: "Profile",  to: "/profile",  icon: User,     group: 0 },
+                ]}
+              />
+            )
           ) : (
             <>
               <Link
                 to="/login"
-                className="h-9 px-5 text-base lg:text-base  border transition-opacity hover:opacity-70 flex items-center rounded-full"
-                style={{ color: "var(--color-ink)", borderColor: "var(--color-ink)" }}
+                className="h-9 px-5 text-base transition-opacity hover:opacity-70 flex items-center rounded-full"
+                style={{ color: "var(--color-ink)" }}
               >
                 Log in
               </Link>
               <Link
                 to="/onboarding"
-                className="h-9 px-5 text-base lg:text-base  transition-opacity hover:opacity-80 flex items-center rounded-full"
+                className="h-9 px-5 text-base transition-opacity hover:opacity-80 flex items-center rounded-full"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 Get started
@@ -61,3 +75,4 @@ export default function Header() {
     </nav>
   );
 }
+

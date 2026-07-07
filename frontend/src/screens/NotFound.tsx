@@ -16,8 +16,8 @@ export default function NotFound() {
             The page you're looking for doesn't exist or has been moved. If you followed a link, it may be outdated.
           </p>
         </div>
-        <div className="p-4 flex flex-col gap-3 border rounded-xl" style={{ borderColor: "var(--color-stone-surface)", backgroundColor: "var(--color-fog)" }}>
-          <p className="text-xs  uppercase" style={{ color: "var(--color-muted-stone)" }}>Try one of these instead</p>
+        <div className="p-4 flex flex-col gap-3 border rounded-xl" style={{backgroundColor: "var(--color-fog)" }}>
+          <p className="text-xs medium uppercase" style={{ color: "var(--color-muted-stone)" }}>Try one of these instead</p>
           {[
             "Check the URL for typos",
             "Go back to the previous page",
@@ -25,7 +25,7 @@ export default function NotFound() {
           ].map((s, i) => (
             <div key={s} className="flex items-start gap-3">
               <span className="w-8 h-8 flex items-center justify-center text-sm rounded-xl shrink-0 mt-0.5" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>{i + 1}</span>
-              <p className="text-base" style={{ color: "var(--color-muted-stone)" }}>{s}</p>
+              <p className="text-base medium" style={{ color: "var(--color-muted-stone)" }}>{s}</p>
             </div>
           ))}
         </div>

@@ -41,6 +41,22 @@ export const CreateRoomTypeHandler = asyncHandler(async (req: Request, res: Resp
   res.status(201).json({ success: true, data });
 });
 
+export const ListPublicPropertiesHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const q = req.query as Record<string, string>;
+  const results = await propertyService.searchProperties({
+    search:       q["search"],
+    propertyType: q["propertyType"] as PropertyType | undefined,
+    city:         q["city"],
+    minPrice:     q["minPrice"] ? Number(q["minPrice"]) : undefined,
+    maxPrice:     q["maxPrice"] ? Number(q["maxPrice"]) : undefined,
+    guests:       q["guests"] ? Number(q["guests"]) : undefined,
+    sort:         q["sort"] as "price_asc" | "price_desc" | "newest" | undefined,
+    page:         Number(q["page"] ?? 1),
+    limit:        Number(q["limit"] ?? 20),
+  });
+  res.status(200).json({ success: true, data: results });
+});
+
 export const SeedCalendarHandler = asyncHandler(async (req: Request, res: Response) => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
   const { roomTypeId }       = req.params as Record<string, string>;
@@ -69,13 +85,6 @@ export const DeletePropertyHandler = asyncHandler(async (req, res) => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
   await propertyRepository.deleteProperty(req.params["propertyId"] as string, req.tenantId);
   res.status(200).json({ success: true, message: "Property deleted." });
-});
-
-export const ListPublicPropertiesHandler = asyncHandler(async (req, res) => {
-  const page  = Number(req.query["page"]  ?? 1);
-  const limit = Number(req.query["limit"] ?? 20);
-  const data  = await propertyRepository.listPublicPropertiesWithRoomTypes(page, limit);
-  res.status(200).json({ success: true, data });
 });
 
 export const GetTenantPropertiesHandler = asyncHandler(async (req, res) => {

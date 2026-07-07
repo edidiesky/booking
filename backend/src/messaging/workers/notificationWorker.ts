@@ -13,6 +13,7 @@ import { requestContext }            from "../../context/requestContext";
 import { randomUUID }               from "crypto";
 import logger                        from "../../utils/logger";
 import { trackError }                from "../../utils/metrics";
+import { bookingReceiptHandler } from "../../infra/handlers/booking-receipt.handler";
 
 const HANDLER_MAP: Record<string, BaseNotificationHandler> = {
   [ROUTING_KEYS.NOTIFY_BOOKING_CONFIRMED]:  bookingConfirmedHandler,
@@ -23,27 +24,28 @@ const HANDLER_MAP: Record<string, BaseNotificationHandler> = {
   [ROUTING_KEYS.NOTIFY_PAYMENT_FAILED]:     paymentFailedHandler,
   [ROUTING_KEYS.NOTIFY_AUTH_OTP]:           authOtpHandler,
   [ROUTING_KEYS.NOTIFY_AUTH_REGISTERED]:    authRegisteredHandler,
+  [ROUTING_KEYS.BOOKING_RECEIPT_REQUESTED]: bookingReceiptHandler,
 };
 
-const NOTIFY_QUEUES: Record<string, string> = {
-  [ROUTING_KEYS.NOTIFY_BOOKING_CONFIRMED]:   "notify.q.booking.confirmed",
-  [ROUTING_KEYS.NOTIFY_BOOKING_CANCELLED]:   "notify.q.booking.cancelled",
-  [ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_IN]:  "notify.q.booking.checkin",
-  [ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_OUT]: "notify.q.booking.checkout",
-  [ROUTING_KEYS.NOTIFY_PAYMENT_CONFIRMED]:   "notify.q.payment.confirmed",
-  [ROUTING_KEYS.NOTIFY_PAYMENT_FAILED]:      "notify.q.payment.failed",
-  [ROUTING_KEYS.NOTIFY_AUTH_OTP]:            "notify.q.auth.otp",
-  [ROUTING_KEYS.NOTIFY_AUTH_REGISTERED]:     "notify.q.auth.registered",
+const NOTIFY_QUEUES: Record<string, { queue: string; exchange: string }> = {
+  [ROUTING_KEYS.NOTIFY_BOOKING_CONFIRMED]:   { queue: "notify.q.booking.confirmed",   exchange: EXCHANGES.NOTIFICATION },
+  [ROUTING_KEYS.NOTIFY_BOOKING_CANCELLED]:   { queue: "notify.q.booking.cancelled",   exchange: EXCHANGES.NOTIFICATION },
+  [ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_IN]:  { queue: "notify.q.booking.checkin",     exchange: EXCHANGES.NOTIFICATION },
+  [ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_OUT]: { queue: "notify.q.booking.checkout",    exchange: EXCHANGES.NOTIFICATION },
+  [ROUTING_KEYS.NOTIFY_PAYMENT_CONFIRMED]:   { queue: "notify.q.payment.confirmed",   exchange: EXCHANGES.NOTIFICATION },
+  [ROUTING_KEYS.NOTIFY_PAYMENT_FAILED]:      { queue: "notify.q.payment.failed",      exchange: EXCHANGES.NOTIFICATION },
+  [ROUTING_KEYS.NOTIFY_AUTH_OTP]:            { queue: "notify.q.auth.otp",            exchange: EXCHANGES.NOTIFICATION },
+  [ROUTING_KEYS.NOTIFY_AUTH_REGISTERED]:     { queue: "notify.q.auth.registered",     exchange: EXCHANGES.NOTIFICATION },
+  [ROUTING_KEYS.BOOKING_RECEIPT_REQUESTED]:  { queue: "notify.q.booking.receipt",     exchange: EXCHANGES.BOOKING },  
 };
-
 export async function startNotificationWorker(): Promise<void> {
   const connection = getRabbitMQConnection();
   const channel    = await connection.createChannel();
   await channel.prefetch(5);
 
-  for (const [routingKey, queue] of Object.entries(NOTIFY_QUEUES)) {
+   for (const [routingKey, { queue, exchange }] of Object.entries(NOTIFY_QUEUES)) {
     await channel.assertQueue(queue, { durable: true });
-    await channel.bindQueue(queue, EXCHANGES.NOTIFICATION, routingKey);
+   await channel.bindQueue(queue, exchange, routingKey);
 
     await channel.consume(queue, async (msg: amqp.ConsumeMessage | null) => {
       if (!msg) return;

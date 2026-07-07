@@ -31,16 +31,6 @@ interface AvailabilityResponse {
 
 export const propertyApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getProperties: builder.query<
-      PropertiesResponse,
-      { page?: number; limit?: number }
-    >({
-      query: ({ page = 1, limit = 20 } = {}) => ({
-        url: `${PROPERTY_URL}?page=${page}&limit=${limit}`,
-      }),
-      providesTags: ["Property"],
-    }),
-
     getMyProperties: builder.query<
       PropertiesResponse,
       { page?: number; limit?: number }
@@ -73,6 +63,30 @@ export const propertyApi = apiSlice.injectEndpoints({
         { type: "Property", id },
         "Property",
       ],
+    }),
+
+    getProperties: builder.query<
+      { success: boolean; data: PropertyWithRoomTypes[] },
+      {
+        search?: string;
+        propertyType?: string;
+        city?: string;
+        minPrice?: number;
+        maxPrice?: number;
+        guests?: number;
+        sort?: string;
+        page: number;
+        limit: number;
+      }
+    >({
+      query: (params) => {
+        const qs = new URLSearchParams();
+        Object.entries(params).forEach(([k, v]) => {
+          if (v !== undefined && v !== "") qs.set(k, String(v));
+        });
+        return { url: `${PROPERTY_URL}?${qs.toString()}` };
+      },
+      providesTags: ["Property"],
     }),
 
     createRoomType: builder.mutation<

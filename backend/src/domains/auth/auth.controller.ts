@@ -33,7 +33,7 @@ export const LoginHandler = asyncHandler(async (req: Request, res: Response): Pr
 export const RefreshTokenHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { refreshToken } = req.body as { refreshToken: string };
   const result = await authService.refreshToken(refreshToken);
-  res.status(200).json({ success: true, data: result });
+  res.status(200).json({ success: true, accessToken: result.accessToken, refreshToken: result.refreshToken });
 });
 
 export const LogoutHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {

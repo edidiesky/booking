@@ -1,17 +1,26 @@
 import { motion }           from "framer-motion";
-import { useSelector }      from "react-redux";
-import { useDispatch }      from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { Link }             from "react-router-dom";
 import Header               from "@/components/common/Header";
-import Footer               from "@/components/common/Footer";
-import BookingCard          from "./BookingCard";
-import CancelBookingModal   from "./CancelBookingModal";
-import { useMyBookings }    from "./hooks/useMyBookings";
-import { selectCurrentUser } from "@/redux/slices/authSlice";
+import Footer                from "@/components/common/Footer";
+import BookingCard           from "./BookingCard";
+import CancelBookingModal    from "./CancelBookingModal";
+import { useMyBookings }     from "./hooks/useMyBookings";
 import { selectModal, closeModal } from "@/redux/slices/modalSlice";
+import { Input } from "@/components/ui/input";
+
+function CardSkeleton() {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="rounded-xl animate-pulse bg-[#f2f0ed]" style={{ aspectRatio: "4/5" }} />
+      <div className="h-4 w-3/4 rounded animate-pulse bg-[#f2f0ed]" />
+      <div className="h-3 w-1/2 rounded animate-pulse bg-[#f2f0ed]" />
+    </div>
+  );
+}
 
 export default function MyBookings() {
   const dispatch    = useDispatch();
-  const currentUser = useSelector(selectCurrentUser);
   const cancelModal = useSelector(selectModal("cancelBooking"));
 
   const {
@@ -19,6 +28,8 @@ export default function MyBookings() {
     search, setSearch,
     selected, handleCancelOpen, handleCancel,
   } = useMyBookings();
+
+  const hasBookings = bookings.length > 0;
 
   return (
     <motion.div
@@ -29,44 +40,52 @@ export default function MyBookings() {
     >
       <Header />
 
-      <main className="flex-1">
-        <div className="mx-auto px-6 lg:px-8 py-12" style={{ maxWidth: "900px" }}>
-          <div className="flex flex-col gap-2 mb-8">
-            <h1 className="text-2xl bold"
-                style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
-              My Trips
-            </h1>
-            <p className="text-sm" style={{ color: "var(--color-light-steel)" }}>
-              Welcome back, {currentUser?.firstName}. Here are your bookings.
-            </p>
-          </div>
+      <main className="flex-1 py-20 pb-12">
+        <div className="w-[90%] max-w-[1100px] mx-auto flex flex-col gap-12">
 
-          <div className="mb-6">
-            <input
-              type="text"
-              placeholder="Search by booking reference..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full max-w-xs h-9 px-3 text-sm border outline-none"
-              style={{ borderColor: "#e8e6e3", color: "var(--color-ink)" }}
-            />
-          </div>
+          {hasBookings && (
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-3xl flex-1 md:text-4xl bold text-[#17191c]">
+                My Reservations
+                <span className="block pt-3 font-normal text-base md:text-lg text-[#4c4c4c]">
+                  Here is your list of booked stays.
+                </span>
+              </h3>
+              <div className=" flex items-end justify-end">
+                <Input
+                type="text"
+                placeholder="Search by reference..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="max-w-[400px] h-9 px-3 text-sm border border-[#e8e6e3] outline-none rounded-lg"
+              />
+              </div>
+            </div>
+          )}
 
           {isLoading ? (
-            <div className="flex flex-col gap-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="h-36 rounded-2xl animate-pulse"
-                     style={{ backgroundColor: "#f2f0ed" }} />
-              ))}
+            <div className="w-full gap-8 grid md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} />)}
             </div>
-          ) : bookings.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <p className="text-sm" style={{ color: "var(--color-hint-of-grey)" }}>
-                {search ? `No bookings matching "${search}"` : "You have no bookings yet."}
-              </p>
+          ) : !hasBookings ? (
+            <div className="w-full flex flex-col gap-4 justify-center items-center py-12">
+              <div className="w-[120px] h-[120px] rounded-full bg-[#f2f0ed] flex items-center justify-center">
+                <span className="text-4xl">📭</span>
+              </div>
+              <div className="flex flex-col w-full gap-3 justify-center items-center">
+                <h1 className="text-[#17191c] leading-tight text-2xl md:text-3xl text-center font-bold">
+                  You have no reserved stays yet
+                </h1>
+                <Link
+                  to="/properties"
+                  className="text-xs md:text-sm font-normal pb-1 pt-3 w-fit border-b border-[#17191c] uppercase tracking-wider text-[#17191c]"
+                >
+                  Visit our properties collection
+                </Link>
+              </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-4">
+            <div className="w-full gap-8 grid md:grid-cols-2 lg:grid-cols-3">
               {bookings.map((b) => (
                 <BookingCard key={b.bookingId} booking={b} onCancel={handleCancelOpen} />
               ))}
@@ -79,6 +98,7 @@ export default function MyBookings() {
         <CancelBookingModal
           bookingRef={selected.bookingRef}
           isLoading={cancelling}
+          isOpen={cancelModal.open}
           onConfirm={handleCancel}
           onClose={() => dispatch(closeModal("cancelBooking"))}
         />
