@@ -19,3 +19,7 @@ udemy-video.pem
 run_production.sh
 k8s
 vault.sh
+
+dist/
+node_modules/
+*.tsbuildinfo
