@@ -393,7 +393,7 @@ const migrations: string[] = [
   CREATE INDEX IF NOT EXISTS idx_notif_user        ON notifications(user_id, created_at DESC);`,
   /* 022 booking receipts */
   `ALTER TABLE bookings ADD COLUMN IF NOT EXISTS receipt_url TEXT`,
-  
+
   /* 023 idempotency keys */
   `
   DO $$ BEGIN
@@ -417,6 +417,41 @@ const migrations: string[] = [
   CREATE INDEX IF NOT EXISTS idx_idempotency_expires ON idempotency_keys(expires_at);
   CREATE INDEX IF NOT EXISTS idx_idempotency_status  ON idempotency_keys(status, created_at);
   `,
+
+  // 24 Maintenance
+
+  `
+    CREATE TABLE IF NOT EXISTS maintenance_requests (
+      id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      room_type_id UUID         NOT NULL REFERENCES room_types(id),
+      tenant_id    UUID,
+      title        VARCHAR(200) NOT NULL,
+      description  TEXT,
+      priority     VARCHAR(20)  NOT NULL DEFAULT 'medium',
+      status       VARCHAR(20)  NOT NULL DEFAULT 'open',
+      resolved_at  TIMESTAMPTZ,
+      created_at   TIMESTAMPTZ  NOT NULL DEFAULT now(),
+      updated_at   TIMESTAMPTZ  NOT NULL DEFAULT now()
+    );
+    CREATE INDEX IF NOT EXISTS idx_maintenance_room_type ON maintenance_requests(room_type_id, status);
+  `,
+
+  /** Rentals */
+  `
+  CREATE TABLE IF NOT EXISTS renters (
+    id                       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    owner_id                 UUID         NOT NULL REFERENCES tenants(id),
+    full_name                VARCHAR(200) NOT NULL,
+    email                    VARCHAR(255),
+    phone                    VARCHAR(30),
+    emergency_contact_name   VARCHAR(200),
+    emergency_contact_phone  VARCHAR(30),
+    created_at               TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    updated_at               TIMESTAMPTZ  NOT NULL DEFAULT now()
+  );
+  ALTER TABLE renters ADD COLUMN IF NOT EXISTS guest_user_id UUID REFERENCES users(id);
+  CREATE UNIQUE INDEX IF NOT EXISTS idx_renters_owner_guest ON renters(owner_id, guest_user_id) WHERE guest_user_id IS NOT NULL;
+`,
 ];
 
 export async function runMigrations(): Promise<void> {
