@@ -10,6 +10,8 @@ import type {
   AvailabilitySlot,
   BlockDatesPayload,
   ApiSuccessResponse,
+  PropertyWithRoomTypes,
+  RoomTypeWithOccupancy,
 } from "@/types/api";
 
 interface PropertiesResponse {
@@ -27,6 +29,29 @@ interface RoomTypeResponse {
 interface AvailabilityResponse {
   success: boolean;
   data: AvailabilitySlot[];
+}
+
+interface RoomTypeDetailResponse {
+  success: boolean;
+  data: {
+    roomType: RoomType;
+    occupant: { guest_name: string; check_out: string; status: string } | null;
+  };
+}
+
+interface PropertyDetailResponse {
+  success: boolean;
+  data: {
+    property: Property;
+    roomTypes: RoomTypeWithOccupancy[];
+    summary: {
+      total: number;
+      occupied: number;
+      vacant: number;
+      maintenance: number;
+      revenue: number;
+    };
+  };
 }
 
 export const propertyApi = apiSlice.injectEndpoints({
@@ -139,6 +164,20 @@ export const propertyApi = apiSlice.injectEndpoints({
       query: (id) => ({ url: `${PROPERTY_URL}/${id}`, method: "DELETE" }),
       invalidatesTags: ["Property"],
     }),
+
+    getPropertyDetail: builder.query<PropertyDetailResponse, string>({
+      query: (propertyId) => ({
+        url: `${PROPERTY_URL}/dashboard/${propertyId}`,
+      }), // changed from bare :propertyId
+      providesTags: (_result, _error, id) => [{ type: "Property", id }],
+    }),
+
+    getRoomTypeDetail: builder.query<RoomTypeDetailResponse, string>({
+      query: (roomTypeId) => ({
+        url: `${PROPERTY_URL}/room-types/${roomTypeId}`,
+      }),
+      providesTags: (_result, _error, id) => [{ type: "Property", id }],
+    }),
   }),
 });
 
@@ -153,4 +192,6 @@ export const {
   useBlockDatesMutation,
   useDeletePropertyMutation,
   useGetMyPropertiesQuery,
+  useGetPropertyDetailQuery,
+  useGetRoomTypeDetailQuery,
 } = propertyApi;
