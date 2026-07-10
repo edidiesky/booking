@@ -307,6 +307,7 @@ export interface Booking {
   createdAt:        Date;
   propertyName?:    string;
   roomTypeImage?:   string;
+  receiptUrl?:string;
 }
 
 export interface InitiateBookingPayload {
@@ -349,6 +350,18 @@ export interface TenantBookingQueryParams {
 
 export type PaymentStatus  = "pending" | "success" | "failed" | "refunded";
 export type PaymentGateway = "paystack" | "flutterwave";
+export interface PaymentSummary {
+  id:             string;
+  booking_id:     string;
+  gateway:        PaymentGateway;
+  transaction_id: string | null;
+  amount_ngn:     string;
+  status:         PaymentStatus;
+  channel:        string | null;
+  paid_at:        string | null;
+  created_at:     string;
+  booking_ref:    string;
+}
 
 export interface Payment {
   id:            string;
@@ -362,6 +375,8 @@ export interface Payment {
   redirectUrl?:  string;
   paidAt?:       string;
   createdAt:     string;
+  receiptUrl?:string;
+  totalAmountNgn:number
 }
 
 export interface InitializePaymentPayload {
@@ -555,4 +570,15 @@ export interface RoleListResponse {
 export interface PermissionListResponse {
   success: boolean;
   data:    Permission[];
+}
+
+export interface RoomTypeWithOccupancy extends RoomType {
+  occupancy_status:         "occupied" | "vacant" | "maintenance";
+  active_maintenance_count: number;
+  current_tenant_name:      string | null;
+}
+
+export interface PropertyWithRoomTypes extends Property {
+  roomTypes: RoomType[];
+  fromPrice?: number | null;
 }
