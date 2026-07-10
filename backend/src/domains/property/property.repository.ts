@@ -1,5 +1,5 @@
 import { PoolClient } from "pg";
-import { query, queryOne } from "../../config/database";
+import { query, queryOne } from "@booking/shared";
 import {
   PropertyType,
   PropertyStatus,
@@ -33,6 +33,13 @@ export interface PropertySearchFilters {
   sort?: "price_asc" | "price_desc" | "newest";
   page: number;
   limit: number;
+}
+
+
+export interface RoomTypeWithOccupancy extends RoomType {
+  occupancy_status:         "occupied" | "vacant" | "maintenance";
+  active_maintenance_count: number;
+  current_tenant_name:      string | null;
 }
 
 export interface RoomType {
@@ -349,4 +356,30 @@ export const propertyRepository = {
       [propertyId],
     );
   },
+  async listRoomTypesWithOccupancy(propertyId: string): Promise<RoomTypeWithOccupancy[]> {
+  return query<RoomTypeWithOccupancy>(
+    `SELECT
+       rt.*,
+       CASE
+         WHEN m.open_count > 0 THEN 'maintenance'
+         WHEN l.lease_id IS NOT NULL THEN 'occupied'
+         ELSE 'vacant'
+       END AS occupancy_status,
+       COALESCE(m.open_count, 0) AS active_maintenance_count
+     FROM room_types rt
+     LEFT JOIN LATERAL (
+       SELECT id AS lease_id FROM bookings
+       WHERE room_type_id = rt.id AND status IN ('confirmed', 'checked_in')
+         AND check_in <= CURRENT_DATE AND check_out >= CURRENT_DATE
+       LIMIT 1
+     ) l ON true
+     LEFT JOIN LATERAL (
+       SELECT COUNT(*) AS open_count FROM maintenance_requests
+       WHERE room_type_id = rt.id AND status IN ('open', 'in_progress')
+     ) m ON true
+     WHERE rt.property_id = $1
+     ORDER BY rt.name ASC`,
+    [propertyId],
+  );
+},
 };
