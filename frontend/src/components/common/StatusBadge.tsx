@@ -1,6 +1,6 @@
 import type { BookingStatus, PaymentStatus, EscrowStatus, NotificationStatus, PropertyStatus } from "@/types/api";
 
-type AnyStatus = BookingStatus | PaymentStatus | EscrowStatus | NotificationStatus;
+type AnyStatus = BookingStatus | PaymentStatus | EscrowStatus | NotificationStatus | PropertyStatus;
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
   // BookingStatus
@@ -17,17 +17,23 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
   failed:          { label: "Failed",           color: "#991b1b", bg: "#fee2e2" },
 
   // EscrowStatus
-  held:                { label: "Held",               color: "#1e40af", bg: "#dbeafe" },
-  released:            { label: "Released",           color: "#166534", bg: "#dcfce7" },
-  partially_refunded:  { label: "Part. Refunded",     color: "#5b21b6", bg: "#ede9fe" },
+  held:                { label: "Held",           color: "#1e40af", bg: "#dbeafe" },
+  released:            { label: "Released",       color: "#166534", bg: "#dcfce7" },
+  partially_refunded:  { label: "Part. Refunded", color: "#5b21b6", bg: "#ede9fe" },
 
   // NotificationStatus
   sent:            { label: "Sent",             color: "#166534", bg: "#dcfce7" },
   skipped:         { label: "Skipped",          color: "#374151", bg: "#f3f4f6" },
+
+  // PropertyStatus
+  active:          { label: "Active",           color: "#166534", bg: "#dcfce7" },
+  draft:            { label: "Draft",            color: "#374151", bg: "#f3f4f6" },
+  paused:           { label: "Paused",           color: "#92400e", bg: "#fef3c7" },
+  archived:         { label: "Archived",         color: "#991b1b", bg: "#fee2e2" },
 };
 
 interface Props {
-  status: AnyStatus & PropertyStatus;
+  status: AnyStatus;
   size?:  "sm" | "md";
 }
 
