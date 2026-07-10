@@ -1,39 +1,52 @@
-import { useState }              from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import PropertyTableRow          from "./PropertyTableRow";
-import PropertyModal             from "./PropertyModal";
-import CreateRoomTypeModal       from "./CreateRoomTypeModal";
-import RoomTypesDrawer           from "./RoomTypesDrawer";
-import DeletePropertyModal       from "./DeletePropertyModal";
-import { useProperties }         from "./hooks/useProperties";
-import { ChartSelect }           from "@/components/common/charts/Chartselect";
+import PropertyTableRow from "./PropertyTableRow";
+import PropertyModal from "./PropertyModal";
+import CreateRoomTypeModal from "./CreateRoomTypeModal";
+import RoomTypesDrawer from "./RoomTypesDrawer";
+import DeletePropertyModal from "./DeletePropertyModal";
+import { useProperties } from "./hooks/useProperties";
+import { ChartSelect } from "@/components/common/charts/Chartselect";
 import type { PropertyStatus } from "@/types/api";
+import { useNavigate } from "react-router-dom";
 
 const STATUS_OPTIONS = [
-  { label: "All statuses", value: ""         },
-  { label: "Active",       value: "active"   },
-  { label: "Draft",        value: "draft"    },
-  { label: "Paused",       value: "paused"   },
-  { label: "Archived",     value: "archived" },
+  { label: "All statuses", value: "" },
+  { label: "Active", value: "active" },
+  { label: "Draft", value: "draft" },
+  { label: "Paused", value: "paused" },
+  { label: "Archived", value: "archived" },
 ];
 
 const HEADERS = ["Name", "Type", "Location", "Status", "Created", "Actions"];
 
 export default function DashboardProperties() {
-  const [modalOpen,      setModalOpen]      = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [editPropertyId, setEditPropertyId] = useState<string | null>(null);
-  const [roomTypeId,     setRoomTypeId]     = useState<string | null>(null);
-  const [viewRoomsId,    setViewRoomsId]    = useState<string | null>(null);
-  const [deleteTarget,   setDeleteTarget]   = useState<{ id: string; name: string } | null>(null);
-  const [statusFilter,   setStatusFilter]   = useState<PropertyStatus | "">("");
+  const [roomTypeId, setRoomTypeId] = useState<string | null>(null);
+  const [viewRoomsId, setViewRoomsId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [statusFilter, setStatusFilter] = useState<PropertyStatus | "">("");
+  const navigate = useNavigate()
 
   const { properties, isLoading } = useProperties();
 
   const viewProperty = properties.find((p) => p.id === viewRoomsId) ?? null;
-  const filtered     = properties.filter((p) => !statusFilter || p.status === statusFilter);
+  const filtered = properties.filter(
+    (p) => !statusFilter || p.status === statusFilter,
+  );
 
-  const handleOpenCreate = () => { setEditPropertyId(null); setModalOpen(true); };
-  const handleClose      = () => { setModalOpen(false); setEditPropertyId(null); };
+  const handleOpenCreate = () => {
+    setEditPropertyId(null);
+    setModalOpen(true);
+  };
+  const handleClose = () => {
+    setModalOpen(false);
+    setEditPropertyId(null);
+  };
 
   return (
     <>
@@ -55,14 +68,16 @@ export default function DashboardProperties() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h4 className="text-xl bold lg:text-2xl text-[#17191c]">Properties</h4>
+            <h4 className="text-xl bold lg:text-2xl text-[#17191c]">
+              Properties
+            </h4>
             <p className="text-sm text-[#64645f] mt-1 max-w-[420px] bold">
               Manage your listings, room types, and availability calendars.
             </p>
           </div>
           <button
             onClick={handleOpenCreate}
-            className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-sm p-3 px-4"
+            className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-sm p-2 bold px-4"
           >
             Add Property
           </button>
@@ -84,7 +99,10 @@ export default function DashboardProperties() {
             <thead>
               <tr className="border-b border-[#e8e6e3]">
                 {HEADERS.map((h) => (
-                  <th key={h} className="px-5 py-3 text-left text-xs text-[#a3a6af] uppercase whitespace-nowrap">
+                  <th
+                    key={h}
+                    className="px-5 py-3 text-left text-xs text-[#a3a6af] uppercase whitespace-nowrap"
+                  >
                     {h}
                   </th>
                 ))}
@@ -103,22 +121,29 @@ export default function DashboardProperties() {
                 ))
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-sm text-[#a3a6af]">
-                    No properties found. Click "Add Property" to create your first listing.
+                  <td
+                    colSpan={6}
+                    className="px-5 py-10 text-center text-sm text-[#a3a6af]"
+                  >
+                    No properties found. Click "Add Property" to create your
+                    first listing.
                   </td>
                 </tr>
-              ) : filtered.map((property) => (
-                <PropertyTableRow
-                  key={property.id}
-                  property={property}
-                  onAddRoomType={(id) => setRoomTypeId(id)}
-                  onViewRoomTypes={(id) => setViewRoomsId(id)}
-                  onDeleteProperty={(id) => {
-                    const p = properties.find((x) => x.id === id);
-                    if (p) setDeleteTarget({ id: p.id, name: p.name });
-                  }}
-                />
-              ))}
+              ) : (
+                filtered.map((property) => (
+                  <PropertyTableRow
+                    key={property.id}
+                    property={property}
+                    onAddRoomType={(id) => setRoomTypeId(id)}
+                    onOpenProperty={(id) =>
+                      navigate(`/dashboard/properties/${id}`)
+                    }
+                    onDeleteProperty={(property) =>
+                      setDeleteTarget({ id: property.id, name: property.name })
+                    }
+                  />
+                ))
+              )}
             </tbody>
           </table>
         </div>
