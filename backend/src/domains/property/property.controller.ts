@@ -103,3 +103,15 @@ export const GetPropertyHandler = asyncHandler(async (req, res) => {
   if (!data) throw AppError.notFound("Property not found.");
   res.status(200).json({ success: true, data });
 });
+
+export const GetRoomTypeDetailHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const result = await propertyService.getRoomTypeDetail(req.params["roomTypeId"] as string, req.tenantId);
+  res.status(200).json({ success: true, data: result });
+});
+
+export const GetPropertyDetailHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const result = await propertyService.getPropertyDetail(req.params["propertyId"] as string, req.tenantId);
+  res.status(200).json({ success: true, data: result });
+});
