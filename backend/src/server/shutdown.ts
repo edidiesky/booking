@@ -1,5 +1,6 @@
 import http from "http";
-import { disconnectDB }          from "../config/database";
+
+import { disconnectDB }          from "@booking/shared";
 import redisClient               from "../config/redis";
 import { disconnectRabbitMQ }    from "../messaging/connection";
 import { stopOutboxPoller }      from "../messaging/outboxPoller";

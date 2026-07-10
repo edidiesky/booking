@@ -1,5 +1,5 @@
 import { PoolClient } from "pg";
-import { query, queryOne } from "../../config/database";
+import { query, queryOne } from "@booking/shared";
 import { TenantStatus, CancellationPolicyTier, TenantSettings } from "../../types";
 
 export interface Tenant {

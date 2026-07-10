@@ -11,7 +11,7 @@ import { AppError }           from "../../utils/AppError";
 import logger                 from "../../utils/logger";
 import { requestContext }     from "../../context/requestContext";
 import { JWTPayload, UserType } from "../../types";
-import { withTransaction }    from "../../config/database";
+import { withTransaction }    from "@booking/shared";
 import {
   publishNotifyAuthOtp,
   publishNotifyAuthRegistered,

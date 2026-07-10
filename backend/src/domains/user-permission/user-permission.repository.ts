@@ -1,4 +1,4 @@
-import { query, queryOne } from "../../config/database";
+import { query, queryOne } from "@booking/shared";
 import { trackError } from "../../utils/metrics";
 import logger from "../../utils/logger";
 import { requestContext } from "../../context/requestContext";

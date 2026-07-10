@@ -13,6 +13,35 @@ export const EXCHANGES = {
   NOTIFICATION: "notification.events",
 } as const;
 
+export const ROUTING_KEYS = {
+  BOOKING_CREATED:            "booking.created",
+  BOOKING_CONFIRMED:          "booking.confirmed",
+  BOOKING_CANCELLED:          "booking.cancelled",
+  BOOKING_CHECKED_IN:         "booking.checked_in",
+  BOOKING_CHECKED_OUT:        "booking.checked_out",
+  BOOKING_RECEIPT_REQUESTED:  "booking.receipt.requested",
+  RENTER_UPSERT_REQUESTED:    "renter.upsert.requested",
+
+  PAYMENT_CONFIRMED:  "payment.confirmed",
+  PAYMENT_FAILED:     "payment.failed",
+  PAYMENT_INITIATED:  "payment.initiated",
+
+  ESCROW_RELEASED:    "escrow.released",
+  ESCROW_REFUNDED:    "escrow.refunded",
+
+  NOTIFICATION_EMAIL: "notification.email",
+
+  NOTIFY_BOOKING_CONFIRMED:   "notify.booking.confirmed",
+  NOTIFY_BOOKING_CANCELLED:   "notify.booking.cancelled",
+  NOTIFY_BOOKING_CHECKED_IN:  "notify.booking.checkin",
+  NOTIFY_BOOKING_CHECKED_OUT: "notify.booking.checkout",
+  NOTIFY_PAYMENT_CONFIRMED:   "notify.payment.confirmed",
+  NOTIFY_PAYMENT_FAILED:      "notify.payment.failed",
+  NOTIFY_AUTH_OTP:            "notify.auth.otp",
+  NOTIFY_AUTH_REGISTERED:     "notify.auth.registered",
+  NOTIFY_ESCROW_RELEASED:     "notify.escrow.released",
+} as const;
+
 export async function connectRabbitMQ(): Promise<void> {
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
@@ -45,4 +74,12 @@ export function getRabbitMQConnection(): amqp.ChannelModel {
 export function getRabbitMQChannel(): amqp.Channel {
   if (!_channel) throw new Error("RabbitMQ channel not initialized");
   return _channel;
+}
+
+export async function disconnectRabbitMQ(): Promise<void> {
+  if (_channel)    await _channel.close().catch(() => null);
+  if (_connection) await _connection.close().catch(() => null);
+  _channel = null;
+  _connection = null;
+  logger.info("rabbitmq_disconnected", { event: "rabbitmq_disconnected" });
 }

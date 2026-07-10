@@ -1,36 +1,35 @@
-import StatusBadge    from "@/components/common/StatusBadge";
-import { formatDate } from "@/utils/formatDate";
+import StatusBadge        from "@/components/common/StatusBadge";
+import { formatDate }     from "@/utils/formatDate";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { Eye, FileText }  from "lucide-react";
+import RowActionsMenu     from "@/components/common/RowActionsMenu";
 import type { Payment }   from "@/types/api";
 
-interface Props { payment: Payment; }
+interface Props {
+  payment:        Payment;
+  onViewDetails:  (payment: Payment) => void;
+}
 
-export default function PaymentTableRow({ payment }: Props) {
+export default function PaymentTableRow({ payment, onViewDetails }: Props) {
   return (
-    <tr className="border-b last:border-0 hover:bg-[#fafaf9] transition-colors"
-        style={{ borderColor: "#f2f0ed" }}>
-      <td className="px-5 py-3 text-xs whitespace-nowrap"
-          style={{ color: "var(--color-hint-of-grey)" }}>
-        {payment.id}
-      </td>
-      <td className="px-5 py-3 text-xs whitespace-nowrap"
-          style={{ color: "var(--color-muted-stone)" }}>
-        {payment.bookingId}
-      </td>
-      <td className="px-5 py-3 bold whitespace-nowrap"
-          style={{ color: "var(--color-ink)" }}>
-        {formatCurrency(payment.amountNgn)}
-      </td>
-      <td className="px-5 py-3 capitalize text-sm"
-          style={{ color: "var(--color-muted-stone)" }}>
-        {payment.gateway}
-      </td>
-      <td className="px-5 py-3">
-        <StatusBadge status={payment.status} />
-      </td>
-      <td className="px-5 py-3 text-sm whitespace-nowrap"
-          style={{ color: "var(--color-muted-stone)" }}>
-        {formatDate(payment.createdAt)}
+    <tr
+      onClick={() => onViewDetails(payment)}
+      className="border-b last:border-0 hover:bg-[#fafaf9] transition-colors cursor-pointer"
+      style={{ borderColor: "#f2f0ed" }}
+    >
+      <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-hint-of-grey)" }}>{payment.id?.slice(0, 10)}...</td>
+      <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>{payment.booking_id?.slice(0, 10)}...</td>
+      <td className="px-5 py-3 bold whitespace-nowrap" style={{ color: "var(--color-ink)" }}>{formatCurrency(payment.amount_ngn)}</td>
+      <td className="px-5 py-3 capitalize text-sm" style={{ color: "var(--color-muted-stone)" }}>{payment.gateway}</td>
+      <td className="px-5 py-3"><StatusBadge status={payment.status} /></td>
+      <td className="px-5 py-3 text-sm whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>{formatDate(payment.createdAt)}</td>
+      <td className="px-5 py-3 text-right">
+        <RowActionsMenu
+          actions={[
+            { label: "View payment details", icon: Eye,      onClick: () => onViewDetails(payment) },
+            { label: "View receipt",         icon: FileText, onClick: () => window.open(payment.receiptUrl!, "_blank", "noopener,noreferrer"), hidden: !payment.receiptUrl },
+          ]}
+        />
       </td>
     </tr>
   );

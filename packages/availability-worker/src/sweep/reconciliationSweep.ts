@@ -1,13 +1,10 @@
 import type amqp from "amqplib";
-import { query, logger } from "@booking/shared";
+import { query, logger, driftDetectedGauge } from "@booking/shared";
 import { setupRecurringTick } from "../scheduling/recurringTick";
 
-interface DriftRow {
-  room_type_id: string;
-  date: string;
-  stored_count: number;
-  computed_count: number;
-}
+interface DriftRow { room_type_id: string; date: string; stored_count: number; computed_count: number; }
+
+const RECONCILIATION_INTERVAL_MS = 30 * 60_000;
 
 async function reconcileOnce(): Promise<void> {
   const drifted = await query<DriftRow>(
@@ -25,37 +22,33 @@ async function reconcileOnce(): Promise<void> {
        AND ac.available_count != (rt.quantity - COALESCE(active.held, 0))`,
   );
 
-  if (drifted.length === 0) return;
-  logger.warn("availability_drift_detected", {
-    event: "availability_drift_detected",
-    count: drifted.length,
-    sample: drifted.slice(0, 5),
-  });
+  driftDetectedGauge.set(drifted.length);
 
-  for (const row of drifted) {
-    await query(
-      `UPDATE availability_calendar SET available_count = $1, updated_at = now() WHERE room_type_id = $2 AND date = $3`,
-      [row.computed_count, row.room_type_id, row.date],
-    );
-  }
+  if (drifted.length === 0) return;
+
+  logger.warn("availability_drift_detected", { event: "availability_drift_detected", count: drifted.length, sample: drifted.slice(0, 5) });
+
+  await query(
+    `UPDATE availability_calendar ac
+     SET available_count = data.computed_count, updated_at = now()
+     FROM (
+       SELECT * FROM UNNEST($1::uuid[], $2::date[], $3::int[]) AS t(room_type_id, date, computed_count)
+     ) data
+     WHERE ac.room_type_id = data.room_type_id AND ac.date = data.date`,
+    [drifted.map((r) => r.room_type_id), drifted.map((r) => r.date), drifted.map((r) => r.computed_count)],
+  );
 }
 
-export async function startReconciliationSweep(
-  connection: amqp.ChannelModel,
-): Promise<void> {
+export async function startReconciliationSweep(connection: amqp.ChannelModel): Promise<void> {
   const channel = await connection.createChannel();
   await channel.prefetch(1);
 
-  await setupRecurringTick(
-    channel,
-    {
-      name: "reconciliation_sweep",
-      delayExchange: "sweep.reconcile.delay",
-      deadExchange: "sweep.reconcile.dead",
-      delayQueue: "sweep.reconcile.delay.queue",
-      processQueue: "sweep.reconcile.process.queue",
-      intervalMs: 30 * 60_000,
-    },
-    reconcileOnce,
-  );
+  await setupRecurringTick(channel, {
+    name:          "reconciliation_sweep",
+    delayExchange: "sweep.reconcile.delay",
+    deadExchange:  "sweep.reconcile.dead",
+    delayQueue:    "sweep.reconcile.delay.queue",
+    processQueue:  "sweep.reconcile.process.queue",
+    intervalMs:    RECONCILIATION_INTERVAL_MS,
+  }, reconcileOnce);
 }

@@ -14,7 +14,7 @@ export default function Header() {
       className="w-full sticky top-0 z-50"
       style={{ backgroundColor: "var(--color-canvas)", boxShadow: "rgba(0,0,0,0.04) 0px 0px 0px 1px" }}
     >
-      <div className="mx-auto px-6 lg:px-8 h-16 flex items-center justify-between" style={{ maxWidth: "1280px" }}>
+      <div className="mx-auto px-6 lg:px-0 h-16 flex items-center justify-between max-w-screen-xl">
         <Link to="/" className="text-xl tracking-tight bold" style={{ color: "var(--color-ink)" }}>
           Booking
         </Link>

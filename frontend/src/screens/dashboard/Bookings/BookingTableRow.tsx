@@ -1,62 +1,67 @@
-import StatusBadge    from "@/components/common/StatusBadge";
-import { formatDate } from "@/utils/formatDate";
+import StatusBadge     from "@/components/common/StatusBadge";
+import { formatDate }  from "@/utils/formatDate";
 import { formatCurrency } from "@/utils/formatCurrency";
-import type { Booking }   from "@/types/api";
+import type { Booking } from "@/types/api";
+import RowActionsMenu  from "@/components/common/RowActionsMenu";
+import { Download, Eye, LogIn, LogOut, XCircle } from "lucide-react";
 
 interface Props {
-  booking:       Booking;
-  onCheckIn:     (id: string) => void;
-  onCheckOut:    (id: string) => void;
-  isCheckingIn:  boolean;
-  isCheckingOut: boolean;
+  booking:        Booking;
+  onViewDetails:  (booking: Booking) => void;
+  onCancel:       (booking: Booking) => void;
+  onCheckIn?:     (id: string) => void;
+  onCheckOut?:    (id: string) => void;
+  setSelectedOrder:    () => void;
 }
 
-export default function BookingTableRow({ booking, onCheckIn, onCheckOut, isCheckingIn, isCheckingOut }: Props) {
+
+function downloadReceipt(url: string, bookingRef: string): void {
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `receipt-${bookingRef}.pdf`;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+
+export default function BookingTableRow({
+  booking,
+  onViewDetails,
+  onCancel,
+  onCheckIn,
+  onCheckOut,
+  setSelectedOrder
+}: Props) {
   return (
-    <tr className="border-b last:border-0 hover:bg-[#fafaf9] transition-colors"
-        style={{ borderColor: "#f2f0ed" }}>
-      <td className="px-5 py-3 bold text-sm whitespace-nowrap"
-          style={{ color: "var(--color-ink)" }}>
+    <tr onClick={() => setSelectedOrder()} className="border-b cursor-pointer last:border-0 hover:bg-[#fafaf9] transition-colors" style={{ borderColor: "#f2f0ed" }}>
+      <td className="px-5 py-3 bold text-sm whitespace-nowrap" style={{ color: "var(--color-ink)" }}>
         {booking.bookingRef}
       </td>
-      <td className="px-5 py-3 text-sm whitespace-nowrap"
-          style={{ color: "var(--color-muted-stone)" }}>
+      <td className="px-5 py-3 text-sm whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
         {formatDate(booking.checkIn)}
       </td>
-      <td className="px-5 py-3 text-sm whitespace-nowrap"
-          style={{ color: "var(--color-muted-stone)" }}>
+      <td className="px-5 py-3 text-sm whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
         {formatDate(booking.checkOut)}
       </td>
-      <td className="px-5 py-3 text-sm whitespace-nowrap"
-          style={{ color: "var(--color-ink)" }}>
+      <td className="px-5 py-3 text-sm whitespace-nowrap" style={{ color: "var(--color-ink)" }}>
         {formatCurrency(booking.totalAmountNgn)}
       </td>
       <td className="px-5 py-3">
         <StatusBadge status={booking.status} />
       </td>
-      <td className="px-5 py-3">
-        <div className="flex items-center gap-2">
-          {booking.status === "confirmed" && (
-            <button
-              onClick={() => onCheckIn(booking.bookingId)}
-              disabled={isCheckingIn}
-              className="text-xs px-3 py-1.5 rounded-full transition-opacity hover:opacity-80 disabled:opacity-50"
-              style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
-            >
-              Check In
-            </button>
-          )}
-          {booking.status === "checked_in" && (
-            <button
-              onClick={() => onCheckOut(booking.bookingId)}
-              disabled={isCheckingOut}
-              className="text-xs px-3 py-1.5 rounded-full border transition-opacity hover:opacity-70 disabled:opacity-50"
-              style={{ borderColor: "var(--color-ink)", color: "var(--color-ink)" }}
-            >
-              Check Out
-            </button>
-          )}
-        </div>
+      <td className="px-5 py-3 text-right">
+        <RowActionsMenu
+          actions={[
+            { label: "View details", icon: Eye,      onClick: () => onViewDetails(booking) },
+            { label: "Download receipt", icon: Download, onClick: () => downloadReceipt(booking.receiptUrl!, booking.bookingRef), hidden: !booking.receiptUrl },
+            { label: "Check in",     icon: LogIn,    onClick: () => onCheckIn?.(booking.bookingId),  hidden: booking.status !== "confirmed"  || !onCheckIn,  separator: true },
+            { label: "Check out",    icon: LogOut,   onClick: () => onCheckOut?.(booking.bookingId), hidden: booking.status !== "checked_in" || !onCheckOut },
+            { label: "Cancel booking", icon: XCircle, onClick: () => onCancel(booking), variant: "danger", hidden: !["pending_payment", "confirmed"].includes(booking.status), separator: true },
+          ]}
+        />
       </td>
     </tr>
   );

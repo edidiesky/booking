@@ -11,12 +11,15 @@ export function useDashboardHome() {
   const payments  = paymentsData?.data  ?? [];
   const tenant    = tenantData?.data;
 
-  const totalRevenue  = payments.filter((p) => p.status === "success")
-    .reduce((sum, p) => sum + p.amountNgn, 0);
+  const totalRevenue  = payments.filter((p) => p.status === "success" || p.status === "checked_in")
+    .reduce((sum, p) => sum + p.totalAmountNgn, 0);
 
   const confirmedCount  = bookings.filter((b) => b.status === "confirmed").length;
   const checkedInCount  = bookings.filter((b) => b.status === "checked_in").length;
   const cancelledCount  = bookings.filter((b) => b.status === "cancelled").length;
+
+  console.log("totalRevenue", { totalRevenue})
+
 
   return {
     tenant,

@@ -1,4 +1,4 @@
-import { query, queryOne } from "../../config/database";
+import { query, queryOne } from "@booking/shared";
 export type NotificationType =
   | "booking_confirmed" | "booking_cancelled"
   | "booking_checked_in" | "booking_checked_out"

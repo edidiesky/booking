@@ -6,7 +6,7 @@ import { bookingService }    from "../booking/booking.service";
 import { webhookRepository } from "./webhook.repository";
 import { AppError }          from "../../utils/AppError";
 import logger                from "../../utils/logger";
-import { withTransaction }   from "../../config/database";
+import { withTransaction }   from "@booking/shared";
 import { PaymentGateway }    from "../../types";
 import { trackError }        from "../../utils/metrics";
 
@@ -14,7 +14,6 @@ export const webhookService = {
   /**
    * Process a webhook from any gateway.
    * Flow: verify signature -> idempotency -> Redis lock -> transaction -> outbox
-   * Mirrors your existing webhook.service.ts exactly.
    */
   async process(
     gateway:                   PaymentGateway,

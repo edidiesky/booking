@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment Received</title>
+  <style>
+    body,table,td,a{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#333}
+    .wrap{max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0}
+    .header{background:#0f172a;padding:24px 32px}
+    .header-title{color:#fff;font-size:22px;font-weight:700}
+    .header-sub{color:#94a3b8;font-size:13px;margin-top:2px}
+    .content{padding:36px 32px}
+    .badge{display:inline-block;background:#dcfce7;color:#166534;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:20px}
+    .greeting{margin:0 0 16px;color:#111;font-size:22px;font-weight:700}
+    .body-text{color:#4a5566;margin:0 0 20px;font-size:15px;line-height:26px}
+    .amount-block{background:#0f172a;border-radius:8px;padding:24px;text-align:center;margin-bottom:24px}
+    .amount-label{color:#94a3b8;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+    .amount-value{color:#4ade80;font-size:36px;font-weight:800;margin:8px 0}
+    .info-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:20px;margin-bottom:24px}
+    .info-row{padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:14px;display:flex;justify-content:space-between}
+    .info-row:last-child{border-bottom:none}
+    .info-label{color:#64748b;font-weight:500}
+    .info-value{color:#111;font-weight:600}
+    .footer{background:#f8f8f8;padding:20px 32px;text-align:center;font-size:13px;color:#96a2b3;border-top:1px solid #e0e0e0}
+  </style>
+</head>
+<body style="background:#f4f4f4;padding:20px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr><td align="center">
+    <table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0">
+      <tr><td class="header">
+        <div class="header-title">Booking Platform</div>
+        <div class="header-sub">Payment Receipt</div>
+      </td></tr>
+      <tr><td class="content">
+        <div class="badge">✓ Payment Received</div>
+        <h1 class="greeting">Payment confirmed, {{guestName}}!</h1>
+        <p class="body-text">
+          We have received your payment for booking <strong>{{bookingRef}}</strong>.
+          Here is your receipt.
+        </p>
+
+        <div class="amount-block">
+          <div class="amount-label">Amount Paid</div>
+          <div class="amount-value">₦{{amountNgn}}</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-row">
+            <span class="info-label">Booking Reference</span>
+            <span class="info-value">{{bookingRef}}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Transaction ID</span>
+            <span class="info-value">{{transactionId}}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Payment Method</span>
+            <span class="info-value" style="text-transform:capitalize">{{gateway}}</span>
+          </div>
+        </div>
+
+        <p class="body-text">
+          <a href="{{manageUrl}}" style="color:#2563eb">View your booking</a> or
+          <a href="{{supportUrl}}" style="color:#2563eb">contact support</a> if you have questions.
+        </p>
+      </td></tr>
+      <tr><td class="footer">
+        <p style="margin:0">&copy; {{year}} Booking Platform. All rights reserved.</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>

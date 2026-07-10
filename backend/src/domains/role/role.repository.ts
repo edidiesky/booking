@@ -1,4 +1,4 @@
-import { query, queryOne } from "../../config/database";
+import { query, queryOne } from "@booking/shared";
 import { SeedRole } from "../../types";
 import { trackError } from "../../utils/metrics";
 import logger from "../../utils/logger";

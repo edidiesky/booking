@@ -1,6 +1,6 @@
+import { trackError } from "@booking/shared";
 import { webhookService } from "../../domains/webhook/webhook.service";
-import logger             from "../../utils/logger";
-import { trackError }     from "../../utils/metrics";
+import logger from "../../utils/logger";
 
 const RETRY_INTERVAL_MS = parseInt(process.env.WEBHOOK_RETRY_INTERVAL_MS ?? "60000", 10);
 

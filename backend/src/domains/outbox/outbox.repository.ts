@@ -1,7 +1,7 @@
 import { PoolClient } from "pg";
-import { query, queryOne } from "../../config/database";
 import { OutboxStatus } from "../../types";
 import logger from "../../utils/logger";
+import { query, queryOne } from "@booking/shared";
 
 export type OutboxEventType =
   | "booking.created"
@@ -13,7 +13,8 @@ export type OutboxEventType =
   | "payment.confirmed"
   | "payment.failed"
   | "payment.initiated"
-  | "escrow.released"
+  | "escrow.released" 
+  | "renter.upsert.requested"
   | "escrow.refunded";
 
 export const MAX_RETRIES = 5;

@@ -1,8 +1,10 @@
 import type amqp from "amqplib";
-import { query, availabilityBroadcaster, logger } from "@booking/shared";
+import { query, availabilityBroadcaster, logger, locksPurgedCounter } from "@booking/shared";
 import { setupRecurringTick } from "../scheduling/recurringTick";
 
 interface ExpiredLock { room_type_id: string; check_in: string; check_out: string; }
+
+const LOCK_SWEEP_INTERVAL_MS = 5 * 60_000;
 
 async function sweepOnce(): Promise<void> {
   const expired = await query<ExpiredLock>(
@@ -10,7 +12,9 @@ async function sweepOnce(): Promise<void> {
   );
   if (expired.length === 0) return;
 
+  locksPurgedCounter.inc(expired.length);
   logger.info("expired_locks_purged", { event: "expired_locks_purged", count: expired.length });
+
   for (const lock of expired) {
     availabilityBroadcaster.publish(lock.room_type_id, { type: "released", checkIn: lock.check_in, checkOut: lock.check_out });
   }
@@ -21,9 +25,11 @@ export async function startLockSweep(connection: amqp.ChannelModel): Promise<voi
   await channel.prefetch(1);
 
   await setupRecurringTick(channel, {
-    name: "lock_sweep",
-    delayExchange: "sweep.lock.delay", deadExchange: "sweep.lock.dead",
-    delayQueue: "sweep.lock.delay.queue", processQueue: "sweep.lock.process.queue",
-    intervalMs: 5 * 60_000,
+    name:          "lock_sweep",
+    delayExchange: "sweep.lock.delay",
+    deadExchange:  "sweep.lock.dead",
+    delayQueue:    "sweep.lock.delay.queue",
+    processQueue:  "sweep.lock.process.queue",
+    intervalMs:    LOCK_SWEEP_INTERVAL_MS,
   }, sweepOnce);
 }

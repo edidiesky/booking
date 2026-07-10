@@ -1,5 +1,4 @@
 import "./utils/otel";
-
 import "dotenv/config";
 import express      from "express";
 import helmet       from "helmet";
@@ -22,7 +21,7 @@ import auditRoutes    from "./domains/audit/audit.routes";
 import sseRouter      from "./domains/sse/sse.routes";
 import roleRoutes       from "./domains/role/role.routes";
 import permissionRoutes from "./domains/permission/permission.routes";
-
+import renterRoutes from "./domains/renter/renter.routes";
 const app = express();
 
 if (!process.env.WEB_ORIGIN) throw new Error("WEB_ORIGIN env var not set.");
@@ -31,9 +30,6 @@ app.use(helmet());
 app.use(cors({ origin: [process.env.WEB_ORIGIN], credentials: true }));
 app.use(morgan("dev"));
 app.use(cookieParser());
-
-app.use("/api/v1/webhooks", express.raw({ type: "application/json" }));
-
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(contextMiddleware);
@@ -53,6 +49,8 @@ app.use("/api/v1/auth",     authRoutes);
 app.use("/api/v1/webhooks", webhookRoutes);
 
 // Tenant-scoped routes
+
+app.use("/api/v1/renters", tenantMiddleware, renterRoutes);
 app.use("/api/v1/sse",        tenantMiddleware, sseRouter);
 app.use("/api/v1/tenants",    tenantMiddleware, tenantRoutes);
 app.use("/api/v1/properties", tenantMiddleware, propertyRoutes);
@@ -68,3 +66,4 @@ app.use(NotFound);
 app.use(errorHandler);
 
 export { app };
+

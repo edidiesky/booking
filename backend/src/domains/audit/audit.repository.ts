@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { query } from "../../config/database";
+import { query } from "@booking/shared";
 import { AuditAction } from "../../types";
 import { requestContext } from "../../context/requestContext";
 import logger from "../../utils/logger";

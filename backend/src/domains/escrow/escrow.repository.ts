@@ -1,5 +1,5 @@
 import { PoolClient } from "pg";
-import { query, queryOne } from "../../config/database";
+import { query, queryOne } from "@booking/shared";
 import { EscrowStatus } from "../../types";
 import { publishEscrowReleased, publishEscrowRefunded } from "../../messaging/publisher";
 import { escrowHeldGauge } from "../../utils/metrics";

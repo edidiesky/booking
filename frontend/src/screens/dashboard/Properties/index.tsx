@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import PropertyTableRow from "./PropertyTableRow";
 import PropertyModal from "./PropertyModal";
 import CreateRoomTypeModal from "./CreateRoomTypeModal";
-import RoomTypesDrawer from "./RoomTypesDrawer";
 import DeletePropertyModal from "./DeletePropertyModal";
 import { useProperties } from "./hooks/useProperties";
 import { ChartSelect } from "@/components/common/charts/Chartselect";
@@ -24,7 +23,6 @@ export default function DashboardProperties() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editPropertyId, setEditPropertyId] = useState<string | null>(null);
   const [roomTypeId, setRoomTypeId] = useState<string | null>(null);
-  const [viewRoomsId, setViewRoomsId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     name: string;
@@ -34,7 +32,6 @@ export default function DashboardProperties() {
 
   const { properties, isLoading } = useProperties();
 
-  const viewProperty = properties.find((p) => p.id === viewRoomsId) ?? null;
   const filtered = properties.filter(
     (p) => !statusFilter || p.status === statusFilter,
   );
@@ -77,7 +74,7 @@ export default function DashboardProperties() {
           </div>
           <button
             onClick={handleOpenCreate}
-            className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-sm p-2 bold px-4"
+            className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-sm lg:text-base p-2 bold px-4"
           >
             Add Property
           </button>
@@ -155,16 +152,6 @@ export default function DashboardProperties() {
             isOpen={Boolean(roomTypeId)}
             propertyId={roomTypeId}
             onClose={() => setRoomTypeId(null)}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {viewRoomsId && viewProperty && (
-          <RoomTypesDrawer
-            propertyName={viewProperty.name}
-            roomTypes={viewProperty.roomTypes ?? []}
-            onClose={() => setViewRoomsId(null)}
           />
         )}
       </AnimatePresence>

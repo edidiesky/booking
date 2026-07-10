@@ -41,7 +41,7 @@ export default function MyBookings() {
       <Header />
 
       <main className="flex-1 py-20 pb-12">
-        <div className="w-[90%] max-w-[1100px] mx-auto flex flex-col gap-12">
+        <div className="w-[90%] max-w-screen-xl mx-auto flex flex-col gap-12">
 
           {hasBookings && (
             <div className="flex items-center justify-between gap-4">
@@ -73,7 +73,7 @@ export default function MyBookings() {
                 <span className="text-4xl">📭</span>
               </div>
               <div className="flex flex-col w-full gap-3 justify-center items-center">
-                <h1 className="text-[#17191c] leading-tight text-2xl md:text-3xl text-center font-bold">
+                <h1 className="text-[#17191c] leading-tight text-2xl md:text-3xl text-center ">
                   You have no reserved stays yet
                 </h1>
                 <Link

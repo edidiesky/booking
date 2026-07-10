@@ -1,5 +1,5 @@
 import { PoolClient } from "pg";
-import { queryOne } from "../../config/database";
+import { queryOne } from "@booking/shared";
 
 export interface Profile {
   id:           string;

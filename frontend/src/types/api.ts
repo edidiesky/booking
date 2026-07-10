@@ -308,7 +308,9 @@ export interface Booking {
   propertyName?:    string;
   roomTypeImage?:   string;
   receiptUrl?:string;
+  room_type_images: string[]
 }
+
 
 export interface InitiateBookingPayload {
   propertyId:       string;

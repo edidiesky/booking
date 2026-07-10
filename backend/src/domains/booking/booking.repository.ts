@@ -1,5 +1,5 @@
 import { PoolClient } from "pg";
-import { query, queryOne } from "../../config/database";
+import { query, queryOne } from "@booking/shared";
 import { BookingStatus } from "../../types";
 import { requestContext } from "../../context/requestContext";
 import { trackError } from "../../utils/metrics";
@@ -27,6 +27,8 @@ export interface Booking {
   metadata: Record<string, unknown>;
   created_at: Date;
   updated_at: Date;
+  receipt_url: string;
+  room_type_images?: string[]
 }
 
 function generateBookingRef(): string {
@@ -201,7 +203,8 @@ export const bookingRepository = {
     const offset = (page - 1) * limit;
     try {
       return await query<Booking>(
-        `SELECT b.*, p.name AS property_name, rt.name AS room_type_name
+        `SELECT b.*, p.name AS property_name, rt.name AS room_type_name,
+         rt.images AS room_type_images
          FROM bookings b
          JOIN properties p  ON p.id  = b.property_id
          JOIN room_types rt ON rt.id = b.room_type_id
@@ -227,7 +230,7 @@ export const bookingRepository = {
     try {
       return await query<Booking>(
         `SELECT b.*, u.first_name AS guest_first_name, u.last_name AS guest_last_name,
-                u.email AS guest_email, p.name AS property_name, rt.name AS room_type_name
+                u.email AS guest_email, p.images AS property_name, rt.name AS room_type_name
          FROM bookings b
          JOIN users      u  ON u.id  = b.guest_user_id
          JOIN properties p  ON p.id  = b.property_id

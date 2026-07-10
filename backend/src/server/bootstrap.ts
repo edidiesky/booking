@@ -1,12 +1,11 @@
 import logger        from "../utils/logger";
-import redisClient  from "../config/redis";
-import { connectDB }              from "../config/database";
-import { connectRabbitMQ }        from "../messaging/connection";
-import { startOutboxPoller }      from "../messaging/outboxPoller";
-import { startSseFanoutWorker }   from "../messaging/workers/sseFanoutWorker";
+import redisClient   from "../config/redis";
+import { connectDB } from "@booking/shared";
+import { connectRabbitMQ }         from "../messaging/connection";
+import { startOutboxPoller }       from "../messaging/outboxPoller";
+import { startSseFanoutWorker }    from "../messaging/workers/sseFanoutWorker";
 import { startNotificationWorker } from "../messaging/workers/notificationWorker";
 import { startWebhookRetryWorker } from "../messaging/workers/webhookRetryWorker";
-import { availabilityRepository } from "../domains/availability/availability.repository";
 import { serverHealthGauge, trackError } from "../utils/metrics";
 import { seedService } from "../domains/role/seed.service";
 import { runMigrations } from "../migrations/runner";
@@ -31,21 +30,15 @@ async function runStep(step: InitStep): Promise<void> {
 
 export async function bootstrapServer(): Promise<void> {
   const steps: InitStep[] = [
-    { name: "postgres",              fn: connectDB },
-    { name: "redis",                 fn: async () => { await redisClient.ping(); } },
-    { name: "rabbitmq",              fn: connectRabbitMQ },
-    { name: "migrations",          fn: runMigrations },    
-    { name: "outbox_poller",         fn: async () => { startOutboxPoller(); } },
-    { name: "seed_rbac",             fn: async () => { await seedService.seedAll(); } },
-    { name: "sse_fanout_worker",     fn: startSseFanoutWorker },
-    { name: "notification_worker",   fn: startNotificationWorker },
-    { name: "webhook_retry_worker",  fn: async () => { startWebhookRetryWorker(); } },
-    { name: "lock_cleanup",          fn: async () => {
-      setInterval(async () => {
-        const count = await availabilityRepository.purgeExpiredLocks().catch(() => 0);
-        if (count > 0) logger.info("expired_locks_purged", { event: "expired_locks_purged", count });
-      }, 5 * 60_000);
-    }},
+    { name: "postgres",             fn: connectDB },
+    { name: "redis",                fn: async () => { await redisClient.ping(); } },
+    { name: "rabbitmq",             fn: connectRabbitMQ },
+    { name: "migrations",           fn: runMigrations },
+    { name: "outbox_poller",        fn: async () => { startOutboxPoller(); } },
+    { name: "seed_rbac",            fn: async () => { await seedService.seedAll(); } },
+    { name: "sse_fanout_worker",    fn: startSseFanoutWorker },
+    { name: "notification_worker",  fn: startNotificationWorker },
+    { name: "webhook_retry_worker", fn: async () => { startWebhookRetryWorker(); } },
   ];
 
   const start = process.hrtime.bigint();

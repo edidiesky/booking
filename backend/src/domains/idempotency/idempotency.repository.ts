@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { query, queryOne } from "../../config/database";
+import { query, queryOne } from "@booking/shared";
 import logger from "../../utils/logger";
 import { trackError } from "../../utils/metrics";
 import { idempotencyStateCounter } from "../../utils/metrics";

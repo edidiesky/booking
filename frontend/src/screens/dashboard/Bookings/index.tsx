@@ -1,46 +1,125 @@
-import { useState }          from "react";
-import { motion }            from "framer-motion";
-import { AnimatePresence }   from "framer-motion";
-import BookingDrawer         from "./BookingDrawer";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useTenantBookings } from "./hooks/useTenantBookings";
-import { ChartSelect }       from "@/components/common/charts/Chartselect";
+import { ChartSelect } from "@/components/common/charts/Chartselect";
 import type { Booking, BookingStatus } from "@/types/api";
-import { ChevronRight }      from "lucide-react";
+import BookingDrawer from "./BookingDrawer";
+import {
+  useCheckInMutation,
+  useCheckOutMutation,
+  useCancelBookingMutation,
+} from "@/redux/services/bookingApi";
+import { showToast } from "@/components/common/Toast";
+import CancelBookingModal from "@/screens/guest/MyBookings/CancelBookingModal";
+import BookingTableRow from "./BookingTableRow";
 
-const STATUS_CONFIG: Record<BookingStatus, { label: string; className: string }> = {
-  pending_payment: { label: "Pending Payment", className: "bg-yellow-50 text-yellow-800" },
-  confirmed:       { label: "Confirmed",       className: "bg-blue-50 text-blue-700"    },
-  checked_in:      { label: "Checked In",      className: "bg-green-50 text-green-700"  },
-  checked_out:     { label: "Checked Out",     className: "bg-[#f2f0ed] text-[#4c4c4c]"},
-  cancelled:       { label: "Cancelled",       className: "bg-red-50 text-red-700"      },
-  refunded:        { label: "Refunded",        className: "bg-purple-50 text-purple-700" },
+const STATUS_CONFIG: Record<
+  BookingStatus,
+  { label: string; className: string }
+> = {
+  pending_payment: {
+    label: "Pending Payment",
+    className: "bg-yellow-50 text-yellow-800",
+  },
+  confirmed: { label: "Confirmed", className: "bg-blue-50 text-blue-700" },
+  checked_in: { label: "Checked In", className: "bg-green-50 text-green-700" },
+  checked_out: {
+    label: "Checked Out",
+    className: "bg-[#f2f0ed] text-[#4c4c4c]",
+  },
+  cancelled: { label: "Cancelled", className: "bg-red-50 text-red-700" },
+  refunded: { label: "Refunded", className: "bg-purple-50 text-purple-700" },
 };
 
 const STATUS_OPTIONS: { label: string; value: BookingStatus | "" }[] = [
-  { label: "All statuses",    value: ""                },
+  { label: "All statuses", value: "" },
   { label: "Pending Payment", value: "pending_payment" },
-  { label: "Confirmed",       value: "confirmed"       },
-  { label: "Checked In",      value: "checked_in"      },
-  { label: "Checked Out",     value: "checked_out"     },
-  { label: "Cancelled",       value: "cancelled"       },
+  { label: "Confirmed", value: "confirmed" },
+  { label: "Checked In", value: "checked_in" },
+  { label: "Checked Out", value: "checked_out" },
+  { label: "Cancelled", value: "cancelled" },
 ];
 
-const HEADERS = ["Reference", "Property", "Dates", "Rooms", "Amount", "Status", ""];
+const HEADERS = [
+  "Reference",
+  "Property",
+  "Dates",
+  "Rooms",
+  "Amount",
+  "Status",
+  "",
+];
 
 export default function DashboardBookings() {
-  const [selected, setSelected] = useState<Booking | null>(null);
 
   const {
-    bookings, isLoading,
-    search, setSearch,
-    statusFilter, setStatusFilter,
+    bookings,
+    isLoading,
+    search,
+    setSearch,
+    statusFilter,
+    setStatusFilter,
   } = useTenantBookings();
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
+
+  const [checkIn] = useCheckInMutation();
+  const [checkOut] = useCheckOutMutation();
+  const [cancelBooking] = useCancelBookingMutation();
+
+  const handleCheckIn = async (id: string) => {
+    try {
+      await checkIn(id).unwrap();
+      showToast("Guest checked in.", "success");
+    } catch {
+      /* errorMiddleware */
+    }
+  };
+
+  const handleCheckOut = async (id: string) => {
+    try {
+      await checkOut(id).unwrap();
+      showToast("Guest checked out.", "success");
+    } catch {
+      /* errorMiddleware */
+    }
+  };
+
+  const handleConfirmCancel = async (reason?: string) => {
+    if (!cancelTarget) return;
+    try {
+      await cancelBooking({
+        id: cancelTarget.bookingId,
+        body: { reason },
+      }).unwrap();
+      showToast("Booking cancelled.", "success");
+      setCancelTarget(null);
+    } catch {
+      /* errorMiddleware */
+    }
+  };
 
   return (
     <>
       <AnimatePresence>
-        {selected && (
-          <BookingDrawer booking={selected} onClose={() => setSelected(null)} />
+        {selectedBooking && (
+          <BookingDrawer
+            booking={selectedBooking}
+            onClose={() => setSelectedBooking(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {cancelTarget && (
+          <CancelBookingModal
+            bookingRef={cancelTarget.bookingRef}
+            isLoading={false}
+            isOpen={Boolean(cancelTarget)}
+            onConfirm={handleConfirmCancel}
+            onClose={() => setCancelTarget(null)}
+          />
         )}
       </AnimatePresence>
 
@@ -52,12 +131,17 @@ export default function DashboardBookings() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h4 className="text-xl lg:text-2xl bold  text-[#17191c]">Bookings</h4>
+            <h4 className="text-xl lg:text-2xl bold  text-[#17191c]">
+              Bookings
+            </h4>
             <p className="text-sm text-[#64645f] mt-1 max-w-[420px] bold">
-              Manage guest reservations. Click a row to view details and take actions.
+              Manage guest reservations. Click a row to view details and take
+              actions.
             </p>
           </div>
-          <span className="text-sm text-[#a3a6af] mt-2">{bookings.length} total</span>
+          <span className="text-sm text-[#a3a6af] mt-2">
+            {bookings.length} total
+          </span>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
@@ -65,7 +149,9 @@ export default function DashboardBookings() {
             <input
               type="text"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); }}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
               placeholder="Search by booking reference..."
               className="w-full max-w-xs h-[38px] px-4 border border-[#e8e6e3] text-sm outline-none focus:border-[#17191c] transition-colors"
             />
@@ -73,7 +159,10 @@ export default function DashboardBookings() {
           <ChartSelect
             value={statusFilter}
             onValueChange={(v) => setStatusFilter(v as BookingStatus | "")}
-            options={STATUS_OPTIONS.map((o) => ({ label: o.label, value: o.value }))}
+            options={STATUS_OPTIONS.map((o) => ({
+              label: o.label,
+              value: o.value,
+            }))}
           />
         </div>
 
@@ -82,7 +171,10 @@ export default function DashboardBookings() {
             <thead>
               <tr className="border-b border-[#e8e6e3]">
                 {HEADERS.map((h) => (
-                  <th key={h} className="px-5 py-3 text-left text-xs text-[#a3a6af] uppercase whitespace-nowrap">
+                  <th
+                    key={h}
+                    className="px-5 py-3 text-left text-xs text-[#a3a6af] uppercase whitespace-nowrap"
+                  >
                     {h}
                   </th>
                 ))}
@@ -101,40 +193,27 @@ export default function DashboardBookings() {
                 ))
               ) : bookings.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-10 text-center text-sm text-[#a3a6af]">
+                  <td
+                    colSpan={7}
+                    className="px-5 py-10 text-center text-sm text-[#a3a6af]"
+                  >
                     No bookings found{search ? ` for "${search}"` : ""}
                   </td>
                 </tr>
-              ) : bookings.map((b) => {
-                const cfg = STATUS_CONFIG[b.status];
-                return (
-                  <tr
-                    key={b.bookingId}
-                    onClick={() => setSelected(b)}
-                    className="border-b border-[#f2f0ed] last:border-0 hover:bg-[#fafaf9] transition-colors cursor-pointer"
-                  >
-                    <td className="px-5 py-3 text-[#17191c]  whitespace-nowrap">
-                      {b.bookingRef}
-                    </td>
-                    <td className="px-5 py-3 text-xs text-[#777b86] whitespace-nowrap max-w-[140px] truncate">
-                      {b.propertyId}
-                    </td>
-                    <td className="px-5 py-3 text-xs text-[#777b86] whitespace-nowrap">
-                      {b.checkIn} - {b.checkOut}
-                    </td>
-                    <td className="px-5 py-3 text-[#4c4c4c]">{b.roomsCount}</td>
-                    <td className="px-5 py-3 text-[#17191c]  whitespace-nowrap">
-                      ₦{b.totalAmountNgn.toLocaleString("en-NG")}
-                    </td>
-                    <td className="px-5 py-3">
-                      <span className={`text-xs px-2 py-0.5 ${cfg.className}`}>{cfg.label}</span>
-                    </td>
-                    <td className="px-5 py-3 text-[#777b86]">
-                      <ChevronRight size={14} />
-                    </td>
-                  </tr>
-                );
-              })}
+              ) : (
+                bookings.map((b) => {
+                  return (
+                    <BookingTableRow
+                      booking={b}
+                      onViewDetails={setSelectedBooking}
+                      onCancel={setCancelTarget}
+                      onCheckIn={handleCheckIn}
+                      onCheckOut={handleCheckOut}
+                      setSelectedOrder={()=> setSelectedBooking(b)}
+                    />
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>

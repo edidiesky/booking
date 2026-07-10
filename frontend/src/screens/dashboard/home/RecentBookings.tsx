@@ -13,15 +13,15 @@ export default function RecentBookings({ bookings }: Props) {
     <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center justify-between px-5 py-4 border-b"
            style={{ borderColor: "#e8e6e3" }}>
-        <p className="text-sm bold" style={{ color: "var(--color-ink)" }}>
+        <p className="text-base lg:text-lg bold" style={{ color: "var(--color-ink)" }}>
           Recent Bookings
         </p>
         <button
           onClick={() => navigate("/dashboard/bookings")}
-          className="text-xs transition-opacity hover:opacity-70"
+          className="text-sm transition-opacity hover:opacity-70"
           style={{ color: "var(--color-terracotta)" }}
         >
-          View all →
+          View all
         </button>
       </div>
 

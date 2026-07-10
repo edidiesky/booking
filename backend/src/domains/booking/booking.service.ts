@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { withTransaction } from "../../config/database";
+import { withTransaction } from "@booking/shared";
 import { bookingRepository, Booking } from "./booking.repository";
 import { availabilityRepository } from "../availability/availability.repository";
 import { propertyRepository } from "../property/property.repository";
@@ -57,6 +57,8 @@ export interface BookingDto {
   createdAt: Date;
   propertyName?: string;
   roomTypeImage?: string;
+  receiptUrl?:string;
+  room_type_images?: string[]
 }
 
 function toDto(
@@ -85,6 +87,8 @@ function toDto(
     createdAt: b.created_at,
     propertyName: enrichment?.propertyName,
     roomTypeImage: enrichment?.roomTypeImage,
+    receiptUrl:      b.receipt_url ?? undefined,
+    room_type_images: b.room_type_images ?? []
   };
 }
 
@@ -275,6 +279,9 @@ export const bookingService = {
       );
     }
 
+    const guest = await userRepository.findById(booking.guest_user_id);
+    if (!guest) throw AppError.notFound("Guest user not found.");
+
     let confirmed!: Booking;
 
     await withTransaction(async (client) => {
@@ -321,6 +328,7 @@ export const bookingService = {
         client,
       );
 
+
       // Booking receipt reqested
       await outboxRepository.create(
         "booking.receipt.requested",
@@ -333,8 +341,21 @@ export const bookingService = {
           totalAmountNgn: Number(booking.total_amount_ngn),
           platformFeeNgn: Number(booking.platform_fee_ngn),
           transactionId,
-          gateway: "unknown", // see note below
+          gateway: "unknown",
           paidAt: new Date().toISOString(),
+        },
+        client,
+      );
+
+      // adding customer insert to seller records
+      await outboxRepository.create(
+        "renter.upsert.requested",
+        {
+          ownerId: booking.tenant_id,
+          guestUserId: booking.guest_user_id,
+          fullName: guest.first_name + " " + guest.last_name,
+          email: guest.email,
+          phone: guest.phone ?? undefined,
         },
         client,
       );

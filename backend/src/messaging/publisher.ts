@@ -1,7 +1,7 @@
-import { getRabbitMQChannel, EXCHANGES, ROUTING_KEYS } from "./connection";
 import { requestContext } from "../context/requestContext";
 import logger from "../utils/logger";
 import { BookingStatus } from "../types";
+import { EXCHANGES, getRabbitMQChannel, ROUTING_KEYS } from "./connection";
 
 function publish(exchange: string, routingKey: string, payload: unknown): void {
   try {
@@ -137,6 +137,14 @@ export interface BookingReceiptRequestedPayload {
   paidAt: string;
 }
 
+
+export interface RentalsRecordUpsertedPayload {
+  ownerId: string;
+  guestUserId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+}
 export function publishBookingCreated(p: BookingEventPayload): void {
   publish(EXCHANGES.BOOKING, ROUTING_KEYS.BOOKING_CREATED, p);
 }
@@ -202,4 +210,10 @@ export function publishBookingReceiptRequested(
   p: BookingReceiptRequestedPayload,
 ): void {
   publish(EXCHANGES.BOOKING, ROUTING_KEYS.BOOKING_RECEIPT_REQUESTED, p);
+}
+
+export function publishRentalsRecordUpserted(
+  p: RentalsRecordUpsertedPayload,
+): void {
+  publish(EXCHANGES.BOOKING, ROUTING_KEYS.RENTERS_RECORED_UPSERTED, p);
 }

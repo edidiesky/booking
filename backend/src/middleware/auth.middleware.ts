@@ -23,6 +23,10 @@ export function authenticate(
   }
 
   let decoded: { user: JWTPayload };
+  logger.debug("user auth request:", {
+    JWT_SECRET: process.env.JWT_SECRET,
+    token,
+  })
   try {
     decoded = jwt.verify(token, process.env.JWT_SECRET!, {
       issuer: "booking-platform",

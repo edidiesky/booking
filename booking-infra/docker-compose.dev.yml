@@ -47,7 +47,23 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
-          
+
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: pgbouncer
+    networks:
+      - app-tier
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
+    volumes:
+      - ./pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+    ports:
+      - "6432:6432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+            
   postgres:
     image: postgres:16-alpine
     container_name: postgres
@@ -82,8 +98,8 @@ services:
 
   booking:
     build:
-      context: ../backend
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: backend/Dockerfile
     container_name: booking
     env_file:
       - ./.env.production
@@ -152,6 +168,22 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+
+  # events-worker:
+  #   build:
+  #     context: ..
+  #     dockerfile: packages/events-worker/Dockerfile
+  #   env_file:
+  #     - ./.env.production
+  #   networks:
+  #     - app-tier
+  #   depends_on: 
+  #     rabbitmq:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
 
   # prometheus:
   #   image: prom/prometheus:latest

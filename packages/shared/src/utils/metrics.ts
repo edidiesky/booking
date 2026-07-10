@@ -28,6 +28,34 @@ export const availabilityLockCounter   = new client.Counter({ name: "availabilit
 export const circuitBreakerCounter     = new client.Counter({ name: "circuit_breaker_events_total", help: "Circuit breaker events", labelNames: ["name", "event"] as const,     registers: [bookingRegistry] });
 export const idempotencyStateCounter   = new client.Counter({ name: "idempotency_state_total",    help: "Idempotency state transitions", labelNames: ["status"] as const,        registers: [bookingRegistry] });
 
+export const sweepDurationHistogram = new client.Histogram({
+  name: "booking_sweep_duration_seconds",
+  help: "Duration of recurring sweep executions",
+  labelNames: ["sweep"] as const,
+  buckets: [0.01, 0.05, 0.1, 0.5, 1, 5, 10],
+  registers: [bookingRegistry],
+});
+
+export const sweepFailureCounter = new client.Counter({
+  name: "booking_sweep_failures_total",
+  help: "Total sweep executions that threw",
+  labelNames: ["sweep"] as const,
+  registers: [bookingRegistry],
+});
+
+export const locksPurgedCounter = new client.Counter({
+  name: "booking_locks_purged_total",
+  help: "Total expired booking_locks rows deleted by the lock sweep",
+  registers: [bookingRegistry],
+});
+
+export const driftDetectedGauge = new client.Gauge({
+  name: "booking_availability_drift_rows",
+  help: "Number of availability_calendar rows found drifted on the most recent reconciliation pass",
+  registers: [bookingRegistry],
+});
+
+
 export function trackError(errorType: string, operation: string, severity: string): void {
   errorCounter.inc({ error_type: errorType, operation, severity });
 }

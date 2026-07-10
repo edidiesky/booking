@@ -13,3 +13,4 @@ export const NOTIFICATION_URL = `${BASE}/api/v1/notifications`;
 export const ROLE_URL         = `${BASE}/api/v1/roles`;
 export const PERMISSION_URL   = `${BASE}/api/v1/permissions`;
 export const SSE_URL          = `${BASE}/api/v1/sse`;
+export const RENTER_URL          = `${BASE}/api/v1/renters`;

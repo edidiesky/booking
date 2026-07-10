@@ -6,7 +6,7 @@ import { MdCleaningServices } from "react-icons/md";
 import { GiConsoleController } from "react-icons/gi";
 import { FaKitchenSet } from "react-icons/fa6";
 import AnimateTextWord from "@/components/common/AnimateTextWord";
-import Image from "@/components/common/Image";
+import LazyImage from "@/components/common/LazyImage";
 
 const whychooseList = [
   {
@@ -121,7 +121,7 @@ const About = () => {
         {" "}
         <div className="w-[90%] max-w-custom mx-auto grid md:grid-cols-2 gap-24">
           <div className="w-full h-[450px]">
-            <Image
+            <LazyImage
               src={
                 "https://avada.website/business/wp-content/uploads/sites/171/2022/09/about-us-2.jpg"
               }

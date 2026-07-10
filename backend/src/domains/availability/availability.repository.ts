@@ -1,5 +1,5 @@
 import { PoolClient } from "pg";
-import { query, queryOne } from "../../config/database";
+import { query, queryOne } from "@booking/shared";
 import { availabilityLockCounter, trackError } from "../../utils/metrics";
 import { requestContext } from "../../context/requestContext";
 import logger from "../../utils/logger";

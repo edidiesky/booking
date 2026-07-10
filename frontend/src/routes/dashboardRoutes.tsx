@@ -5,13 +5,16 @@ import { ProtectRoute }     from "./guards/ProtectRoute";
 import PageLoader           from "@/components/common/PageLoader";
 
 const DashboardLayout      = lazy(() => import("@/screens/dashboard/layout"));
-const DashboardHome        = lazy(() => import("@/screens/dashboard/Home"));
+const DashboardHome        = lazy(() => import("@/screens/dashboard/home"));
 const DashboardProperties  = lazy(() => import("@/screens/dashboard/Properties/index"));
 const DashboardBookings    = lazy(() => import("@/screens/dashboard/Bookings"));
 const DashboardPayments    = lazy(() => import("@/screens/dashboard/Payment"));
 const DashboardEscrow      = lazy(() => import("@/screens/dashboard/Escrow"));
 const DashboardRoles       = lazy(() => import("@/screens/dashboard/Roles"));
 const DashboardAccount     = lazy(() => import("@/screens/dashboard/Account"));
+const PropertyDetail = lazy(() => import("@/screens/dashboard/Properties/PropertyDetail"));
+const DashboardRenters = lazy(() => import("@/screens/dashboard/Renters"));
+
 
 const MyBookings     = lazy(() => import("@/screens/guest/MyBookings"));
 const BookingDetail  = lazy(() => import("@/screens/guest/BookingDetail"));
@@ -31,6 +34,8 @@ export const dashboardRoutes: RouteObject[] = [
       { path: "escrow",                         element: s(<DashboardEscrow />)     },
       { path: "roles",                          element: s(<DashboardRoles />)      },
       { path: "account",                        element: s(<DashboardAccount />)    },
+      { path: "properties/:propertyId", element: s(<PropertyDetail />) },
+      { path: "renters", element: s(<DashboardRenters />) },
     ],
   },
   {

@@ -23,6 +23,8 @@ export const NAV_GROUPS = [
     items: [
       { icon: LuBuilding,  text: "Properties", path: "properties", tour: "nav-properties" },
       { icon: LuCalendar,  text: "Bookings",   path: "bookings",   tour: "nav-bookings"   },
+      { icon: LuUsers, text: "Tenants", path: "renters", tour: "nav-renters" },
+
     ],
   },
   {

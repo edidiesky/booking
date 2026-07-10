@@ -3,7 +3,7 @@ import { FaMountainCity } from "react-icons/fa6";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { GiModernCity } from "react-icons/gi";
 import AnimateTextWord from "@/components/common/AnimateTextWord";
-import Image from "@/components/common/Image";
+import LazyImage from "@/components/common/LazyImage";
 
 const Expert = () => {
   const zyncStength = [
@@ -72,7 +72,7 @@ const Expert = () => {
         <div className="w-[100%] flex flex-col gap-20">
           <div className="grid lg:grid-cols-2 items-start md:items-center w-full">
             <div className="w-full h-full">
-              <Image
+              <LazyImage
                 src={
                   "https://avada.website/business/wp-content/uploads/sites/171/2022/10/about-features-1.jpg"
                 }

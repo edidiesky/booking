@@ -1,4 +1,4 @@
-import { query, queryOne } from "../../config/database";
+import { query, queryOne } from "@booking/shared";
 import { PaymentGateway, WebhookLogStatus } from "../../types";
 
 export interface WebhookLog {

@@ -7,7 +7,7 @@ import { userRepository } from "../auth/auth.repository";
 import { AppError } from "../../utils/AppError";
 import logger from "../../utils/logger";
 import { requestContext } from "../../context/requestContext";
-import { withTransaction } from "../../config/database";
+import { withTransaction } from "@booking/shared";
 import { PaymentGateway } from "../../types";
 import {
   paymentInitializedCounter,

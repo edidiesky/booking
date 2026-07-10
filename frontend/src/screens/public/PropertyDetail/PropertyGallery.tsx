@@ -57,7 +57,7 @@ export default function PropertyGallery({ images, name }: Props) {
                 >
                   <LazyImage src={src} alt={`${name} ${i + 2}`} />
                   {i === 3 && count > 5 && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-bold">
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm ">
                       +{count - 5} more
                     </div>
                   )}

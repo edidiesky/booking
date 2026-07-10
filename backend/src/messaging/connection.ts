@@ -29,6 +29,7 @@ export const ROUTING_KEYS = {
   NOTIFY_AUTH_REGISTERED:    "notify.auth.registered",
   NOTIFY_ESCROW_RELEASED:    "notify.escrow.released",
   BOOKING_RECEIPT_REQUESTED: "booking.receipt.requested",
+  RENTERS_RECORED_UPSERTED: "renter.upsert.requested",
 } as const;
 
 let _connection: amqp.ChannelModel | null = null;

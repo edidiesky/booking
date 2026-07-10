@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import AnimateTextWord from "@/components/common/AnimateTextWord";
-import Image from "@/components/common/Image";
+import LazyImage from "@/components/common/LazyImage";
+
 
 const blogList = [
   {
@@ -59,7 +60,7 @@ const Blog = () => {
                 className="w-full group flex flex-col gap-4"
               >
                 <div className="w-full overflow-hidden rounded-xl">
-                  <Image src={blog?.image} />
+                  <LazyImage src={blog?.image} />
                 </div>
                 <div className="py-8 border-b border-dotted px-4 flex flex-col gap-4">
                   <h5 className="text-base font-normal">

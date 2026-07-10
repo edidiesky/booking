@@ -7,6 +7,7 @@ import { userRepository }                 from "../../domains/auth/auth.reposito
 import { ROUTING_KEYS }                   from "../../messaging/connection";
 import { BookingReceiptRequestedPayload } from "../../messaging/publisher";
 import logger                             from "../../utils/logger";
+import { paymentRepository } from "../../domains/payment/payment.repository";
 
 export class BookingReceiptHandler extends BaseNotificationHandler {
   protected routingKey = ROUTING_KEYS.BOOKING_RECEIPT_REQUESTED;
@@ -16,14 +17,16 @@ export class BookingReceiptHandler extends BaseNotificationHandler {
     return `receipt:${d.bookingId}`;
   }
 
+
   protected async handle(data: unknown): Promise<void> {
     const e = data as BookingReceiptRequestedPayload;
 
-    const [booking, property, roomType, guest] = await Promise.all([
+    const [booking, property, roomType, guest, payment] = await Promise.all([
       bookingRepository.findById(e.bookingId),
       propertyRepository.findPropertyById(e.propertyId),
       propertyRepository.findRoomTypeById(e.roomTypeId),
       userRepository.findById(e.guestUserId),
+      paymentRepository.findByTransactionId(e.transactionId)
     ]);
 
     if (!booking) {
@@ -43,7 +46,7 @@ export class BookingReceiptHandler extends BaseNotificationHandler {
       totalAmountNgn: e.totalAmountNgn,
       platformFeeNgn: e.platformFeeNgn,
       transactionId:  e.transactionId,
-      gateway:        e.gateway,
+      gateway:        payment?.gateway as string,
       paidAt:         new Date(e.paidAt),
     });
 
