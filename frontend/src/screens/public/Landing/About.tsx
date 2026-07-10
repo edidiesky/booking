@@ -60,7 +60,7 @@ const About = () => {
     <div data-scroll-section className="w-full relative flex flex-col gap-20">
      
       <div className="w-full py-20">
-        <div className="w-[90%] max-w-custom mx-auto flex flex-col gap-20">
+        <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
           <div className="grid lg:grid-cols-2 items-start md:items-center w-full gap-8">
             <div className="flex flex-col gap-4">
               <h4 className="text-lg md:text-xl text-[var(--primary)]">
@@ -119,7 +119,7 @@ const About = () => {
       </div>
       <div className="w-full bg-[#22253d] py-40 z-40">
         {" "}
-        <div className="w-[90%] max-w-custom mx-auto grid md:grid-cols-2 gap-24">
+        <div className="max-w-screen-xl mx-auto grid md:grid-cols-2 gap-24">
           <div className="w-full h-[450px]">
             <LazyImage
               src={

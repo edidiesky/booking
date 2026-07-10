@@ -177,7 +177,7 @@ const Hero = () => {
           />
           <div className="w-full h-full absolute z-30 bg-[rgba(0,0,0,.5)]"></div>
 
-          <div className="w-[90%] max-w-custom py-12 md:py-20 mx-auto lg:px-4 z-40 flex md:items-center md:justify-center flex-col  gap-8 lg:gap-16  md:gap-12">
+          <div className="max-w-screen-xl py-12 md:py-20 mx-auto lg:px-4 z-40 flex md:items-center md:justify-center flex-col  gap-8 lg:gap-16  md:gap-12">
             <div className="flex max-w-[980px] md:mx-auto flex-col md:items-center justify-center gap-8">
               <div className="w-full hero_about_text flex-row flex items-center gap-4">
                 <div className="flex items-center">

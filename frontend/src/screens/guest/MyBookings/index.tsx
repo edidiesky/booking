@@ -41,7 +41,7 @@ export default function MyBookings() {
       <Header />
 
       <main className="flex-1 py-20 pb-12">
-        <div className="w-[90%] max-w-screen-xl mx-auto flex flex-col gap-12">
+        <div className="max-w-screen-xl mx-auto flex flex-col gap-12">
 
           {hasBookings && (
             <div className="flex items-center justify-between gap-4">

@@ -46,7 +46,7 @@ export default function PropertyDetail() {
       <Header />
 
       <main className="flex-1 pb-24 lg:pb-0">
-        <div className="w-full md:w-[90%] max-w-[1280px] mx-auto py-6 px-4 md:px-0">
+        <div className="w-full max-w-screen-xl mx-auto py-6 px-4 md:px-0">
 
           <button
             onClick={() => navigate(-1)}
