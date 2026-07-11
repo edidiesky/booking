@@ -2,10 +2,11 @@ import { apiSlice }    from "./apiSlice";
 import { PAYMENT_URL } from "@/constants/api";
 import type {
   InitializePaymentPayload, InitializePaymentResponse,
-  Payment, PaymentListResponse,
+  Payment, PaymentSummary,
 } from "@/types/api";
 
 interface PaymentResponse { success: boolean; data: Payment; }
+interface PaymentSummaryListResponse { success: boolean; data: PaymentSummary[]; }
 
 export const paymentApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -19,7 +20,7 @@ export const paymentApi = apiSlice.injectEndpoints({
       providesTags: (_r, _e, bookingId) => [{ type: "Payment", id: bookingId }],
     }),
 
-    getTenantPayments: builder.query<PaymentListResponse, { page?: number; limit?: number }>({
+    getTenantPayments: builder.query<PaymentSummaryListResponse, { page?: number; limit?: number }>({
       query: ({ page = 1, limit = 20 } = {}) => ({
         url: `${PAYMENT_URL}/tenant?page=${page}&limit=${limit}`,
       }),

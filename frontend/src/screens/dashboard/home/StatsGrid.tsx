@@ -61,12 +61,12 @@ export default function StatsGrid({
   ];
 
   return (
-    <div className="rounded-3xl border border-[var(--color-fog)] bg-[#f5f5f3] overflow-hidden px-1 pt-6 pb-3">
+    <div className="rounded-3xl border border-[var(--color-fog)] bg-[#f5f5f3] overflow-hidden px-1 pt-6 pb-1">
       <div className="w-full rounded-3xl bg-white grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[var(--color-fog)]">
         {stats.map(({ id, label, value, sub }) => (
           <div
             key={id}
-            className="flex h-36 lg:h-40 items-start flex-col justify-between gap-3 px-5 py-4"
+            className="flex h-36 lg:h-44 items-start flex-col justify-between gap-3 px-5 py-4"
           >
             <p
                 className="text-sm uppercase medium"

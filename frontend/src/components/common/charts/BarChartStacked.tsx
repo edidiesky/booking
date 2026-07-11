@@ -61,20 +61,20 @@ function CustomTooltip({ active, payload, label, dataKeys, chartConfig, isCurren
   if (!active || !payload?.length) return null;
   const total = payload.reduce((sum, p) => sum + (p?.value ?? 0), 0);
   return (
-    <div style={{ background: "white", border: "0.5px solid #e8e6e3", padding: "10px 14px", minWidth: "180px", display: "flex", flexDirection: "column", gap: "8px", boxShadow: "0 2px 8px 0 rgba(0,0,0,0.08)" }}>
-      <p style={{ fontSize: "14px", color: "#17191c", margin: 0 }}>{formatDate(label ?? "")}</p>
-      <p style={{ fontSize: "14px", color: "#4c4c4c", margin: 0 }}>
+    <div className="rounded-xl" style={{ background: "white", border: "0.5px solid #e8e6e3", padding: "10px 14px", minWidth: "210px", display: "flex", flexDirection: "column", gap: "15px", boxShadow: "0 2px 8px 0 rgba(0,0,0,0.08)" }}>
+      <p className="bold" style={{ fontSize: "14px", color: "#17191c", margin: 0 }}>{formatDate(label ?? "")}</p>
+      <p className="bold" style={{ fontSize: "14px", color: "#4c4c4c", margin: 0 }}>
         {isCurrency ? "Total revenue" : "Total"}:{" "}
-        <span style={{ color: "#17191c" }}>{isCurrency ? formatCurrency(total) : total.toLocaleString("en-NG")}</span>
+        <span className="bold" style={{ color: "#17191c" }}>{isCurrency ? formatCurrency(total) : total.toLocaleString("en-NG")}</span>
       </p>
       {dataKeys.map((key, i) => {
         const val = payload[i]?.value ?? 0;
         const configEntry = chartConfig[key.datakey];
         const seriesLabel = typeof configEntry === "object" && "label" in configEntry ? String(configEntry.label) : key.datakey;
         return (
-          <p key={key.datakey} style={{ fontSize: "14px", margin: 0 }}>
-            <span style={{ color: key.color }}>{seriesLabel}:</span>{" "}
-            <span style={{ color: "#17191c" }}>{isCurrency ? formatCurrency(val) : val.toLocaleString("en-NG")}</span>
+          <p className="bold" key={key.datakey} style={{ fontSize: "14px", margin: 0 }}>
+            <span className="bold" style={{ color: key.color }}>{seriesLabel}:</span>{" "}
+            <span className="bold" style={{ color: "#17191c" }}>{isCurrency ? formatCurrency(val) : val.toLocaleString("en-NG")}</span>
           </p>
         );
       })}
@@ -119,8 +119,8 @@ function ChartBody({ data, chartConfig, dataKeys, isCurrency, emptyMessage }: {
       <ChartContainer config={chartConfig} className="w-full h-[280px] lg:h-[300px]">
         <BarChart data={data} accessibilityLayer>
           <CartesianGrid vertical={false} stroke="#f2f0ed" strokeDasharray="4" />
-          <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} minTickGap={32} tick={{ fontSize: 13, fontWeight:600, fill: "#777b86" }} tickFormatter={(v) => formatDate(v)} />
-          <YAxis tickLine={false} axisLine={false} tickMargin={8} width={isCurrency ? 70 : 55} tick={{ fontSize: 13, fontWeight:600, fill: "#777b86" }} tickFormatter={(v: number) => isCurrency ? formatCurrency(v) : v.toLocaleString("en-NG")} />
+          <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} minTickGap={32} tick={{ fontSize: 13, fontFamily:"Bold", fill: "#777b86" }} tickFormatter={(v) => formatDate(v)} />
+          <YAxis tickLine={false} axisLine={false} tickMargin={8} width={isCurrency ? 70 : 55} tick={{ fontSize: 13, fontFamily:"Bold", fill: "#777b86" }} tickFormatter={(v: number) => isCurrency ? formatCurrency(v) : v.toLocaleString("en-NG")} />
           <ChartTooltip cursor={{ fill: "#f2f0ed" }} content={<CustomTooltip dataKeys={dataKeys} chartConfig={chartConfig} isCurrency={isCurrency} />} />
           {dataKeys.map((key, index) => (
             <Bar key={key.datakey} dataKey={key.datakey} stackId="a" fill={key.color}
@@ -159,8 +159,8 @@ export function BarChartStacked({
     <div className={`${showBorder ? "border border-[#e8e6e3]" : ""} flex flex-col rounded-2xl`}>
       <div className="px-5 py-4 w-full border-b border-[#e8e6e3] flex items-start justify-between gap-4">
         <div className="w-full">
-          <p className="text-lg  text-[#17191c]">{title}</p>
-          <p className="text-sm text-[#777b86] mt-0.5">{description}</p>
+          <p className="text-lg bold text-[#17191c]">{title}</p>
+          <p className="text-sm medium text-[#777b86] mt-0.5">{description}</p>
         </div>
         <ChartSelect value={selectedFilter} onValueChange={onFilterChange} options={filterOptions} />
       </div>

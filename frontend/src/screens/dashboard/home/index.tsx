@@ -1,17 +1,25 @@
-import { motion }            from "framer-motion";
-import { useSelector }       from "react-redux";
-import Title                 from "@/components/dashboard/common/Title";
-import StatsGrid             from "./StatsGrid";
-import RecentBookings        from "./RecentBookings";
-import { useDashboardHome }  from "./hooks/useDashboardHome";
+import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import Title from "@/components/dashboard/common/Title";
+import StatsGrid from "./StatsGrid";
+import RecentBookings from "./RecentBookings";
+import { useDashboardHome } from "./hooks/useDashboardHome";
 import { selectCurrentUser } from "@/redux/slices/authSlice";
+import RevenueTrendCard from "./RevenueTrendCard";
+import RecentTransactionsCard from "./BookingFunnelCard";
+import TodaysFocusCard from "./TodaysFocusCard";
+import QuickActionsRow from "./QuickActionsRow";
 
 export default function DashboardHome() {
   const currentUser = useSelector(selectCurrentUser);
   const {
-    recentBookings, totalRevenue,
-    confirmedCount, checkedInCount, cancelledCount,
+    recentBookings,
+    totalRevenue,
+    confirmedCount,
+    checkedInCount,
+    cancelledCount,
     isLoading,
+    recentTransactions,
   } = useDashboardHome();
 
   return (
@@ -28,8 +36,14 @@ export default function DashboardHome() {
 
       {isLoading ? (
         <div className="flex flex-col gap-6">
-          <div className="h-40 rounded-xl animate-pulse" style={{ backgroundColor: "#f2f0ed" }} />
-          <div className="h-64 rounded-xl animate-pulse" style={{ backgroundColor: "#f2f0ed" }} />
+          <div
+            className="h-40 rounded-xl animate-pulse"
+            style={{ backgroundColor: "#f2f0ed" }}
+          />
+          <div
+            className="h-64 rounded-xl animate-pulse"
+            style={{ backgroundColor: "#f2f0ed" }}
+          />
         </div>
       ) : (
         <>
@@ -39,6 +53,25 @@ export default function DashboardHome() {
             checkedInCount={checkedInCount}
             cancelledCount={cancelledCount}
           />
+          <div className="grid grid-cols-1 lg:grid-cols-[60%_40%] gap-4">
+            <RevenueTrendCard />
+
+            <div className="flex flex-col gap-4">
+              <RecentTransactionsCard
+                recentTransactions={recentTransactions || []}
+              />
+              <TodaysFocusCard
+                confirmedCount={confirmedCount}
+                checkedInCount={checkedInCount}
+                cancelledCount={cancelledCount}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <QuickActionsRow />
+          </div>
+
           <RecentBookings bookings={recentBookings} />
         </>
       )}

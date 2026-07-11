@@ -1,9 +1,11 @@
 import { useGetTenantBookingsQuery } from "@/redux/services/bookingApi";
+import { useGetTenantPaymentsQuery } from "@/redux/services/paymentApi";
 import { useGetMyTenantQuery }       from "@/redux/services/tenantApi";
 
 export function useDashboardHome() {
   const { data: tenantData }   = useGetMyTenantQuery();
   const { data: bookingsData, isLoading: loadingBookings } = useGetTenantBookingsQuery({ limit: 5 });
+  const { data: paymentsData, isLoading: loadingPayments } = useGetTenantPaymentsQuery({ limit: 10 });
 
   const bookings  = bookingsData?.data  ?? [];
   const tenant    = tenantData?.data;
@@ -20,11 +22,12 @@ export function useDashboardHome() {
 
   return {
     tenant,
-    recentBookings: bookings.slice(0, 5),
+    recentBookings: bookings?.slice(0, 5) ?? [], // paymentsData
+    recentTransactions: paymentsData?.data?.slice(0, 5) ?? [], // paymentsData
     totalRevenue,
     confirmedCount,
     checkedInCount,
     cancelledCount,
-    isLoading: loadingBookings,
+    isLoading: loadingBookings || loadingPayments,
   };
 }

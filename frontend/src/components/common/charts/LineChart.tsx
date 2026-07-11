@@ -124,7 +124,6 @@ export function ChartLineMultiple({
   emptyMessage = "No chart data available",
   hideHeader = false,
 }: LineChartMultipleProps) {
-  // hideHeader: caller owns the border and header. Render body only.
   if (hideHeader) {
     return (
       <ChartBody data={data} chartConfig={chartConfig} series={series} isCurrency={isCurrency} emptyMessage={emptyMessage} />
