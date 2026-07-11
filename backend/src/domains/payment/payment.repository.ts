@@ -218,9 +218,14 @@ export const paymentRepository = {
        p.channel,
        p.paid_at,
        p.created_at,
-       b.booking_ref
+       b.booking_ref,
+       u.first_name,
+       u.last_name,
+       u.profile_image,
+       u.profile_image
      FROM payments p
-     JOIN bookings b ON b.id = p.booking_id
+     JOIN bookings b ON b.id = p.booking_id 
+     JOIN users u ON u.id = p.guest_user_id 
      WHERE p.tenant_id = $1
      ORDER BY p.created_at DESC
      LIMIT $2 OFFSET $3`,
@@ -228,3 +233,4 @@ export const paymentRepository = {
     );
   },
 };
+// guest_user_id
