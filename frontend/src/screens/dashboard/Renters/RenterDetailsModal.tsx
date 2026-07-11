@@ -16,7 +16,7 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
   const occupancy = data?.data.occupancy;
 
   return (
-    <div className="fixed inset-0 bg-black/10 backdrop-blur-sm p-4 flex items-center justify-end z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm p-4 flex items-center justify-end z-50">
       <motion.div
         initial={{ x: 400 }} animate={{ x: 0 }} exit={{ x: 400 }}
         transition={{ duration: 0.2, ease: "easeOut" }}

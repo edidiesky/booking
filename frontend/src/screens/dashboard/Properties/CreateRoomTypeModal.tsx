@@ -325,7 +325,7 @@ export default function CreateRoomTypeModal({
   const isBusy = isLoading;
 
   return (
-    <div className="fixed inset-0 bg-black/10 backdrop-blur-sm p-4 flex items-center justify-end z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm p-4 flex items-center justify-end z-50">
       <motion.div
         initial={{ x: 600 }}
         animate={isOpen ? { x: 0 } : { x: 600 }}

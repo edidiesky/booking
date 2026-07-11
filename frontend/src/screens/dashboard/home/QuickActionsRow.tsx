@@ -9,12 +9,12 @@ const ACTIONS = [
 
 export default function QuickActionsRow() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {ACTIONS.map(({ id, title, subtitle, Icon, href }) => (
         <a
           key={id}
           href={href}
-          className="flex items-center hover:bg-[#f2f0ed5f] h-36 lg:h-32 gap-3 rounded-2xl border border-[var(--color-fog)] bg-[var(--color-canvas)] px-4 py-3.5 hover:border-[var(--color-ink)]/20 transition-colors"
+          className="flex items-center hover:bg-[#f2f0ed5f] h-24 lg:h-32 gap-3 rounded-2xl border border-[var(--color-fog)] bg-[var(--color-canvas)] px-4 py-3.5 hover:border-[var(--color-ink)]/20 transition-colors"
         >
           <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[var(--color-fog)]">
             <Icon size={14} style={{ color: "var(--color-ink)" }} />

@@ -200,7 +200,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
     "h-[42px] border border-[#e8e6e3] px-3 text-sm outline-none focus:border-[#17191c] transition-colors w-full";
 
   return (
-    <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-end p-4 z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-end p-4 z-50">
       <motion.div
         initial={{ x: 800 }}
         animate={isOpen ? { x: 0 } : { x: 800 }}
