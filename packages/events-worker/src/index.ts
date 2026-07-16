@@ -1,14 +1,21 @@
 import "dotenv/config";
-import { connectDB, connectRedis, connectRabbitMQ, getRabbitMQConnection, logger } from "@booking/shared";
-import { startOutboxPoller }       from "./workers/outboxPoller";
-import { startNotificationWorker } from "./workers/notificationWorker";
-import { startWebhookRetryWorker } from "./workers/webhookRetryWorker";
-import { startSseFanoutWorker }    from "./workers/sseFanoutWorker";
-import { registerGracefulShutdown } from "./shutdown";
-import { startMetricsServer }       from "./metricsServer";
+import { connectDB, connectRedis, connectRabbitMQ, getRabbitMQConnection, redisClient, registerGracefulShutdown, logger } from "@booking/shared";
+import { startOutboxPoller, stopOutboxPoller }       from "./workers/outboxPoller";
+import { startNotificationWorker }                    from "./workers/notificationWorker";
+import { startWebhookRetryWorker, stopWebhookRetryWorker } from "./workers/webhookRetryWorker";
+import { startSseFanoutWorker }                        from "./workers/sseFanoutWorker";
+import { startMetricsServer }                           from "./metricsServer";
 
 async function main(): Promise<void> {
-  registerGracefulShutdown();
+  registerGracefulShutdown({
+    serviceName: "events-worker",
+    redisClient,
+    onBeforeDisconnect: () => {
+      stopOutboxPoller();
+      stopWebhookRetryWorker();
+    },
+  });
+
   await connectDB();
   await connectRedis();
   await connectRabbitMQ();
