@@ -71,7 +71,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
         animate={{ x: 0 }}
         exit={{ x: 400 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
-        className="bg-white w-full rounded-2xl overflow-hidden relative flex flex-col lg:w-[550px] h-[95vh]"
+        className="bg-white w-full rounded-2xl overflow-hidden relative flex flex-col lg:w-[750px] h-[95vh]"
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           <div>

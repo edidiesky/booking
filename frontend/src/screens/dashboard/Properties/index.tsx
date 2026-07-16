@@ -74,7 +74,7 @@ export default function DashboardProperties() {
           </div>
           <button
             onClick={handleOpenCreate}
-            className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-sm lg:text-base p-2 bold px-4"
+            className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-sm lg:text-sm p-2 bold px-6"
           >
             Add Property
           </button>

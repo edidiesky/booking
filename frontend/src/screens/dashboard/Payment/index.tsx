@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useGetTenantPaymentsQuery } from "@/redux/services/paymentApi";
 import { ChartSelect } from "@/components/common/charts/Chartselect";
-import type { Payment, PaymentStatus, PaymentGateway } from "@/types/api";
+import type {PaymentStatus, PaymentGateway, PaymentSummary } from "@/types/api";
 import Title from "@/components/dashboard/common/Title";
 import PaymentTableRow from "./PaymentTableRow";
 import PaymentDetailsModal from "./PaymentDetailsModal";
@@ -39,7 +39,7 @@ const STATUS_OPTIONS: PaymentStatus[] = [
 const GATEWAY_OPTIONS: PaymentGateway[] = ["paystack", "flutterwave"];
 
 export default function DashboardPayments() {
-  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentSummary | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<PaymentStatus | "">("");
   const [gatewayFilter, setGatewayFilter] = useState<PaymentGateway | "">("");
@@ -49,7 +49,7 @@ export default function DashboardPayments() {
     limit: ROWS_PER_PAGE,
   });
 
-  const allPayments: Payment[] = data?.data ?? [];
+  const allPayments: PaymentSummary[] = data?.data ?? [];
 
   const payments = allPayments.filter((p) => {
     const matchStatus = !statusFilter || p?.status === statusFilter;

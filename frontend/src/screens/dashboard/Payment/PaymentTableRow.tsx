@@ -3,11 +3,11 @@ import { formatDate }     from "@/utils/formatDate";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Eye, FileText }  from "lucide-react";
 import RowActionsMenu     from "@/components/common/RowActionsMenu";
-import type { Payment }   from "@/types/api";
+import type { PaymentSummary }   from "@/types/api";
 
 interface Props {
-  payment:        Payment;
-  onViewDetails:  (payment: Payment) => void;
+  payment:        PaymentSummary;
+  onViewDetails:  (payment: PaymentSummary) => void;
 }
 
 export default function PaymentTableRow({ payment, onViewDetails }: Props) {
@@ -19,15 +19,15 @@ export default function PaymentTableRow({ payment, onViewDetails }: Props) {
     >
       <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-hint-of-grey)" }}>{payment.id?.slice(0, 10)}...</td>
       <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>{payment.booking_id?.slice(0, 10)}...</td>
-      <td className="px-5 py-3 bold whitespace-nowrap" style={{ color: "var(--color-ink)" }}>{formatCurrency(payment.amount_ngn)}</td>
+      <td className="px-5 py-3 bold whitespace-nowrap" style={{ color: "var(--color-ink)" }}>{formatCurrency(Number(payment.amount_ngn))}</td>
       <td className="px-5 py-3 capitalize text-sm" style={{ color: "var(--color-muted-stone)" }}>{payment.gateway}</td>
       <td className="px-5 py-3"><StatusBadge status={payment.status} /></td>
-      <td className="px-5 py-3 text-sm whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>{formatDate(payment.createdAt)}</td>
+      <td className="px-5 py-3 text-sm whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>{formatDate(payment.created_at)}</td>
       <td className="px-5 py-3 text-right">
         <RowActionsMenu
           actions={[
             { label: "View payment details", icon: Eye,      onClick: () => onViewDetails(payment) },
-            { label: "View receipt",         icon: FileText, onClick: () => window.open(payment.receiptUrl!, "_blank", "noopener,noreferrer"), hidden: !payment.receiptUrl },
+            { label: "View receipt",         icon: FileText, onClick: () => window.open(payment.receipt_url!, "_blank", "noopener,noreferrer"), hidden: !payment.receipt_url },
           ]}
         />
       </td>

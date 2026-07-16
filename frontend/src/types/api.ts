@@ -353,18 +353,27 @@ export interface TenantBookingQueryParams {
 export type PaymentStatus  = "pending" | "success" | "failed" | "refunded";
 export type PaymentGateway = "paystack" | "flutterwave";
 export interface PaymentSummary {
-  id:             string;
-  booking_id:     string;
-  gateway:        PaymentGateway;
-  transaction_id: string | null;
-  amount_ngn:     string;
-  status:         PaymentStatus;
-  channel:        string | null;
-  paid_at:        string | null;
-  created_at:     string;
-  booking_ref:    string;
+  id:                   string;
+  booking_id:           string;
+  gateway:              PaymentGateway;
+  transaction_id:       string | null;
+  amount_ngn:           string;
+  status:               PaymentStatus;
+  channel:              string | null;
+  paid_at:              string | null;
+  created_at:           string;
+  booking_ref:          string;
+  check_in:             string;
+  check_out:            string;
+  receipt_url:          string | null;
+  guest_first_name:     string;
+  guest_last_name:      string;
+  guest_profile_image:  string | null;
+  room_type_name:       string;
+  room_type_images:     string[];
+  guest_email: string;
+  guest_user_type: string;
 }
-
 export interface Payment {
   id:            string;
   booking_id:     string;
