@@ -23,20 +23,18 @@ export interface Payment {
   updated_at: Date;
 }
 
-
 export interface PaymentSummary {
-  id:             string;
-  booking_id:     string;
-  gateway:        PaymentGateway;
+  id: string;
+  booking_id: string;
+  gateway: PaymentGateway;
   transaction_id: string | null;
-  amount_ngn:     string;
-  status:         PaymentStatus;
-  channel:        string | null;
-  paid_at:        string | null;
-  created_at:     string;
-  booking_ref:    string;
+  amount_ngn: string;
+  status: PaymentStatus;
+  channel: string | null;
+  paid_at: string | null;
+  created_at: string;
+  booking_ref: string;
 }
-
 
 function ctx() {
   return requestContext.get() ?? {};
@@ -219,13 +217,20 @@ export const paymentRepository = {
        p.paid_at,
        p.created_at,
        b.booking_ref,
-       u.first_name,
-       u.last_name,
-       u.profile_image,
-       u.profile_image
+       b.check_in,
+       b.check_out,
+       b.receipt_url,
+       u.first_name AS guest_first_name,
+       u.last_name  AS guest_last_name, 
+       u.user_type  AS guest_user_type, 
+       u.email  AS guest_email,
+       u.profile_image AS guest_profile_image,
+       rt.name AS room_type_name,
+       rt.images AS room_type_images
      FROM payments p
-     JOIN bookings b ON b.id = p.booking_id 
-     JOIN users u ON u.id = p.guest_user_id 
+     JOIN bookings   b  ON b.id  = p.booking_id
+     JOIN room_types rt ON rt.id = b.room_type_id
+     JOIN users      u  ON u.id  = p.guest_user_id
      WHERE p.tenant_id = $1
      ORDER BY p.created_at DESC
      LIMIT $2 OFFSET $3`,
@@ -233,4 +238,4 @@ export const paymentRepository = {
     );
   },
 };
-// guest_user_id
+// user_type

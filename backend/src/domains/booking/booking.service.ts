@@ -8,6 +8,7 @@ import { escrowRepository } from "../escrow/escrow.repository";
 import { outboxRepository } from "../outbox/outbox.repository";
 import { auditRepository } from "../audit/audit.repository";
 import { sseService } from "../sse/sse.service";
+import { redisClient } from "@booking/shared";
 import { userRepository } from "../auth/auth.repository";
 import { AppError } from "../../utils/AppError";
 import logger from "../../utils/logger";
@@ -241,6 +242,8 @@ export const bookingService = {
         },
         client,
       );
+
+      await redisClient.zadd("schedule:booking_expiry", Date.now() + 30 * 60_000, booking.id);
     });
 
     bookingCreatedCounter.inc({
