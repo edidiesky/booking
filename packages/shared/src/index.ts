@@ -1,6 +1,11 @@
+export { runConsumerLoop, getInFlightCount, stopAllConsumers } from "./messaging/consumerLoop";
+export type { MessageHandler } from "./messaging/consumerLoop";
+export { registerGracefulShutdown } from "./shutdown/gracefulShutdown";
+export type { GracefulShutdownOptions } from "./shutdown/gracefulShutdown";
 export { connectDB, query, queryOne, withTransaction, disconnectDB } from "./config/database";
 export { default as redisClient, connectRedis }                     from "./config/redis";
 export { connectRabbitMQ, getRabbitMQConnection, getRabbitMQChannel, disconnectRabbitMQ, EXCHANGES, ROUTING_KEYS } from "./config/rabbitmq";
+export { createScheduleIndex, createLockedScheduler } from "./scheduling/scheduleIndex";
 
 export { bookingRepository }       from "./domains/booking/booking.repository";
 export { propertyRepository }      from "./domains/property/property.repository";
@@ -9,6 +14,8 @@ export { availabilityBroadcaster } from "./domains/availability/availability.bro
 export { outboxRepository }        from "./domains/outbox/outbox.repository";
 export type { OutboxEventType, OutboxEvent } from "./domains/outbox/outbox.repository";
 // export { renterRepository }        from "./domains/renter/renter.repository";
+export { webhookRepository }       from "./domains/webhook/webhook.repository";
+export { webhookService }          from "./domains/webhook/webhook.service";
 
 export * from "./messaging/publisher";
 
