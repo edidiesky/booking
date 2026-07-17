@@ -56,16 +56,21 @@ export interface BookingDto {
   sessionId: string;
   specialRequests?: string;
   createdAt: Date;
-  propertyName?: string;
+  receiptUrl?: string;
+  room_type_images?: string[];
+  propertyName?:  string;
+  propertyCity?:  string;
+  roomTypeName?:  string;
   roomTypeImage?: string;
-  receiptUrl?:string;
-  room_type_images?: string[]
 }
 
 function toDto(
   b: Booking,
   sessionId = "",
-  enrichment?: { propertyName?: string; roomTypeImage?: string },
+  enrichment?: { propertyName?: string;
+  propertyCity?:  string;
+  roomTypeName?:  string;
+  roomTypeImage?: string; },
 ): BookingDto {
   return {
     bookingId: b.id,
@@ -88,8 +93,10 @@ function toDto(
     createdAt: b.created_at,
     propertyName: enrichment?.propertyName,
     roomTypeImage: enrichment?.roomTypeImage,
-    receiptUrl:      b.receipt_url ?? undefined,
-    room_type_images: b.room_type_images ?? []
+    receiptUrl: b.receipt_url ?? undefined,
+    room_type_images: b.room_type_images ?? [],
+    propertyCity: b.propertyCity,
+    roomTypeName: b.roomTypeName,
   };
 }
 
@@ -134,6 +141,7 @@ async function resolveNotificationContext(booking: Booking): Promise<{
     roomTypeName: roomType?.name ?? "room",
   };
 }
+
 
 export const bookingService = {
   async initiateBooking(input: InitiateBookingInput): Promise<BookingDto> {
@@ -243,7 +251,11 @@ export const bookingService = {
         client,
       );
 
-      await redisClient.zadd("schedule:booking_expiry", Date.now() + 30 * 60_000, booking.id);
+      await redisClient.zadd(
+        "schedule:booking_expiry",
+        Date.now() + 30 * 60_000,
+        booking.id,
+      );
     });
 
     bookingCreatedCounter.inc({
@@ -330,7 +342,6 @@ export const bookingService = {
         },
         client,
       );
-
 
       // Booking receipt reqested
       await outboxRepository.create(
@@ -449,7 +460,10 @@ export const bookingService = {
         `Cannot cancel a booking with status: ${booking.status}`,
       );
     }
-    if (booking.guest_user_id !== requestingUserId)
+    if (
+      requestingUserId !== "system" &&
+      booking.guest_user_id !== requestingUserId
+    )
       throw AppError.forbidden("You can only cancel your own bookings.");
 
     const tenant = await tenantRepository.findById(booking.tenant_id);
@@ -732,6 +746,8 @@ export const bookingService = {
     return toDto(b, "", {
       propertyName: property?.name,
       roomTypeImage: roomType?.images?.[0],
+      propertyCity:  property?.address?.city,
+      roomTypeName:  roomType?.name,
     });
   },
 
