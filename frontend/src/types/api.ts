@@ -305,10 +305,12 @@ export interface Booking {
   sessionId:        string;
   specialRequests?: string;
   createdAt:        Date;
-  propertyName?:    string;
-  roomTypeImage?:   string;
   receiptUrl?:string;
-  room_type_images: string[]
+  room_type_images: string[];
+  propertyName?:  string;
+  propertyCity?:  string;
+  roomTypeName?:  string;
+  roomTypeImage?: string;
 }
 
 
