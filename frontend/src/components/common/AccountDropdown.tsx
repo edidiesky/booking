@@ -55,10 +55,10 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="h-9 px-5 text-base text-[#000] transition-opacity hover:opacity-80 flex items-center gap-2 rounded-full outline-none hover:bg-[#f5f5f3]"
+          className="h-9 px-5 text-sm text-[#000] transition-opacity hover:opacity-80 flex items-center gap-2 rounded-full outline-none hover:bg-[#f5f5f3]"
         >
           <span
-            className="w-8 bold h-8 rounded-full flex text-[#000] items-center justify-center text-sm bg-[#f5f5f3] shrink-0"
+            className="w-8 bold h-8 rounded-full flex text-[#000] items-center justify-center text-xs bg-[#f5f5f3] shrink-0"
           >
             {initial}
           </span>
@@ -77,14 +77,14 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
             className="flex items-center gap-3 px-3 py-3 cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none border-b border-[#f2f0ed] mb-1"
           >
             <span
-              className="w-9 h-9 rounded-full flex items-center justify-center text-sm shrink-0"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-xs shrink-0"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
             >
               {initial}
             </span>
             <div className="flex flex-col leading-tight">
-              <span className="text-base bold text-[#17191c]">{fullName || "My Account"}</span>
-              <span className="text-sm medium text-[#777b86]">View your profile</span>
+              <span className="text-sm bold text-[#17191c]">{fullName || "My Account"}</span>
+              <span className="text-xs medium text-[#777b86]">View your profile</span>
             </div>
           </Link>
         </DropdownMenuItem>
@@ -100,7 +100,7 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
                   <DropdownMenuItem key={item.to} asChild>
                     <Link
                       to={item.to}
-                      className="flex items-center gap-3 px-3 py-2.5 text-sm bold text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
+                      className="flex items-center gap-3 px-3 py-2.5 text-xs bold text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
                     >
                       <Icon size={30} className="text-[#4c4c4c]" />
                       {item.label}
@@ -116,7 +116,7 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
 
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="flex items-center gap-3 px-3 py-2.5 text-sm bold text-red-600 cursor-pointer hover:bg-red-50 rounded-lg outline-none"
+          className="flex items-center gap-3 px-3 py-2.5 text-xs bold text-red-600 cursor-pointer hover:bg-red-50 rounded-lg outline-none"
         >
           <LogOut size={16} />
           Sign out

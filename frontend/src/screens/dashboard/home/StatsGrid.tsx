@@ -69,20 +69,20 @@ export default function StatsGrid({
             className="flex h-36 lg:h-44 items-start flex-col justify-between gap-3 px-5 py-4"
           >
             <p
-                className="text-sm uppercase medium"
+                className="text-xs uppercase medium"
                 style={{ color: "var(--color-muted-stone)" }}
               >
                 {label}
               </p>
               <div className="w-full flex flex-col gap-3">
                 <h4
-                  className="text-2xl mt-1 bold lg:text-3xl"
+                  className="text-xl mt-1 bold lg:text-3xl"
                   style={{ color: "var(--color-ink)" }}
                 >
                   {value}
                 </h4>
                 <p
-                  className="text-sm medium"
+                  className="text-xs medium"
                   style={{ color: "var(--color-muted-stone)" }}
                 >
                   {sub}

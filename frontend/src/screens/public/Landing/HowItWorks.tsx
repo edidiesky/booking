@@ -37,10 +37,10 @@ export default function HowItWorks() {
                 {num}
               </span>
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-base bold" style={{ color: "var(--color-ink)" }}>
+                <h3 className="text-sm bold" style={{ color: "var(--color-ink)" }}>
                   {title}
                 </h3>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--color-light-steel)" }}>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--color-light-steel)" }}>
                   {body}
                 </p>
               </div>

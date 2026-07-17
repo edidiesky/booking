@@ -92,14 +92,14 @@ export default function StickyFeatures() {
                 >
                   {feature.tag}
                 </span>
-                <h3 className="text-2xl lg:text-4xl  leading-tight text-[#171717]">
+                <h3 className="text-xl lg:text-4xl  leading-tight text-[#171717]">
                   {feature.title}
                 </h3>
                 <ul className="flex flex-col gap-3">
                   {feature.bullets.map((bullet, j) => (
                     <li
                       key={j}
-                      className="flex items-start gap-3 text-sm text-[#666]"
+                      className="flex items-start gap-3 text-xs text-[#666]"
                     >
                       <span
                         className="w-1.5 h-1.5 rounded-full mt-2 shrink-0"
@@ -131,12 +131,12 @@ export default function StickyFeatures() {
                 />
                 <div className="mt-auto">
                   <p
-                    className="text-lg "
+                    className="text-base "
                     style={{ color: feature.accent }}
                   >
                     {feature.cardLabel}
                   </p>
-                  <p className="text-sm text-[#888] mt-1">{feature.cardSub}</p>
+                  <p className="text-xs text-[#888] mt-1">{feature.cardSub}</p>
                 </div>
               </motion.div>
             </div>

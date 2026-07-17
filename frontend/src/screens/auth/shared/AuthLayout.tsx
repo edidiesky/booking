@@ -48,7 +48,7 @@ function StepChecklist({ steps }: { steps: StepItem[] }) {
             <Circle size={18} className="shrink-0" style={{ color: "#d1d5db" }} />
           )}
           <span
-            className="text-sm"
+            className="text-xs"
             style={{
               color: step.status === "pending" ? "#9ca3af" : "#17191c",
               fontWeight: step.status === "active" ? 600 : 400,
@@ -109,7 +109,7 @@ export default function AuthLayout({
                       Create Account
                     </h2>
                     {remainingCount != null && remainingCount > 0 && (
-                      <p className="text-sm" style={{ color: "#6b7280" }}>
+                      <p className="text-xs" style={{ color: "#6b7280" }}>
                         {remainingCount} step{remainingCount > 1 ? "s" : ""} remaining
                       </p>
                     )}
@@ -140,7 +140,7 @@ export default function AuthLayout({
         >
           <Link
             to="/"
-            className="text-base bold mb-8 block lg:hidden"
+            className="text-sm bold mb-8 block lg:hidden"
             style={{ color: "#17191c" }}
           >
             Selleasi

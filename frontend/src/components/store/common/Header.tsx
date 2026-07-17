@@ -55,7 +55,7 @@ export default function StoreHeader() {
         {/* left — store name */}
         <Link
           to={`/store/${id}`}
-          className="text-2xl pt-4 bold text-[#171717] whitespace-nowrap shrink-0"
+          className="text-xl pt-4 bold text-[#171717] whitespace-nowrap shrink-0"
         >
           {store?.name ?? "Store"}
         </Link>
@@ -70,7 +70,7 @@ export default function StoreHeader() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={`Search ${store?.name ?? "this store"}...`}
-                className="flex-1 h-full px-4 text-base bold text-[#222] placeholder:text-[#aaa] outline-none bg-transparent"
+                className="flex-1 h-full px-4 text-sm bold text-[#222] placeholder:text-[#aaa] outline-none bg-transparent"
               />
               <button
                 type="submit"
@@ -86,7 +86,7 @@ export default function StoreHeader() {
               <button
                 key={`${cat}-${i}`}
                 onClick={() => handleCategoryClick(cat)}
-                className={`flex items-center gap-2 h-[42px] px-3 bold rounded-full text-base text-[#333] hover:bg-[#eeece2] transition-colors`}
+                className={`flex items-center gap-2 h-[42px] px-3 bold rounded-full text-sm text-[#333] hover:bg-[#eeece2] transition-colors`}
               >
                 {cat}
               </button>

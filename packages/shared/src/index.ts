@@ -13,9 +13,6 @@ export { availabilityRepository }  from "./domains/availability/availability.rep
 export { availabilityBroadcaster } from "./domains/availability/availability.broadcaster";
 export { outboxRepository }        from "./domains/outbox/outbox.repository";
 export type { OutboxEventType, OutboxEvent } from "./domains/outbox/outbox.repository";
-// export { renterRepository }        from "./domains/renter/renter.repository";
-export { webhookRepository }       from "./domains/webhook/webhook.repository";
-export { webhookService }          from "./domains/webhook/webhook.service";
 
 export * from "./messaging/publisher";
 

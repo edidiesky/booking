@@ -123,12 +123,12 @@ export const UserTable = ({
           value={search}
           onChange={handleSearch}
           placeholder={`Search ${type}s...`}
-          className="w-48 lg:w-64 px-4 h-[38px] bg-white border border-[#e8e6e3] text-sm  outline-none focus:border-[#17191c] transition-colors"
+          className="w-48 lg:w-64 px-4 h-[38px] bg-white border border-[#e8e6e3] text-xs  outline-none focus:border-[#17191c] transition-colors"
         />
       </div>
 
       <div className="border rounded-2xl border-[#e8e6e3] overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-[#e8e6e3]">
               {headers.map((header, index) => (
@@ -156,7 +156,7 @@ export const UserTable = ({
               <tr>
                 <td
                   colSpan={headers.length}
-                  className="px-5 py-10 text-center text-sm text-[#a3a6af] "
+                  className="px-5 py-10 text-center text-xs text-[#a3a6af] "
                 >
                   No {type}s found{search ? ` for "${search}"` : ""}
                 </td>

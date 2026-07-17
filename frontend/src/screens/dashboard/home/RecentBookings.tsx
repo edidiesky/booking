@@ -13,12 +13,12 @@ export default function RecentBookings({ bookings }: Props) {
     <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center justify-between px-5 py-4 border-b"
            style={{ borderColor: "#e8e6e3" }}>
-        <p className="text-base lg:text-lg bold" style={{ color: "var(--color-ink)" }}>
+        <p className="text-sm lg:text-base bold" style={{ color: "var(--color-ink)" }}>
           Recent Bookings
         </p>
         <button
           onClick={() => navigate("/dashboard/bookings")}
-          className="text-sm transition-opacity hover:opacity-70"
+          className="text-xs transition-opacity hover:opacity-70"
           style={{ color: "var(--color-terracotta)" }}
         >
           View all
@@ -26,7 +26,7 @@ export default function RecentBookings({ bookings }: Props) {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-xs">
           <thead>
             <tr className="border-b" style={{ borderColor: "#f2f0ed" }}>
               {["Reference", "Check-in", "Check-out", "Amount", "Status"].map((h) => (
@@ -40,7 +40,7 @@ export default function RecentBookings({ bookings }: Props) {
           <tbody>
             {bookings.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-10 text-center text-sm"
+                <td colSpan={5} className="px-5 py-10 text-center text-xs"
                     style={{ color: "var(--color-hint-of-grey)" }}>
                   No bookings yet.
                 </td>

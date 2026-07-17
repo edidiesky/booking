@@ -52,7 +52,7 @@ export default function ResetPassword() {
             >
               Check your inbox
             </h1>
-            <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
+            <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
               We sent a password reset link to{" "}
               <span className="" style={{ color: "var(--color-ink)" }}>
                 {submittedEmail}
@@ -68,7 +68,7 @@ export default function ResetPassword() {
             <p className="text-xs  uppercase " style={{ color: "var(--color-muted-stone)" }}>
               Didn't receive it?
             </p>
-            <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
+            <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
               Check your spam folder or{" "}
               <button
                 onClick={() => setSent(false)}
@@ -83,7 +83,7 @@ export default function ResetPassword() {
 
           <Link
             to="/login"
-            className="text-sm transition-opacity hover:opacity-60"
+            className="text-xs transition-opacity hover:opacity-60"
             style={{ color: "var(--color-muted-stone)" }}
           >
             ← Back to sign in
@@ -103,7 +103,7 @@ export default function ResetPassword() {
           >
             Reset your password
           </h1>
-          <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
             Enter the email address linked to your account and we'll send you a reset link.
           </p>
         </div>
@@ -120,13 +120,13 @@ export default function ResetPassword() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 flex items-center justify-center gap-2 text-sm  transition-opacity hover:opacity-80 disabled:opacity-50"
+          className="w-full h-12 flex items-center justify-center gap-2 text-xs  transition-opacity hover:opacity-80 disabled:opacity-50"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
           {isLoading ? "Sending..." : "Send reset link"}
         </button>
 
-        <p className="text-sm text-center" style={{ color: "var(--color-muted-stone)" }}>
+        <p className="text-xs text-center" style={{ color: "var(--color-muted-stone)" }}>
           Remember your password?{" "}
           <Link
             to="/login"

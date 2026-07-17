@@ -69,7 +69,7 @@ export default function NewPassword() {
               Password updated
             </h1>
             <p
-              className="text-sm"
+              className="text-xs"
               style={{ color: "var(--color-muted-stone)" }}
             >
               Your password has been changed successfully. You can now sign in
@@ -79,7 +79,7 @@ export default function NewPassword() {
 
           <button
             onClick={() => navigate("/login")}
-            className="w-full h-12 flex items-center justify-center gap-2 text-sm  transition-opacity hover:opacity-80"
+            className="w-full h-12 flex items-center justify-center gap-2 text-xs  transition-opacity hover:opacity-80"
             style={{
               backgroundColor: "var(--color-ink)",
               color: "var(--color-canvas)",
@@ -102,12 +102,12 @@ export default function NewPassword() {
           >
             Invalid link
           </h1>
-          <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
             This password reset link is invalid or has expired.
           </p>
           <Link
             to="/reset-password"
-            className="text-sm  underline underline-offset-4"
+            className="text-xs  underline underline-offset-4"
             style={{ color: "var(--color-ink)" }}
           >
             Request a new link
@@ -130,7 +130,7 @@ export default function NewPassword() {
           >
             Set new password
           </h1>
-          <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
             Choose a strong password to secure your account.
           </p>
         </div>
@@ -175,7 +175,7 @@ export default function NewPassword() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 flex items-center justify-center gap-2 text-sm  transition-opacity hover:opacity-80 disabled:opacity-50"
+          className="w-full h-12 flex items-center justify-center gap-2 text-xs  transition-opacity hover:opacity-80 disabled:opacity-50"
           style={{
             backgroundColor: "var(--color-ink)",
             color: "var(--color-canvas)",

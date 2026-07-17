@@ -13,27 +13,27 @@ export default function PaymentFailed() {
         </div>
 
         <div>
-          <h1 className="text-2xl  text-[#171717]">Payment Failed</h1>
-          <p className="text-sm text-[#666] mt-2 leading-relaxed">
+          <h1 className="text-xl  text-[#171717]">Payment Failed</h1>
+          <p className="text-xs text-[#666] mt-2 leading-relaxed">
             Something went wrong with your payment. Your cart has been saved and you can try again.
           </p>
         </div>
 
         <div className="w-full bg-[#f4f3ee] p-4 text-left flex flex-col gap-1">
           <p className="text-xs text-[#888] uppercase tracking-wide ">What to do next</p>
-          <p className="text-sm text-[#666] mt-1">Check your card details and try again, or switch to a different payment method.</p>
+          <p className="text-xs text-[#666] mt-1">Check your card details and try again, or switch to a different payment method.</p>
         </div>
 
         <div className="flex flex-col gap-3 w-full">
           <button
             onClick={() => navigate(-2 as unknown as string)}
-            className="w-full h-12 bg-[#171717] text-white text-sm  hover:opacity-90 transition-opacity"
+            className="w-full h-12 bg-[#171717] text-white text-xs  hover:opacity-90 transition-opacity"
           >
             Try Again
           </button>
           <button
             onClick={() => navigate("/")}
-            className="w-full h-12 border border-black/10 text-sm  hover:bg-[#f4f3ee] transition-colors"
+            className="w-full h-12 border border-black/10 text-xs  hover:bg-[#f4f3ee] transition-colors"
           >
             Back to Home
           </button>

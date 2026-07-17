@@ -24,7 +24,7 @@
 //             initial={{ opacity: 0, y: 8 }}
 //             animate={{ opacity: 1, y: 0 }}
 //             transition={{ duration: 0.4 }}
-//             className="flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm"
+//             className="flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs"
 //             style={{ borderColor: "#e8e6e3", color: "var(--color-muted-stone)" }}
 //           >
 //             <MapPin size={13} />
@@ -56,7 +56,7 @@
 //             initial={{ opacity: 0, y: 16 }}
 //             animate={{ opacity: 1, y: 0 }}
 //             transition={{ duration: 0.5, delay: 0.2 }}
-//             className="text-base lg:text-xl text-center leading-relaxed max-w-md"
+//             className="text-sm lg:text-lg text-center leading-relaxed max-w-md"
 //             style={{ color: "var(--color-muted-stone)" }}
 //           >
 //             Browse shortlets, hotels, and guesthouses. Pay securely,
@@ -71,7 +71,7 @@
           // >
           //   <button
           //     onClick={handleCta}
-          //     className="h-14 px-7 text-base flex items-center gap-2 transition-opacity hover:opacity-80 rounded-full"
+          //     className="h-14 px-7 text-sm flex items-center gap-2 transition-opacity hover:opacity-80 rounded-full"
           //     style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
           //   >
           //     {isAuthenticated ? "Browse Properties" : "Get started"}
@@ -80,7 +80,7 @@
           //   {!isAuthenticated && (
           //     <button
           //       onClick={() => navigate("/login")}
-          //       className="h-14 px-7 text-base border transition-opacity hover:opacity-70 rounded-full"
+          //       className="h-14 px-7 text-sm border transition-opacity hover:opacity-70 rounded-full"
           //       style={{ color: "var(--color-ink)", borderColor: "var(--color-ink)" }}
           //     >
           //       Log in
@@ -99,7 +99,7 @@
 //               { icon: Calendar, label: "Book instantly"      },
 //               { icon: MapPin,   label: "Across Nigeria"      },
 //             ].map(({ icon: Icon, label }) => (
-//               <div key={label} className="flex items-center gap-1.5 text-sm"
+//               <div key={label} className="flex items-center gap-1.5 text-xs"
 //                    style={{ color: "var(--color-muted-stone)" }}>
 //                 <Icon size={14} />
 //                 {label}
@@ -197,7 +197,7 @@ const Hero = () => {
                     );
                   })}
                 </div>
-                <span className="text-base lg:text-lg text-[#eee] regular capitalize block family1">
+                <span className="text-sm lg:text-base text-[#eee] regular capitalize block family1">
                   5 K+ Happy Customers
                 </span>
               </div>
@@ -205,7 +205,7 @@ const Hero = () => {
                 <span className="text-center hero_main_text bold hide">
                   Find your Best Property - By Lease, or Rent with Confidence
                 </span>
-                <span className="text-base md:text-xl hero_submain_text hide max-w-[400px] lg:mx-auto md:text-center lg:max-w-[680px] text-gray-400  pt-2 block family1">
+                <span className="text-sm md:text-lg hero_submain_text hide max-w-[400px] lg:mx-auto md:text-center lg:max-w-[680px] text-gray-400  pt-2 block family1">
                   Explore a versed range of properties and secure your next
                   home. We are experts who set the pace Inspiring homes beyond
                   boundaries. We help you get the best out of your finance in
@@ -217,7 +217,7 @@ const Hero = () => {
               <div className="flex flex-1">
                 <Link
                   to={"/search"}
-                  className="btn hero_btn md:text-base text-center  w-full text-sm family1 regular text-white rounded-[40px] px-4 py-4"
+                  className="btn hero_btn md:text-sm text-center  w-full text-xs family1 regular text-white rounded-[40px] px-4 py-4"
                 >
                   Book Your Home
                 </Link>
@@ -226,7 +226,7 @@ const Hero = () => {
               <div className="flex flex-1 items-center">
                 <Link
                   to={"/search"}
-                  className="btn hero_btn btn_2 md:text-base text-center w-full text-sm family1 regular text-white px-4 py-4"
+                  className="btn hero_btn btn_2 md:text-sm text-center w-full text-xs family1 regular text-white px-4 py-4"
                 >
                   Learn More
                 </Link>

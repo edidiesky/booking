@@ -63,7 +63,7 @@ const About = () => {
         <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
           <div className="grid lg:grid-cols-2 items-start md:items-center w-full gap-8">
             <div className="flex flex-col gap-4">
-              <h4 className="text-lg md:text-xl text-[var(--primary)]">
+              <h4 className="text-base md:text-lg text-[var(--primary)]">
                 Passionate – Dedicated – Professional
               </h4>
               <h3 className="text-4xl max-w-[600px]  bold md:text-5xl text-[var(--dark-1)]">
@@ -73,7 +73,7 @@ const About = () => {
               </h3>
             </div>
             <div className="flex lg:items-center md:justify-end">
-              <span className="text-xl max-w-[100%] md:max-w-[400px] text-grey font-normal">
+              <span className="text-lg max-w-[100%] md:max-w-[400px] text-grey font-normal">
                 <AnimateTextWord>
                   Auisque cursus metus vitae sed pharetra auctor semy mas
                   interdum magnads augue.
@@ -96,16 +96,16 @@ const About = () => {
                     <div className="w-36 h-36 mb-4 border-8 group-hover:text-white group-hover:bg-[var(--primary)] border-[hsla(232, 28%, 73%,calc(100% - 80%))] md:text-6xl flex items-center justify-center rounded-full bg-white text-4xl">
                       {data?.icons}
                     </div>
-                    <h3 className="text-2xl md:text-3xl family2 text-dark">
+                    <h3 className="text-xl md:text-3xl family2 text-dark">
                       {data?.title}
                     </h3>
-                    <h4 className="text-sm md:text-base family1 font-normal text-grey">
+                    <h4 className="text-xs md:text-sm family1 font-normal text-grey">
                       {data?.subText}
                     </h4>
                   </div>
                   <div className="w-full z-10">
                     <div
-                      className="w-[90%] capitalize family1 font-normal -mt-20 text-base text-center py-4 pt-12 px-4
+                      className="w-[90%] capitalize family1 font-normal -mt-20 text-sm text-center py-4 pt-12 px-4
                      rounded-xl text-white mx-auto bg-[var(--primary)]"
                     >
                       {data?.text}
@@ -128,7 +128,7 @@ const About = () => {
             />
           </div>
           <div className="flex w-full flex-col gap-4">
-            <h4 className="text-lg md:text-xl text-[var(--primary)]">
+            <h4 className="text-base md:text-lg text-[var(--primary)]">
               <AnimateTextWord>
                 Passionate – Dedicated – Professional
               </AnimateTextWord>
@@ -139,17 +139,17 @@ const About = () => {
               </AnimateTextWord>{" "}
             </h3>
             <div className="flex items-center py-4 gap-8">
-              <div className="family2 text-xl md:text-xl family2 text-white">
+              <div className="family2 text-lg md:text-lg family2 text-white">
                 The Mission
               </div>
-              <div className="family2 text-xl md:text-xl family2 text-white">
+              <div className="family2 text-lg md:text-lg family2 text-white">
                 The Mission
               </div>
-              <div className="family2 text-xl md:text-xl family2 text-white">
+              <div className="family2 text-lg md:text-lg family2 text-white">
                 The Mission
               </div>
             </div>
-            <p className="text-xl family1 leading-[1.4] font-normal text-white">
+            <p className="text-lg family1 leading-[1.4] font-normal text-white">
               <AnimateTextWord>
                 Buisque cursus metus vitae sed pharetra auctor semy interdum
                 magna augue eget diam ante ipsum faucibus luctus ultrices
@@ -157,14 +157,14 @@ const About = () => {
               </AnimateTextWord>
             </p>
             <div className="flex pt-8 flex-col gap-4">
-              <p className="text-lg text-grey">
+              <p className="text-base text-grey">
                 Call us for inquiry : Monday to Friday : 9 am – 5 pm
               </p>
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 flex items-center bg-[var(--primary)] justify-center rounded-full text-white text-xl">
+                <div className="w-14 h-14 flex items-center bg-[var(--primary)] justify-center rounded-full text-white text-lg">
                   <Phone />
                 </div>
-                <h4 className="text-white text-2xl md:text-3xl family2">
+                <h4 className="text-white text-xl md:text-3xl family2">
                   +1 (800) 555 555{" "}
                 </h4>
               </div>

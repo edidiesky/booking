@@ -41,9 +41,9 @@ export default function BookingSuccess() {
         className="max-w-screen-md w-full bg-white border border-[#e8e6e3] rounded-2xl p-8 flex flex-col gap-6"
       >
         <div className="flex flex-col items-center text-center gap-2">
-          <h1 className="text-2xl lg:text-3xl bold text-[#17191c] mt-2">Woohoo! Your booking is confirmed.</h1>
+          <h1 className="text-xl lg:text-3xl bold text-[#17191c] mt-2">Woohoo! Your booking is confirmed.</h1>
           {booking?.propertyName && (
-            <p className="text-sm lg:text-base text-[#777b86]">
+            <p className="text-xs lg:text-sm text-[#777b86]">
               <span className="bold text-[#17191c]">{booking.propertyName}</span> will get everything ready. We'll notify you once it's confirmed.
             </p>
           )}
@@ -56,12 +56,12 @@ export default function BookingSuccess() {
               {STEPS.map((step, i) => (
                 <div key={step.key} className="flex items-center flex-1">
                   <div className="flex flex-col items-center gap-1.5 flex-1">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm lg:text-base bold ${
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs lg:text-sm bold ${
                       i <= stepIdx ? "bg-[#17191c] text-white" : "border-2 border-[#e8e6e3] text-[#a3a6af]"
                     }`}>
                       {i < stepIdx ? "✓" : i + 1}
                     </div>
-                    <span className={`text-sm lg:text-base ${i <= stepIdx ? "text-[#17191c] bold" : "text-[#a3a6af]"}`}>{step.label}</span>
+                    <span className={`text-xs lg:text-sm ${i <= stepIdx ? "text-[#17191c] bold" : "text-[#a3a6af]"}`}>{step.label}</span>
                   </div>
                   {i < STEPS.length - 1 && <div className={`h-0.5 flex-1 -mt-5 ${i < stepIdx ? "bg-[#17191c]" : "bg-[#e8e6e3]"}`} />}
                 </div>
@@ -70,7 +70,7 @@ export default function BookingSuccess() {
 
             <button
               onClick={() => navigate(`/trips/${booking.bookingId}`)}
-              className="w-full h-12 rounded-full border border-[#e8e6e3] text-sm lg:text-base bold text-[#17191c] hover:bg-[#f2f0ed] transition-colors"
+              className="w-full h-12 rounded-full border border-[#e8e6e3] text-xs lg:text-sm bold text-[#17191c] hover:bg-[#f2f0ed] transition-colors"
             >
               View your booking
             </button>
@@ -78,8 +78,8 @@ export default function BookingSuccess() {
             {/* order details card */}
             <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-[#e8e6e3]">
-                <p className="text-xs lg:text-sm uppercase medium text-[#777b86]">Booking details</p>
-                <p className="text-sm lg:text-base bold mt-0.5">Confirmation: {booking.bookingRef}</p>
+                <p className="text-xs lg:text-xs uppercase medium text-[#777b86]">Booking details</p>
+                <p className="text-xs lg:text-sm bold mt-0.5">Confirmation: {booking.bookingRef}</p>
               </div>
 
               <div className="px-4 py-4 flex gap-3 border-b items-center border-[#f2f0ed]">
@@ -87,32 +87,32 @@ export default function BookingSuccess() {
                   {booking.roomTypeImage && <LazyImage src={booking.roomTypeImage} alt={booking.roomTypeName ?? ""} />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-lg lg:text-xl bold text-[#17191c] truncate">{booking.propertyName}</p>
-                  <p className="text-sm lg:text-base text-[#777b86]">{booking.nights} night{booking.nights !== 1 ? "s" : ""} · {booking.guestCount} guest{booking.guestCount !== 1 ? "s" : ""}</p>
+                  <p className="text-base lg:text-lg bold text-[#17191c] truncate">{booking.propertyName}</p>
+                  <p className="text-xs lg:text-sm text-[#777b86]">{booking.nights} night{booking.nights !== 1 ? "s" : ""} · {booking.guestCount} guest{booking.guestCount !== 1 ? "s" : ""}</p>
                 </div>
-                <p className="text-base lg:text-lg bold text-[#17191c] whitespace-nowrap">{formatCurrency(booking.totalAmountNgn)}</p>
+                <p className="text-sm lg:text-base bold text-[#17191c] whitespace-nowrap">{formatCurrency(booking.totalAmountNgn)}</p>
               </div>
 
               <div className="px-4 py-4 grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm lg:text-sm uppercase tracking-widest text-[#a3a6af] bold mb-1">Check-in</p>
-                  <p className="text-sm lg:text-base bold text-[#17191c]">{formatDate(booking.checkIn)}</p>
+                  <p className="text-xs lg:text-xs uppercase tracking-widest text-[#a3a6af] bold mb-1">Check-in</p>
+                  <p className="text-xs lg:text-sm bold text-[#17191c]">{formatDate(booking.checkIn)}</p>
                 </div>
                 <div>
-                  <p className="text-sm lg:text-sm uppercase tracking-widest text-[#a3a6af] bold mb-1">Check-out</p>
-                  <p className="text-sm lg:text-base bold text-[#17191c]">{formatDate(booking.checkOut)}</p>
+                  <p className="text-xs lg:text-xs uppercase tracking-widest text-[#a3a6af] bold mb-1">Check-out</p>
+                  <p className="text-xs lg:text-sm bold text-[#17191c]">{formatDate(booking.checkOut)}</p>
                 </div>
               </div>
 
               <div className="px-4 py-3 bg-[#f7f7f8] flex items-center justify-between">
-                <span className="text-sm lg:text-base bold text-[#17191c]">Total (1 booking)</span>
-                <span className="text-sm lg:text-base bold text-[#17191c]">{formatCurrency(booking.totalAmountNgn)}</span>
+                <span className="text-xs lg:text-sm bold text-[#17191c]">Total (1 booking)</span>
+                <span className="text-xs lg:text-sm bold text-[#17191c]">{formatCurrency(booking.totalAmountNgn)}</span>
               </div>
             </div>
 
             {booking.receiptUrl && (
               <a href={booking.receiptUrl} target="_blank" rel="noopener noreferrer"
-                className="text-sm text-center underline underline-offset-4 text-[#777b86] hover:text-[#17191c] transition-colors">
+                className="text-xs text-center underline underline-offset-4 text-[#777b86] hover:text-[#17191c] transition-colors">
                 View receipt
               </a>
             )}
@@ -124,12 +124,12 @@ export default function BookingSuccess() {
                 className="border border-[#e8e6e3] rounded-xl p-4 flex items-center justify-between hover:bg-[#f7f7f8] transition-colors text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-[#17191c] text-white flex items-center justify-center text-sm bold shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-[#17191c] text-white flex items-center justify-center text-xs bold shrink-0">
                     {booking.propertyName.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-sm lg:text-lg bold text-[#17191c]">{booking.propertyName}</p>
-                    <p className="text-sm lg:text-base text-[#a3a6af]">{booking.propertyCity}</p>
+                    <p className="text-xs lg:text-base bold text-[#17191c]">{booking.propertyName}</p>
+                    <p className="text-xs lg:text-sm text-[#a3a6af]">{booking.propertyCity}</p>
                   </div>
                 </div>
                 <ChevronRight size={16} className="text-[#a3a6af]" />
@@ -140,7 +140,7 @@ export default function BookingSuccess() {
 
         <button
           onClick={() => { sessionStorage.removeItem("pending_booking_id"); navigate("/"); }}
-          className="w-full h-14 rounded-full bg-[#17191c] text-white text-sm lg:text-base bold hover:opacity-90 transition-opacity"
+          className="w-full h-14 rounded-full bg-[#17191c] text-white text-xs lg:text-sm bold hover:opacity-90 transition-opacity"
         >
           Continue browsing
         </button>

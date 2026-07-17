@@ -27,7 +27,7 @@ export default function Checkout() {
           >
             Almost there.
           </h2>
-          <p className="text-base leading-relaxed" style={{ color: "#6b7280" }}>
+          <p className="text-sm leading-relaxed" style={{ color: "#6b7280" }}>
             {step === "shipping"
               ? "Enter your delivery address and we'll get your order on its way."
               : "Choose how you'd like to pay. Your order is reserved and ready."}

@@ -27,7 +27,7 @@ const Loader = ({
   }
   return (
     <div
-      className="flex items-center top-0 text-2xl text-dark left-0 z-[333330000000] justify-center flex-col gap-3"
+      className="flex items-center top-0 text-xl text-dark left-0 z-[333330000000] justify-center flex-col gap-3"
       style={{
         width: "100vw",
         position: "fixed",

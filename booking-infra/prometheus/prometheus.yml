@@ -5,7 +5,7 @@ global:
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['prometheus:9090']
 
   - job_name: 'grafana'
     static_configs:
@@ -23,3 +23,15 @@ scrape_configs:
       - targets: ['rabbitmq:15692']
         labels:
           group: 'rabbitmq'
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          group: 'database'
+
+  - job_name: 'pgbouncer'
+    static_configs:
+      - targets: ['pgbouncer-exporter:9127']
+        labels:
+          group: 'database'

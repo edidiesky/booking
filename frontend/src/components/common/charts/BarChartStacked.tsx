@@ -91,7 +91,7 @@ function ChartLegendRow({ dataKeys, chartConfig }: { dataKeys: DataKey[]; chartC
         return (
           <div key={key.datakey} className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: key.color }} />
-            <span className="text-sm text-[#4c4c4c]">{label}</span>
+            <span className="text-xs text-[#4c4c4c]">{label}</span>
           </div>
         );
       })}
@@ -110,7 +110,7 @@ function ChartBody({ data, chartConfig, dataKeys, isCurrency, emptyMessage }: {
     return (
       <div className="flex flex-col items-center justify-center py-8 gap-3">
         <img src="/assets/icons/card.png" className="w-50 h-50" alt="" />
-        <p className="text-sm text-[#a3a6af]">{emptyMessage}</p>
+        <p className="text-xs text-[#a3a6af]">{emptyMessage}</p>
       </div>
     );
   }
@@ -159,8 +159,8 @@ export function BarChartStacked({
     <div className={`${showBorder ? "border border-[#e8e6e3]" : ""} flex flex-col rounded-2xl`}>
       <div className="px-5 py-4 w-full border-b border-[#e8e6e3] flex items-start justify-between gap-4">
         <div className="w-full">
-          <p className="text-lg bold text-[#17191c]">{title}</p>
-          <p className="text-sm medium text-[#777b86] mt-0.5">{description}</p>
+          <p className="text-base bold text-[#17191c]">{title}</p>
+          <p className="text-xs medium text-[#777b86] mt-0.5">{description}</p>
         </div>
         <ChartSelect value={selectedFilter} onValueChange={onFilterChange} options={filterOptions} />
       </div>

@@ -54,9 +54,9 @@ export default function PropertyCalendar({ nights, name, dateRange, onChange }: 
 
   return (
     <div className="flex pt-8 md:pt-12 border-t border-[#e8e6e3] flex-col w-full gap-4">
-      <h3 className="text-2xl md:text-3xl bold text-[#17191c]">
+      <h3 className="text-xl md:text-3xl bold text-[#17191c]">
         {nights} night{nights !== 1 ? "s" : ""} in {name}
-        <span className="block text-[#777b86] font-normal text-base pt-1">
+        <span className="block text-[#777b86] font-normal text-sm pt-1">
           {fromLabel} — {toLabel}
         </span>
       </h3>

@@ -52,12 +52,12 @@ function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm bold text-[#17191c]">{label}</span>
+      <span className="text-xs bold text-[#17191c]">{label}</span>
       <div className=" py-2 px-2 flex flex-wrap gap-2 min-h-[45px] focus-within:border-[#17191c] transition-colors">
         {tags.map((tag, i) => (
           <span
             key={i}
-            className="inline-flex items-center gap-1 px-4 rounded-full bold py-1 bg-[#f2f0ed] text-sm text-[#17191c]"
+            className="inline-flex items-center gap-1 px-4 rounded-full bold py-1 bg-[#f2f0ed] text-xs text-[#17191c]"
           >
             {tag}
             <button
@@ -197,7 +197,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
   const isBusy = creating || updating;
 
   const inputClass =
-    "h-[42px] border border-[#e8e6e3] px-3 text-sm outline-none focus:border-[#17191c] transition-colors w-full";
+    "h-[42px] border border-[#e8e6e3] px-3 text-xs outline-none focus:border-[#17191c] transition-colors w-full";
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-end p-4 z-50">
@@ -211,10 +211,10 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
         {/* header */}
         <div className="border-b flex items-center justify-between px-8 h-[72px] shrink-0">
           <div>
-            <h4 className="text-lg bold text-[#17191c]">
+            <h4 className="text-base bold text-[#17191c]">
               {isEdit ? "Edit Property" : "Create Property"}
             </h4>
-            <p className="text-sm text-[#777b86] mt-0.5">
+            <p className="text-xs text-[#777b86] mt-0.5">
               {isEdit
                 ? "Update your property details and availability settings."
                 : "Fill in the details below to add a new property listing."}
@@ -258,7 +258,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                 {/* name + type */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm  text-[#17191c]">
+                    <label className="text-xs  text-[#17191c]">
                       Property Name
                     </label>
                     <Input
@@ -273,7 +273,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                     )}
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm text-[#17191c]">
+                    <label className="text-xs text-[#17191c]">
                       Property Type
                     </label>
                     <Controller
@@ -298,11 +298,11 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
 
                 {/* description */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm  text-[#17191c]">Description</label>
+                  <label className="text-xs  text-[#17191c]">Description</label>
                   <textarea
                     {...register("description")}
                     rows={4}
-                    className="border border-[#e8e6e3] px-3 py-2.5 text-sm outline-none resize-none focus:border-[#17191c] transition-colors"
+                    className="border border-[#e8e6e3] px-3 py-2.5 text-xs outline-none resize-none focus:border-[#17191c] transition-colors"
                     placeholder="Describe your property, nearby landmarks, access instructions..."
                   />
                 </div>
@@ -322,7 +322,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                       ] as const
                     ).map(([key, label, ph]) => (
                       <div key={key} className="flex flex-col gap-1.5">
-                        <label className="text-sm  text-[#17191c]">
+                        <label className="text-xs  text-[#17191c]">
                           {label}
                         </label>
                         <Input
@@ -343,7 +343,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                 {/* times */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm  text-[#17191c]">
+                    <label className="text-xs  text-[#17191c]">
                       Check-in Time
                     </label>
                     <Input
@@ -353,7 +353,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm  text-[#17191c]">
+                    <label className="text-xs  text-[#17191c]">
                       Check-out Time
                     </label>
                     <Input
@@ -379,7 +379,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
         <div className="border-t h-[68px] flex items-center justify-between px-8 shrink-0">
           <button
             onClick={onClose}
-            className="text-sm text-[#4c4c4c] hover:text-[#17191c] transition-colors"
+            className="text-xs text-[#4c4c4c] hover:text-[#17191c] transition-colors"
           >
             Cancel
           </button>
@@ -387,7 +387,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
             type="submit"
             form="property-form"
             disabled={isBusy}
-            className="bg-[#17191c] text-white text-sm px-6 rounded-full h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="bg-[#17191c] text-white text-xs px-6 rounded-full h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {isBusy
               ? isEdit

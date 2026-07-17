@@ -85,13 +85,13 @@ export default function StatsScroll() {
                 {stat.value}
               </p>
               <p
-                className="text-xl  leading-snug"
+                className="text-lg  leading-snug"
                 style={{ color: stat.color }}
               >
                 {stat.label}
               </p>
               <p
-                className="text-sm leading-relaxed mt-auto"
+                className="text-xs leading-relaxed mt-auto"
                 style={{ color: `${stat.color}99` }}
               >
                 {stat.description}

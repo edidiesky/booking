@@ -36,7 +36,7 @@ const FAQ = () => {
             <AnimateTextWord>Frequently asked questions</AnimateTextWord>
           </span>
 
-          <span className="text-lg text-[var(--dark-grey)] max-w-[750px] lg:text-center pt-3 block">
+          <span className="text-base text-[var(--dark-grey)] max-w-[750px] lg:text-center pt-3 block">
             Stay in complete control. Maintain complete visibility over your
             queue, configure granular SLAs and notifications, and bring your
             support and pricing structure to Plain.
@@ -51,7 +51,7 @@ const FAQ = () => {
               >
                 <div className="w-full flex flex-col gap-1">
                   <h3 className="text-3xl ">{data?.title}</h3>
-                  <p className="text-base text-[var(--dark-grey)] ">
+                  <p className="text-sm text-[var(--dark-grey)] ">
                     {data?.description}
                   </p>
                 </div>

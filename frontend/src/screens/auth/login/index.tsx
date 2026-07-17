@@ -32,7 +32,7 @@ export default function Login() {
           <h1 className="text-[32px] leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
             Welcome back
           </h1>
-          <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
             Sign in to manage bookings, properties, and payments.
           </p>
         </div>
@@ -45,12 +45,12 @@ export default function Login() {
         </div>
 
         <button type="submit" disabled={isLoading}
-          className="w-full h-12 flex items-center justify-center text-base bold rounded-full transition-opacity hover:opacity-80 disabled:opacity-50"
+          className="w-full h-12 flex items-center justify-center text-sm bold rounded-full transition-opacity hover:opacity-80 disabled:opacity-50"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
           {isLoading ? "Signing in..." : "Sign in"}
         </button>
 
-        <p className="text-sm text-center" style={{ color: "var(--color-muted-stone)" }}>
+        <p className="text-xs text-center" style={{ color: "var(--color-muted-stone)" }}>
           Don't have an account?{" "}
           <Link to="/onboarding" className="underline underline-offset-4" style={{ color: "var(--color-ink)" }}>
             Get started

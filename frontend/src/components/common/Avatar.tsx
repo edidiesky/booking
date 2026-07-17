@@ -31,7 +31,7 @@ export default function Avatar({ username }: { username: string }) {
   return (
     <div style={{
         background:`${avatarColor}`
-    }} className="w-[45px] h-[45px] rounded-full  flex items-center justify-center text-lg text-white bg-[#35373e41]">
+    }} className="w-[45px] h-[45px] rounded-full  flex items-center justify-center text-base text-white bg-[#35373e41]">
       {username.split("")[0]}
     </div>
   );

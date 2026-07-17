@@ -28,7 +28,7 @@ export default function EscrowTableRow({ escrow }: Props) {
       <td className="px-5 py-3">
         <StatusBadge status={escrow.status} />
       </td>
-      <td className="px-5 py-3 text-sm whitespace-nowrap"
+      <td className="px-5 py-3 text-xs whitespace-nowrap"
           style={{ color: "var(--color-muted-stone)" }}>
         {formatDate(escrow.createdAt)}
       </td>

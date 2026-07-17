@@ -20,8 +20,8 @@ export default function QuickActionsRow() {
             <Icon size={14} style={{ color: "var(--color-ink)" }} />
           </div>
           <div className="flex-1 min-w-0 flex flex-col gap-1">
-            <p className="text-base bold" style={{ color: "var(--color-ink)" }}>{title}</p>
-            <p className="text-sm lg:text-sm medium truncate" style={{ color: "var(--color-muted-stone)" }}>{subtitle}</p>
+            <p className="text-sm bold" style={{ color: "var(--color-ink)" }}>{title}</p>
+            <p className="text-xs lg:text-xs medium truncate" style={{ color: "var(--color-muted-stone)" }}>{subtitle}</p>
           </div>
         </a>
       ))}

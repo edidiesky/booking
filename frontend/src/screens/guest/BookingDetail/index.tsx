@@ -39,18 +39,18 @@ export default function BookingPayment() {
               </motion.h2>
 
               <ul className="flex flex-col gap-4 pb-4 border-b border-[#e8e6e3]">
-                <li className="text-base lg:text-lg text-[#4c4c4c]">
+                <li className="text-sm lg:text-base text-[#4c4c4c]">
                   One more step to complete your booking. Our payment platform ensures your payment details are safe and secured.
                 </li>
               </ul>
 
               <div className="flex flex-col gap-4">
-                <h3 className="text-2xl lg:text-3xl bold text-[#17191c]">
+                <h3 className="text-xl lg:text-3xl bold text-[#17191c]">
                   Complete your booking seamlessly
                 </h3>
                 <ul className="flex flex-col gap-4 pb-8 border-b border-[#e8e6e3]">
                   {CHECKLIST.map((item) => (
-                    <li key={item} className="text-base flex items-start gap-2 text-[#4c4c4c]">
+                    <li key={item} className="text-sm flex items-start gap-2 text-[#4c4c4c]">
                       <BiCheck size={20} className="shrink-0 mt-0.5" />
                       {item}
                     </li>

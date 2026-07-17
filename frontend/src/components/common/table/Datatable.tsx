@@ -77,7 +77,7 @@ export function DataTable({
             if (currentPage !== 1) onPageChange(1);
           }}
           placeholder={searchPlaceholder}
-          className="w-48 lg:w-64 h-[38px] bg-white border border-[#e8e6e3] text-sm outline-none focus:border-[#17191c] transition-colors"
+          className="w-48 lg:w-64 h-[38px] bg-white border border-[#e8e6e3] text-xs outline-none focus:border-[#17191c] transition-colors"
         />
         <span className="text-xs text-[#a3a6af] ">
           {total} {total === 1 ? "record" : "records"}
@@ -86,7 +86,7 @@ export function DataTable({
 
       {/* table */}
       <div className="border border-[#e8e6e3] overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-[#e8e6e3]">
               {headers.map((h) => (
@@ -106,7 +106,7 @@ export function DataTable({
               <tr>
                 <td
                   colSpan={colSpan}
-                  className="px-5 py-12 text-center text-sm text-[#a3a6af] "
+                  className="px-5 py-12 text-center text-xs text-[#a3a6af] "
                 >
                   {search
                     ? `${emptyMessage} for "${search}"`

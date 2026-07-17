@@ -30,7 +30,7 @@ export default function Properties() {
                 style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
               Browse Properties
             </h1>
-            <p className="text-sm" style={{ color: "var(--color-light-steel)" }}>
+            <p className="text-xs" style={{ color: "var(--color-light-steel)" }}>
               {allCount} propert{allCount === 1 ? "y" : "ies"} available
             </p>
           </div>

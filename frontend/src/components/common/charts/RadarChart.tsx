@@ -44,7 +44,7 @@ function ChartLegendRow({ series }: { series: RadarSeries[] }) {
       {series.map((s) => (
         <div key={s.datakey} className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
-          <span className="text-sm text-[#4c4c4c]">{s.label}</span>
+          <span className="text-xs text-[#4c4c4c]">{s.label}</span>
         </div>
       ))}
     </div>
@@ -63,8 +63,8 @@ export function RadarChartCard({
   return (
     <div className="border border-[#e8e6e3] flex flex-col">
       <div className="px-5 py-4 border-b border-[#e8e6e3]">
-        <p className="text-lg bold text-[#17191c]">{title}</p>
-        <p className="text-sm text-[#777b86] mt-0.5">{description}</p>
+        <p className="text-base bold text-[#17191c]">{title}</p>
+        <p className="text-xs text-[#777b86] mt-0.5">{description}</p>
       </div>
 
       {!data?.length ? (

@@ -31,11 +31,11 @@ export default function PropertyGrid({ properties, isLoading, search, typeFilter
   if (!properties.length) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <p className="text-sm" style={{ color: "var(--color-hint-of-grey)" }}>
+        <p className="text-xs" style={{ color: "var(--color-hint-of-grey)" }}>
           {search || typeFilter ? "No properties match your filter." : "No properties available yet."}
         </p>
         {(search || typeFilter) && (
-          <button onClick={onClear} className="text-sm underline underline-offset-4"
+          <button onClick={onClear} className="text-xs underline underline-offset-4"
                   style={{ color: "var(--color-muted-stone)" }}>
             Clear filters
           </button>

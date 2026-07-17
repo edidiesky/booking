@@ -32,18 +32,18 @@ export default function PropertyTableRow({
     >
       <td className="px-5 py-3 text-[#17191c] whitespace-nowrap">
         <div className="flex flex-col gap-0.5">
-          <span className="text-base medium">{property.name}</span>
+          <span className="text-sm medium">{property.name}</span>
           {roomCount > 0 && (
-            <span className="text-sm text-[#a3a6af]">{roomCount} room type{roomCount !== 1 ? "s" : ""}</span>
+            <span className="text-xs text-[#a3a6af]">{roomCount} room type{roomCount !== 1 ? "s" : ""}</span>
           )}
         </div>
       </td>
-      <td className="px-5 py-3 capitalize text-sm text-[#4c4c4c]">{property.property_type}</td>
-      <td className="px-5 py-3 text-sm text-[#777b86] whitespace-nowrap">{property.address.city}, {property.address.state}</td>
+      <td className="px-5 py-3 capitalize text-xs text-[#4c4c4c]">{property.property_type}</td>
+      <td className="px-5 py-3 text-xs text-[#777b86] whitespace-nowrap">{property.address.city}, {property.address.state}</td>
       <td className="px-5 py-3">
-        <span className={`text-sm medium px-3 py-1 rounded-full ${cfg.className}`}>{cfg.label}</span>
+        <span className={`text-xs medium px-3 py-1 rounded-full ${cfg.className}`}>{cfg.label}</span>
       </td>
-      <td className="px-5 py-3 text-sm text-[#777b86]">{moment(property.createdAt).format("DD MMM YYYY")}</td>
+      <td className="px-5 py-3 text-xs text-[#777b86]">{moment(property.createdAt).format("DD MMM YYYY")}</td>
       <td className="px-5 py-3 text-right">
         <RowActionsMenu
           actions={[

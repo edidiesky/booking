@@ -6,6 +6,7 @@ import type {
   TenantBookingQueryParams, ApiSuccessResponse,
 } from "@/types/api";
 
+
 interface BookingResponse { success: boolean; data: Booking; }
 
 export const bookingApi = apiSlice.injectEndpoints({

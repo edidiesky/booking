@@ -20,12 +20,12 @@ const TableCard = ({ tabledata, type, tableheadList }: {
                     <tr>
                         {
                             tableheadList?.map((data, index) => {
-                                return <th className="text-sm py-6 bg-[#FAF8F5] px-3 text-[#969A9A] " key={index}>{data}</th>
+                                return <th className="text-xs py-6 bg-[#FAF8F5] px-3 text-[#969A9A] " key={index}>{data}</th>
                             })
                         }
                     </tr>
                 </thead>
-                <tbody className="text-sm ">
+                <tbody className="text-xs ">
                     {
                         tabledata?.map((data?: any, _?: any) => {
                             return <tr className="px-4 hover:bg-[#eee] border-b cursor-pointer text-start py-6" key={data?.id}>
@@ -102,12 +102,12 @@ const TableCard = ({ tabledata, type, tableheadList }: {
                 <tr>
                     {
                         tableheadList?.map((data, index) => {
-                            return <th className="text-sm py-8 bg-[#FAF8F5] px-3 text-[#969A9A] " key={index}>{data}</th>
+                            return <th className="text-xs py-8 bg-[#FAF8F5] px-3 text-[#969A9A] " key={index}>{data}</th>
                         })
                     }
                 </tr>
             </thead>
-            <tbody className="text-sm ">
+            <tbody className="text-xs ">
                 {
                     tabledata?.map((data?: any, _?: any) => {
                         return <tr className="px-4 border-b hover:bg-[#eee] cursor-pointer text-start py-6" key={data?.id}>
@@ -120,7 +120,7 @@ const TableCard = ({ tabledata, type, tableheadList }: {
                                     alt="Comapny's Logo"
                                 />
                             </td>
-                            <td className="text-base family2 py-6 text-center">{data?.company}
+                            <td className="text-sm family2 py-6 text-center">{data?.company}
                             </td>
                             <td className="  py-6 text-center">   {data?.jobtitle} </td>
 

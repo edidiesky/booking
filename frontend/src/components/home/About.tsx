@@ -8,7 +8,7 @@ const About = () => {
       <div className="w-full bg-[var(--dark-1)] lg:min-h-[800px] py-20 pb-36 flex items-center justify-center">
         <div className="max-w-custom mx-auto flex lg:items-center lg:justify-center flex-col gap-8">
           <h2 className="text-3xl lg:text-[50px] max-w-[1000px] lg:mx-auto lg:text-center text-white  leading-[60px]">
-            <span className="block text-base pb-8 uppercase">
+            <span className="block text-sm pb-8 uppercase">
               WHAT WE DO AT SELLEASI
             </span>
             <AnimateTextWord type="bigtext_Center">
@@ -30,10 +30,10 @@ const About = () => {
             />
           </div>
           <div className="min-h-[170px] bg-white w-[90%] mx-auto p-4 rounded-md">
-            <span className=" text-base">
+            <span className=" text-sm">
               Create a unique experience for each device
             </span>
-            <p className="text-sm text-[#64645f] mt-1">
+            <p className="text-xs text-[#64645f] mt-1">
               A dedicated frontend for your mobile shop and another for desktop,
               enabling a mobile-first approach. The traditional responsive
               approach simply does not make the cut anymore.

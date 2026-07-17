@@ -16,7 +16,7 @@ export function useBookingPayment() {
       const result = await initializePayment({
         bookingId,
         gateway,
-        callbackUrl: `${window.location.origin}/payment-success`,
+        callbackUrl: `${window.location.origin}/booking-success`,
       }).unwrap();
       window.location.href = result.data.redirectUrl;
     } catch {

@@ -14,7 +14,7 @@ const Listing = () => {
       <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
         <div className="grid lg:grid-cols-2 gap-4 items-start lg:items-center w-full">
           <div className="flex flex-col gap-4">
-            <h4 className="text-lg md:text-xl text-[var(--primary)]">
+            <h4 className="text-base md:text-lg text-[var(--primary)]">
               Passionate – Dedicated – Professional
             </h4>
             <h4 className="text-4xl capitalize max-w-[600px] md:text-5xl family2 text-[var(--dark-1)]">
@@ -24,7 +24,7 @@ const Listing = () => {
             </h4>
           </div>
           <div className="flex lg:items-center md:justify-end">
-            <button className="btn btn md:px-8 px-4 py-4 text-sm md:text-base family1 text-white font-normal">
+            <button className="btn btn md:px-8 px-4 py-4 text-xs md:text-sm family1 text-white font-normal">
               Browse all Homes
             </button>
           </div>

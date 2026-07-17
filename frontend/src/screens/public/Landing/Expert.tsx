@@ -30,7 +30,7 @@ const Expert = () => {
         <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
           <div className="grid lg:grid-cols-2 items-start md:items-center w-full gap-12">
             <div className="flex flex-col gap-4">
-              <h4 className="text-lg md:text-xl text-[var(--primary)]">
+              <h4 className="text-base md:text-lg text-[var(--primary)]">
                 Passionate – Dedicated – Professional
               </h4>
               <h4 className="text-4xl max-w-[500px] md:text-5xl capitalize family2 text-[var(--dark-1)]">
@@ -38,7 +38,7 @@ const Expert = () => {
                   Why we are the best at Luxury Homes?
                 </AnimateTextWord>
               </h4>
-              <h4 className="text-lg md:text-xl text-[var(--dark-1)]">
+              <h4 className="text-base md:text-lg text-[var(--dark-1)]">
                 <AnimateTextWord>
                   Auisque cursus sed magnads vitae conubia pharetra auctor
                   interdum dui metus augue. Xursus sed magnads vitae conubia
@@ -50,7 +50,7 @@ const Expert = () => {
               {zyncStength?.map((data, index) => {
                 return (
                   <div key={index} className="w-full flex flex-col gap-3">
-                    <span className="text-base md:text-lg text-dark font-normal">
+                    <span className="text-sm md:text-base text-dark font-normal">
                       {data?.title} {data?.percentage}%
                     </span>
                     <div className="w-full h-4 rounded-xl bg-[#d8d8d8]">
@@ -81,7 +81,7 @@ const Expert = () => {
             <div className="flex h-full relative bg-[#22253d] items-start justify-center py-20 px-12 md:px-20 flex-col gap-8">
               <div className="background_grey"></div>
 
-              <h4 className="text-lg md:text-xl text-[var(--primary)]">
+              <h4 className="text-base md:text-lg text-[var(--primary)]">
                 Passionate – Dedicated – Professional
               </h4>
               <h3 className="text-4xl max-w-[500px] md:text-5xl capitalize family2 text-white">
@@ -89,7 +89,7 @@ const Expert = () => {
                   Why you should choose ZyncLuxury?
                 </AnimateTextWord>
               </h3>
-              <p className="text-base md:text-lg family1 leading-[1.4] font-normal text-grey">
+              <p className="text-sm md:text-base family1 leading-[1.4] font-normal text-grey">
                 <AnimateTextWord>
                   Buisque cursus metus vitae sed pharetra auctor semy interdum
                   magna augue eget diam ante ipsum faucibus luctus ultrices
@@ -113,7 +113,7 @@ const Expert = () => {
                     fontSize={"26px"}
                     color="var(--primary)"
                   />
-                  <span className="text-base md:text-xl text-white">
+                  <span className="text-sm md:text-lg text-white">
                     <AnimateTextWord>
                       Awards won with business intelligence
                     </AnimateTextWord>
@@ -124,7 +124,7 @@ const Expert = () => {
                     fontSize={"26px"}
                     color="var(--primary)"
                   />
-                  <span className="text-base md:text-xl text-white">
+                  <span className="text-sm md:text-lg text-white">
                     <AnimateTextWord>
                       Our mission is to grow your business faster
                     </AnimateTextWord>
@@ -136,7 +136,7 @@ const Expert = () => {
                     color="var(--primary)"
                   />
 
-                  <span className="text-base md:text-xl text-white">
+                  <span className="text-sm md:text-lg text-white">
                     <AnimateTextWord>
                       Global presence makes us top rated company
                     </AnimateTextWord>
@@ -157,7 +157,7 @@ const Expert = () => {
               <h2 className="text-7xl md:text-9xl text-[#868dbb]">
                 <AnimateTextWord type={"bigtext"}>15k+</AnimateTextWord>
               </h2>
-              <span className="text-lg md:text-xl text-[#000]">
+              <span className="text-base md:text-lg text-[#000]">
                 <AnimateTextWord> Supported Listings</AnimateTextWord>
               </span>
             </div>
@@ -165,7 +165,7 @@ const Expert = () => {
               <h2 className="text-7xl md:text-9xl text-[#868dbb]">
                 <AnimateTextWord type={"bigtext"}> 3.5M</AnimateTextWord>
               </h2>
-              <span className="text-lg md:text-xl text-[#000]">
+              <span className="text-base md:text-lg text-[#000]">
                 <AnimateTextWord> Supported Listings</AnimateTextWord>
               </span>
             </div>{" "}
@@ -174,7 +174,7 @@ const Expert = () => {
                 {" "}
                 <AnimateTextWord type={"bigtext"}>600</AnimateTextWord>
               </h2>
-              <span className="text-lg md:text-xl text-[#000]">
+              <span className="text-base md:text-lg text-[#000]">
                 <AnimateTextWord> Supported Listings</AnimateTextWord>
               </span>
             </div>

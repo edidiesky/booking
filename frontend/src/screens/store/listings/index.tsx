@@ -54,11 +54,11 @@ export default function StoreListing() {
             {store?.name ?? "Store"}
           </h1>
           {store?.description && (
-            <p className="mt-2 text-white/60 text-sm max-w-[500px] leading-relaxed">
+            <p className="mt-2 text-white/60 text-xs max-w-[500px] leading-relaxed">
               {store.description}
             </p>
           )}
-          <p className="mt-3 text-sm text-white/40">
+          <p className="mt-3 text-xs text-white/40">
             {allProducts.length} product{allProducts.length !== 1 ? "s" : ""}
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function StoreListing() {
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => setCategory(null)}
-              className={`px-4 py-1.5 text-sm rounded-full border transition-colors ${
+              className={`px-4 py-1.5 text-xs rounded-full border transition-colors ${
                 !activeCategory
                   ? "bg-[#222] text-white border-[#222]"
                   : "border-[#e0ddd8] text-[#555] hover:border-[#222]"
@@ -85,7 +85,7 @@ export default function StoreListing() {
               <button
                 key={cat}
                 onClick={() => setCategory(activeCategory === cat ? null : cat)}
-                className={`px-4 py-1.5 text-sm rounded-full border transition-colors ${
+                className={`px-4 py-1.5 text-xs rounded-full border transition-colors ${
                   activeCategory === cat
                     ? "bg-[#222] text-white border-[#222]"
                     : "border-[#e0ddd8] text-[#555] hover:border-[#222]"
@@ -104,13 +104,13 @@ export default function StoreListing() {
               placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 text-sm outline-none bg-transparent text-[#222] placeholder:text-[#aaa]"
+              className="flex-1 text-xs outline-none bg-transparent text-[#222] placeholder:text-[#aaa]"
             />
           </div>
         </div>
 
         {/* result count */}
-        <p className="text-sm text-[#999] mb-6">
+        <p className="text-xs text-[#999] mb-6">
           {filtered.length} result{filtered.length !== 1 ? "s" : ""}
           {activeCategory ? ` in "${activeCategory}"` : ""}
           {search ? ` for "${search}"` : ""}
@@ -132,7 +132,7 @@ export default function StoreListing() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <p className="text-sm text-[#aaa]">
+            <p className="text-xs text-[#aaa]">
               {search || activeCategory
                 ? "No products match your filter."
                 : "This store has no products yet."}
@@ -140,7 +140,7 @@ export default function StoreListing() {
             {(search || activeCategory) && (
               <button
                 onClick={() => { setSearch(""); setCategory(null); }}
-                className="text-sm underline text-[#555] hover:text-[#222]"
+                className="text-xs underline text-[#555] hover:text-[#222]"
               >
                 Clear filters
               </button>

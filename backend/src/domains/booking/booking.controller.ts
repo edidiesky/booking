@@ -73,3 +73,12 @@ export const CheckOutHandler = asyncHandler(async (req: Request, res: Response):
   const result = await bookingService.checkOut(req.params["bookingId"] as string, req.user.userId);
   res.status(200).json({ success: true, message: "Guest checked out. Escrow released.", data: result });
 });
+
+
+export const InternalCancelBookingHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const bookingId = req.params["bookingId"] as string;
+  const { reason } = req.body as { reason?: string };
+
+  const booking = await bookingService.cancelBooking(bookingId, "system", reason ?? "Payment window expired.");
+  res.status(200).json({ success: true, data: booking });
+});

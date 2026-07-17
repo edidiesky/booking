@@ -32,11 +32,11 @@ export default function CheckoutShippingStep({ onSubmit, isLoading, onBack }: Pr
     <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl lg:text-3xl" >
+          <h1 className="text-xl lg:text-3xl" >
             Shipping Address
           </h1>
         </div>
-        <h4 className="text-base" style={{ color: "#6b7280" }}>
+        <h4 className="text-sm" style={{ color: "#6b7280" }}>
           Where should we deliver your order?
         </h4>
       </div>
@@ -75,7 +75,7 @@ export default function CheckoutShippingStep({ onSubmit, isLoading, onBack }: Pr
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full h-[46px] text-base rounded-full bold flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="w-full h-[46px] text-sm rounded-full bold flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50"
         style={{ background: "#17191c", color: "#fff" }}
       >
         {isLoading ? "Processing..." : "Continue to Payment"}
@@ -84,7 +84,7 @@ export default function CheckoutShippingStep({ onSubmit, isLoading, onBack }: Pr
       <button
         type="button"
         onClick={onBack}
-        className="text-base bold transition-opacity hover:opacity-60 flex items-center gap-1"
+        className="text-sm bold transition-opacity hover:opacity-60 flex items-center gap-1"
         style={{ color: "#6b7280" }}
       >
         Back to cart

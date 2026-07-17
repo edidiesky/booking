@@ -41,33 +41,33 @@ export default function SearchPage() {
             <input
               type="text" placeholder="Search by property name or city..." value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-12 px-4 border border-[#e8e6e3] rounded-full text-sm outline-none"
+              className="w-full h-12 px-4 border border-[#e8e6e3] rounded-full text-xs outline-none"
             />
 
             <div className="flex flex-wrap gap-3">
               <select value={propertyType} onChange={(e) => setPropertyType(e.target.value)}
-                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-sm outline-none">
+                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-xs outline-none">
                 {PROPERTY_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
 
               <input type="text" placeholder="City" value={city}
                 onChange={(e) => setCity(e.target.value)}
-                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-sm outline-none w-32" />
+                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-xs outline-none w-32" />
 
               <input type="number" placeholder="Min price" value={minPrice ?? ""}
                 onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : undefined)}
-                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-sm outline-none w-28" />
+                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-xs outline-none w-28" />
 
               <input type="number" placeholder="Max price" value={maxPrice ?? ""}
                 onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : undefined)}
-                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-sm outline-none w-28" />
+                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-xs outline-none w-28" />
 
               <input type="number" placeholder="Guests" value={guests ?? ""}
                 onChange={(e) => setGuests(e.target.value ? Number(e.target.value) : undefined)}
-                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-sm outline-none w-24" />
+                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-xs outline-none w-24" />
 
               <select value={sort} onChange={(e) => setSort(e.target.value)}
-                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-sm outline-none">
+                className="h-9 px-3 border border-[#e8e6e3] rounded-full text-xs outline-none">
                 {SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
               </select>
             </div>
@@ -83,7 +83,7 @@ export default function SearchPage() {
               ))}
             </div>
           ) : properties.length === 0 ? (
-            <p className="text-sm text-[#a3a6af] text-center py-20">No properties match your filters.</p>
+            <p className="text-xs text-[#a3a6af] text-center py-20">No properties match your filters.</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
               {properties.map((p, i) => <PropertyCard key={p.id} property={p} index={i} />)}

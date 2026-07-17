@@ -24,13 +24,13 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           {isLoading || !renter ? (
-            <p className="text-lg  text-[#17191c]">Loading...</p>
+            <p className="text-base  text-[#17191c]">Loading...</p>
           ) : (
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#17191c] text-white flex items-center justify-center text-sm ">
+              <div className="w-9 h-9 rounded-full bg-[#17191c] text-white flex items-center justify-center text-xs ">
                 {renter.full_name.charAt(0).toUpperCase()}
               </div>
-              <p className="text-base  text-[#17191c]">{renter.full_name}</p>
+              <p className="text-sm  text-[#17191c]">{renter.full_name}</p>
             </div>
           )}
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center hover:bg-[#f2f0ed] transition-colors">
@@ -49,15 +49,15 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
               <div>
                 <p className="text-xs uppercase tracking-widest text-[#a3a6af]  mb-3">Contact</p>
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-xs">
                     <span className="text-[#777b86] flex items-center gap-1.5"><Mail size={13} /> Email</span>
                     <span className="text-[#17191c] ">{renter.email ?? "—"}</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-xs">
                     <span className="text-[#777b86] flex items-center gap-1.5"><Phone size={13} /> Phone</span>
                     <span className="text-[#17191c] ">{renter.phone ?? "—"}</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-xs">
                     <span className="text-[#777b86] flex items-center gap-1.5"><ShieldAlert size={13} /> Emergency</span>
                     <span className="text-[#17191c]  text-right max-w-[60%]">
                       {renter.emergency_contact_name
@@ -72,22 +72,22 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
                 <p className="text-xs uppercase tracking-widest text-[#a3a6af]  mb-3">Current stay</p>
                 {occupancy ? (
                   <div className="border border-[#e8e6e3] rounded-xl p-4 flex flex-col gap-2">
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-xs">
                       <span className="text-[#777b86]">Property</span>
                       <span className="text-[#17191c] ">{occupancy.property_name}</span>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-xs">
                       <span className="text-[#777b86]">Room type</span>
                       <span className="text-[#17191c] ">{occupancy.room_type_name}</span>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-xs">
                       <span className="text-[#777b86]">Check-out</span>
                       <span className="text-[#17191c] ">{formatDate(occupancy.check_out)}</span>
                     </div>
                     <StatusBadge status={occupancy.status as BookingStatus} />
                   </div>
                 ) : (
-                  <p className="text-sm text-[#a3a6af]">No active booking, not currently staying at any property.</p>
+                  <p className="text-xs text-[#a3a6af]">No active booking, not currently staying at any property.</p>
                 )}
               </div>
             </div>

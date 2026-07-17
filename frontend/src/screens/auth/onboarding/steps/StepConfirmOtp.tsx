@@ -98,7 +98,7 @@ export default function StepConfirmOtp({
             value={digit}
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
-            className="flex-1 h-14 text-center text-xl w-full  rounded-[12px] border-2 transition-all outline-none focus:ring-0"
+            className="flex-1 h-14 text-center text-lg w-full  rounded-[12px] border-2 transition-all outline-none focus:ring-0"
             style={{
               borderColor: digit
                 ? "var(--color-ink)"
@@ -115,7 +115,7 @@ export default function StepConfirmOtp({
       </div>
 
       {isLoading && (
-        <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
+        <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
           Verifying...
         </p>
       )}
@@ -123,7 +123,7 @@ export default function StepConfirmOtp({
       <button
         onClick={handleResend}
         disabled={countdown > 0 || isResending}
-        className="text-sm transition-opacity disabled:opacity-40 text-left"
+        className="text-xs transition-opacity disabled:opacity-40 text-left"
         style={{ color: "var(--color-muted-stone)" }}
       >
         {countdown > 0

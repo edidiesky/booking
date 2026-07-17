@@ -38,17 +38,17 @@ export default function BookingCard({ booking, onCancel }: Props) {
       <div className="w-full flex flex-col pt-3 gap-1.5">
         <h3
           onClick={() => navigate(`/trips/${booking?.bookingId}`)}
-          className="text-lg lg:text-xl bold leading-snug line-clamp-1 text-[#17191c]"
+          className="text-base lg:text-lg bold leading-snug line-clamp-1 text-[#17191c]"
         >
           {booking?.propertyName ?? booking?.bookingRef}
         </h3>
 
-        <p className="text-sm lg:text-base text-[#777b86]">
+        <p className="text-xs lg:text-sm text-[#777b86]">
           {checkInLabel} - {checkOutLabel} · {booking?.nights} night{booking?.nights !== 1 ? "s" : ""}
         </p>
 
         <div className="flex items-center justify-between pt-1">
-          <p className="text-base bold text-[#17191c]">
+          <p className="text-sm bold text-[#17191c]">
             {formatCurrency(booking?.totalAmountNgn)}
           </p>
           {cancelable && (

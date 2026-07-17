@@ -21,13 +21,13 @@ export default function ProfileSection({ profile, onSave, isSaving }: Props) {
           className="flex flex-col gap-4">
       <Input label="Display name" {...register("displayName")} />
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm" style={{ color: "var(--color-ink)" }}>Bio</label>
-        <textarea rows={3} className="w-full border rounded-xl px-3 py-2.5 text-sm resize-none outline-none"
+        <label className="text-xs" style={{ color: "var(--color-ink)" }}>Bio</label>
+        <textarea rows={3} className="w-full border rounded-xl px-3 py-2.5 text-xs resize-none outline-none"
                   style={{ borderColor: "#e8e6e3", color: "var(--color-ink)" }}
                   {...register("bio")} />
       </div>
       <button type="submit" disabled={isSaving}
-              className="h-10 px-6 rounded-full text-sm self-start transition-opacity hover:opacity-80 disabled:opacity-50"
+              className="h-10 px-6 rounded-full text-xs self-start transition-opacity hover:opacity-80 disabled:opacity-50"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
         {isSaving ? "Saving..." : "Save profile"}
       </button>

@@ -27,7 +27,7 @@ export default function Header() {
           style={{ color: "var(--color-muted-stone)" }}
         >
           <Search size={15} />
-          <span className="text-sm hidden sm:block">Search or press ⌘K</span>
+          <span className="text-xs hidden sm:block">Search or press ⌘K</span>
         </button>
 
         {/* Right side */}
@@ -47,7 +47,7 @@ export default function Header() {
             to="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 text-sm bold px-4 py-1.5 rounded-full border transition-opacity hover:opacity-70"
+            className="hidden sm:flex items-center gap-1.5 text-xs bold px-4 py-1.5 rounded-full border transition-opacity hover:opacity-70"
             style={{
               color:       "var(--color-muted-stone)",
               borderColor: "var(--color-fog)",
@@ -59,13 +59,13 @@ export default function Header() {
           {/* User avatar */}
           <div className="flex items-center gap-2">
             <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-sm bold  shrink-0"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-xs bold  shrink-0"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
             >
               {initials}
             </div>
             <span
-              className="text-base bold hidden md:block truncate max-w-[140px]"
+              className="text-sm bold hidden md:block truncate max-w-[140px]"
               style={{ color: "var(--color-ink)" }}
             >
               {displayName}

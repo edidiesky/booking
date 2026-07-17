@@ -42,4 +42,4 @@ export const lockSweepScheduler = createLockedScheduler({
 export const reconciliationScheduler = createLockedScheduler({
   lockKey: "scheduler:reconciliation:lock", lockTtlSec: 15, tickMs: 30 * 60_000,
   serviceName: "availability-worker", onTick: reconciliationTick,
-});
+}); 

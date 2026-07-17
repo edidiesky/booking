@@ -28,7 +28,11 @@ export interface Booking {
   created_at: Date;
   updated_at: Date;
   receipt_url: string;
-  room_type_images?: string[]
+  room_type_images?: string[];
+  propertyName?:  string;
+  propertyCity?:  string;
+  roomTypeName?:  string;
+  roomTypeImage?: string;
 }
 
 function generateBookingRef(): string {

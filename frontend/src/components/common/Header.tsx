@@ -15,7 +15,7 @@ export default function Header() {
       style={{ backgroundColor: "var(--color-canvas)", boxShadow: "rgba(0,0,0,0.04) 0px 0px 0px 1px" }}
     >
       <div className="mx-auto px-6 lg:px-0 h-16 flex items-center justify-between max-w-screen-xl">
-        <Link to="/" className="text-xl tracking-tight bold" style={{ color: "var(--color-ink)" }}>
+        <Link to="/" className="text-lg tracking-tight bold" style={{ color: "var(--color-ink)" }}>
           Booking
         </Link>
 
@@ -24,7 +24,7 @@ export default function Header() {
             <Link
               key={item}
               to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="text-sm lg:text-base transition-opacity px-4 py-2 rounded-full hover:bg-[#f5f5f3]"
+              className="text-xs lg:text-sm transition-opacity px-4 py-2 rounded-full hover:bg-[#f5f5f3]"
               style={{ color: "var(--color-ink)" }}
             >
               {item}
@@ -37,7 +37,7 @@ export default function Header() {
             isHost ? (
               <Link
                 to="/dashboard"
-                className="h-9 px-5 text-base transition-opacity hover:opacity-80 flex items-center rounded-full"
+                className="h-9 px-5 text-sm transition-opacity hover:opacity-80 flex items-center rounded-full"
                 style={{ backgroundColor: "#f5f5f3", color: "var(--color-canvas)" }}
               >
                 Dashboard
@@ -56,14 +56,14 @@ export default function Header() {
             <>
               <Link
                 to="/login"
-                className="h-9 px-5 text-base transition-opacity hover:opacity-70 flex items-center rounded-full"
+                className="h-9 px-5 text-sm transition-opacity hover:opacity-70 flex items-center rounded-full"
                 style={{ color: "var(--color-ink)" }}
               >
                 Log in
               </Link>
               <Link
                 to="/onboarding"
-                className="h-9 px-5 text-base transition-opacity hover:opacity-80 flex items-center rounded-full"
+                className="h-9 px-5 text-sm transition-opacity hover:opacity-80 flex items-center rounded-full"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 Get started

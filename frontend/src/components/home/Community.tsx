@@ -7,7 +7,7 @@ const Community = () => {
             <div className="max-w-custom mx-auto w-[90%] grid lg:grid-cols-2 lg:items-center gap-12 lg:gap-20">
                 <div className="w-full flex flex-col gap-4 lg:items-center justify-between">
                     <h2 className="text-4xl flex-1 lg:text-6xl text-start leading-[1] family2 text-dark family2">
-                        <span className="pb-4 block text-xl">
+                        <span className="pb-4 block text-lg">
                             <AnimateTextWord type='bigtext'>
                                 Top Companies
                             </AnimateTextWord>
@@ -19,13 +19,13 @@ const Community = () => {
 
                     </h2>
                     <div className="flex flex-1 flex-col gap-4">
-                        <span className='text-base lg:text-lg '>
+                        <span className='text-sm lg:text-base '>
                             <AnimateTextWord>
                                 Unlock your true potential and discover a true world of communities that aligns Job Hunting made Easy: Get instant alerts for job matching your skills and innovative job finder!
                             </AnimateTextWord>
                         </span>
                         <span className='flex'>
-                            <button className="text-sm lg:text-base px-4 lg:px-6 py-4 border rounded-full text-white bg-[#3e3aff] shadows">Get Started!</button>
+                            <button className="text-xs lg:text-sm px-4 lg:px-6 py-4 border rounded-full text-white bg-[#3e3aff] shadows">Get Started!</button>
                         </span>
                     </div>
                 </div>
@@ -36,13 +36,13 @@ const Community = () => {
 
                                 <div className="flex flex-col gap-4">
 
-                                    <h3 className="text-xl lg:text-2xl bold leading-[1] family2 text-dark family2">
+                                    <h3 className="text-lg lg:text-xl bold leading-[1] family2 text-dark family2">
                                         <AnimateTextWord type='bigtext'>
                                             Jobs In Tech
                                         </AnimateTextWord>
                                       
                                     </h3>
-                                    <span className='text-sm lg:text-base  max-w-[500px]'>
+                                    <span className='text-xs lg:text-sm  max-w-[500px]'>
                                         <AnimateTextWord>
                                             Many Tech Companies foster innovative and collaborative environments
                                         </AnimateTextWord>
@@ -60,13 +60,13 @@ const Community = () => {
 
                                 <div className="flex flex-col gap-4">
 
-                                    <h3 className="text-xl lg:text-2xl bold leading-[1] family2 text-dark family2">
+                                    <h3 className="text-lg lg:text-xl bold leading-[1] family2 text-dark family2">
                                         <AnimateTextWord type='bigtext'>
                                             Designers
                                         </AnimateTextWord>
                                         
                                     </h3>
-                                    <span className='text-sm lg:text-base  max-w-[500px]'>
+                                    <span className='text-xs lg:text-sm  max-w-[500px]'>
                                         <AnimateTextWord>
                                             Design jobs are all about creating visual components that communicate ideas and vision
                                         </AnimateTextWord>
@@ -89,7 +89,7 @@ const Community = () => {
                                         <AnimateTextWord type='bigtext'>
                                             20k+
                                         </AnimateTextWord>
-                                        <span className='text-sm lg:text-base block  max-w-[500px]'>
+                                        <span className='text-xs lg:text-sm block  max-w-[500px]'>
                                             <AnimateTextWord>
                                             Users joined the community!
 
@@ -97,13 +97,13 @@ const Community = () => {
                                            
                                         </span>
                                     </h3>
-                                    <h3 className="text-xl lg:text-2xl bold leading-[1] family2 text-dark family2">
+                                    <h3 className="text-lg lg:text-xl bold leading-[1] family2 text-dark family2">
                                         <AnimateTextWord type='bigtext'>
                                             Salaries in Tech
                                         </AnimateTextWord>
                                     
                                     </h3>
-                                    <span className='text-sm lg:text-base  max-w-[500px]'>
+                                    <span className='text-xs lg:text-sm  max-w-[500px]'>
                                         <AnimateTextWord>
                                             Tech salaries are generally quite competitive compared to the average across all occupations.
                                         </AnimateTextWord>
@@ -117,7 +117,7 @@ const Community = () => {
                             </div>
                         </div>
                         <div className="z-10 rounded-[20px] w-full bg-[#e8f2fc61] flex p-4 items-center justify-center gap-4">
-                            <h3 className="text-lg lg:text-xl leading-[1] family2 text-dark text-center w-full family2">
+                            <h3 className="text-base lg:text-lg leading-[1] family2 text-dark text-center w-full family2">
                                 More
                             </h3>
                         </div>

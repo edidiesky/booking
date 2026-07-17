@@ -50,7 +50,7 @@ export function DataTable({
           value={search}
           onChange={(e) => { onSearch(e.target.value); if (currentPage !== 1) onPageChange(1); }}
           placeholder={searchPlaceholder}
-          className="w-48 lg:w-64 h-9 px-3 text-sm border outline-none transition-colors"
+          className="w-48 lg:w-64 h-9 px-3 text-xs border outline-none transition-colors"
           style={{ borderColor: "#e8e6e3", color: "var(--color-ink)", backgroundColor: "var(--color-canvas)" }}
         />
         <span className="text-xs" style={{ color: "var(--color-hint-of-grey)" }}>
@@ -59,7 +59,7 @@ export function DataTable({
       </div>
 
       <div className="border overflow-x-auto" style={{ borderColor: "#e8e6e3" }}>
-        <table className="w-full text-sm">
+        <table className="w-full text-xs">
           <thead>
             <tr className="border-b" style={{ borderColor: "#e8e6e3" }}>
               {headers.map((h) => (
@@ -74,7 +74,7 @@ export function DataTable({
             {isLoading ? <Skeleton colSpan={colSpan} />
               : isEmpty ? (
                 <tr>
-                  <td colSpan={colSpan} className="px-5 py-12 text-center text-sm"
+                  <td colSpan={colSpan} className="px-5 py-12 text-center text-xs"
                       style={{ color: "var(--color-hint-of-grey)" }}>
                     {search ? `${emptyMessage} for "${search}"` : emptyMessage}
                   </td>

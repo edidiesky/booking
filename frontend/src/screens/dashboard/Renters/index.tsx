@@ -21,12 +21,12 @@ export default function DashboardRenters() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h4 className="text-2xl bold text-[#17191c]">Tenants</h4>
-            <p className="text-sm lg:text-base text-[#64645f] mt-1">
+            <h4 className="text-xl bold text-[#17191c]">Tenants</h4>
+            <p className="text-xs lg:text-sm text-[#64645f] mt-1">
               Manage tenant records across your properties.
             </p>
           </div>
-          <button className="bg-[#17191c] flex bold rounded-full items-center gap-2 hover:opacity-90 text-white text-sm p-2 px-4">
+          <button className="bg-[#17191c] flex bold rounded-full items-center gap-2 hover:opacity-90 text-white text-xs p-2 px-4">
             Add Tenant
           </button>
         </div>
@@ -49,9 +49,9 @@ export default function DashboardRenters() {
               key={label as string}
               className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-5"
             >
-              <p className="text-sm bold uppercase text-[#a3a6af]">{label}</p>
-              <p className="text-2xl lg:text-4xl bold text-[#17191c]">{value}</p>
-              <p className="text-sm medium text-[#a3a6af]">{sub}</p>
+              <p className="text-xs bold uppercase text-[#a3a6af]">{label}</p>
+              <p className="text-xl lg:text-4xl bold text-[#17191c]">{value}</p>
+              <p className="text-xs medium text-[#a3a6af]">{sub}</p>
             </div>
           ))}
         </div>
@@ -61,11 +61,11 @@ export default function DashboardRenters() {
           placeholder="Search tenants..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-xs h-9 px-3 text-sm border border-[#e8e6e3] rounded-lg outline-none"
+          className="w-full max-w-xs h-9 px-3 text-xs border border-[#e8e6e3] rounded-lg outline-none"
         />
 
         <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-[#e8e6e3]">
                 {["Tenant", "Contact", "Emergency", "Added", ""].map((h) => (
@@ -91,7 +91,7 @@ export default function DashboardRenters() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-5 py-10 text-center text-sm text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs text-[#a3a6af]"
                   >
                     No tenants found.
                   </td>

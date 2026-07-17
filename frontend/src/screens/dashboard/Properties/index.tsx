@@ -65,16 +65,16 @@ export default function DashboardProperties() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h4 className="text-xl bold lg:text-2xl text-[#17191c]">
+            <h4 className="text-lg bold lg:text-xl text-[#17191c]">
               Properties
             </h4>
-            <p className="text-sm text-[#64645f] mt-1 max-w-[420px] bold">
+            <p className="text-xs text-[#64645f] mt-1 max-w-[420px] bold">
               Manage your listings, room types, and availability calendars.
             </p>
           </div>
           <button
             onClick={handleOpenCreate}
-            className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-sm lg:text-sm p-2 bold px-6"
+            className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-xs p-2 bold px-6"
           >
             Add Property
           </button>
@@ -86,13 +86,13 @@ export default function DashboardProperties() {
             onValueChange={(v) => setStatusFilter(v as PropertyStatus | "")}
             options={STATUS_OPTIONS}
           />
-          <span className="text-sm text-[#a3a6af]">
+          <span className="text-xs text-[#a3a6af]">
             {filtered.length} propert{filtered.length === 1 ? "y" : "ies"}
           </span>
         </div>
 
         <div className="border border-[#e8e6e3] overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-[#e8e6e3]">
                 {HEADERS.map((h) => (
@@ -120,7 +120,7 @@ export default function DashboardProperties() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-5 py-10 text-center text-sm text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs text-[#a3a6af]"
                   >
                     No properties found. Click "Add Property" to create your
                     first listing.

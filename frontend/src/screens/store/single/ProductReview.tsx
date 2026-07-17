@@ -52,14 +52,14 @@ export default function ProductReview({ productId }: { productId: string }) {
 
   return (
     <div className="w-full py-12 border-t border-[#f0f0f0] flex flex-col gap-8">
-      <h3 className="text-xl bold text-[#171717]">
+      <h3 className="text-lg bold text-[#171717]">
         Customer Reviews ({reviews.length})
       </h3>
 
       {isLoading ? (
-        <p className="text-sm text-[#666]">Loading reviews...</p>
+        <p className="text-xs text-[#666]">Loading reviews...</p>
       ) : reviews.length === 0 ? (
-        <p className="text-sm text-[#666]">No reviews yet. Be the first to leave one.</p>
+        <p className="text-xs text-[#666]">No reviews yet. Be the first to leave one.</p>
       ) : (
         <div className="flex flex-col gap-6">
           {reviews.map((review) => (
@@ -70,9 +70,9 @@ export default function ProductReview({ productId }: { productId: string }) {
                   {new Date(review.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                 </span>
               </div>
-              <p className="text-sm text-[#444] leading-relaxed">{review.comment}</p>
+              <p className="text-xs text-[#444] leading-relaxed">{review.comment}</p>
               {review.sellerResponse && (
-                <div className="bg-[#f6f6f6] px-4 py-3 text-sm text-[#666] border-l-2 border-[#171717]">
+                <div className="bg-[#f6f6f6] px-4 py-3 text-xs text-[#666] border-l-2 border-[#171717]">
                   <span className="text-xs bold text-[#171717] block mb-1">Seller response</span>
                   {review.sellerResponse}
                 </div>
@@ -84,7 +84,7 @@ export default function ProductReview({ productId }: { productId: string }) {
 
       {currentUser && (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-lg">
-          <h4 className="text-base bold text-[#171717]">Write a review</h4>
+          <h4 className="text-sm bold text-[#171717]">Write a review</h4>
           <div className="flex flex-col gap-1.5">
             <span className="text-xs bold text-[#171717]">Your rating</span>
             <StarRating value={rating} onChange={setRating} />
@@ -96,13 +96,13 @@ export default function ProductReview({ productId }: { productId: string }) {
               onChange={(e) => setComment(e.target.value)}
               rows={4}
               placeholder="Share your experience with this product..."
-              className="border border-black/10 px-4 py-3 text-sm text-[#171717] outline-none focus:border-[#171717] transition-colors resize-none"
+              className="border border-black/10 px-4 py-3 text-xs text-[#171717] outline-none focus:border-[#171717] transition-colors resize-none"
             />
           </div>
           <button
             type="submit"
             disabled={submitting || !comment.trim()}
-            className="h-11 bg-[#171717] text-white text-sm bold hover:opacity-90 transition-opacity disabled:opacity-50 w-fit px-6"
+            className="h-11 bg-[#171717] text-white text-xs bold hover:opacity-90 transition-opacity disabled:opacity-50 w-fit px-6"
           >
             {submitting ? "Submitting..." : "Submit review"}
           </button>

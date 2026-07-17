@@ -57,16 +57,16 @@ export default function ProductTableList({
             )}
           </div>
         </td>
-        <td className="px-5 py-3 whitespace-nowrap text-sm text-[#17191c] font-dashboard_regular">
+        <td className="px-5 py-3 whitespace-nowrap text-xs text-[#17191c] font-dashboard_regular">
           {tableData.name}
         </td>
-        <td className="px-5 py-3 whitespace-nowrap text-sm text-[#4c4c4c] font-selleasy_normal">
+        <td className="px-5 py-3 whitespace-nowrap text-xs text-[#4c4c4c] font-selleasy_normal">
           ₦{tableData.price?.toLocaleString("en-NG")}
         </td>
-        <td className="px-5 py-3 whitespace-nowrap text-sm text-[#4c4c4c] font-selleasy_normal">
+        <td className="px-5 py-3 whitespace-nowrap text-xs text-[#4c4c4c] font-selleasy_normal">
           {(tableData.category ?? []).join(", ") || "—"}
         </td>
-        <td className="px-5 py-3 whitespace-nowrap text-sm">
+        <td className="px-5 py-3 whitespace-nowrap text-xs">
           <div className="flex gap-1 items-center flex-wrap">
             {(tableData.size ?? []).map((s: ProductColorOrSize, index: number) => (
               <span
@@ -79,7 +79,7 @@ export default function ProductTableList({
             {(tableData.size ?? []).length === 0 && <span className="text-[#d0cec9] text-xs">—</span>}
           </div>
         </td>
-        <td className="px-5 py-3 whitespace-nowrap text-sm">
+        <td className="px-5 py-3 whitespace-nowrap text-xs">
           <div className="flex gap-1 items-center">
             {(tableData.colors ?? []).map((c: ProductColorOrSize, index: number) => (
               <div
@@ -92,7 +92,7 @@ export default function ProductTableList({
             {(tableData.colors ?? []).length === 0 && <span className="text-[#d0cec9] text-xs">—</span>}
           </div>
         </td>
-        <td className="px-5 py-3 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
+        <td className="px-5 py-3 whitespace-nowrap text-xs" onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center gap-1">
             <button
               className="p-2 hover:bg-[#f2f0ed] transition-colors"
@@ -127,17 +127,17 @@ export default function ProductTableList({
         <td className="px-5 py-3 whitespace-nowrap text-xs text-[#a3a6af] font-selleasy_normal">
           {tableData._id}
         </td>
-        <td className="px-5 py-3 whitespace-nowrap text-sm text-[#17191c] font-dashboard_regular">
+        <td className="px-5 py-3 whitespace-nowrap text-xs text-[#17191c] font-dashboard_regular">
           {tableData.name}
         </td>
-        <td className="px-5 py-3 whitespace-nowrap text-sm text-[#4c4c4c] font-selleasy_normal">
+        <td className="px-5 py-3 whitespace-nowrap text-xs text-[#4c4c4c] font-selleasy_normal">
           {type === "Color" ? (
             <div style={{ backgroundColor: tableData.value }} className="w-5 h-5 border border-[#e8e6e3]" />
           ) : (
             tableData.value
           )}
         </td>
-        <td className="px-5 py-3 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
+        <td className="px-5 py-3 whitespace-nowrap text-xs" onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center gap-1">
             <button
               className="p-2 hover:bg-[#f2f0ed] transition-colors"
@@ -162,7 +162,7 @@ export default function ProductTableList({
   if (isCustomer(tableData)) {
     return (
       <tr className="border-b border-[#f2f0ed] last:border-0 hover:bg-[#fafaf9] transition-colors">
-        <td className="px-5 py-3 whitespace-nowrap text-sm text-[#4c4c4c] font-selleasy_normal">
+        <td className="px-5 py-3 whitespace-nowrap text-xs text-[#4c4c4c] font-selleasy_normal">
           {tableData.phone_number}
         </td>
       </tr>

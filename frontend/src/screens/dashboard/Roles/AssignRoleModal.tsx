@@ -18,7 +18,7 @@ interface Props {
   isSaving: boolean;
 }
 
-const field      = "w-full h-10 px-3 text-sm border rounded-lg outline-none";
+const field      = "w-full h-10 px-3 text-xs border rounded-lg outline-none";
 const fieldStyle = { borderColor: "var(--color-fog)", color: "var(--color-ink)" };
 
 export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: Props) {
@@ -44,8 +44,8 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
            style={{ backgroundColor: "var(--color-canvas)" }}>
 
         <div className="flex items-center justify-between">
-          <h2 className="text-lg " style={{ color: "var(--color-ink)" }}>Assign Role</h2>
-          <button onClick={onClose} className="text-2xl leading-none opacity-40 hover:opacity-100">×</button>
+          <h2 className="text-base " style={{ color: "var(--color-ink)" }}>Assign Role</h2>
+          <button onClick={onClose} className="text-xl leading-none opacity-40 hover:opacity-100">×</button>
         </div>
 
         <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
@@ -80,12 +80,12 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}
-              className="flex-1 h-10 rounded-full border text-sm transition-opacity hover:opacity-70"
+              className="flex-1 h-10 rounded-full border text-xs transition-opacity hover:opacity-70"
               style={{ borderColor: "var(--color-fog)", color: "var(--color-muted-stone)" }}>
               Cancel
             </button>
             <button type="submit" disabled={isSaving}
-              className="flex-1 h-10 rounded-full text-sm transition-opacity hover:opacity-80 disabled:opacity-50"
+              className="flex-1 h-10 rounded-full text-xs transition-opacity hover:opacity-80 disabled:opacity-50"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
               {isSaving ? "Assigning..." : "Assign Role"}
             </button>

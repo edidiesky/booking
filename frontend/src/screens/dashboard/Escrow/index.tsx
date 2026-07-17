@@ -27,13 +27,13 @@ export default function DashboardEscrow() {
                style={{ borderColor: "#e8e6e3", backgroundColor: bg }}>
             <p className="text-xs bold uppercase tracking-widest"
                style={{ color }}>{label}</p>
-            <p className="text-2xl bold" style={{ color }}>{value}</p>
+            <p className="text-xl bold" style={{ color }}>{value}</p>
           </div>
         ))}
       </div>
 
       <div className="border rounded-xl overflow-x-auto" style={{ borderColor: "#e8e6e3" }}>
-        <table className="w-full text-sm">
+        <table className="w-full text-xs">
           <thead>
             <tr className="border-b" style={{ borderColor: "#e8e6e3" }}>
               {HEADERS.map((h) => (
@@ -57,7 +57,7 @@ export default function DashboardEscrow() {
               ))
             ) : escrows.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-5 py-12 text-center text-sm"
+                <td colSpan={6} className="px-5 py-12 text-center text-xs"
                     style={{ color: "var(--color-hint-of-grey)" }}>
                   No escrow records found.
                 </td>

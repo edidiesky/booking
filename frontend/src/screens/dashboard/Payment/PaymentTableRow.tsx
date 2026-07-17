@@ -20,9 +20,9 @@ export default function PaymentTableRow({ payment, onViewDetails }: Props) {
       <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-hint-of-grey)" }}>{payment.id?.slice(0, 10)}...</td>
       <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>{payment.booking_id?.slice(0, 10)}...</td>
       <td className="px-5 py-3 bold whitespace-nowrap" style={{ color: "var(--color-ink)" }}>{formatCurrency(Number(payment.amount_ngn))}</td>
-      <td className="px-5 py-3 capitalize text-sm" style={{ color: "var(--color-muted-stone)" }}>{payment.gateway}</td>
+      <td className="px-5 py-3 capitalize text-xs" style={{ color: "var(--color-muted-stone)" }}>{payment.gateway}</td>
       <td className="px-5 py-3"><StatusBadge status={payment.status} /></td>
-      <td className="px-5 py-3 text-sm whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>{formatDate(payment.created_at)}</td>
+      <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>{formatDate(payment.created_at)}</td>
       <td className="px-5 py-3 text-right">
         <RowActionsMenu
           actions={[

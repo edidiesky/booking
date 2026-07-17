@@ -34,7 +34,7 @@ export default function ProductShortDescription({
       <div className="w-full flex flex-col gap-1">
         <div className="w-full flex flex-col gap-2  border-b py-4 border-dotted">
           <h3 className="text-3xl">{data?.name}</h3>
-          <h5 className="text-base space-y-2 ">
+          <h5 className="text-sm space-y-2 ">
             <span className="block">SKU 028 
               {/* {data?.brand} */}
             </span>
@@ -46,21 +46,21 @@ export default function ProductShortDescription({
         <div className="w-full flex flex-col gap-6  border-b py-4 border-dotted">
           {/* timer */}
           <div className="w-full bg-[#FFCE78] p-6 flex flex-col items-center gap-3">
-            <span className="text-base ">
+            <span className="text-sm ">
               Flash Sale
             </span>
             <div className="flex items-center gap-4">
               {/* Days */}
-              <span className="text-base ">0 0 Days</span>
-              <span className="text-base ">0 0 HRS</span>
-              <span className="text-base ">0 0 Min</span>
-              <span className="text-base ">0 0 Sec</span>
+              <span className="text-sm ">0 0 Days</span>
+              <span className="text-sm ">0 0 HRS</span>
+              <span className="text-sm ">0 0 Min</span>
+              <span className="text-sm ">0 0 Sec</span>
             </div>
           </div>
 
           {/* color */}
           <div className="w-full flex items-center gap-8">
-            <h3 className="text-lg ">Color</h3>
+            <h3 className="text-base ">Color</h3>
             <div className="flex items-center  gap-4">
               {data?.colors?.map((data, index) => {
                 return (
@@ -79,13 +79,13 @@ export default function ProductShortDescription({
 
           {/* size */}
           <div className="w-full flex items-center gap-8">
-            <h3 className="text-lg ">Size</h3>
+            <h3 className="text-base ">Size</h3>
             <div className="flex items-center  gap-4">
               {data?.size?.map((data, index) => {
                 return (
                   <div
                     key={index}
-                    className="w-16 cursor-pointer hover:bg-[#eee] flex items-center justify-center h-12 rounded-md text-base p-1 border"
+                    className="w-16 cursor-pointer hover:bg-[#eee] flex items-center justify-center h-12 rounded-md text-sm p-1 border"
                   >
                     {data?.value}
                   </div>
@@ -97,48 +97,48 @@ export default function ProductShortDescription({
           {/* cart button */}
           <div className="w-full py-3 flex items-center gap-4">
             <div className="w-[180px] h-[45px] flex items-center border rounded-full overflow-hidden">
-              <div className="w-[50px] border-r h-full flex items-center justify-center text-sm">
+              <div className="w-[50px] border-r h-full flex items-center justify-center text-xs">
                 <LuPlus />
               </div>
-              <div className="flex-1 h-full flex items-center justify-center text-base">
+              <div className="flex-1 h-full flex items-center justify-center text-sm">
                 1
               </div>
-              <div className="w-[50px] border-l h-full flex items-center justify-center text-sm">
+              <div className="w-[50px] border-l h-full flex items-center justify-center text-xs">
                 <LuMinus />
               </div>
             </div>
-            <div className="btn btn_small flex-1 text-base text-white">
+            <div className="btn btn_small flex-1 text-sm text-white">
               <span className="p-1">Add to Cart</span>
             </div>
           </div>
         </div>
         {/* description */}
         <div className="w-full flex flex-col gap-2  border-b py-4 border-dotted">
-          <p className="text-base ">
+          <p className="text-sm ">
            {ReactHtmlParser(sanitizedValue)}
           </p>
           <div className="flex items-center justify-end">
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-xl hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-lg hover:bg-[#FAF8F5]"
             >
               <TiSocialFacebook />
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-lg  hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-base  hover:bg-[#FAF8F5]"
             >
               <FaXTwitter />
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-lg  hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-base  hover:bg-[#FAF8F5]"
             >
               <FaInstagram />
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-lg  hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-base  hover:bg-[#FAF8F5]"
             >
               <FaYoutube />
             </Link>

@@ -14,7 +14,7 @@ export default function BookingDetailCard({ booking }: Props) {
         <div className="flex flex-col gap-1">
           <p className="text-xs uppercase tracking-widest bold"
              style={{ color: "var(--color-hint-of-grey)" }}>Booking Reference</p>
-          <p className="text-2xl bold"
+          <p className="text-xl bold"
              style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
             {booking.bookingRef}
           </p>
@@ -35,7 +35,7 @@ export default function BookingDetailCard({ booking }: Props) {
                style={{ color: "var(--color-hint-of-grey)" }}>
               <Icon size={11} /> {label}
             </p>
-            <p className="text-sm bold" style={{ color: "var(--color-ink)" }}>
+            <p className="text-xs bold" style={{ color: "var(--color-ink)" }}>
               {value}
             </p>
           </div>
@@ -49,7 +49,7 @@ export default function BookingDetailCard({ booking }: Props) {
           { label: "Platform fee", value: formatCurrency(booking.platformFeeNgn) },
           { label: "Host payout",  value: formatCurrency(booking.hostPayoutNgn)  },
         ].map(({ label, value }) => (
-          <div key={label} className="flex items-center justify-between text-sm">
+          <div key={label} className="flex items-center justify-between text-xs">
             <span style={{ color: "var(--color-muted-stone)" }}>{label}</span>
             <span style={{ color: "var(--color-ink)" }}>{value}</span>
           </div>

@@ -33,17 +33,17 @@ function CartRow({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-[#ccc] text-sm">
+              <div className="w-full h-full flex items-center justify-center text-[#ccc] text-xs">
                 No img
               </div>
             )}
           </div>
           <div className="flex flex-col gap-0.5 min-w-0">
-            <p className="text-base lg:text-lg bold text-[#171717] truncate max-w-[200px]">
+            <p className="text-sm lg:text-base bold text-[#171717] truncate max-w-[200px]">
               {item.productTitle}
             </p>
             {item.availabilityStatus === "unavailable" && (
-              <p className="text-sm text-red-500">
+              <p className="text-xs text-red-500">
                 {item.unavailabilityReason ?? "Out of stock"}
               </p>
             )}
@@ -52,7 +52,7 @@ function CartRow({
       </td>
 
       {/* unit price */}
-      <td className="py-5 pr-4 text-base lg:text-lg text-[#555] whitespace-nowrap">
+      <td className="py-5 pr-4 text-sm lg:text-base text-[#555] whitespace-nowrap">
         ₦{item.productPrice.toLocaleString("en-NG")}
       </td>
 
@@ -65,7 +65,7 @@ function CartRow({
           >
             <Minus size={12} />
           </button>
-          <span className="w-9 text-center text-base lg:text-lg bold">
+          <span className="w-9 text-center text-sm lg:text-base bold">
             {item.productQuantity}
           </span>
           <button
@@ -78,7 +78,7 @@ function CartRow({
       </td>
 
       {/* subtotal */}
-      <td className="py-5 pr-4 text-base lg:text-lg bold text-[#171717] whitespace-nowrap">
+      <td className="py-5 pr-4 text-sm lg:text-base bold text-[#171717] whitespace-nowrap">
         ₦{(item.productPrice * item.productQuantity).toLocaleString("en-NG")}
       </td>
 
@@ -110,24 +110,24 @@ function OrderSummary({
 }) {
   return (
     <div className="border border-[#e8e6e3] p-6 flex flex-col gap-6 bg-white">
-      <h3 className="text-lg lg:text-2xl bold text-[#171717]">Cart Totals</h3>
+      <h3 className="text-base lg:text-xl bold text-[#171717]">Cart Totals</h3>
 
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-center py-3 border-b border-[#f0efec]">
-          <span className="text-base lg:text-lg text-[#555]">
+          <span className="text-sm lg:text-base text-[#555]">
             Subtotal ({itemCount} item{itemCount !== 1 ? "s" : ""})
           </span>
-          <span className="text-base lg:text-lg bold text-[#171717]">
+          <span className="text-sm lg:text-base bold text-[#171717]">
             ₦{total.toLocaleString("en-NG")}
           </span>
         </div>
         <div className="flex justify-between items-center py-3 border-b border-[#f0efec]">
-          <span className="text-base lg:text-lg text-[#555]">Shipping</span>
-          <span className="text-base lg:text-lg text-[#999]">Calculated at checkout</span>
+          <span className="text-sm lg:text-base text-[#555]">Shipping</span>
+          <span className="text-sm lg:text-base text-[#999]">Calculated at checkout</span>
         </div>
         <div className="flex justify-between items-center py-3">
-          <span className="text-base lg:text-lg  text-[#171717]">Total</span>
-          <span className="text-base lg:text-lg  text-[#171717]">
+          <span className="text-sm lg:text-base  text-[#171717]">Total</span>
+          <span className="text-sm lg:text-base  text-[#171717]">
             ₦{total.toLocaleString("en-NG")}
           </span>
         </div>
@@ -136,13 +136,13 @@ function OrderSummary({
       <div className="flex flex-col gap-3">
         <button
           onClick={onCheckout}
-          className="w-full h-12 rounded-full bg-[#171717] text-white text-base lg:text-lg bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+          className="w-full h-12 rounded-full bg-[#171717] text-white text-sm lg:text-base bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
         >
           Proceed to Checkout
         </button>
         <button
           onClick={onContinue}
-          className="w-full h-12 rounded-full border border-black/10 text-base lg:text-lg bold hover:bg-[#f4f3ee] transition-colors"
+          className="w-full h-12 rounded-full border border-black/10 text-sm lg:text-base bold hover:bg-[#f4f3ee] transition-colors"
         >
           Continue shopping
         </button>
@@ -205,10 +205,10 @@ export default function Cart() {
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-28 gap-4">
-            <p className="text-sm text-[#666]">Your cart is empty.</p>
+            <p className="text-xs text-[#666]">Your cart is empty.</p>
             <button
               onClick={() => navigate(`/store/${storeId}`)}
-              className="h-10 px-6 bg-[#171717] text-white text-sm bold rounded-full hover:opacity-90 transition-opacity"
+              className="h-10 px-6 bg-[#171717] text-white text-xs bold rounded-full hover:opacity-90 transition-opacity"
             >
               Continue shopping
             </button>
@@ -225,7 +225,7 @@ export default function Cart() {
                     {["Product", "Price", "Quantity", "Subtotal", ""].map((h) => (
                       <th
                         key={h}
-                        className="pb-4 text-left text-sm text-[#a3a6af] uppercase tracking-widest pr-4"
+                        className="pb-4 text-left text-xs text-[#a3a6af] uppercase tracking-widest pr-4"
                       >
                         {h}
                       </th>

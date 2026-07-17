@@ -40,7 +40,7 @@ export default function DashboardRoles() {
         />
         <button
           onClick={() => setShowAssign(true)}
-          className="flex items-center gap-2 h-9 px-4 rounded-full text-sm transition-opacity hover:opacity-80 shrink-0"
+          className="flex items-center gap-2 h-9 px-4 rounded-full text-xs transition-opacity hover:opacity-80 shrink-0"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
           <UserPlus size={14} />
@@ -75,13 +75,13 @@ export default function DashboardRoles() {
         placeholder="Search by user ID or role..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="h-9 px-3 text-sm border rounded-lg outline-none w-64"
+        className="h-9 px-3 text-xs border rounded-lg outline-none w-64"
         style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
       />
 
       {/* Table */}
       <div className="border rounded-xl overflow-x-auto" style={{ borderColor: "var(--color-fog)" }}>
-        <table className="w-full text-sm">
+        <table className="w-full text-xs">
           <thead>
             <tr className="border-b" style={{ borderColor: "var(--color-fog)" }}>
               {HEADERS.map((h) => (
@@ -105,7 +105,7 @@ export default function DashboardRoles() {
               ))
             ) : assignments.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-5 py-12 text-center text-sm"
+                <td colSpan={6} className="px-5 py-12 text-center text-xs"
                     style={{ color: "var(--color-muted-stone)" }}>
                   No role assignments yet. Click "Assign Role" to add a team member.
                 </td>
@@ -125,10 +125,10 @@ export default function DashboardRoles() {
                         {a.roleName}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-sm" style={{ color: "var(--color-muted-stone)" }}>
+                    <td className="px-5 py-3 text-xs" style={{ color: "var(--color-muted-stone)" }}>
                       {a.assignedBy}
                     </td>
-                    <td className="px-5 py-3 text-sm whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
+                    <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
                       {formatDate(a.assignedAt)}
                     </td>
                     <td className="px-5 py-3">

@@ -28,7 +28,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           >
             Check your email
           </h1>
-          <p className="text-sm leading-relaxed" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-xs leading-relaxed" style={{ color: "var(--color-muted-stone)" }}>
             We sent a 6-digit verification code to{" "}
             <span style={{ color: "var(--color-ink)" }}>{email}</span>.
           </p>
@@ -56,14 +56,14 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
               >
                 {i + 1}
               </span>
-              <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>{step}</p>
+              <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>{step}</p>
             </div>
           ))}
         </div>
 
         <button
           onClick={onContinue}
-          className="w-full h-12 flex items-center justify-center text-sm transition-opacity hover:opacity-80 rounded-full"
+          className="w-full h-12 flex items-center justify-center text-xs transition-opacity hover:opacity-80 rounded-full"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
           Enter the code →
@@ -72,7 +72,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
         <button
           onClick={onResend}
           disabled={isResending}
-          className="flex items-center justify-center gap-2 text-sm transition-opacity hover:opacity-60 disabled:opacity-40"
+          className="flex items-center justify-center gap-2 text-xs transition-opacity hover:opacity-60 disabled:opacity-40"
           style={{ color: "var(--color-muted-stone)" }}
         >
           <RefreshCw size={13} className={isResending ? "animate-spin" : ""} />

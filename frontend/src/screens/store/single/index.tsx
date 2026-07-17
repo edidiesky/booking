@@ -102,7 +102,7 @@ export default function StoreSingleProduct() {
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
         <button
           onClick={() => navigate(`/store/${storeId}`)}
-          className="flex items-center gap-2 text-base bold text-[#666] hover:text-[#171717] mb-8 transition-colors"
+          className="flex items-center gap-2 text-sm bold text-[#666] hover:text-[#171717] mb-8 transition-colors"
         >
           <ArrowLeft size={16} />
           Back to store
@@ -177,7 +177,7 @@ export default function StoreSingleProduct() {
 
           <div className="flex flex-col gap-2">
             <div className="flex flex-col gap-2">
-              <h4 className="text-lg bold text-red-600">
+              <h4 className="text-base bold text-red-600">
                 10+ views in 24 Hours
               </h4>
               <h1 className="text-4xl lg:text-5xl text-[#171717]">
@@ -186,18 +186,18 @@ export default function StoreSingleProduct() {
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <h4 className="text-base bold text-gray-600">
+                <h4 className="text-sm bold text-gray-600">
                   Local taxes included (where applicable)
                 </h4>
-                <p className="text-xl text-[#171717]">{product.name}</p>
-                <p className="text-base text-[#171717] leading-relaxed">
+                <p className="text-lg text-[#171717]">{product.name}</p>
+                <p className="text-sm text-[#171717] leading-relaxed">
                   {ReactHtmlParser(sanitizedValue)}
                 </p>
               </div>
 
               {product.colors?.length > 0 && (
                 <div className="flex flex-col gap-2">
-                  <span className="text-lg bold text-[#171717]">
+                  <span className="text-base bold text-[#171717]">
                     Colors Available
                   </span>
                   <div className="flex items-center gap-2">
@@ -215,12 +215,12 @@ export default function StoreSingleProduct() {
 
               {product.size?.length > 0 && (
                 <div className="flex flex-col gap-2">
-                  <span className="text-lg bold text-[#171717]">Sizes</span>
+                  <span className="text-base bold text-[#171717]">Sizes</span>
                   <div className="flex items-center gap-2">
                     {product.size.map((s, i) => (
                       <div
                         key={i}
-                        className="px-3 bold py-1.5 border border-black/10 text-base text-[#171717] cursor-pointer hover:bg-[#f4f3ee] transition-colors"
+                        className="px-3 bold py-1.5 border border-black/10 text-sm text-[#171717] cursor-pointer hover:bg-[#f4f3ee] transition-colors"
                       >
                         {s.value}
                       </div>
@@ -234,7 +234,7 @@ export default function StoreSingleProduct() {
                   {product.category.map((cat) => (
                     <span
                       key={cat}
-                      className="px-3 bold py-1 bg-[#f4f3ee] text-base  text-[#444]"
+                      className="px-3 bold py-1 bg-[#f4f3ee] text-sm  text-[#444]"
                     >
                       {cat}
                     </span>
@@ -249,7 +249,7 @@ export default function StoreSingleProduct() {
                   >
                     <Minus size={18} />
                   </button>
-                  <span className="w-12 text-center text-sm">{quantity}</span>
+                  <span className="w-12 text-center text-xs">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
                     className="w-12 h-12 flex items-center justify-center hover:bg-[#f4f3ee] transition-colors"
@@ -260,7 +260,7 @@ export default function StoreSingleProduct() {
                 <button
                   onClick={handleAddToCart}
                   disabled={addingToCart}
-                  className="flex-1 h-14 bg-[#171717] text-white text-base bold rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="flex-1 h-14 bg-[#171717] text-white text-sm bold rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {addingToCart ? "Adding..." : "Add to Cart"}
                 </button>
@@ -269,7 +269,7 @@ export default function StoreSingleProduct() {
 
             <button
               onClick={() => navigate(`/store/${storeId}/reviews/${productId}`)}
-              className="text-sm text-[#666] underline underline-offset-4 text-left w-fit hover:text-[#171717] transition-colors"
+              className="text-xs text-[#666] underline underline-offset-4 text-left w-fit hover:text-[#171717] transition-colors"
             >
               View all {reviews.length} reviews
             </button>

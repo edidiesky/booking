@@ -5,8 +5,8 @@ export default function Stats() {
   return (
     <div className="w-full border p-4 rounded-sm flex flex-col gap-6">
       <div className="w-full flex border-b pb-3 flex-col gap-1">
-        <h3 className="text-xl">Store Performance Report</h3>
-        <p className="text-sm text-[#64645f] max-w-[520px] leading-[1.6]">
+        <h3 className="text-lg">Store Performance Report</h3>
+        <p className="text-xs text-[#64645f] max-w-[520px] leading-[1.6]">
           Monitor how effectively your store is meeting sales targets.
         </p>
       </div>

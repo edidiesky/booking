@@ -12,7 +12,7 @@ function Section({ title, description, children }: {
     <div className="flex flex-col gap-4 p-6 border rounded-2xl"
          style={{ borderColor: "#e8e6e3" }}>
       <div className="flex flex-col gap-1 pb-4 border-b" style={{ borderColor: "#f2f0ed" }}>
-        <h3 className="text-sm bold" style={{ color: "var(--color-ink)" }}>{title}</h3>
+        <h3 className="text-xs bold" style={{ color: "var(--color-ink)" }}>{title}</h3>
         <p className="text-xs" style={{ color: "var(--color-light-steel)" }}>{description}</p>
       </div>
       {children}

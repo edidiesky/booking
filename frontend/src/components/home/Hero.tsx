@@ -68,7 +68,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-base lg:text-xl text-center leading-relaxed max-w-md"
+            className="text-sm lg:text-lg text-center leading-relaxed max-w-md"
             style={{
               color: "var(--color-muted-stone)",
               letterSpacing: "-0.009em",
@@ -86,7 +86,7 @@ export default function Hero() {
           >
             <button
               onClick={handleCta}
-              className="h-16 px-7 text-base  flex items-center gap-2 transition-opacity hover:opacity-80"
+              className="h-16 px-7 text-sm  flex items-center gap-2 transition-opacity hover:opacity-80"
               style={{
                 backgroundColor: "var(--color-ink)",
                 color: "var(--color-canvas)",
@@ -98,7 +98,7 @@ export default function Hero() {
             </button>
             <button
               onClick={() => navigate("/login")}
-              className="h-16 px-7 text-base  border transition-opacity hover:opacity-70"
+              className="h-16 px-7 text-sm  border transition-opacity hover:opacity-70"
               style={{
                 color: "var(--color-ink)",
                 borderColor: "var(--color-ink)",
@@ -125,7 +125,7 @@ export default function Hero() {
               ].map((bg, i) => (
                 <div
                   key={i}
-                  className="w-12 h-12 rounded-full border-2 flex items-center justify-center text-base  text-white"
+                  className="w-12 h-12 rounded-full border-2 flex items-center justify-center text-sm  text-white"
                   style={{
                     backgroundColor: bg,
                     borderColor: "var(--color-canvas)",
@@ -136,7 +136,7 @@ export default function Hero() {
               ))}
             </div>
             <p
-              className="text-base"
+              className="text-sm"
               style={{ color: "var(--color-muted-stone)" }}
             >
               Joined by{" "}

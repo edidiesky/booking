@@ -131,15 +131,15 @@ export default function DashboardBookings() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h4 className="text-xl lg:text-2xl bold  text-[#17191c]">
+            <h4 className="text-lg lg:text-xl bold  text-[#17191c]">
               Bookings
             </h4>
-            <p className="text-sm text-[#64645f] mt-1 max-w-[420px] bold">
+            <p className="text-xs text-[#64645f] mt-1 max-w-[420px] bold">
               Manage guest reservations. Click a row to view details and take
               actions.
             </p>
           </div>
-          <span className="text-sm text-[#a3a6af] mt-2">
+          <span className="text-xs text-[#a3a6af] mt-2">
             {bookings.length} total
           </span>
         </div>
@@ -153,7 +153,7 @@ export default function DashboardBookings() {
                 setSearch(e.target.value);
               }}
               placeholder="Search by booking reference..."
-              className="w-full max-w-xs h-[38px] px-4 border border-[#e8e6e3] text-sm outline-none focus:border-[#17191c] transition-colors"
+              className="w-full max-w-xs h-[38px] px-4 border border-[#e8e6e3] text-xs outline-none focus:border-[#17191c] transition-colors"
             />
           </div>
           <ChartSelect
@@ -167,7 +167,7 @@ export default function DashboardBookings() {
         </div>
 
         <div className="border border-[#e8e6e3] overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-[#e8e6e3]">
                 {HEADERS.map((h) => (
@@ -195,7 +195,7 @@ export default function DashboardBookings() {
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-5 py-10 text-center text-sm text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs text-[#a3a6af]"
                   >
                     No bookings found{search ? ` for "${search}"` : ""}
                   </td>

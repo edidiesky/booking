@@ -42,7 +42,7 @@ export default function Card({
             {x?.title}
           </div>
         </td>
-        {/* <td className="text-lg">{x?.price}</td> */}
+        {/* <td className="text-base">{x?.price}</td> */}
         <td>₦{x?.price}</td>
         <td>
           <div className="btnWrapper">
@@ -65,7 +65,7 @@ export default function Card({
             </button>
           </div>
         </td>
-        <td className="text-xl">₦{x?.price * cartcount}</td>
+        <td className="text-lg">₦{x?.price * cartcount}</td>
         <td className="svg">
           <div
             className="w-12 h-12 rounded-full hover:bg-[#eee] flex items-center justify-center cursor-pointer"

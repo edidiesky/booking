@@ -128,7 +128,7 @@ export default function StickyFeatures() {
         style={{ maxWidth: "1280px" }}
       >
         <span
-          className="text-base lg:text-xl  uppercase "
+          className="text-sm lg:text-lg  uppercase "
           style={{ color: "var(--color-light-steel)" }}
         >
           Everything you need
@@ -191,7 +191,7 @@ export default function StickyFeatures() {
                   {feature.bullets.map((bullet, j) => (
                     <li
                       key={j}
-                      className="flex items-start gap-3 text-lg leading-relaxed"
+                      className="flex items-start gap-3 text-base leading-relaxed"
                       style={{
                         color: "var(--color-muted-stone)",
                         letterSpacing: "-0.009em",

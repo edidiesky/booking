@@ -75,8 +75,8 @@ export default function BookingDrawer({ booking, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           <div>
-            <p className="text-lg bold text-[#17191c]">Booking details</p>
-            <p className="text-base text-[#777b86] mt-0.5">
+            <p className="text-base bold text-[#17191c]">Booking details</p>
+            <p className="text-sm text-[#777b86] mt-0.5">
               {booking.bookingRef}
             </p>
           </div>
@@ -104,10 +104,10 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                   key={label}
                   className="flex w-full items-center gap-8 lg:gap-10"
                 >
-                  <span className="text-base medium flex-1 text-[#777b86]">
+                  <span className="text-sm medium flex-1 text-[#777b86]">
                     {label}
                   </span>
-                  <span className="text-base text-end flex-1 text-[#17191c] bold">
+                  <span className="text-sm text-end flex-1 text-[#17191c] bold">
                     {value}
                   </span>
                 </div>
@@ -116,7 +116,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
           </div>
 
           <div className="px-6 py-5 border-b flex flex-col gap-4">
-            <p className="w-full text-sm text-[#a3a6af] uppercase">
+            <p className="w-full text-xs text-[#a3a6af] uppercase">
               Payment breakdown
             </p>
             {[
@@ -128,15 +128,15 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                 key={label}
                 className={`w-full flex items-center gap-8 lg:gap-10`}
               >
-                <p className="text-base medium text-[#777b86]">{label}</p>
-                <p className="text-base text-[#17191c] bold">{value}</p>
+                <p className="text-sm medium text-[#777b86]">{label}</p>
+                <p className="text-sm text-[#17191c] bold">{value}</p>
               </div>
             ))}
           </div>
           <div className="px-6 py-5 border-b flex flex-col gap-4">
             {!isTerminal && (
               <div className="flex flex-col gap-4">
-                <p className="text-sm text-[#a3a6af] uppercase bold">
+                <p className="text-xs text-[#a3a6af] uppercase bold">
                   Timeline
                 </p>
                 <div className="flex flex-col gap-4">
@@ -147,11 +147,11 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                       />
                       <div>
                         <p
-                          className={`text-base bold ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}
+                          className={`text-sm bold ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}
                         >
                           {step.label}
                         </p>
-                        <p className="text-sm text-[#a3a6af]">
+                        <p className="text-xs text-[#a3a6af]">
                           {step.description}
                         </p>
                       </div>
@@ -166,7 +166,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
         <div className="border-t border-[#e8e6e3] px-6 py-4 flex items-center justify-between">
           <button
             onClick={onClose}
-            className="text-sm  text-[#777b86] bold hover:text-[#17191c]"
+            className="text-xs  text-[#777b86] bold hover:text-[#17191c]"
           >
             Cancel
           </button>
@@ -179,7 +179,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                     "noopener,noreferrer",
                   )
                 }
-                className="text-sm bold text-[#fff] bg-black rounded-full px-4 py-2"
+                className="text-xs bold text-[#fff] bg-black rounded-full px-4 py-2"
               >
                 View receipt
               </button>

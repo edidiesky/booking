@@ -23,7 +23,7 @@ function StepChecklist({ steps }: { steps: StepItem[] }) {
           {step.status === "active" && <Loader2 size={18} className="shrink-0 animate-spin" style={{ color: "var(--color-ink)" }} />}
           {step.status === "pending"&& <Circle size={18} className="shrink-0" style={{ color: "#d1d5db" }} />}
           <span
-            className="text-sm"
+            className="text-xs"
             style={{
               color:          step.status === "pending" ? "#9ca3af" : "var(--color-ink)",
               fontWeight:     step.status === "active"  ? 600 : 400,
@@ -62,7 +62,7 @@ export default function AuthLayout({ children, leftContent, stepLabels, currentS
                       Create Account
                     </h2>
                     {remaining != null && remaining > 0 && (
-                      <p className="text-sm" style={{ color: "#6b7280" }}>
+                      <p className="text-xs" style={{ color: "#6b7280" }}>
                         {remaining} step{remaining > 1 ? "s" : ""} remaining
                       </p>
                     )}
@@ -96,7 +96,7 @@ export default function AuthLayout({ children, leftContent, stepLabels, currentS
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <Link to="/" className="text-base bold mb-8 block lg:hidden" style={{ color: "var(--color-ink)" }}>
+          <Link to="/" className="text-sm bold mb-8 block lg:hidden" style={{ color: "var(--color-ink)" }}>
             Booking
           </Link>
           {children}

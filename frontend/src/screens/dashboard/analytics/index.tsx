@@ -47,7 +47,7 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub?: s
     <div className="flex flex-col gap-1 p-5 rounded-xl border"
          style={{ borderColor: "var(--color-fog)" }}>
       <p className="text-xs uppercase tracking-wide" style={{ color: "var(--color-muted-stone)" }}>{label}</p>
-      <p className="text-2xl " style={{ color: "var(--color-ink)" }}>{value}</p>
+      <p className="text-xl " style={{ color: "var(--color-ink)" }}>{value}</p>
       {sub && <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>{sub}</p>}
     </div>
   );
@@ -265,7 +265,7 @@ export default function DashboardAnalytics() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className="px-5 py-2.5 text-sm transition-colors border-b-2 -mb-px whitespace-nowrap"
+            className="px-5 py-2.5 text-xs transition-colors border-b-2 -mb-px whitespace-nowrap"
             style={{
               borderBottomColor: activeTab === tab.key ? "var(--color-ink)" : "transparent",
               color:             activeTab === tab.key ? "var(--color-ink)" : "var(--color-muted-stone)",
