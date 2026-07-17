@@ -8,7 +8,7 @@ const SearchPage = lazy(() => import("@/screens/public/Search"));
 const PropertyDetail = lazy(() => import("@/screens/public/PropertyDetail"));
 const NotFound = lazy(() => import("@/screens/NotFound"));
 const Unauthorized = lazy(() => import("@/screens/Unauthorized"));
-const PaymentSuccess = lazy(() => import("@/screens/store/payment/Success"));
+const BookingSuccess  = lazy(() => import("@/screens/guest/BookingSuccess"));
 const PaymentFailed = lazy(() => import("@/screens/store/payment/Failed"));
 const s = (el: React.ReactNode) => (
   <Suspense fallback={<PageLoader />}>{el}</Suspense>
@@ -35,6 +35,6 @@ export const guestRoutes: RouteObject[] = [
       </Suspense>
     ),
   },
-  { path: "/payment-success", element: s(<PaymentSuccess />) },
+  { path: "/booking-success/:bookingId?", element: s(<BookingSuccess />) },
   { path: "/payment-failed", element: s(<PaymentFailed />) },
 ];
