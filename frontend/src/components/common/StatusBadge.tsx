@@ -2,7 +2,7 @@ import type { BookingStatus, PaymentStatus, EscrowStatus, NotificationStatus, Pr
 
 type AnyStatus = BookingStatus | PaymentStatus | EscrowStatus | NotificationStatus | PropertyStatus;
 
-const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
+export const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
   // BookingStatus
   pending_payment: { label: "Pending Payment", color: "#92400e", bg: "#fef3c7" },
   confirmed:       { label: "Confirmed",        color: "#166534", bg: "#dcfce7" },
