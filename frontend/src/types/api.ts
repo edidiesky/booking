@@ -311,6 +311,8 @@ export interface Booking {
   propertyCity?:  string;
   roomTypeName?:  string;
   roomTypeImage?: string;
+  guestFirstName?: string;
+  guestLastName?:  string;
 }
 
 
