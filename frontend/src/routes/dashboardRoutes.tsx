@@ -11,6 +11,7 @@ const DashboardBookings    = lazy(() => import("@/screens/dashboard/Bookings"));
 const DashboardPayments    = lazy(() => import("@/screens/dashboard/Payment"));
 const DashboardEscrow      = lazy(() => import("@/screens/dashboard/Escrow"));
 const DashboardRoles       = lazy(() => import("@/screens/dashboard/Roles"));
+const DashboardCalendar       = lazy(() => import("@/screens/dashboard/calendar"));
 const DashboardAccount     = lazy(() => import("@/screens/dashboard/Account"));
 const PropertyDetail = lazy(() => import("@/screens/dashboard/Properties/PropertyDetail"));
 const DashboardRenters = lazy(() => import("@/screens/dashboard/Renters"));
@@ -33,6 +34,7 @@ export const dashboardRoutes: RouteObject[] = [
       { path: "payments",                       element: s(<DashboardPayments />)   },
       { path: "escrow",                         element: s(<DashboardEscrow />)     },
       { path: "roles",                          element: s(<DashboardRoles />)      },
+      { path: "calendar",                          element: s(<DashboardCalendar />)      },
       { path: "account",                        element: s(<DashboardAccount />)    },
       { path: "properties/:propertyId", element: s(<PropertyDetail />) },
       { path: "renters", element: s(<DashboardRenters />) },
