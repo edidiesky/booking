@@ -62,6 +62,8 @@ export interface BookingDto {
   propertyCity?:  string;
   roomTypeName?:  string;
   roomTypeImage?: string;
+  guestFirstName?: string;
+  guestLastName?:  string;
 }
 
 function toDto(
@@ -91,12 +93,15 @@ function toDto(
     sessionId,
     specialRequests: b.special_requests,
     createdAt: b.created_at,
-    propertyName: enrichment?.propertyName,
+    propertyName: b?.propertyName,
     roomTypeImage: enrichment?.roomTypeImage,
     receiptUrl: b.receipt_url ?? undefined,
     room_type_images: b.room_type_images ?? [],
     propertyCity: b.propertyCity,
     roomTypeName: b.roomTypeName,
+    guestFirstName: b.guest_first_name,
+    guestLastName:  b.guest_last_name,
+    
   };
 }
 
