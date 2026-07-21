@@ -24,7 +24,7 @@ function AmenityIcon({ label }: { label: string }) {
   const key  = label.toLowerCase();
   const icon = Object.entries(AMENITY_ICONS).find(([k]) => key.includes(k))?.[1];
   return (
-    <span className="flex items-center gap-1 text-xs" style={{ color: "var(--color-light-steel)" }}>
+    <span className="flex items-center gap-1 text-sm" style={{ color: "var(--color-light-steel)" }}>
       {icon ?? <span className="w-1 h-1 rounded-full bg-current inline-block" />}
       {label}
     </span>
@@ -131,14 +131,14 @@ export default function PropertyCard({ property, index = 0 }: Props) {
 
         {/* property type badge */}
         <div className="absolute top-3 left-3 z-10">
-          <span className={`text-xs bold px-3 py-1 rounded-full capitalize font-medium ${typeClass}`}>
+          <span className={`text-sm bold px-3 py-1 rounded-full capitalize font-medium ${typeClass}`}>
             {property.property_type ?? property.propertyType}
           </span>
         </div>
       </div>
 
       {/* card body */}
-      <div className="w-full flex flex-col p-4 gap-1.5">
+      <div className="w-full flex flex-col px-4 py-8 gap-2">
 
         {/* name + price */}
         <div className="flex items-start justify-between gap-2">
@@ -151,7 +151,7 @@ export default function PropertyCard({ property, index = 0 }: Props) {
           {lowestPrice !== null && (
             <p className="text-sm lg:text-base bold shrink-0" style={{ color: "var(--color-ink)" }}>
               {formatCurrency(lowestPrice)}
-              <span className="text-xs font-normal" style={{ color: "var(--color-light-steel)" }}>
+              <span className="text-sm font-normal" style={{ color: "var(--color-light-steel)" }}>
                 /night
               </span>
             </p>
@@ -165,7 +165,7 @@ export default function PropertyCard({ property, index = 0 }: Props) {
         </p>
 
         {/* star rating placeholder */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <div className="flex items-center gap-0.5">
             {Array.from({ length: 4 }).map((_, i) => (
               <IoStar key={i} className="text-[13px] text-[#f5a623]" />

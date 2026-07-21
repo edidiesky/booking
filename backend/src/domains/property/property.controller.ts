@@ -4,6 +4,29 @@ import { propertyService }   from "./property.service";
 import { AppError }          from "../../utils/AppError";
 import { PropertyAddress, PropertyType } from "../../types";
 import { propertyRepository } from "./property.repository";
+import { availabilityBroadcaster, logger } from "@booking/shared";
+
+export const StreamRoomTypeAvailabilityHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const roomTypeId = req.params["roomTypeId"] as string;
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no");
+  res.flushHeaders();
+
+  const unsubscribe = await availabilityBroadcaster.subscribe(roomTypeId, (payload) => {
+    logger.info("sse_availability_frame_sent", { event: "sse_availability_frame_sent", roomTypeId, payload });
+    res.write(`event: availability\ndata: ${JSON.stringify(payload)}\n\n`);
+  });
+
+  const heartbeat = setInterval(() => res.write(": heartbeat\n\n"), 25_000);
+
+  req.on("close", () => {
+    clearInterval(heartbeat);
+    void unsubscribe();
+  });
+});
 
 
 export const CreatePropertyHandler = asyncHandler(async (req: Request, res: Response) => {

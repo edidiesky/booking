@@ -14,23 +14,23 @@ import { showToast } from "@/components/common/Toast";
 import CancelBookingModal from "@/screens/guest/MyBookings/CancelBookingModal";
 import BookingTableRow from "./BookingTableRow";
 
-const STATUS_CONFIG: Record<
-  BookingStatus,
-  { label: string; className: string }
-> = {
-  pending_payment: {
-    label: "Pending Payment",
-    className: "bg-yellow-50 text-yellow-800",
-  },
-  confirmed: { label: "Confirmed", className: "bg-blue-50 text-blue-700" },
-  checked_in: { label: "Checked In", className: "bg-green-50 text-green-700" },
-  checked_out: {
-    label: "Checked Out",
-    className: "bg-[#f2f0ed] text-[#4c4c4c]",
-  },
-  cancelled: { label: "Cancelled", className: "bg-red-50 text-red-700" },
-  refunded: { label: "Refunded", className: "bg-purple-50 text-purple-700" },
-};
+// const STATUS_CONFIG: Record<
+//   BookingStatus,
+//   { label: string; className: string }
+// > = {
+//   pending_payment: {
+//     label: "Pending Payment",
+//     className: "bg-yellow-50 text-yellow-800",
+//   },
+//   confirmed: { label: "Confirmed", className: "bg-blue-50 text-blue-700" },
+//   checked_in: { label: "Checked In", className: "bg-green-50 text-green-700" },
+//   checked_out: {
+//     label: "Checked Out",
+//     className: "bg-[#f2f0ed] text-[#4c4c4c]",
+//   },
+//   cancelled: { label: "Cancelled", className: "bg-red-50 text-red-700" },
+//   refunded: { label: "Refunded", className: "bg-purple-50 text-purple-700" },
+// };
 
 const STATUS_OPTIONS: { label: string; value: BookingStatus | "" }[] = [
   { label: "All statuses", value: "" },

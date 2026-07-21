@@ -23,13 +23,13 @@ export default function NavGroupComponent({ group }: Props) {
             data-tour={item.tour}
             className={({ isActive }) =>
               [
-                "flex items-center gap-2.5 px-2.5 py-2 rounded-[8px] bold text-sm transition-colors w-full mb-0.5",
+                "flex items-center gap-2.5 text-[#64645f] px-2.5 py-2 rounded-[8px] font-semibold text-sm transition-colors w-full mb-0.5",
                 isActive
                   ? "bg-[#f5f5f3] font-medium"
                   : "hover:bg-[#f5f5f3]",
               ].join(" ")
             }
-            style={({ isActive }) => ({ color: isActive ? "var(--color-ink)" : "var(--color-muted-stone)" })}
+            style={({ isActive }) => ({ color: isActive ? "var(--color-ink)" : "#9a9a98" })}
           >
             <Icon size={15} className="shrink-0" />
             {item.text}

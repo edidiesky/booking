@@ -11,11 +11,9 @@ export class BookingConfirmedHandler extends BaseNotificationHandler {
   protected async handle(data: unknown): Promise<void> {
     const e = data as NotifyBookingPayload;
 
-    const manageUrl  = `${process.env.WEB_ORIGIN}/bookings/${e.bookingId}`;
-    const supportUrl = `${process.env.WEB_ORIGIN}/support`;
 
     const { subject, html } = bookingConfirmedTemplate({
-      guestName:      e.guestName,
+       guestName:      e.guestName,
       bookingRef:     e.bookingRef,
       propertyName:   e.propertyName,
       roomTypeName:   e.roomTypeName,
@@ -23,8 +21,8 @@ export class BookingConfirmedHandler extends BaseNotificationHandler {
       checkOut:       e.checkOut,
       nights:         e.nights,
       totalAmountNgn: e.totalAmountNgn,
-      manageUrl,
-      supportUrl,
+      manageUrl:      `${process.env.WEB_ORIGIN}/bookings/${e.bookingId}`,
+      supportUrl:     `${process.env.WEB_ORIGIN}/support`,
     });
 
     const notification = await notificationRepository.create({

@@ -1,18 +1,18 @@
-import { useState }                    from "react";
+import { useEffect, useState }                    from "react";
 import { useParams, useNavigate }      from "react-router-dom";
 import { useSelector }                 from "react-redux";
 import { addDays }                     from "date-fns";
-import { useGetPropertyByIdQuery }     from "@/redux/services/propertyApi";
+import { useGetAvailabilityQuery, useGetPropertyByIdQuery }     from "@/redux/services/propertyApi";
 import { useInitiateBookingMutation }  from "@/redux/services/bookingApi";
 import { selectIsAuthenticated }       from "@/redux/slices/authSlice";
 import { showToast }                   from "@/components/common/Toast";
 import type { RoomType }               from "@/types/api";
+import { useAvailabilityStream } from "@/hooks/useAvailabilityStream";
 
 export function usePropertyDetail() {
   const { id }    = useParams<{ id: string }>();
   const navigate  = useNavigate();
   const isAuth    = useSelector(selectIsAuthenticated);
-
   const today = new Date();
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: today,
@@ -25,7 +25,11 @@ export function usePropertyDetail() {
   const property             = data?.data ?? null;
 
   const [initiateBooking, { isLoading: booking }] = useInitiateBookingMutation();
-
+  useEffect(() => {
+    if (!selectedRoomType && property?.roomTypes && property.roomTypes.length > 0) {
+      setSelectedRoomType(property.roomTypes[0]);
+    }
+  }, [property, selectedRoomType]);
   const nights = Math.max(
     0,
     Math.round(
@@ -36,6 +40,7 @@ export function usePropertyDetail() {
   const totalAmount = selectedRoomType
     ? Number(selectedRoomType.base_price_ngn) * nights
     : 0;
+
 
   const handleBook = async () => {
     if (!isAuth) {
@@ -63,6 +68,19 @@ export function usePropertyDetail() {
     } catch { /* errorMiddleware */ }
   };
 
+
+  const availabilityWindow = {
+    checkIn:  today.toISOString().split("T")[0],
+    checkOut: addDays(today, 90).toISOString().split("T")[0],
+  };
+
+   const { data: availabilityData } = useGetAvailabilityQuery(
+    { roomTypeId: selectedRoomType?.id ?? "", ...availabilityWindow },
+    { skip: !selectedRoomType?.id },
+  );
+
+    const liveEvent = useAvailabilityStream(selectedRoomType?.id);
+
   return {
     property, isLoading,
     dateRange, setDateRange,
@@ -70,6 +88,9 @@ export function usePropertyDetail() {
     selectedRoomType, setSelectedRoomType,
     guestCount, setGuestCount,
     totalAmount,
-    handleBook, booking,
+    handleBook, 
+    booking,
+    liveEvent,
+    availabilitySnapshot: availabilityData?.data ?? [],
   };
 }

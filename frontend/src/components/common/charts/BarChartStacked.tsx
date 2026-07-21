@@ -119,8 +119,8 @@ function ChartBody({ data, chartConfig, dataKeys, isCurrency, emptyMessage }: {
       <ChartContainer config={chartConfig} className="w-full h-[280px] lg:h-[300px]">
         <BarChart data={data} accessibilityLayer>
           <CartesianGrid vertical={false} stroke="#f2f0ed" strokeDasharray="4" />
-          <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} minTickGap={32} tick={{ fontSize: 13, fontFamily:"Bold", fill: "#777b86" }} tickFormatter={(v) => formatDate(v)} />
-          <YAxis tickLine={false} axisLine={false} tickMargin={8} width={isCurrency ? 70 : 55} tick={{ fontSize: 13, fontFamily:"Bold", fill: "#777b86" }} tickFormatter={(v: number) => isCurrency ? formatCurrency(v) : v.toLocaleString("en-NG")} />
+          <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} minTickGap={32} tick={{ fontSize: 13, fontFamily:"Bricolage Grotesque", fill: "#777b86" }} tickFormatter={(v) => formatDate(v)} />
+          <YAxis tickLine={false} axisLine={false} tickMargin={8} width={isCurrency ? 70 : 55} tick={{ fontSize: 13, fontFamily:"Bricolage Grotesque", fill: "#777b86" }} tickFormatter={(v: number) => isCurrency ? formatCurrency(v) : v.toLocaleString("en-NG")} />
           <ChartTooltip cursor={{ fill: "#f2f0ed" }} content={<CustomTooltip dataKeys={dataKeys} chartConfig={chartConfig} isCurrency={isCurrency} />} />
           {dataKeys.map((key, index) => (
             <Bar key={key.datakey} dataKey={key.datakey} stackId="a" fill={key.color}

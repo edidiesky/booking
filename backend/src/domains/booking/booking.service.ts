@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { withTransaction } from "@booking/shared";
+import { availabilityBroadcaster, withTransaction } from "@booking/shared";
 import { bookingRepository, Booking } from "./booking.repository";
 import { availabilityRepository } from "../availability/availability.repository";
 import { propertyRepository } from "../property/property.repository";
@@ -258,6 +258,8 @@ export const bookingService = {
       );
     });
 
+    availabilityBroadcaster.publish(roomTypeId, { type: "locked", checkIn, checkOut });
+
     bookingCreatedCounter.inc({
       tenant_id: tenantId,
       property_type: property.property_type,
@@ -374,6 +376,8 @@ export const bookingService = {
         client,
       );
     });
+
+    availabilityBroadcaster.publish(booking.room_type_id, { type: "booked", checkIn: booking.check_in, checkOut: booking.check_out });
 
     const sessionId =
       (booking.metadata as Record<string, string>)["sessionId"] ?? "";
@@ -514,6 +518,8 @@ export const bookingService = {
         client,
       );
     });
+    // broadcast cancel booking
+    availabilityBroadcaster.publish(booking.room_type_id, { type: "released", checkIn: booking.check_in, checkOut: booking.check_out });
 
     if (booking.status === "pending_payment") {
       const sessionId =

@@ -65,34 +65,6 @@
     @apply border-border;
   }
 
-  @font-face {
-    font-family: "Bold";
-    src: url("/fonts/Cabinet-bold.woff2") format("truetype");
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: "Medium";
-    src: url("/fonts/Cabinet-medium.woff2") format("truetype");
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: "Regular";
-    src: url("/fonts/Cabinet-regular.woff2") format("truetype");
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: "Instrument";
-    src: url("/fonts/InstrumentSans-VariableFont_wdth,wght.woff2")
-      format("truetype");
-    font-weight: 100 1000;
-    font-style: normal;
-    font-display: swap;
-  }
-
   body {
     @apply bg-background text-foreground;
     font-family: "Bricolage Grotesque", sans-serif;
@@ -119,7 +91,7 @@
   h6,
   span,
   p {
-    font-family: "Regular", sans-serif;
+    font-family: "Bricolage Grotesque", sans-serif;
   }
 }
 
@@ -153,7 +125,7 @@ td {
 }
 
 th {
-  font-family: "DM Sans", sans-serif !important;
+  font-family: "Bricolage Grotesque", sans-serif !important;
 }
 
 .text-dark {
@@ -357,10 +329,10 @@ html.lenis body {
 .rdrMonth {
   width: 100% !important;
   font-size: 14px !important;
-  font-family: "DM Sans", sans-serif !important;
+  font-family: "Bricolage Grotesque", sans-serif !important;
 }
 .rdrMonthAndYearPickers select {
-  font-family: "DM Sans", sans-serif !important;
+  font-family: "Bricolage Grotesque", sans-serif !important;
   font-size: 14px !important;
   color: var(--dark-1) !important;
 }
@@ -377,7 +349,7 @@ html.lenis body {
   > .MuiDataGrid-cell {
   max-height: 200px !important;
   min-height: 200px !important;
-  font-family: "DM Sans", sans-serif !important;
+  font-family: "Bricolage Grotesque", sans-serif !important;
 }
 
 .rdrDateRangePickerWrapper {
@@ -389,7 +361,7 @@ html.lenis body {
   width: 100% !important;
   color: var(--dark-1) !important;
   font-size: 15px !important;
-  font-family: "DM Sans", sans-serif !important;
+  font-family: "Bricolage Grotesque", sans-serif !important;
 }
 
 .custom-toast {
@@ -456,7 +428,7 @@ html.lenis body {
   padding: 5px 12px;
   border-radius: 6px;
   font-size: 12px;
-  font-family: "DM Sans", sans-serif;
+  font-family: "Bricolage Grotesque", sans-serif;
   font-weight: 600;
   cursor: pointer;
   border: 1px solid transparent;
@@ -533,7 +505,7 @@ html.lenis body {
 .driver-popover-next-btn,
 .driver-popover-footer-btn,
 .driver-popover-footer-btn {
-  font-family: "DM Sans", sans-serif !important;
+  font-family: "Bricolage Grotesque", sans-serif !important;
 }
 
 .selleasi-tour-popover {

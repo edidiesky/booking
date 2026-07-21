@@ -23,7 +23,7 @@ export default function NotFound() {
             "Go back to the previous page",
             "Return to the homepage and navigate from there",
           ].map((s, i) => (
-            <div key={s} className="flex items-start gap-3">
+            <div key={s} className="flex items-center gap-3">
               <span className="w-8 h-8 flex items-center justify-center text-xs rounded-xl shrink-0 mt-0.5" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>{i + 1}</span>
               <p className="text-sm medium" style={{ color: "var(--color-muted-stone)" }}>{s}</p>
             </div>

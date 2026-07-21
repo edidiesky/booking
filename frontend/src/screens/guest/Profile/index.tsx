@@ -1,45 +1,35 @@
-import { motion }          from "framer-motion";
-import Header              from "@/components/common/Header";
-import Footer              from "@/components/common/Footer";
-import ProfileForm         from "./ProfileForm";
-import { useGuestProfile } from "./hooks/useGuestProfile";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/redux/slices/authSlice";
+import AccountTab from "./tabs/AccountTab";
+import TripsTab from "./tabs/TripsTab";
+import SecurityTab from "./tabs/SecurityTab";
+import NotificationsTab from "./tabs/NotificationsTab";
+import { User } from "@/types/api";
+
+const TABS = [
+  { key: "account", label: "Account", Component: AccountTab },
+  { key: "trips", label: "Trips", Component: TripsTab },
+  { key: "security", label: "Security", Component: SecurityTab },
+  { key: "notifications", label: "Notifications", Component: NotificationsTab },
+] as const;
 
 export default function GuestProfile() {
-  const { profile, isLoading, saving, handleUpdate } = useGuestProfile();
+  const [active, setActive] = useState<typeof TABS[number]["key"]>("account");
+  const user = useSelector(selectCurrentUser);
+  const ActiveComponent = TABS.find((t) => t.key === active)!.Component;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="flex flex-col min-h-screen"
-    >
-      <Header />
-      <main className="flex-1">
-        <div className="mx-auto px-6 lg:px-8 py-12" style={{ maxWidth: "640px" }}>
-          <div className="flex flex-col gap-2 mb-8">
-            <h1 className="text-xl bold"
-                style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
-              My Profile
-            </h1>
-            <p className="text-xs" style={{ color: "var(--color-light-steel)" }}>
-              Update your personal details.
-            </p>
-          </div>
-
-          {isLoading ? (
-            <div className="flex flex-col gap-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-12 rounded-xl animate-pulse"
-                     style={{ backgroundColor: "#f2f0ed" }} />
-              ))}
-            </div>
-          ) : (
-            <ProfileForm profile={profile} onSubmit={handleUpdate} isSaving={saving} />
-          )}
-        </div>
-      </main>
-      <Footer />
-    </motion.div>
+    <div className="max-w-3xl mx-auto py-10 px-4">
+      <div className="flex gap-2 border-b border-[#e8e6e3] mb-6">
+        {TABS.map((t) => (
+          <button key={t.key} onClick={() => setActive(t.key)}
+            className={`px-4 py-2 text-sm ${active === t.key ? "border-b-2 border-[#17191c] text-[#17191c] font-semibold" : "text-[#a3a6af]"}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <ActiveComponent user={user as User} />
+    </div>
   );
 }

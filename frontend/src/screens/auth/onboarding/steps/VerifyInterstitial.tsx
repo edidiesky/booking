@@ -1,4 +1,4 @@
-import { Mail, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 
 interface Props {
   email:       string;
@@ -14,12 +14,6 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
       style={{ backgroundColor: "var(--color-fog)" }}
     >
       <div className="max-w-md w-full bg-white p-10 flex flex-col gap-6 rounded-2xl shadow-sm">
-        <div
-          className="w-14 h-14 flex items-center justify-center rounded-xl"
-          style={{ backgroundColor: "var(--color-warm-mist)" }}
-        >
-          <Mail size={24} style={{ color: "var(--color-terracotta)" }} />
-        </div>
 
         <div className="flex flex-col gap-2">
           <h1
@@ -51,12 +45,12 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           ].map((step, i) => (
             <div key={step} className="flex items-start gap-3">
               <span
-                className="w-5 h-5 flex items-center justify-center text-xs shrink-0 mt-0.5"
+                className="w-5 h-5 flex items-center justify-center text-sm shrink-0 mt-0.5"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 {i + 1}
               </span>
-              <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>{step}</p>
+              <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>{step}</p>
             </div>
           ))}
         </div>
@@ -66,7 +60,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           className="w-full h-12 flex items-center justify-center text-xs transition-opacity hover:opacity-80 rounded-full"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
-          Enter the code →
+          Enter the code
         </button>
 
         <button

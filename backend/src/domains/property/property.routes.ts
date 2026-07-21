@@ -13,6 +13,7 @@ import {
   DeletePropertyHandler,
   GetRoomTypeDetailHandler,
   GetPropertyDetailHandler,
+  StreamRoomTypeAvailabilityHandler,
 } from "./property.controller";
 import {
   blockDatesSchema,
@@ -37,5 +38,6 @@ propertyRouter.get("/room-types/:roomTypeId", authenticate, requireTenantMember,
 propertyRouter.post("/:propertyId/room-types", authenticate, requireTenantMember, validate(createRoomTypeSchema), CreateRoomTypeHandler);
 propertyRouter.post("/room-types/:roomTypeId/calendar", authenticate, requireTenantMember, validate(seedCalendarSchema), SeedCalendarHandler);
 propertyRouter.patch("/room-types/:roomTypeId/block", authenticate, requireTenantMember, validate(blockDatesSchema), BlockDatesHandler);
+propertyRouter.get("/room-types/:roomTypeId/availability/stream", StreamRoomTypeAvailabilityHandler);
 
 export default propertyRouter;

@@ -3,18 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
 </head>
-<body style="margin:0;padding:0;background:#f7f7f8;font-family:'Newsreader',Georgia,serif;color:#4c4c4c">
+<body style="margin:0;padding:0;background:#f7f7f8;font-family:'Bricolage Grotesque',Georgia,serif;color:#4c4c4c">
   <table width="100%" cellpadding="0" cellspacing="0">
     <tr><td height="48"></td></tr>
     <tr><td align="center">
       <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:2px solid #f0f0f0;border-radius:20px">
         <tr><td style="padding:40px 48px 8px"><span style="font-size:18px;font-weight:700;color:#17191c">Booking</span></td></tr>
         <tr><td style="padding:24px 48px 48px">
-          <h1 style="margin:0 0 16px;font-size:28px;line-height:1.3;color:#17191c;font-weight:600">Payment received</h1>
+          <h1 style="margin:0 0 16px;font-size:28px;color:#17191c;font-weight:600">Payment received</h1>
           <p style="font-size:15px;line-height:26px;margin:0 0 28px">Hi {{guestName}}, we've received your payment for booking <strong>{{bookingRef}}</strong>.</p>
           <table width="100%" cellpadding="0" cellspacing="0" style="background:#f7f7f8;border-radius:8px;margin:0 0 32px;text-align:left;overflow:hidden">
+            <tr>
+              <td style="font-size:15px;color:#777b86;padding:12px 16px;border-bottom:1px solid #f0f0f0">Room</td>
+              <td style="font-size:15px;color:#17191c;padding:12px 16px;border-bottom:1px solid #f0f0f0;text-align:right">{{roomTypeName}}</td>
+            </tr>
             <tr>
               <td style="font-size:15px;color:#777b86;padding:12px 16px;border-bottom:1px solid #f0f0f0">Amount</td>
               <td style="font-size:15px;color:#17191c;padding:12px 16px;border-bottom:1px solid #f0f0f0;text-align:right">₦{{amountNgn}}</td>
@@ -29,8 +33,11 @@
             </tr>
           </table>
           <a href="{{manageUrl}}" style="background:#5d2a1a;color:#ffffff;padding:16px 40px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;display:inline-block">View your trip</a>
+          {{#if receiptUrl}}
+          <div style="margin-top:16px"><a href="{{receiptUrl}}" style="background:#f7f7f8;color:#17191c;padding:14px 32px;border-radius:999px;font-weight:600;font-size:14px;text-decoration:none;display:inline-block;border:1px solid #e8e6e3">Download receipt</a></div>
+          {{/if}}
           <div style="margin-top:20px"><a href="{{supportUrl}}" style="color:#5d2a1a;font-size:15px;text-decoration:underline">Need help?</a></div>
-          <p style="font-size:13px;color:#a3a6af;margin:32px 0 0;line-height:20px">This confirms your reservation is fully paid.</p>
+          <p style="font-size:13px;color:#a3a6af;margin:32px 0 0;line-height:20px">This confirms your reservation is fully paid. The receipt is also attached to this email as a PDF.</p>
         </td></tr>
       </table>
       <table width="560" cellpadding="0" cellspacing="0">

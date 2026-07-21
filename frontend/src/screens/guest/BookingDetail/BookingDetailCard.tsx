@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Users, Moon } from "lucide-react";
+import { Calendar, Users, Moon } from "lucide-react";
 import StatusBadge    from "@/components/common/StatusBadge";
 import { formatDate } from "@/utils/formatDate";
 import { formatCurrency } from "@/utils/formatCurrency";

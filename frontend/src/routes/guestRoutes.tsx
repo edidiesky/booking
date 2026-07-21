@@ -9,7 +9,6 @@ const PropertyDetail = lazy(() => import("@/screens/public/PropertyDetail"));
 const NotFound = lazy(() => import("@/screens/NotFound"));
 const Unauthorized = lazy(() => import("@/screens/Unauthorized"));
 const BookingSuccess  = lazy(() => import("@/screens/guest/BookingSuccess"));
-const PaymentFailed = lazy(() => import("@/screens/store/payment/Failed"));
 const s = (el: React.ReactNode) => (
   <Suspense fallback={<PageLoader />}>{el}</Suspense>
 );
@@ -36,5 +35,4 @@ export const guestRoutes: RouteObject[] = [
     ),
   },
   { path: "/booking-success/:bookingId?", element: s(<BookingSuccess />) },
-  { path: "/payment-failed", element: s(<PaymentFailed />) },
 ];

@@ -17,9 +17,10 @@ export function bookingConfirmedTemplate(p: {
   totalAmountNgn: number;
   manageUrl:      string;
   supportUrl:     string;
-}): { subject: string; html: string } {
+}): { subject: string; html: string, nightsLabel: string } {
   return {
     subject: `Booking Confirmed — ${p.bookingRef}`,
     html:    compiled({ ...p, year: new Date().getFullYear() }),
+    nightsLabel: `${p.nights} night${p.nights !== 1 ? "s" : ""}`,
   };
 }

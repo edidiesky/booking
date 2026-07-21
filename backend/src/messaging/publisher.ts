@@ -64,7 +64,7 @@ export interface EscrowEventPayload {
 }
 
 export interface NotifyBookingPayload {
-  notificationId: string;
+notificationId: string;
   guestEmail: string;
   guestName: string;
   guestPhone?: string;
@@ -81,7 +81,7 @@ export interface NotifyBookingPayload {
 }
 
 export interface NotifyPaymentPayload {
-  notificationId: string;
+ notificationId: string;
   guestEmail: string;
   guestName: string;
   bookingRef: string;
@@ -91,6 +91,7 @@ export interface NotifyPaymentPayload {
   tenantId: string;
   bookingId: string;
   failureReason?: string;
+  roomTypeName?: string;
 }
 
 export interface NotifyAuthOtpPayload {

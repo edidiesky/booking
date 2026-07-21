@@ -31,7 +31,10 @@ export default function PropertyDetail() {
     selectedRoomType, setSelectedRoomType,
     guestCount, setGuestCount,
     totalAmount,
-    handleBook, booking,
+    handleBook, 
+    booking,
+    liveEvent,
+    availabilitySnapshot
   } = usePropertyDetail();
 
   const roomTypes = property?.roomTypes ?? [];
@@ -84,11 +87,13 @@ export default function PropertyDetail() {
 
                   <PropertyAmenities property={property} />
 
-                  <PropertyCalendar
+                 <PropertyCalendar
                     nights={nights}
                     name={property.name}
                     dateRange={dateRange}
                     onChange={setDateRange}
+                    liveEvent={liveEvent}
+                    availabilitySnapshot={availabilitySnapshot}
                   />
                 </div>
 
