@@ -22,7 +22,7 @@ function CardSkeleton() {
 export default function PropertyGrid({ properties, isLoading, search, typeFilter, onClear }: Props) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8">
         {Array.from({ length: 8 }).map((_, i) => <CardSkeleton key={i} />)}
       </div>
     );
@@ -45,7 +45,7 @@ export default function PropertyGrid({ properties, isLoading, search, typeFilter
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8">
       {properties.map((p) => <PropertyCard key={p.id} property={p} />)}
     </div>
   );

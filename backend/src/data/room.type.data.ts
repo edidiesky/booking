@@ -53,6 +53,7 @@ export const roomTypes = [
     ],
     status: "active",
   },
+  
   {
     name: "Garden View Twin",
     description: "Bring your travel buddy and get ready to relax! This twin-bed room looks straight out onto the guesthouse's lush garden, giving every morning a fresh, peaceful start. It's the ideal setup for friends, siblings, or colleagues who want their own space without sacrificing that easy, laid-back vibe — breakfast included, of course!",

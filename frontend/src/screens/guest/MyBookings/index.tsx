@@ -45,7 +45,7 @@ export default function MyBookings() {
 
           {hasBookings && (
             <div className="flex items-center justify-between gap-4">
-              <h3 className="text-3xl flex-1 md:text-4xl bold text-[#17191c]">
+              <h3 className="text-3xl flex-1 md:text-3xl bold text-[#17191c]">
                 My Reservations
                 <span className="block pt-3 font-normal text-xs md:text-sm text-[#4c4c4c]">
                   Here is your list of booked stays.
@@ -73,7 +73,7 @@ export default function MyBookings() {
                 <span className="text-4xl">📭</span>
               </div>
               <div className="flex flex-col w-full gap-3 justify-center items-center">
-                <h1 className="text-[#17191c] leading-tight text-xl md:text-3xl text-center ">
+                <h1 className="text-[#17191c] leading-tight text-xl md:text-xl text-center ">
                   You have no reserved stays yet
                 </h1>
                 <Link

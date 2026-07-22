@@ -21,7 +21,7 @@ function PulseIcon({
         rotate: isHovered ? [0, -20, 20, -20, 0] : 0,
       }}
       transition={{ duration: 0.4 }}
-      className="shrink-0 hover:bg-[var(--color-ink)]"
+      className="shrink-0"
     >
       <Icon size={15}  />
     </motion.div>

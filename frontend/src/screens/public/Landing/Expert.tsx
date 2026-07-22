@@ -33,7 +33,7 @@ const Expert = () => {
               <h4 className="text-sm md:text-lg text-[var(--primary)]">
                 Passionate – Dedicated – Professional
               </h4>
-              <h4 className="text-4xl max-w-[500px] md:text-5xl capitalize family2 text-[var(--dark-1)]">
+              <h4 className="text-4xl max-w-[500px] md:text-4xl capitalize family2 text-[var(--dark-1)]">
                 <AnimateTextWord type={"bigtext"}>
                   Why we are the best at Luxury Homes?
                 </AnimateTextWord>
@@ -84,7 +84,7 @@ const Expert = () => {
               <h4 className="text-sm md:text-lg text-[var(--primary)]">
                 Passionate – Dedicated – Professional
               </h4>
-              <h3 className="text-4xl max-w-[500px] md:text-5xl capitalize family2 text-white">
+              <h3 className="text-4xl max-w-[500px] md:text-4xl capitalize family2 text-white">
                 <AnimateTextWord>
                   Why you should choose ZyncLuxury?
                 </AnimateTextWord>

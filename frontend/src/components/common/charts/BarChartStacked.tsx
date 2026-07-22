@@ -116,7 +116,7 @@ function ChartBody({ data, chartConfig, dataKeys, isCurrency, emptyMessage }: {
   }
   return (
     <div className="px-2 py-4">
-      <ChartContainer config={chartConfig} className="w-full h-[280px] lg:h-[300px]">
+      <ChartContainer config={chartConfig} className="w-full h-[280px] lg:min-h-[400px]">
         <BarChart data={data} accessibilityLayer>
           <CartesianGrid vertical={false} stroke="#f2f0ed" strokeDasharray="4" />
           <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} minTickGap={32} tick={{ fontSize: 13, fontFamily:"Bricolage Grotesque", fill: "#777b86" }} tickFormatter={(v) => formatDate(v)} />

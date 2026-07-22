@@ -75,8 +75,8 @@ export default function BookingDrawer({ booking, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           <div>
-            <p className="text-sm bold text-[#17191c]">Booking details</p>
-            <p className="text-xs text-[#777b86] mt-0.5">
+            <p className="text-base bold text-[#17191c]">Booking details</p>
+            <p className="text-sm text-[#777b86] mt-0.5">
               {booking.bookingRef}
             </p>
           </div>
@@ -104,10 +104,10 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                   key={label}
                   className="flex w-full items-center gap-8 lg:gap-10"
                 >
-                  <span className="text-xs medium flex-1 text-[#777b86]">
+                  <span className="text-sm medium flex-1 text-[#777b86]">
                     {label}
                   </span>
-                  <span className="text-xs text-end flex-1 text-[#17191c] bold">
+                  <span className="text-sm text-end flex-1 text-[#17191c] bold">
                     {value}
                   </span>
                 </div>
@@ -128,8 +128,8 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                 key={label}
                 className={`w-full flex items-center gap-8 lg:gap-10`}
               >
-                <p className="text-xs medium text-[#777b86]">{label}</p>
-                <p className="text-xs text-[#17191c] bold">{value}</p>
+                <p className="text-sm medium text-[#777b86]">{label}</p>
+                <p className="text-sm text-[#17191c] bold">{value}</p>
               </div>
             ))}
           </div>
@@ -147,7 +147,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                       />
                       <div>
                         <p
-                          className={`text-xs bold ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}
+                          className={`text-sm bold ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}
                         >
                           {step.label}
                         </p>

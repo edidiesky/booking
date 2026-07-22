@@ -23,7 +23,7 @@ export function useDashboardHome() {
   return {
     tenant,
     recentBookings: bookings?.slice(0, 5) ?? [], // paymentsData
-    recentTransactions: paymentsData?.data?.slice(0, 5) ?? [], // paymentsData
+    recentTransactions: paymentsData?.data?.slice(0, 4) ?? [], // paymentsData
     totalRevenue,
     confirmedCount,
     checkedInCount,

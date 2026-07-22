@@ -17,7 +17,7 @@ const Listing = () => {
             <h4 className="text-sm md:text-lg text-[var(--primary)]">
               Passionate – Dedicated – Professional
             </h4>
-            <h4 className="text-4xl capitalize max-w-[600px] md:text-5xl family2 text-[var(--dark-1)]">
+            <h4 className="text-4xl capitalize max-w-[600px] md:text-4xl family2 text-[var(--dark-1)]">
               <AnimateTextWord type={"bigtext"}>
                 Holiday accomodations recommendations for you
               </AnimateTextWord>
@@ -29,16 +29,16 @@ const Listing = () => {
             </button>
           </div>
         </div>
-        <div className="w-full gap-x-8 gap-y-16 max-w-custom_1 columns-2 sm:columns-3 lg:columns-4 gap-4">
+        <div className="w-full gap-x-8 gap-y-8 grid grid-cols-2 lg:grid-cols-3 gap-4">
           {isLoading ? (
             <>
-              {properties?.slice(0, 3).map((_, index) => {
+              {properties?.slice(0, 6).map((_, index) => {
                 return <CardLoader key={index} />;
               })}
             </>
           ) : (
             <>
-              {properties?.slice(0, 3)?.map((p, index) => {
+              {properties?.slice(0, 6)?.map((p, index) => {
                 return (
                   <PropertyCard key={index} property={p} />
                 );

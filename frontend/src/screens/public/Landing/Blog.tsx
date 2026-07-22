@@ -36,7 +36,7 @@ const Blog = () => {
             <h4 className="text-sm md:text-lg text-[var(--primary)]">
               Passionate – Dedicated – Professional
             </h4>
-            <h3 className="text-4xl md:text-5xl capitalize family2 text-[var(--dark-1)]">
+            <h3 className="text-4xl md:text-4xl capitalize family2 text-[var(--dark-1)]">
               <AnimateTextWord type={"bigtext"}>
                 latest news & insights
               </AnimateTextWord>
@@ -69,7 +69,7 @@ const Blog = () => {
                       <AnimateTextWord> Luxury Living</AnimateTextWord>
                     </span>
                   </h5>
-                  <h4 className="text-xl group-hover:text-[var(--primary)] group-hover:underline md:text-3xl family2">
+                  <h4 className="text-xl group-hover:text-[var(--primary)] group-hover:underline md:text-xl family2">
                     <AnimateTextWord>{blog?.title}</AnimateTextWord>
                   </h4>
                 </div>

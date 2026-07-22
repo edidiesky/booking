@@ -48,7 +48,7 @@ export default function PropertyAmenities({ property }: Props) {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <h3 className="text-xl bold md:text-3xl  text-[#17191c]">
+      <h3 className="text-xl bold md:text-xl  text-[#17191c]">
         Room Services
         <span className="block text-xs text-[#777b86] pt-1">
           Enjoy the comforts of home and beyond with these distinctive features.

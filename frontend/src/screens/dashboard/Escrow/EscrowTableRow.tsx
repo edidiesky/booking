@@ -11,7 +11,11 @@ export default function EscrowTableRow({ escrow }: Props) {
         style={{ borderColor: "#f2f0ed" }}>
       <td className="px-5 py-3 text-xs whitespace-nowrap"
           style={{ color: "var(--color-hint-of-grey)" }}>
-        {escrow.bookingId}
+        {escrow.bookingRef}
+      </td>
+      <td className="px-5 py-3 text-xs whitespace-nowrap"
+          style={{ color: "var(--color-muted-stone)" }}>
+        {formatDate(escrow.checkIn)} – {formatDate(escrow.checkOut)}
       </td>
       <td className="px-5 py-3 bold whitespace-nowrap"
           style={{ color: "var(--color-ink)" }}>

@@ -66,7 +66,7 @@ const About = () => {
               <h4 className="text-sm md:text-lg text-[var(--primary)]">
                 Passionate – Dedicated – Professional
               </h4>
-              <h3 className="text-4xl max-w-[600px]  bold md:text-5xl text-[var(--dark-1)]">
+              <h3 className="text-4xl max-w-[600px]  bold md:text-4xl text-[var(--dark-1)]">
                 <AnimateTextWord type={"bigtext"}>
                   Why you should should Choose ZyncLuxury?
                 </AnimateTextWord>
@@ -96,7 +96,7 @@ const About = () => {
                     <div className="w-36 h-36 mb-4 border-8 group-hover:text-white group-hover:bg-[var(--primary)] border-[hsla(232, 28%, 73%,calc(100% - 80%))] md:text-6xl flex items-center justify-center rounded-full bg-white text-4xl">
                       {data?.icons}
                     </div>
-                    <h3 className="text-xl md:text-3xl family2 text-dark">
+                    <h3 className="text-xl md:text-xl family2 text-dark">
                       {data?.title}
                     </h3>
                     <h4 className="text-xs md:text-xs family1 font-normal text-grey">
@@ -133,7 +133,7 @@ const About = () => {
                 Passionate – Dedicated – Professional
               </AnimateTextWord>
             </h4>
-            <h3 className="text-4xl leading-[1.2] max-w-[500px] md:text-5xl family2 capitalize family2 text-white">
+            <h3 className="text-4xl leading-[1.2] max-w-[500px] md:text-4xl family2 capitalize family2 text-white">
               <AnimateTextWord type={"bigtext"}>
                 its’ not about business, it’s about ‘YOU’!
               </AnimateTextWord>{" "}
@@ -164,7 +164,7 @@ const About = () => {
                 <div className="w-14 h-14 flex items-center bg-[var(--primary)] justify-center rounded-full text-white text-lg">
                   <Phone />
                 </div>
-                <h4 className="text-white text-xl md:text-3xl family2">
+                <h4 className="text-white text-xl md:text-xl family2">
                   +1 (800) 555 555{" "}
                 </h4>
               </div>

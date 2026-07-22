@@ -1,7 +1,8 @@
 import { lazy, Suspense } from "react";
 import type { RouteObject } from "react-router-dom";
 import PageLoader from "@/components/common/PageLoader";
-
+import { ProtectRoute } from "./guards/ProtectRoute";
+const GuestProfile = lazy(() => import("@/screens/guest/Profile"));
 const Landing = lazy(() => import("@/screens/public/Landing"));
 const Properties = lazy(() => import("@/screens/public/Properties"));
 const SearchPage = lazy(() => import("@/screens/public/Search"));
@@ -26,6 +27,14 @@ export const guestRoutes: RouteObject[] = [
       </Suspense>
     ),
   },
+  {
+      path: "/profile",
+      element: (
+        <ProtectRoute>
+          <Suspense fallback={<PageLoader />}>{s(<GuestProfile />)}</Suspense>
+        </ProtectRoute>
+      ),
+    },
   {
     path: "*",
     element: (

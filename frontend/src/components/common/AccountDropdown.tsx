@@ -14,10 +14,10 @@ import { useLogoutMutation } from "@/redux/services/authApi";
 import { showToast }         from "@/components/common/Toast";
 
 export interface AccountDropdownItem {
-  label:      string;
-  to:         string;
-  icon:       LucideIcon;
-  group?:     number;
+  label:  string;
+  to:     string;
+  icon:   LucideIcon;
+  group?: number;
 }
 
 interface Props {
@@ -33,8 +33,8 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
   const refreshToken = useSelector(selectRefreshToken);
   const [logout]     = useLogoutMutation();
 
-  const initial   = currentUser?.firstName?.charAt(0).toUpperCase() ?? "?";
-  const fullName  = [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(" ");
+  const initial  = currentUser?.firstName?.charAt(0).toUpperCase() ?? "?";
+  const fullName = [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(" ");
 
   const handleSignOut = async () => {
     try {
@@ -50,16 +50,15 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
     (acc[g] ??= []).push(item);
     return acc;
   }, {});
+  const groupKeys = Object.keys(groups).map(Number).sort((a, b) => a - b);
+
+  // console.log("currentUser:", currentUser)
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          className="h-9 px-5 text-xs text-[#000] transition-opacity hover:opacity-80 flex items-center gap-2 rounded-full outline-none hover:bg-[#f5f5f3]"
-        >
-          <span
-            className="w-8 bold h-8 rounded-full flex text-[#000] items-center justify-center text-xs bg-[#f5f5f3] shrink-0"
-          >
+        <button className="h-9 px-5 text-sm text-[#000] transition-opacity hover:opacity-80 flex items-center gap-2 rounded-full outline-none hover:bg-[#f5f5f3]">
+          <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs bold bg-[#f5f5f3] text-[#17191c] shrink-0">
             {initial}
           </span>
           {triggerLabel}
@@ -69,56 +68,61 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
 
       <DropdownMenuContent
         align="end"
-        className="w-60 bg-white border border-[#e8e6e3] rounded-xl shadow-lg p-1"
+        sideOffset={8}
+        className="w-56 bg-white border border-[#e8e6e3] rounded-xl shadow-lg p-1.5"
       >
+        {/* Identity header: avatar + name + email, matches the reference's
+            top block, also links to the profile page since that's the most
+            natural target for tapping your own identity row. */}
         <DropdownMenuItem asChild>
           <Link
             to={profilePath}
-            className="flex items-center gap-3 px-3 py-3 cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none border-b border-[#f2f0ed] mb-1"
+            className="flex items-center gap-3 px-2.5 py-2.5 mb-1 cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
           >
             <span
-              className="w-9 h-9 rounded-full flex items-center justify-center text-xs shrink-0"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-sm bold shrink-0"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
             >
               {initial}
             </span>
-            <div className="flex flex-col leading-tight">
-              <span className="text-xs bold text-[#17191c]">{fullName || "My Account"}</span>
-              <span className="text-xs medium text-[#777b86]">View your profile</span>
+            <div className="flex flex-col leading-tight min-w-0">
+              <span className="text-sm bold text-[#17191c] truncate">{fullName || "My Account"}</span>
+              <span className="text-xs capitalize text-[#777b86] truncate">{`${currentUser?.userType} profile`}</span>
             </div>
           </Link>
         </DropdownMenuItem>
 
-        {Object.keys(groups)
-          .map(Number)
-          .sort((a, b) => a - b)
-          .map((groupKey, i, arr) => (
-            <div key={groupKey}>
-              {groups[groupKey].map((item) => {
-                const Icon = item.icon;
-                return (
-                  <DropdownMenuItem key={item.to} asChild>
-                    <Link
-                      to={item.to}
-                      className="flex items-center gap-3 px-3 py-2.5 text-xs bold text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
-                    >
-                      <Icon size={30} className="text-[#4c4c4c]" />
-                      {item.label}
-                    </Link>
-                  </DropdownMenuItem>
-                );
-              })}
-              {i < arr.length - 1 && <DropdownMenuSeparator className="my-1 border-[#f2f0ed]" />}
-            </div>
-          ))}
+        <DropdownMenuSeparator className="my-1 border-[#f2f0ed]" />
+
+        <div className="w-full flex flex-col">
+          {groupKeys.map((groupKey, i) => (
+          <div key={groupKey} className="w-full flex flex-col gap-2">
+            {groups[groupKey].map((item) => {
+              const Icon = item.icon;
+              return (
+                <DropdownMenuItem key={item.to} asChild>
+                  <Link
+                    to={item.to}
+                    className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-sm font-semibold text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
+                  >
+                    <Icon size={24} className="text-[#4c4c4c] shrink-0" />
+                    {item.label}
+                  </Link>
+                </DropdownMenuItem>
+              );
+            })}
+            {i < groupKeys.length - 1 && <DropdownMenuSeparator className="my-1 border-[#f2f0ed]" />}
+          </div>
+        ))}
+        </div>
 
         <DropdownMenuSeparator className="my-1 border-[#f2f0ed]" />
 
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="flex items-center gap-3 px-3 py-2.5 text-xs bold text-red-600 cursor-pointer hover:bg-red-50 rounded-lg outline-none"
+          className="flex items-center gap-3 px-2.5 py-2 text-xs bold text-red-600 cursor-pointer hover:bg-red-50 rounded-lg outline-none"
         >
-          <LogOut size={16} />
+          <LogOut size={16} className="shrink-0" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

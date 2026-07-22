@@ -27,7 +27,7 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
     <div className="w-full flex flex-col gap-4">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div className="flex flex-col gap-2 flex-1">
-          <h1 className="text-3xl md:text-4xl bold text-[#17191c]">
+          <h1 className="text-3xl md:text-3xl bold text-[#17191c]">
             {property.name}
             <span className="text-xs pt-2 text-[#777b86] font-normal flex items-center gap-3 mt-1">
               <span className="flex items-center gap-1">

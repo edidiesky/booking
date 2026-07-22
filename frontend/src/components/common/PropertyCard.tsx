@@ -24,7 +24,7 @@ function AmenityIcon({ label }: { label: string }) {
   const key  = label.toLowerCase();
   const icon = Object.entries(AMENITY_ICONS).find(([k]) => key.includes(k))?.[1];
   return (
-    <span className="flex items-center gap-1 text-xs" style={{ color: "var(--color-light-steel)" }}>
+    <span className="flex items-center gap-1 text-xs lg:text-sm" style={{ color: "var(--color-light-steel)" }}>
       {icon ?? <span className="w-1 h-1 rounded-full bg-current inline-block" />}
       {label}
     </span>
@@ -78,7 +78,7 @@ export default function PropertyCard({ property, index = 0 }: Props) {
       className="w-full flex flex-col rounded-xl overflow-hidden border cursor-pointer group"
     >
       {/* image area */}
-      <div className="w-full h-[340px] overflow-hidden relative">
+      <div className="w-full h-[370px] overflow-hidden relative">
 
         {primaryImage ? (
           <motion.div
@@ -131,7 +131,7 @@ export default function PropertyCard({ property, index = 0 }: Props) {
 
         {/* property type badge */}
         <div className="absolute top-3 left-3 z-10">
-          <span className={`text-xs bold px-3 py-1 rounded-full capitalize font-medium ${typeClass}`}>
+          <span className={`text-xs px-3 py-1 rounded-full capitalize font-bold ${typeClass}`}>
             {property.property_type ?? property.propertyType}
           </span>
         </div>
@@ -149,9 +149,9 @@ export default function PropertyCard({ property, index = 0 }: Props) {
             {property.name}
           </h3>
           {lowestPrice !== null && (
-            <p className="text-xs lg:text-sm bold shrink-0" style={{ color: "var(--color-ink)" }}>
+            <p className="text-xs lg:text-sm lg:text-sm bold shrink-0" style={{ color: "var(--color-ink)" }}>
               {formatCurrency(lowestPrice)}
-              <span className="text-xs font-normal" style={{ color: "var(--color-light-steel)" }}>
+              <span className="text-xs lg:text-sm font-normal" style={{ color: "var(--color-light-steel)" }}>
                 /night
               </span>
             </p>
@@ -159,7 +159,7 @@ export default function PropertyCard({ property, index = 0 }: Props) {
         </div>
 
         {/* location */}
-        <p className="text-xs bold flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
+        <p className="text-xs lg:text-sm bold flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
           <MapPin size={16} />
           {property.address.city}, {property.address.country}
         </p>
@@ -171,8 +171,8 @@ export default function PropertyCard({ property, index = 0 }: Props) {
               <IoStar key={i} className="text-[13px] text-[#f5a623]" />
             ))}
           </div>
-          <span className="text-xs bold" style={{ color: "var(--color-ink)" }}>4.7</span>
-          <span className="text-xs" style={{ color: "var(--color-light-steel)" }}>87 reviews</span>
+          <span className="text-xs lg:text-sm bold" style={{ color: "var(--color-ink)" }}>4.7</span>
+          <span className="text-xs lg:text-sm" style={{ color: "var(--color-light-steel)" }}>87 reviews</span>
         </div>
 
         {/* amenities */}
