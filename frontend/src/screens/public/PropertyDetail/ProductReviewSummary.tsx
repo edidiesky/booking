@@ -18,7 +18,7 @@
 //       <h2 className="text-2xl bold text-[#171717]">Reviews for this item</h2>
 
 //       {aiHighlights.length > 0 && (
-//         <div className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm">
+//         <div className="flex flex-wrap items-center gap-x-2 gap-y-2 text-xs">
 //           <span className="bold text-[#171717]">
 //             What buyers say, summarized by AI:
 //           </span>
@@ -43,7 +43,7 @@
 //               strokeWidth={0}
 //             />
 //           </div>
-//           <span className="text-sm underline underline-offset-4 text-[#171717]">
+//           <span className="text-xs underline underline-offset-4 text-[#171717]">
 //             Item average ({stats.totalReviews} reviews)
 //           </span>
 //         </div>
@@ -72,7 +72,7 @@
 
 //         return (
 //           <div key={level} className="flex items-center gap-3">
-//             <span className="w-3 text-sm text-[#444] text-right">
+//             <span className="w-3 text-xs text-[#444] text-right">
 //               {level}
 //             </span>
 //             <Star size={12} className="text-[#e8a33d]" fill="currentColor" strokeWidth={0} />
@@ -82,7 +82,7 @@
 //                 style={{ width: `${pct}%` }}
 //               />
 //             </div>
-//             <span className="w-8 text-sm text-[#666] text-right">
+//             <span className="w-8 text-xs text-[#666] text-right">
 //               {count}
 //             </span>
 //           </div>
@@ -123,11 +123,11 @@ function RatingRing({ value, label }: { value: number; label: string }) {
             strokeDasharray={`${dash} ${circumference}`}
           />
         </svg>
-        <div className="absolute inset-0 flex items-center justify-center text-base lg:text-lg bold text-[#171717]">
+        <div className="absolute inset-0 flex items-center justify-center text-sm lg:text-lg bold text-[#171717]">
           {value.toFixed(1)}
         </div>
       </div>
-      <span className="text-sm text-[#666] text-center leading-tight">
+      <span className="text-xs text-[#666] text-center leading-tight">
         {label}
       </span>
     </div>
@@ -148,14 +148,14 @@ export default function ProductReviewSummary() {
     <div className="w-full flex flex-col gap-6">
       <h3 className="text-lg lg:text-2xl bold">Reviews for this item</h3>
       <div className="w-full flex flex-col gap-4">
-        <p className="text-base lg:text-lg bold">
+        <p className="text-sm lg:text-lg bold">
           What buyers say, summarized by AI:
         </p>
         <div className="flex flex-wrap gap-2">
           {mockAiSummary.map((chip) => (
             <span
               key={chip.label}
-              className="inline-flex items-center gap-1 rounded-full border border-[#EDEAE3] px-3 py-1 text-sm lg:text-base text-[#171717]"
+              className="inline-flex items-center gap-1 rounded-full border border-[#EDEAE3] px-3 py-1 text-xs lg:text-sm text-[#171717]"
             >
               <Check size={12} className="text-[#2F5D4F]" />
               {chip.label}
@@ -172,7 +172,7 @@ export default function ProductReviewSummary() {
             </span>
             <Star size={22} className="fill-[#F5A623] text-[#F5A623]" />
           </div>
-          <span className="text-sm text-[#666]">
+          <span className="text-xs text-[#666]">
             Item average{" "}
             <span className="underline">({totalReviews} reviews)</span>
           </span>
@@ -185,11 +185,11 @@ export default function ProductReviewSummary() {
         </div>
 
         <div className="flex flex-col items-center gap-1 rounded-full border-2 border-[#F5A623] h-20 w-20 justify-center">
-          <span className="text-base lg:text-lg bold text-[#171717]">
+          <span className="text-sm lg:text-lg bold text-[#171717]">
             {recommendPercent}%
           </span>
         </div>
-        <span className="text-sm text-[#666] -ml-4 max-w-[70px]">
+        <span className="text-xs text-[#666] -ml-4 max-w-[70px]">
           Buyers recommend
         </span>
       </div>

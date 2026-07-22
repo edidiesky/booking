@@ -19,7 +19,7 @@ export default function Footer() {
             <span className="text-lg lg:text-xl bold" style={{ color: "var(--color-ink)" }}>
               Booking
             </span>
-            <p className="text-sm leading-relaxed" style={{ color: "var(--color-light-steel)" }}>
+            <p className="text-xs leading-relaxed" style={{ color: "var(--color-light-steel)" }}>
               Find and book extraordinary stays with ease.
             </p>
           </div>
@@ -34,7 +34,7 @@ export default function Footer() {
                 <Link
                   key={item}
                   to="/"
-                  className="text-sm transition-opacity hover:opacity-60"
+                  className="text-xs transition-opacity hover:opacity-60"
                   style={{ color: "var(--color-muted-stone)" }}
                 >
                   {item}

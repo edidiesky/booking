@@ -50,7 +50,7 @@ export default function Features() {
                 <Icon size={18} style={{ color: "var(--color-terracotta)" }} />
               </div>
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-sm bold" style={{ color: "var(--color-ink)" }}>
+                <h3 className="text-xs bold" style={{ color: "var(--color-ink)" }}>
                   {title}
                 </h3>
                 <p className="text-xs leading-relaxed" style={{ color: "var(--color-light-steel)" }}>

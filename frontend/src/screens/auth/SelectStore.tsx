@@ -55,7 +55,7 @@ export default function SelectStore() {
                   }}
                 >
                   <div
-                    className="w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0 text-sm "
+                    className="w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0 text-xs "
                     style={{
                       backgroundColor: "var(--color-fog)",
                       color:           "var(--color-ink)",

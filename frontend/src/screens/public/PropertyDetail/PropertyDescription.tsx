@@ -8,7 +8,7 @@ export default function PropertyDescription({ property }: Props) {
       <h3 className="text-xl md:text-3xl bold text-[#17191c]">
         Description
       </h3>
-      <p className="text-sm leading-[1.8] text-[#4c4c4c] font-normal">
+      <p className="text-xs leading-[1.8] text-[#4c4c4c] font-normal">
         {property.description || "No description provided."}
       </p>
     </div>

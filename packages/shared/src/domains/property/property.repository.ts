@@ -332,6 +332,53 @@ export const propertyRepository = {
       : await queryOne<RoomType>(sql, params);
     return row!;
   },
+  // Bulk insert via UNNEST: one round trip for the whole chunk instead of one
+  // INSERT per row. Caller is responsible for chunking (e.g. 500 rows) and
+  // for falling back to per-row inserts within a chunk if the whole chunk
+  // fails, so a single bad row doesn't lose error attribution for the batch.
+  async createRoomTypesBulk(
+    rows: Array<{
+      propertyId: string;
+      tenantId: string;
+      name: string;
+      description?: string;
+      maxOccupancy: number;
+      basePriceNgn: number;
+      images?: string[];
+      amenities?: string[];
+      quantity: number;
+      status?: RoomStatus;
+    }>,
+    client?: PoolClient,
+  ): Promise<RoomType[]> {
+    if (rows.length === 0) return [];
+
+    const sql = `
+      INSERT INTO room_types
+        (property_id, tenant_id, name, description, max_occupancy, base_price_ngn, images, amenities, quantity, status)
+      SELECT * FROM UNNEST(
+        $1::uuid[], $2::uuid[], $3::text[], $4::text[], $5::int[],
+        $6::numeric[], $7::text[][], $8::text[][], $9::int[], $10::text[]
+      )
+      RETURNING *`;
+    const params = [
+      rows.map((r) => r.propertyId),
+      rows.map((r) => r.tenantId),
+      rows.map((r) => r.name),
+      rows.map((r) => r.description ?? null),
+      rows.map((r) => r.maxOccupancy),
+      rows.map((r) => r.basePriceNgn),
+      rows.map((r) => r.images ?? []),
+      rows.map((r) => r.amenities ?? []),
+      rows.map((r) => r.quantity),
+      rows.map((r) => r.status ?? "active"),
+    ];
+
+    return client
+      ? (await client.query<RoomType>(sql, params)).rows
+      : await query<RoomType>(sql, params);
+  },
+
   async findRoomTypeById(
     id: string,
     tenantId?: string,

@@ -96,7 +96,7 @@ export default function AuthLayout({ children, leftContent, stepLabels, currentS
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <Link to="/" className="text-sm bold mb-8 block lg:hidden" style={{ color: "var(--color-ink)" }}>
+          <Link to="/" className="text-xs bold mb-8 block lg:hidden" style={{ color: "var(--color-ink)" }}>
             Booking
           </Link>
           {children}

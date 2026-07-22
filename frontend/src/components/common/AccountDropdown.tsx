@@ -55,7 +55,7 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="h-9 px-5 text-sm text-[#000] transition-opacity hover:opacity-80 flex items-center gap-2 rounded-full outline-none hover:bg-[#f5f5f3]"
+          className="h-9 px-5 text-xs text-[#000] transition-opacity hover:opacity-80 flex items-center gap-2 rounded-full outline-none hover:bg-[#f5f5f3]"
         >
           <span
             className="w-8 bold h-8 rounded-full flex text-[#000] items-center justify-center text-xs bg-[#f5f5f3] shrink-0"
@@ -83,7 +83,7 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
               {initial}
             </span>
             <div className="flex flex-col leading-tight">
-              <span className="text-sm bold text-[#17191c]">{fullName || "My Account"}</span>
+              <span className="text-xs bold text-[#17191c]">{fullName || "My Account"}</span>
               <span className="text-xs medium text-[#777b86]">View your profile</span>
             </div>
           </Link>

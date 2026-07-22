@@ -3,7 +3,7 @@ import { downloadCsv } from "./csvDownloader";
 import { validateCsvSize } from "./csvSizeValidator";
 import { validateCsvHeaders } from "./csvHeaderValidator";
 import { parseRoomTypeCsv } from "./csvStreamParser";
-import { validateRoomTypeRow, type RowError } from "./roomTypeRowValidator";
+import { validateRoomTypeRow, type RowError, type ValidatedRow } from "./roomTypeRowValidator";
 
 const JOB_TYPE = "csv_room_import";
 
@@ -50,32 +50,48 @@ export async function runRoomTypeCsvImport(
   const errors: RowError[] = [];
   let succeeded = 0;
 
+  // Validate everything up front (pure, no DB access), keep the row number
+  // attached so DB-stage errors can still be reported per row later.
+  const good: Array<{ rowNum: number; data: ValidatedRow }> = [];
+
   for (let i = 0; i < rows.length; i++) {
     const validated = validateRoomTypeRow(rows[i], i + 2);
     if (!validated.ok) {
       errors.push(validated.error);
       continue;
     }
+    good.push({ rowNum: i + 2, data: validated.data });
+  }
 
+  // Bulk-insert in chunks: one round trip per chunk instead of one per row.
+  const CHUNK_SIZE = 500;
+  for (let start = 0; start < good.length; start += CHUNK_SIZE) {
+    const chunk = good.slice(start, start + CHUNK_SIZE);
     try {
-      await propertyRepository.createRoomType({
-        propertyId,
-        tenantId,
-        ...validated.data,
-      });
-      succeeded++;
+      await propertyRepository.createRoomTypesBulk(
+        chunk.map(({ data }) => ({ propertyId, tenantId, ...data })),
+      );
+      succeeded += chunk.length;
     } catch (err) {
-      errors.push({ row: i + 2, reason: (err as Error).message });
+      // Whole chunk failed (e.g. one row violates a constraint), fall back
+      // to per-row inserts for just this chunk so we can attribute the
+      // failure to the specific row instead of losing the whole chunk.
+      for (const { rowNum, data } of chunk) {
+        try {
+          await propertyRepository.createRoomType({ propertyId, tenantId, ...data });
+          succeeded++;
+        } catch (rowErr) {
+          errors.push({ row: rowNum, reason: (rowErr as Error).message });
+        }
+      }
     }
 
-    if (i % 10 === 0 || i === rows.length - 1) {
-      await setState(
-        "processing",
-        15 + Math.round(((i + 1) / rows.length) * 80),
-        { stage: "importing" },
-        jobId,
-      );
-    }
+    await setState(
+      "processing",
+      15 + Math.round(((start + chunk.length) / Math.max(good.length, 1)) * 80),
+      { stage: "importing" },
+      jobId,
+    );
   }
 
   const result: ImportResult = { succeeded, failed: errors.length, errors };

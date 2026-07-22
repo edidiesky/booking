@@ -132,6 +132,25 @@ export const bookingRepository = {
     }
   },
 
+  async findByIds(ids: string[]): Promise<Booking[]> {
+    if (ids.length === 0) return [];
+    try {
+      return await query<Booking>(
+        `SELECT * FROM bookings WHERE id = ANY($1::uuid[])`,
+        [ids],
+      );
+    } catch (err) {
+      trackError("booking_find_failed", "booking_repository", "medium");
+      logger.error("booking_repository_find_by_ids_failed", {
+        event: "booking_repository_find_by_ids_failed",
+        count: ids.length,
+        error: (err as Error).message,
+        ...ctx(),
+      });
+      throw err;
+    }
+  },
+
   async findByRef(ref: string): Promise<Booking | null> {
     try {
       return await queryOne<Booking>(

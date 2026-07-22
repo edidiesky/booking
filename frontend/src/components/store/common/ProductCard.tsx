@@ -31,7 +31,7 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-col gap-1">
-        <h3 className="text-sm text-[#222] leading-[1.4] line-clamp-2 ">
+        <h3 className="text-xs text-[#222] leading-[1.4] line-clamp-2 ">
           {product.name}
         </h3>
 
@@ -44,17 +44,17 @@ export default function ProductCard({ product }: { product: Product }) {
               className="fill-[#000] text-[#000]"
             />
           ))}
-          <span className="text-sm text-[#999]">
+          <span className="text-xs text-[#999]">
             (10)
           </span>
         </div>
 
         {/* price row */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-base bold">
+          <span className="text-sm bold">
             NGN {product.price.toLocaleString("en-NG")}
           </span>
-          <span className="text-sm text-[#999] line-through">
+          <span className="text-xs text-[#999] line-through">
             ₦{originalPrice.toLocaleString("en-NG")} 
           </span>
         </div>

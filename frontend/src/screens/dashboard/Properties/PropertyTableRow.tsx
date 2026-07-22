@@ -32,7 +32,7 @@ export default function PropertyTableRow({
     >
       <td className="px-5 py-3 text-[#17191c] whitespace-nowrap">
         <div className="flex flex-col gap-0.5">
-          <span className="text-sm medium">{property.name}</span>
+          <span className="text-xs medium">{property.name}</span>
           {roomCount > 0 && (
             <span className="text-xs text-[#a3a6af]">{roomCount} room type{roomCount !== 1 ? "s" : ""}</span>
           )}

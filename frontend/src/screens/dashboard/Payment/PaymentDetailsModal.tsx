@@ -49,8 +49,8 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           <div>
-            <p className="text-base bold text-[#17191c]">Payment details</p>
-            <p className="text-sm text-[#777b86] mt-0.5">{payment?.id}</p>
+            <p className="text-sm bold text-[#17191c]">Payment details</p>
+            <p className="text-xs text-[#777b86] mt-0.5">{payment?.id}</p>
           </div>
           <button
             onClick={onClose}
@@ -70,10 +70,10 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
                 ) : null}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm lg:text-base bold text-[#17191c] truncate">{payment.room_type_name}</p>
+                <p className="text-xs lg:text-sm bold text-[#17191c] truncate">{payment.room_type_name}</p>
                 <p className="text-xs text-[#777b86]">{nights} night{nights !== 1 ? "s" : ""}</p>
               </div>
-              <p className="text-sm bold text-[#17191c] whitespace-nowrap">
+              <p className="text-xs bold text-[#17191c] whitespace-nowrap">
                 {formatCurrency(Number(payment.amount_ngn))}
               </p>
             </div>
@@ -97,8 +97,8 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
                 ],
               ].map(([label, value]) => (
                 <div key={label} className="flex items-center justify-between">
-                  <span className="text-sm text-[#777b86]">{label}</span>
-                  <span className="text-sm text-[#17191c] bold text-right max-w-[60%] truncate">
+                  <span className="text-xs text-[#777b86]">{label}</span>
+                  <span className="text-xs text-[#17191c] bold text-right max-w-[60%] truncate">
                     {value}
                   </span>
                 </div>
@@ -119,8 +119,8 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
                 key={label}
                 className={`w-full flex items-center gap-8 lg:gap-10`}
               >
-                <p className="text-sm medium text-[#777b86]">{label}</p>
-                <p className="text-sm text-[#17191c] bold">{value}</p>
+                <p className="text-xs medium text-[#777b86]">{label}</p>
+                <p className="text-xs text-[#17191c] bold">{value}</p>
               </div>
             ))}
           </div>
@@ -136,7 +136,7 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
                     i <= idx ? "bg-[#17191c] border-[#17191c]" : "bg-white border-[#e8e6e3]"
                   }`} />
                   <div>
-                    <p className={`text-sm bold ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}>{step.label}</p>
+                    <p className={`text-xs bold ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}>{step.label}</p>
                     <p className="text-xs medium text-[#a3a6af]">{step.description}</p>
                   </div>
                 </div>

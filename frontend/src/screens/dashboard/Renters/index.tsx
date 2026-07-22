@@ -22,7 +22,7 @@ export default function DashboardRenters() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h4 className="text-xl bold text-[#17191c]">Tenants</h4>
-            <p className="text-xs lg:text-sm text-[#64645f] mt-1">
+            <p className="text-xs lg:text-xs text-[#64645f] mt-1">
               Manage tenant records across your properties.
             </p>
           </div>

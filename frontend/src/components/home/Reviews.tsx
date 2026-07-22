@@ -20,7 +20,7 @@ const Reviews = () => {
             </AnimateTextWord>
           </span>
 
-          <span className="text-base pt-3 block">
+          <span className="text-sm pt-3 block">
             Stay in complete control. Maintain complete visibility over your
             queue, configure granular SLAs and notifications, and bring your
             support and pricing structure to Plain.
@@ -67,7 +67,7 @@ const Reviews = () => {
                 style={{
                   lineHeight: "1.5",
                 }}
-                className="text-base md:text-lg w-full pr-4"
+                className="text-sm md:text-lg w-full pr-4"
               >
                 We are able to measure and manage all mediums effectively and
                 increase customer satisfaction and resolution time drastically
@@ -85,14 +85,14 @@ const Reviews = () => {
                   src={"/images/user_1.jpg"}
                   className="w-[50px] h-[50px] rounded-full object-cover"
                 />
-                <h4 className="text-sm md:text-base  flex-1">
+                <h4 className="text-xs md:text-sm  flex-1">
                   Carlos Costa
                   <span className="block text-xs lg:text-xs text-[#777]">
                     Foca
                   </span>
                 </h4>
               </div>
-              <h4 className="text-sm md:text-xs w-full pr-4">
+              <h4 className="text-xs md:text-xs w-full pr-4">
                 Since we've started using Crisp, I've seen the software evolve
                 nicely.
               </h4>
@@ -108,14 +108,14 @@ const Reviews = () => {
                   src={"/images/user_2.jpg"}
                   className="w-[50px] h-[50px] rounded-full object-cover"
                 />
-                <h4 className="text-sm md:text-base  flex-1">
+                <h4 className="text-xs md:text-sm  flex-1">
                   Carlos Costa
                   <span className="block text-xs lg:text-xs text-[#777]">
                     Foca
                   </span>
                 </h4>
               </div>
-              <h4 className="text-sm md:text-xs w-full">
+              <h4 className="text-xs md:text-xs w-full">
                 Crisp has been amazing and the first thing that really attracted
                 me to, as a techy, was the size of the chat widget.
               </h4>
@@ -194,7 +194,7 @@ const Reviews = () => {
                 style={{
                   lineHeight: "1.5",
                 }}
-                className="text-base md:text-lg w-full pr-4"
+                className="text-sm md:text-lg w-full pr-4"
               >
                 We are able to measure and manage all mediums effectively and
                 increase customer satisfaction and resolution time drastically

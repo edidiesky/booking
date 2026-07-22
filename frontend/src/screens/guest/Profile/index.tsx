@@ -24,7 +24,7 @@ export default function GuestProfile() {
       <div className="flex gap-2 border-b border-[#e8e6e3] mb-6">
         {TABS.map((t) => (
           <button key={t.key} onClick={() => setActive(t.key)}
-            className={`px-4 py-2 text-sm ${active === t.key ? "border-b-2 border-[#17191c] text-[#17191c] font-semibold" : "text-[#a3a6af]"}`}>
+            className={`px-4 py-2 text-xs ${active === t.key ? "border-b-2 border-[#17191c] text-[#17191c] font-semibold" : "text-[#a3a6af]"}`}>
             {t.label}
           </button>
         ))}

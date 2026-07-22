@@ -19,13 +19,13 @@ const Community = () => {
 
                     </h2>
                     <div className="flex flex-1 flex-col gap-4">
-                        <span className='text-sm lg:text-base '>
+                        <span className='text-xs lg:text-sm '>
                             <AnimateTextWord>
                                 Unlock your true potential and discover a true world of communities that aligns Job Hunting made Easy: Get instant alerts for job matching your skills and innovative job finder!
                             </AnimateTextWord>
                         </span>
                         <span className='flex'>
-                            <button className="text-xs lg:text-sm px-4 lg:px-6 py-4 border rounded-full text-white bg-[#3e3aff] shadows">Get Started!</button>
+                            <button className="text-xs lg:text-xs px-4 lg:px-6 py-4 border rounded-full text-white bg-[#3e3aff] shadows">Get Started!</button>
                         </span>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ const Community = () => {
                                         </AnimateTextWord>
                                       
                                     </h3>
-                                    <span className='text-xs lg:text-sm  max-w-[500px]'>
+                                    <span className='text-xs lg:text-xs  max-w-[500px]'>
                                         <AnimateTextWord>
                                             Many Tech Companies foster innovative and collaborative environments
                                         </AnimateTextWord>
@@ -66,7 +66,7 @@ const Community = () => {
                                         </AnimateTextWord>
                                         
                                     </h3>
-                                    <span className='text-xs lg:text-sm  max-w-[500px]'>
+                                    <span className='text-xs lg:text-xs  max-w-[500px]'>
                                         <AnimateTextWord>
                                             Design jobs are all about creating visual components that communicate ideas and vision
                                         </AnimateTextWord>
@@ -89,7 +89,7 @@ const Community = () => {
                                         <AnimateTextWord type='bigtext'>
                                             20k+
                                         </AnimateTextWord>
-                                        <span className='text-xs lg:text-sm block  max-w-[500px]'>
+                                        <span className='text-xs lg:text-xs block  max-w-[500px]'>
                                             <AnimateTextWord>
                                             Users joined the community!
 
@@ -103,7 +103,7 @@ const Community = () => {
                                         </AnimateTextWord>
                                     
                                     </h3>
-                                    <span className='text-xs lg:text-sm  max-w-[500px]'>
+                                    <span className='text-xs lg:text-xs  max-w-[500px]'>
                                         <AnimateTextWord>
                                             Tech salaries are generally quite competitive compared to the average across all occupations.
                                         </AnimateTextWord>
@@ -117,7 +117,7 @@ const Community = () => {
                             </div>
                         </div>
                         <div className="z-10 rounded-[20px] w-full bg-[#e8f2fc61] flex p-4 items-center justify-center gap-4">
-                            <h3 className="text-base lg:text-lg leading-[1] family2 text-dark text-center w-full family2">
+                            <h3 className="text-sm lg:text-lg leading-[1] family2 text-dark text-center w-full family2">
                                 More
                             </h3>
                         </div>

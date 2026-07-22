@@ -35,7 +35,7 @@
 //       <div className="flex items-center justify-between pt-6">
 //         <button
 //           onClick={onWhyTheseReviews}
-//           className="flex items-center gap-1.5 text-sm text-[#666] underline underline-offset-4 hover:text-[#171717] transition-colors"
+//           className="flex items-center gap-1.5 text-xs text-[#666] underline underline-offset-4 hover:text-[#171717] transition-colors"
 //         >
 //           Why these reviews?
 //           <HelpCircle size={14} />
@@ -43,7 +43,7 @@
 
 //         <button
 //           onClick={onViewAll}
-//           className="rounded-full border border-black/10 px-6 py-3 text-sm bold text-[#171717] hover:bg-[#f4f3ee] transition-colors"
+//           className="rounded-full border border-black/10 px-6 py-3 text-xs bold text-[#171717] hover:bg-[#f4f3ee] transition-colors"
 //         >
 //           View all reviews for this item
 //         </button>
@@ -83,7 +83,7 @@
 //           ))}
 //         </div>
 
-//         <div className="flex items-center gap-2 text-sm text-[#666]">
+//         <div className="flex items-center gap-2 text-xs text-[#666]">
 //           {reviewer?.profileImage && (
 //             <img
 //               src={reviewer.profileImage}
@@ -97,12 +97,12 @@
 //         </div>
 //       </div>
 
-//       <p className="text-sm text-[#171717] leading-relaxed">
+//       <p className="text-xs text-[#171717] leading-relaxed">
 //         {review.comment}
 //       </p>
 
 //       {review.sellerResponse && (
-//         <div className="mt-1 rounded-lg bg-[#f4f3ee] p-3 text-sm text-[#444]">
+//         <div className="mt-1 rounded-lg bg-[#f4f3ee] p-3 text-xs text-[#444]">
 //           <span className="bold text-[#171717]">Seller response: </span>
 //           {review.sellerResponse}
 //         </div>
@@ -153,7 +153,7 @@ function ReviewCard({ review }: { review: MockReview }) {
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <div
-            className="h-12 w-12 rounded-full flex items-center justify-center text-white text-base lg:text-lg bold shrink-0"
+            className="h-12 w-12 rounded-full flex items-center justify-center text-white text-sm lg:text-lg bold shrink-0"
             style={{ backgroundColor: review.reviewerAvatarColor }}
           >
             {initial}
@@ -161,25 +161,25 @@ function ReviewCard({ review }: { review: MockReview }) {
           <div>
             <div className="flex items-center gap-2">
               <Stars rating={review.rating} />
-              <span className="text-base lg:text-lg bold">{review.reviewerName}</span>
+              <span className="text-sm lg:text-lg bold">{review.reviewerName}</span>
             </div>
             {review.purchaseMeta && (
-              <p className="text-sm text-[#666] mt-0.5">{review.purchaseMeta}</p>
+              <p className="text-xs text-[#666] mt-0.5">{review.purchaseMeta}</p>
             )}
           </div>
         </div>
-        <div className="flex items-center gap-1 text-sm lg:text-base text-[#2F5D4F] shrink-0">
+        <div className="flex items-center gap-1 text-xs lg:text-sm text-[#2F5D4F] shrink-0">
           <ShieldCheck size={14} />
           Recommends
         </div>
       </div>
 
-      <p className="text-base lg:text-lg text-[#171717] mt-3 leading-relaxed">{review.comment}</p>
+      <p className="text-sm lg:text-lg text-[#171717] mt-3 leading-relaxed">{review.comment}</p>
 
       <div className="flex items-center justify-between mt-3">
-        <span className="text-sm lg:text-base text-[#666]">{date}</span>
+        <span className="text-xs lg:text-sm text-[#666]">{date}</span>
         {review.helpfulCount > 0 && (
-          <button className="flex items-center gap-1 text-sm text-[#666] hover:text-[#171717] transition-colors">
+          <button className="flex items-center gap-1 text-xs text-[#666] hover:text-[#171717] transition-colors">
             <ThumbsUp size={12} />
             Helpful ({review.helpfulCount})
           </button>
@@ -206,7 +206,7 @@ export default function ProductReviewList({ limit }: ProductReviewListProps) {
       <div className="flex items-center gap-2 flex-wrap ">
         <button
           onClick={() => setActiveTag("Suggested")}
-          className={`shrink-0 rounded-full border px-4 py-1.5 text-sm lg:text-base bold transition-colors ${
+          className={`shrink-0 rounded-full border px-4 py-1.5 text-xs lg:text-sm bold transition-colors ${
             activeTag === "Suggested"
               ? "border-[#171717] bg-[#171717] text-white"
               : "border-[#EDEAE3] text-[#171717] hover:border-[#171717]"
@@ -218,7 +218,7 @@ export default function ProductReviewList({ limit }: ProductReviewListProps) {
           <button
             key={tag}
             onClick={() => setActiveTag(tag)}
-            className={`shrink-0 rounded-full border px-4 py-1.5 text-sm bold whitespace-nowrap transition-colors ${
+            className={`shrink-0 rounded-full border px-4 py-1.5 text-xs bold whitespace-nowrap transition-colors ${
               activeTag === tag
                 ? "border-[#171717] bg-[#171717] text-white"
                 : "border-[#EDEAE3] text-[#171717] hover:border-[#171717]"
@@ -230,7 +230,7 @@ export default function ProductReviewList({ limit }: ProductReviewListProps) {
       </div>
 
       {visible.length === 0 ? (
-        <p className="text-sm text-[#666] py-6">No reviews match this filter yet.</p>
+        <p className="text-xs text-[#666] py-6">No reviews match this filter yet.</p>
       ) : (
         <div className="flex flex-col">
           {visible.map((review) => (

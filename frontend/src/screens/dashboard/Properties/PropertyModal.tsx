@@ -211,7 +211,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
         {/* header */}
         <div className="border-b flex items-center justify-between px-8 h-[72px] shrink-0">
           <div>
-            <h4 className="text-base bold text-[#17191c]">
+            <h4 className="text-sm bold text-[#17191c]">
               {isEdit ? "Edit Property" : "Create Property"}
             </h4>
             <p className="text-xs text-[#777b86] mt-0.5">

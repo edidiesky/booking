@@ -45,12 +45,12 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           ].map((step, i) => (
             <div key={step} className="flex items-start gap-3">
               <span
-                className="w-5 h-5 flex items-center justify-center text-sm shrink-0 mt-0.5"
+                className="w-5 h-5 flex items-center justify-center text-xs shrink-0 mt-0.5"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 {i + 1}
               </span>
-              <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>{step}</p>
+              <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>{step}</p>
             </div>
           ))}
         </div>

@@ -51,7 +51,7 @@ export default function ReviewSubmitForm({ productId }: ReviewSubmitFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-lg">
-      <h4 className="text-base text-[#171717]">Write a review</h4>
+      <h4 className="text-sm text-[#171717]">Write a review</h4>
       <div className="flex flex-col gap-1.5">
         <span className="text-xs text-[#171717]">Your rating</span>
         <EditableStarRating value={rating} onChange={setRating} />
@@ -63,13 +63,13 @@ export default function ReviewSubmitForm({ productId }: ReviewSubmitFormProps) {
           onChange={(e) => setComment(e.target.value)}
           rows={4}
           placeholder="Share your experience with this product..."
-          className="border border-black/10 px-4 py-3 text-sm text-[#171717] outline-none focus:border-[#171717] transition-colors resize-none"
+          className="border border-black/10 px-4 py-3 text-xs text-[#171717] outline-none focus:border-[#171717] transition-colors resize-none"
         />
       </div>
       <button
         type="submit"
         disabled={submitting || !comment.trim()}
-        className="h-11 bg-[#171717] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 w-fit px-6"
+        className="h-11 bg-[#171717] text-white text-xs hover:opacity-90 transition-opacity disabled:opacity-50 w-fit px-6"
       >
         {submitting ? "Submitting..." : "Submit review"}
       </button>

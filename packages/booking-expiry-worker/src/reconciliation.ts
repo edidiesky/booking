@@ -1,4 +1,4 @@
-// packages/booking-expiry-worker/src/reconciliation.ts
+
 import { query, logger } from "@booking/shared";
 import client from "prom-client";
 
@@ -23,14 +23,16 @@ async function reconcileOnce(): Promise<void> {
     [cutoff],
   );
 
-  let repaired = 0;
-  for (const row of stale) {
-    const inIndex = await scheduleIndex.has(row.id);
-    if (inIndex) continue;
-    await scheduleIndex.add(row.id, Date.now());
-    bookingExpiryReconciliationRepairCounter.inc();
-    repaired++;
+  // Single pipelined round trip for all 500 ids, instead of 500 sequential
+  // ZSCORE calls.
+  const presentIds = await scheduleIndex.hasMany(stale.map((row) => row.id));
+  const missing = stale.filter((row) => !presentIds.has(row.id));
+
+  if (missing.length > 0) {
+    await scheduleIndex.addMany(missing.map((row) => row.id), Date.now());
+    bookingExpiryReconciliationRepairCounter.inc(missing.length);
   }
+  const repaired = missing.length;
 
   if (repaired > 0) {
     logger.warn("booking_expiry_reconciliation_repaired", { event: "booking_expiry_reconciliation_repaired", checked: stale.length, repaired });

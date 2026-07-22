@@ -120,7 +120,7 @@ const TableCard = ({ tabledata, type, tableheadList }: {
                                     alt="Comapny's Logo"
                                 />
                             </td>
-                            <td className="text-sm family2 py-6 text-center">{data?.company}
+                            <td className="text-xs family2 py-6 text-center">{data?.company}
                             </td>
                             <td className="  py-6 text-center">   {data?.jobtitle} </td>
 

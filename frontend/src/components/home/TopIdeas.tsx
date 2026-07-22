@@ -131,7 +131,7 @@ export default function StickyFeatures() {
                 />
                 <div className="mt-auto">
                   <p
-                    className="text-base "
+                    className="text-sm "
                     style={{ color: feature.accent }}
                   >
                     {feature.cardLabel}

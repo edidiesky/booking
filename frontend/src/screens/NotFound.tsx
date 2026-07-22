@@ -25,14 +25,14 @@ export default function NotFound() {
           ].map((s, i) => (
             <div key={s} className="flex items-center gap-3">
               <span className="w-8 h-8 flex items-center justify-center text-xs rounded-xl shrink-0 mt-0.5" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>{i + 1}</span>
-              <p className="text-sm medium" style={{ color: "var(--color-muted-stone)" }}>{s}</p>
+              <p className="text-xs medium" style={{ color: "var(--color-muted-stone)" }}>{s}</p>
             </div>
           ))}
         </div>
-        <button onClick={() => navigate(-1)} className="w-full h-12 flex items-center justify-center text-sm rounded-full  transition-opacity hover:opacity-80" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
+        <button onClick={() => navigate(-1)} className="w-full h-12 flex items-center justify-center text-xs rounded-full  transition-opacity hover:opacity-80" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
          Go back
         </button>
-        <button onClick={() => navigate("/")} className="w-full h-12 flex items-center justify-center text-sm rounded-full  border transition-opacity hover:opacity-70" style={{ color: "var(--color-ink)", borderColor: "var(--color-ink)" }}>
+        <button onClick={() => navigate("/")} className="w-full h-12 flex items-center justify-center text-xs rounded-full  border transition-opacity hover:opacity-70" style={{ color: "var(--color-ink)", borderColor: "var(--color-ink)" }}>
           Return to homepage
         </button>
       </div>

@@ -56,14 +56,14 @@ export default function Header() {
             <>
               <Link
                 to="/login"
-                className="h-9 px-5 text-sm transition-opacity hover:opacity-70 flex items-center rounded-full"
+                className="h-9 px-5 text-xs transition-opacity hover:opacity-70 flex items-center rounded-full"
                 style={{ color: "var(--color-ink)" }}
               >
                 Log in
               </Link>
               <Link
                 to="/onboarding"
-                className="h-9 px-5 text-sm transition-opacity hover:opacity-80 flex items-center rounded-full"
+                className="h-9 px-5 text-xs transition-opacity hover:opacity-80 flex items-center rounded-full"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 Get started

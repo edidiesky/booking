@@ -47,7 +47,7 @@ export default function StepSelectUserType({ onSelect }: Props) {
             key={value}
             whileTap={{ scale: 0.98 }}
             onClick={() => onSelect(value)}
-            className="flex items-start gap-4 p-5 border-2 rounded-2xl text-left transition-colors hover:border-[var(--color-ink)]"
+            className="flex items-start gap-4 border p-5 rounded-2xl text-left transition-colors hover:border-[var(--color-ink)]"
             style={{ borderColor: "#e5e7eb", backgroundColor: "var(--color-canvas)" }}
           >
             <div
@@ -57,7 +57,7 @@ export default function StepSelectUserType({ onSelect }: Props) {
               <Icon size={18} style={{ color: "var(--color-ink)" }} />
             </div>
             <div className="flex flex-col gap-0.5">
-              <p className="text-sm bold" style={{ color: "var(--color-ink)" }}>
+              <p className="text-sm bold">
                 {label}
               </p>
               <h4 className="text-xs" style={{ color: "var(--color-muted-stone)" }}>

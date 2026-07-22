@@ -59,7 +59,7 @@ export default function BookingForm({
       >
         <div className="flex items-start py-3 px-3 border-r border-[rgba(0,0,0,0.15)] flex-col gap-1">
           <span className="text-xs bold text-[#777b86] uppercase">Check-in</span>
-          <span className="text-sm border-lime-950  text-[#17191c]">
+          <span className="text-xs border-lime-950  text-[#17191c]">
             {dateRange.from.toLocaleDateString("en-NG", {
               day: "numeric",
               month: "short",
@@ -69,7 +69,7 @@ export default function BookingForm({
         </div>
         <div className="flex items-start py-3 px-3 flex-col gap-1">
           <span className="text-xs bold text-[#777b86] uppercase">Check-out</span>
-          <span className="text-sm border-lime-950  text-[#17191c]">
+          <span className="text-xs border-lime-950  text-[#17191c]">
             {dateRange.to.toLocaleDateString("en-NG", {
               day: "numeric",
               month: "short",
@@ -106,7 +106,7 @@ export default function BookingForm({
             {selectedRoomType
               ? formatCurrency(Number(selectedRoomType.base_price_ngn))
               : "Select a room"}
-            <span className="font-normal text-sm border-lime-950 text-[#777b86]"> /night</span>
+            <span className="font-normal text-xs border-lime-950 text-[#777b86]"> /night</span>
           </h4>
 
           {roomTypes.length > 0 && (
@@ -118,7 +118,7 @@ export default function BookingForm({
                 <button
                   key={rt.id}
                   onClick={() => onSelectRoomType(rt)}
-                  className={`text-left px-3 py-2 rounded-xl text-sm border-lime-950 bold transition-colors ${
+                  className={`text-left px-3 py-2 rounded-xl text-xs border-lime-950 bold transition-colors ${
                     selectedRoomType?.id === rt.id
                       ? "border-[#17191c] bg-[#f2f0ed]"
                       : "border-[#e8e6e3] hover:border-[#17191c]"
@@ -139,7 +139,7 @@ export default function BookingForm({
             <div className="rounded-b-xl border border-t-0 border-[rgba(0,0,0,0.15)] min-h-[50px] p-3">
               <span className="text-xs bold text-[#777b86] uppercase">Guests</span>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-sm border-lime-950 bold text-[#17191c] flex-1">
+                <span className="text-xs border-lime-950 bold text-[#17191c] flex-1">
                   {guestCount} guest{guestCount !== 1 ? "s" : ""}
                 </span>
                 <button
@@ -162,7 +162,7 @@ export default function BookingForm({
             <button
               onClick={onBook}
               disabled={isBooking || !selectedRoomType}
-              className="w-full py-4 text-sm border-lime-950 text-white bg-[#17191c] rounded-full bold hover:opacity-90 disabled:opacity-50 transition-opacity"
+              className="w-full py-4 text-xs border-lime-950 text-white bg-[#17191c] rounded-full bold hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               {isBooking
                 ? "Reserving..."
@@ -174,7 +174,7 @@ export default function BookingForm({
 
           {selectedRoomType && nights > 0 && (
             <div className="w-[90%] mx-auto flex flex-col gap-2 pt-2 border-t border-[#e8e6e3]">
-              <div className="flex items-center bold justify-between text-sm">
+              <div className="flex items-center bold justify-between text-xs">
                 <span className="text-[#4c4c4c] bold">
                   {formatCurrency(Number(selectedRoomType.base_price_ngn))} ×{" "}
                   {nights} night{nights !== 1 ? "s" : ""}
@@ -183,7 +183,7 @@ export default function BookingForm({
                   {formatCurrency(totalAmount)}
                 </span>
               </div>
-              <div className="flex items-center justify-between bold text-sm border-t pt-2 border-[#e8e6e3]">
+              <div className="flex items-center justify-between bold text-xs border-t pt-2 border-[#e8e6e3]">
                 <span className="text-[#17191c]">Total</span>
                 <span className="text-[#17191c]">
                   {formatCurrency(totalAmount)}
@@ -198,7 +198,7 @@ export default function BookingForm({
       <div className="w-full fixed bottom-0 left-0 h-20 flex lg:hidden items-center justify-center border-t bg-white/90 backdrop-blur-md z-50">
         <div className="w-[90%] bold mx-auto flex items-center justify-between">
           <div className="flex flex-col relative">
-            <h4 className="text-base bold text-[#17191c]">
+            <h4 className="text-sm bold text-[#17191c]">
               {selectedRoomType
                 ? formatCurrency(Number(selectedRoomType.base_price_ngn))
                 : "Select room"}
@@ -209,7 +209,7 @@ export default function BookingForm({
             </h4>
             <button
               onClick={() => setShowPicker((v) => !v)}
-              className="text-sm underline text-[#17191c]  text-left"
+              className="text-xs underline text-[#17191c]  text-left"
             >
               {dateRange.from.toLocaleDateString("en-NG", {
                 day: "numeric",

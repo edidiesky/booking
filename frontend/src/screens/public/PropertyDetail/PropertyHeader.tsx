@@ -29,7 +29,7 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
         <div className="flex flex-col gap-2 flex-1">
           <h1 className="text-3xl md:text-4xl bold text-[#17191c]">
             {property.name}
-            <span className="text-sm pt-2 text-[#777b86] font-normal flex items-center gap-3 mt-1">
+            <span className="text-xs pt-2 text-[#777b86] font-normal flex items-center gap-3 mt-1">
               <span className="flex items-center gap-1">
                 <MapPin size={13} />
                 {property.address.city}, {property.address.country}
@@ -47,7 +47,7 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
           )}
         </div>
 
-        <span className="text-sm px-3 py-1 bold rounded-full capitalize self-start"
+        <span className="text-xs px-3 py-1 bold rounded-full capitalize self-start"
           style={{ backgroundColor: "var(--color-fog)", color: "var(--color-muted-stone)" }}>
           {TYPE_LABEL[property.property_type ?? property.propertyType ?? "shortlet"]}
         </span>
@@ -62,9 +62,9 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
         ].map(({ label, value, icon }, i, arr) => (
           <div key={label}
             className={`flex flex-col p-4 pl-6 min-h-[110px] justify-center gap-1 ${i < arr.length - 1 ? "border-r border-[#e8e6e3]" : ""}`}>
-            <h4 className="text-sm bold text-[#17191c]">{label}</h4>
+            <h4 className="text-xs bold text-[#17191c]">{label}</h4>
             <div className="flex items-center gap-3 text-[#777b86]">
-              <span className="text-sm">{value}</span>
+              <span className="text-xs">{value}</span>
               {icon}
             </div>
           </div>

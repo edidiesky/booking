@@ -31,7 +31,7 @@ export default function Growth() {
         <div className="border rounded-xl border-[#e8e6e3] p-5 flex flex-col gap-3">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm lg:text-base  text-[#17191c] ">
+              <p className="text-xs lg:text-sm  text-[#17191c] ">
                 Order Breakdown
               </p>
               <p className="text-sn text-[#777b86]  mt-0.5">
@@ -71,7 +71,7 @@ export default function Growth() {
         <div className="border rounded-xl border-[#e8e6e3] p-5 flex flex-col gap-3">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm lg:text-base  text-[#17191c] ">
+              <p className="text-xs lg:text-sm  text-[#17191c] ">
                 Revenue vs Orders
               </p>
               <p className="text-xs text-[#777b86]  mt-0.5">
@@ -110,7 +110,7 @@ export default function Growth() {
         {/* <div className="border border-[#e8e6e3] p-5 flex flex-col gap-3">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm  text-[#17191c] ">Top Products</p>
+              <p className="text-xs  text-[#17191c] ">Top Products</p>
               <p className="text-xs text-[#777b86]  mt-0.5">Best performing this period</p>
             </div>
             <button
@@ -146,7 +146,7 @@ export default function Growth() {
       {/* recent orders table */}
       <div className="border border-[#e8e6e3]">
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#e8e6e3]">
-          <p className="text-sm  text-[#17191c] ">
+          <p className="text-xs  text-[#17191c] ">
             Recent Transactions
           </p>
           <div className="flex items-center gap-2">

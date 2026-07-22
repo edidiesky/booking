@@ -13,7 +13,7 @@ const Newsletter = () => {
             </AnimateTextWord>
           </h2>
           <div className="flex flex-1 flex-col gap-4">
-            <span className="text-sm lg:text-base text-[var(--grey-1)]  max-w-[500px]">
+            <span className="text-xs lg:text-sm text-[var(--grey-1)]  max-w-[500px]">
               <AnimateTextWord>
                 See what everyone is talking about! Download Expense AI and
                 discover the easiest way to track your expenses.

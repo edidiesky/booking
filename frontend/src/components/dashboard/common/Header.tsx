@@ -65,7 +65,7 @@ export default function Header() {
               {initials}
             </div>
             <span
-              className="text-sm bold hidden md:block truncate max-w-[140px]"
+              className="text-xs bold hidden md:block truncate max-w-[140px]"
               style={{ color: "var(--color-ink)" }}
             >
               {displayName}

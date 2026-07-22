@@ -42,7 +42,7 @@ export default function Card({
             {x?.title}
           </div>
         </td>
-        {/* <td className="text-base">{x?.price}</td> */}
+        {/* <td className="text-sm">{x?.price}</td> */}
         <td>₦{x?.price}</td>
         <td>
           <div className="btnWrapper">

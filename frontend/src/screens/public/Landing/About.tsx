@@ -63,7 +63,7 @@ const About = () => {
         <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
           <div className="grid lg:grid-cols-2 items-start md:items-center w-full gap-8">
             <div className="flex flex-col gap-4">
-              <h4 className="text-base md:text-lg text-[var(--primary)]">
+              <h4 className="text-sm md:text-lg text-[var(--primary)]">
                 Passionate – Dedicated – Professional
               </h4>
               <h3 className="text-4xl max-w-[600px]  bold md:text-5xl text-[var(--dark-1)]">
@@ -99,13 +99,13 @@ const About = () => {
                     <h3 className="text-xl md:text-3xl family2 text-dark">
                       {data?.title}
                     </h3>
-                    <h4 className="text-xs md:text-sm family1 font-normal text-grey">
+                    <h4 className="text-xs md:text-xs family1 font-normal text-grey">
                       {data?.subText}
                     </h4>
                   </div>
                   <div className="w-full z-10">
                     <div
-                      className="w-[90%] capitalize family1 font-normal -mt-20 text-sm text-center py-4 pt-12 px-4
+                      className="w-[90%] capitalize family1 font-normal -mt-20 text-xs text-center py-4 pt-12 px-4
                      rounded-xl text-white mx-auto bg-[var(--primary)]"
                     >
                       {data?.text}
@@ -128,7 +128,7 @@ const About = () => {
             />
           </div>
           <div className="flex w-full flex-col gap-4">
-            <h4 className="text-base md:text-lg text-[var(--primary)]">
+            <h4 className="text-sm md:text-lg text-[var(--primary)]">
               <AnimateTextWord>
                 Passionate – Dedicated – Professional
               </AnimateTextWord>
@@ -157,7 +157,7 @@ const About = () => {
               </AnimateTextWord>
             </p>
             <div className="flex pt-8 flex-col gap-4">
-              <p className="text-base text-grey">
+              <p className="text-sm text-grey">
                 Call us for inquiry : Monday to Friday : 9 am – 5 pm
               </p>
               <div className="flex items-center gap-4">

@@ -50,7 +50,7 @@ export default function PropertyAmenities({ property }: Props) {
     <div className="w-full flex flex-col gap-6">
       <h3 className="text-xl bold md:text-3xl  text-[#17191c]">
         Room Services
-        <span className="block text-sm text-[#777b86] pt-1">
+        <span className="block text-xs text-[#777b86] pt-1">
           Enjoy the comforts of home and beyond with these distinctive features.
         </span>
       </h3>
@@ -58,7 +58,7 @@ export default function PropertyAmenities({ property }: Props) {
         {property.amenities.map((amenity, i) => (
           <div
             key={i}
-            className="flex items-center gap-3 text-sm bold text-[#4c4c4c]"
+            className="flex items-center gap-3 text-xs bold text-[#4c4c4c]"
           >
             <span className="text-[#17191c]">{getIcon(amenity)}</span>
             <span>{amenity}</span>
