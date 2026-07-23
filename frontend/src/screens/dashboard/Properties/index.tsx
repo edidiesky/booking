@@ -8,6 +8,7 @@ import { useProperties } from "./hooks/useProperties";
 import { ChartSelect } from "@/components/common/charts/Chartselect";
 import type { PropertyStatus } from "@/types/api";
 import { useNavigate } from "react-router-dom";
+import StatsOverview from "@/components/dashboard/common/StatsOverview";
 
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
@@ -30,7 +31,7 @@ export default function DashboardProperties() {
   const [statusFilter, setStatusFilter] = useState<PropertyStatus | "">("");
   const navigate = useNavigate()
 
-  const { properties, isLoading } = useProperties();
+  const { properties, isLoading, stats, isStatsLoading } = useProperties();
 
   const filtered = properties.filter(
     (p) => !statusFilter || p.status === statusFilter,
@@ -79,6 +80,19 @@ export default function DashboardProperties() {
             Add Property
           </button>
         </div>
+
+        <StatsOverview
+          isLoading={isStatsLoading}
+          growthPct={stats?.newListingsGrowthPct}
+          growthLabel="new listings this month"
+          growthTooltip="New listings created this calendar month vs. last calendar month"
+          cards={[
+            { label: "Active",   value: String(stats?.activeCount ?? 0),   color: "#166534", bg: "#dcfce7" },
+            { label: "Draft",    value: String(stats?.draftCount ?? 0),    color: "#92400e", bg: "#fef3c7" },
+            { label: "Paused",   value: String(stats?.pausedCount ?? 0),   color: "#374151", bg: "#f3f4f6" },
+            { label: "Archived", value: String(stats?.archivedCount ?? 0), color: "#991b1b", bg: "#fee2e2" },
+          ]}
+        />
 
         <div className="flex items-center gap-3">
           <ChartSelect
