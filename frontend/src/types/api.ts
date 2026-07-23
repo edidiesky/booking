@@ -727,9 +727,63 @@ export interface PropertyWithRoomTypes extends Property {
   fromPrice?: number | null;
 }
 
-// Matches backend/src/domains/renter/renter.repository.ts's Renter
-// interface exactly, the API returns these fields as-is (snake_case),
-// no transformResponse layer exists for this endpoint.
+export interface Review {
+  id:                    string;
+  room_type_id:          string;
+  property_id:           string;
+  tenant_id:             string;
+  guest_user_id:         string;
+  booking_id:            string;
+  rating:                number;
+  title:                 string;
+  comment:               string;
+  images:                string[];
+  is_verified_purchase:  boolean;
+  status:                "approved" | "rejected";
+  helpful_count:         number;
+  unhelpful_count:       number;
+  response_text:         string | null;
+  response_by:           string | null;
+  response_at:           string | null;
+  created_at:            string;
+  updated_at:            string;
+  // present on the guest-joined variant (room-type review list)
+  guest_first_name?:     string;
+  guest_last_name?:      string;
+  guest_profile_image?:  string | null;
+}
+
+export interface ReviewStats {
+  averageRating:      number;
+  totalReviews:       number;
+  verifiedCount:      number;
+  ratingDistribution: Record<string, number>;
+}
+
+export interface RoomTypeReviewsResponse {
+  success: boolean;
+  data: {
+    reviews:    Review[];
+    stats:      ReviewStats;
+    totalCount: number;
+    page:       number;
+    limit:      number;
+  };
+}
+
+export interface CreateReviewPayload {
+  bookingId: string;
+  rating:    number;
+  title:     string;
+  comment:   string;
+  images?:   string[];
+}
+
+export interface CreateReviewResponse {
+  success: boolean;
+  data:    Review;
+}
+
 export interface Renter {
   id:                       string;
   owner_id:                 string;
