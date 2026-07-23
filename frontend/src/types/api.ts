@@ -575,9 +575,35 @@ export interface NotificationListResponse {
   data:    Notification[];
 }
 
+export interface SecurityStatus {
+  isEmailVerified:  boolean;
+  isPhoneVerified:  boolean;
+  twoFactorEnabled: boolean;
+  loginWithPinEnabled: boolean;
+  countryCode:      string | null;
+  hasPin:           boolean;
+}
+
+export interface SecurityStatusResponse {
+  success: boolean;
+  data:    SecurityStatus;
+}
+
+export type OtpPurpose = "email_verify" | "phone_verify" | "two_factor_enable" | "two_factor_disable";
+
+export interface RequestOtpResponse {
+  success: boolean;
+  message: string;
+  expiresInSeconds: number;
+}
+
 //  RBAC 
 
-export type RoleSlug =
+// Fixed system role slugs still exist and are useful for UI logic (e.g.
+// "is this the host:admin row"), but custom roles have dynamic slugs now,
+// so anywhere a role slug is accepted/returned generally, the type is
+// `string`, not this union.
+export type SystemRoleSlug =
   | "platform:admin"
   | "host:admin"
   | "host:staff"
@@ -587,10 +613,12 @@ export type RoleSlug =
 export interface Role {
   id:          string;
   name:        string;
-  slug:        RoleSlug;
+  slug:        string;
   description: string;
   isSystem:    boolean;
+  tenantId:    string | null;
   createdAt:   string;
+  updatedAt:   string;
 }
 
 export interface UserRoleAssignment {
@@ -599,7 +627,7 @@ export interface UserRoleAssignment {
   tenantId:    string;
   roleId:      string;
   roleName:    string;
-  roleSlug:    RoleSlug;
+  roleSlug:    string;
   assignedBy:  string;
   assignedAt:  string;
   reason?:     string;
@@ -611,6 +639,7 @@ export interface Permission {
   resource:     string;
   action:       string;
   description?: string;
+  category:     string;
 }
 
 export interface UserPermissionOverride {
@@ -627,7 +656,7 @@ export interface UserPermissionOverride {
 
 export interface AssignRolePayload {
   userId:   string;
-  roleSlug: RoleSlug;
+  roleSlug: string;
   reason?:  string;
 }
 
@@ -647,6 +676,37 @@ export interface ResolvedPermissions {
 export interface RoleListResponse {
   success: boolean;
   data:    Role[];
+}
+
+export interface RoleMember {
+  userId:     string;
+  firstName?: string;
+  lastName?:  string;
+  email?:     string;
+  assignedAt: string;
+}
+
+export interface RoleDetail {
+  role:                 Role;
+  includedPermissions:  Permission[];
+  availablePermissions: Permission[];
+  members:              RoleMember[];
+}
+
+export interface RoleDetailResponse {
+  success: boolean;
+  data:    RoleDetail;
+}
+
+export interface CreateCustomRolePayload {
+  name:           string;
+  description?:   string;
+  permissionIds:  string[];
+}
+
+export interface UpdateRolePermissionsPayload {
+  roleId:        string;
+  permissionIds: string[];
 }
 
 export interface PermissionListResponse {
