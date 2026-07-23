@@ -4,6 +4,7 @@ import type {
   Booking, InitiateBookingPayload, InitiateBookingResponse,
   CancelBookingPayload, BookingListResponse,
   TenantBookingQueryParams, ApiSuccessResponse,
+  BookingStatsResponse,
 } from "@/types/api";
 
 
@@ -35,6 +36,11 @@ export const bookingApi = apiSlice.injectEndpoints({
       providesTags: ["Booking"],
     }),
 
+    getTenantBookingStats: builder.query<BookingStatsResponse, void>({
+      query: () => ({ url: `${BOOKING_URL}/tenant/stats` }),
+      providesTags: ["Booking"],
+    }),
+
     cancelBooking: builder.mutation<ApiSuccessResponse, { id: string; body: CancelBookingPayload }>({
       query: ({ id, body }) => ({ url: `${BOOKING_URL}/${id}/cancel`, method: "PATCH", body }),
       invalidatesTags: (_r, _e, { id }) => [{ type: "Booking", id }, "Booking"],
@@ -57,6 +63,7 @@ export const {
   useGetBookingByIdQuery,
   useGetMyBookingsQuery,
   useGetTenantBookingsQuery,
+  useGetTenantBookingStatsQuery,
   useCancelBookingMutation,
   useCheckInMutation,
   useCheckOutMutation,
