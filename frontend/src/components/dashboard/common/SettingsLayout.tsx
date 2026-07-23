@@ -39,7 +39,7 @@ export default function SettingsLayout({
         className={`w-full lg:w-[520px] shrink-0 border-b lg:border-b-0 lg:border-r flex flex-col ${showDetailOnMobile ? "hidden lg:flex" : "flex"}`}
         style={{ borderColor: "#e8e6e3" }}
       >
-        <div className="flex items-center justify-between gap-3 px-5 py-5 border-b" style={{ borderColor: "#f2f0ed" }}>
+        <div className="flex items-center justify-between gap-3 px-5 py-5">
           <div className="flex items-center gap-3 min-w-0">
             <span
               className="w-11 h-11 rounded-full flex items-center justify-center text-base lg:text-lg bold shrink-0"

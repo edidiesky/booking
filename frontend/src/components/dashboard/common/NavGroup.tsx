@@ -35,7 +35,7 @@ export default function NavGroupComponent({ group }: Props) {
   return (
     <div className="mb-5">
       <p
-        className="text-xs uppercase tracking-widest px-2 mb-1.5 font-semibold"
+        className="text-xs uppercase px-2 mb-1.5 font-semibold"
         style={{ color: "var(--color-hint-of-grey)" }}
       >
         {group.label}

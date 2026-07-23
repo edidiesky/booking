@@ -4,7 +4,6 @@ import redisClient from "../config/redis";
 import { JWTPayload, UserType } from "../types";
 import { AppError } from "../utils/AppError";
 import { requestContext } from "../context/requestContext";
-import logger from "../utils/logger";
 
 export function authenticate(
   req: Request,
@@ -23,10 +22,6 @@ export function authenticate(
   }
 
   let decoded: { user: JWTPayload };
-  logger.debug("user auth request:", {
-    JWT_SECRET: process.env.JWT_SECRET,
-    token,
-  })
   try {
     decoded = jwt.verify(token, process.env.JWT_SECRET!, {
       issuer: "booking-platform",
@@ -41,9 +36,6 @@ export function authenticate(
       });
     return;
   }
-  logger.info("decoded", {
-    decoded
-  })
 
   redisClient
     .get(`blocklist:${decoded.user.userId}`)

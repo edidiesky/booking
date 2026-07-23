@@ -95,11 +95,11 @@ export default function BookingSuccess() {
 
               <div className="px-4 py-4 grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs lg:text-xs uppercase tracking-widest text-[#a3a6af] bold mb-1">Check-in</p>
+                  <p className="text-xs lg:text-xs uppercase text-[#a3a6af] bold mb-1">Check-in</p>
                   <p className="text-xs lg:text-xs bold text-[#17191c]">{formatDate(booking.checkIn)}</p>
                 </div>
                 <div>
-                  <p className="text-xs lg:text-xs uppercase tracking-widest text-[#a3a6af] bold mb-1">Check-out</p>
+                  <p className="text-xs lg:text-xs uppercase text-[#a3a6af] bold mb-1">Check-out</p>
                   <p className="text-xs lg:text-xs bold text-[#17191c]">{formatDate(booking.checkOut)}</p>
                 </div>
               </div>

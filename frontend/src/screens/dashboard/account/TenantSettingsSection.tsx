@@ -18,7 +18,7 @@ export default function TenantSettingsSection({ tenant, onSave, isSaving }: Prop
 
   return (
     <form onSubmit={handleSubmit(onSave)} className="flex flex-col gap-4">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <Input label="Timezone" placeholder="Africa/Lagos" {...register("timezone")} />
         <Input label="Currency" placeholder="NGN"          {...register("currency")} />
         <Input label="Locale"   placeholder="en-NG"        {...register("locale")}   />

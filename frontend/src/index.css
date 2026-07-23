@@ -278,7 +278,7 @@ textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #000;
+  background: #ddd;
   border-radius: 10px;
   transition: all 0.5s;
 }

@@ -40,7 +40,7 @@ export default function ChangePinTab() {
   };
 
   return (
-    <div className="rounded-xl border p-5 flex flex-col gap-4" style={{ borderColor: "#e8e6e3" }}>
+    <div className="flex flex-col gap-4" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center gap-3">
         <KeyRound size={16} style={{ color: "#4c4c4c" }} />
         <p className="text-xs bold" style={{ color: "var(--color-ink)" }}>

@@ -24,35 +24,6 @@ export function contextMiddleware(req: Request, res: Response, next: NextFunctio
   });
 }
 
-export function tenantMiddleware(req: Request, _res: Response, next: NextFunction): void {
-  // const host       = req.headers["host"] ?? "";
-  // const baseDomain = process.env.BASE_DOMAIN ?? "yourdomain.com";
-
-  let slug = req.headers["x-tenant-slug"] as string | undefined;
-  logger.info("Slug value:", slug)
-  next()
-
-  // // if (!slug) {
-  // //   const subdomain = host.replace(`.${baseDomain}`, "");
-  // //   if (subdomain && subdomain !== host && subdomain !== "www" && subdomain !== "api") {
-  // //     slug = subdomain;
-  // //   }
-  // // }
-
-  
-
-  // if (!slug) { next(); return; }
-
-  // tenantRepository.findBySlug(slug)
-  //   .then((tenant) => {
-  //     if (!tenant || tenant.status !== "active") {
-  //       res.status(404).json({ success: false, message: "Tenant not found." });
-  //       return;
-  //     }
-  //     req.tenantId   = tenant.id;
-  //     req.tenantSlug = tenant.slug;
-  //     requestContext.set({ tenantId: tenant.id, tenantSlug: tenant.slug });
-  //     next();
-  //   })
-  //   .catch(next);
+export function tenantMiddleware(_req: Request, _res: Response, next: NextFunction): void {
+  next();
 }

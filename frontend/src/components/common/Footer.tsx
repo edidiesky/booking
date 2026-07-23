@@ -26,7 +26,7 @@ export default function Footer() {
 
           {Object.entries(LINKS).map(([group, items]) => (
             <div key={group} className="flex flex-col gap-3">
-              <p className="text-xs uppercase tracking-widest bold"
+              <p className="text-xs uppercase bold"
                  style={{ color: "var(--color-hint-of-grey)" }}>
                 {group}
               </p>

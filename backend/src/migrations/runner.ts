@@ -502,9 +502,13 @@ const migrations: string[] = [
      an email-OTP 2FA flow (reuses the existing Resend integration, no SMS
      provider is configured anywhere in this codebase, so SMS-based 2FA
      isn't an option without adding one first). */
-  `ALTER TABLE users ADD COLUMN IF NOT EXISTS pin_hash            VARCHAR(255);
-  ALTER TABLE users ADD COLUMN IF NOT EXISTS is_phone_verified   BOOLEAN NOT NULL DEFAULT false;
-  ALTER TABLE users ADD COLUMN IF NOT EXISTS two_factor_enabled  BOOLEAN NOT NULL DEFAULT false;`
+  `
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS pin_hash VARCHAR(255);
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS is_phone_verified BOOLEAN NOT NULL DEFAULT false;
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS two_factor_enabled BOOLEAN NOT NULL DEFAULT false;
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS login_with_pin_enabled BOOLEAN NOT NULL DEFAULT false;
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS country_code VARCHAR(5);
+  `
 ];
 
 export async function runMigrations(): Promise<void> {

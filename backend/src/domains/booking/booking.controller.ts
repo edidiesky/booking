@@ -41,6 +41,7 @@ export const GetMyBookingsHandler = asyncHandler(async (req: Request, res: Respo
   res.status(200).json({ success: true, data: bookings });
 });
 
+
 export const GetTenantBookingsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
   const q = req.query as Record<string, string>;

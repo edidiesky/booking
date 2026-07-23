@@ -11,7 +11,7 @@ export default function HowItWorks() {
     <section className="w-full py-20" style={{ backgroundColor: "var(--color-canvas)" }}>
       <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
         <div className="flex flex-col gap-3 mb-14">
-          <p className="text-xs uppercase tracking-widest bold"
+          <p className="text-xs uppercase bold"
              style={{ color: "var(--color-hint-of-grey)" }}>
             How it works
           </p>

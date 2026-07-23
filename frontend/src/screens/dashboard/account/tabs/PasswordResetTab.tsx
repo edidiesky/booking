@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Lock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { showToast } from "@/components/common/Toast";
 import { useChangePasswordMutation } from "@/redux/services/authApi";
@@ -25,11 +24,7 @@ export default function PasswordResetTab() {
   };
 
   return (
-    <div className="rounded-xl border p-5 flex flex-col gap-4 max-w-sm" style={{ borderColor: "#e8e6e3" }}>
-      <div className="flex items-center gap-3">
-        <Lock size={16} style={{ color: "#4c4c4c" }} />
-        <p className="text-xs bold" style={{ color: "var(--color-ink)" }}>Reset your password</p>
-      </div>
+    <div className="p-5 flex flex-col gap-4 max-w-sm" style={{ borderColor: "#e8e6e3" }}>
 
       <Input
         type="password"
