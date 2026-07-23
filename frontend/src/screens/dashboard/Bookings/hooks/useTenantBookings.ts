@@ -1,5 +1,5 @@
 import { useState }                  from "react";
-import { useGetTenantBookingsQuery } from "@/redux/services/bookingApi";
+import { useGetTenantBookingsQuery, useGetTenantBookingStatsQuery } from "@/redux/services/bookingApi";
 import { useCheckInMutation, useCheckOutMutation } from "@/redux/services/bookingApi";
 import { showToast }                 from "@/components/common/Toast";
 import type { BookingStatus }        from "@/types/api";
@@ -14,6 +14,8 @@ export function useTenantBookings() {
     page,
     limit:  10,
   });
+
+  const { data: statsData, isLoading: isStatsLoading } = useGetTenantBookingStatsQuery();
 
   const [checkIn,  { isLoading: checkingIn  }] = useCheckInMutation();
   const [checkOut, { isLoading: checkingOut }] = useCheckOutMutation();
@@ -44,5 +46,6 @@ export function useTenantBookings() {
     statusFilter, setStatusFilter,
     handleCheckIn,  checkingIn,
     handleCheckOut, checkingOut,
+    stats: statsData?.data, isStatsLoading,
   };
 }
