@@ -1,5 +1,5 @@
 import { useState }                  from "react";
-import { useGetTenantPaymentsQuery } from "@/redux/services/paymentApi";
+import { useGetTenantPaymentsQuery, useGetTenantPaymentStatsQuery } from "@/redux/services/paymentApi";
 import type { PaymentStatus, PaymentGateway } from "@/types/api";
 
 export function useTenantPayments() {
@@ -8,6 +8,7 @@ export function useTenantPayments() {
   const [gatewayFilter,  setGatewayFilter]  = useState<PaymentGateway  | "">("");
 
   const { data, isLoading } = useGetTenantPaymentsQuery({ page, limit: 10 });
+  const { data: statsData, isLoading: isStatsLoading } = useGetTenantPaymentStatsQuery();
 
   const allPayments = data?.data ?? [];
 
@@ -22,5 +23,6 @@ export function useTenantPayments() {
     page, setPage,
     statusFilter,  setStatusFilter,
     gatewayFilter, setGatewayFilter,
+    stats: statsData?.data, isStatsLoading,
   };
 }
