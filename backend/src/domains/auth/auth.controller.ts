@@ -53,6 +53,17 @@ export const ChangePasswordHandler = asyncHandler(async (req: Request, res: Resp
   res.status(200).json({ success: true, ...result });
 });
 
+export const RequestPasswordResetHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { email } = req.body as { email: string };
+  const result = await authService.requestPasswordReset(email);
+  res.status(200).json({ success: true, message: result.message });
+});
+
+export const ConfirmPasswordResetHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const result = await authService.confirmPasswordReset(req.body);
+  res.status(200).json({ success: true, message: result.message });
+});
+
 export const ResendOtpHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { email } = req.body as { email: string };
   const result = await authService.resendOtp(email);
