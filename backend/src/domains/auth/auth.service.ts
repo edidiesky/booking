@@ -13,6 +13,7 @@ import logger                 from "../../utils/logger";
 import { requestContext }     from "../../context/requestContext";
 import { JWTPayload, UserType } from "../../types";
 import { withTransaction }    from "@booking/shared";
+import { getDispatcher }      from "../../infra/providers/notification.dispatcher";
 import {
   publishNotifyAuthOtp,
   publishNotifyAuthRegistered,
@@ -21,10 +22,12 @@ import {
 const JWT_EXPIRY_SEC     = 15 * 60;
 const REFRESH_EXPIRY_SEC = 7 * 24 * 60 * 60;
 const ONBOARDING_TTL_SEC = 60 * 60;
+const PASSWORD_RESET_TTL_SEC = 15 * 60;
 
 const onboardingKey = (email: string) => `onboarding:${email}`;
 const refreshKey    = (token: string) => `refresh:${token}`;
 const blocklistKey  = (userId: string) => `blocklist:${userId}`;
+const passwordResetKey = (token: string) => `password-reset:${token}`;
 
 interface OnboardingState {
   step:           "email_sent" | "email_verified" | "complete";
@@ -408,5 +411,67 @@ async refreshToken(token: string): Promise<{ accessToken: string; refreshToken: 
 
     logger.info("password_changed", { event: "password_changed", userId });
     return { message: "Password changed." };
+  },
+
+  // Logged-out flow: request a reset link by email, then confirm with the
+  // token from that link. Token lives in Redis with a TTL, same pattern
+  // as the OTP flows in security.service.ts, single-use, self-expiring,
+  // no schema/migration needed for a short-lived artifact like this.
+  async requestPasswordReset(email: string) {
+    const schema = Joi.object({ email: Joi.string().email().required() });
+    const { error, value } = schema.validate({ email });
+    if (error) throw AppError.badRequest(error.details[0].message);
+
+    const user = await userRepository.findByEmail(value.email as string);
+    // Always respond the same way whether or not the email exists, don't
+    // let this endpoint be used to enumerate registered emails.
+    if (!user) {
+      logger.info("password_reset_requested_unknown_email", { event: "password_reset_requested_unknown_email" });
+      return { message: "If that email is registered, a reset link has been sent." };
+    }
+
+    const token = nanoid(32);
+    await redisClient.set(passwordResetKey(token), user.id, "EX", PASSWORD_RESET_TTL_SEC);
+
+    const resetUrl = `${process.env.WEB_ORIGIN}/reset-password/${token}`;
+    const dispatcher = getDispatcher();
+    await dispatcher.sendEmail(
+      user.email,
+      "Reset your password",
+      `<p>We received a request to reset your password. This link expires in 15 minutes.</p>
+       <p><a href="${resetUrl}">${resetUrl}</a></p>
+       <p>If you didn't request this, you can safely ignore this email.</p>`,
+    );
+
+    logger.info("password_reset_requested", { event: "password_reset_requested", userId: user.id });
+    return { message: "If that email is registered, a reset link has been sent." };
+  },
+
+  async confirmPasswordReset(body: unknown) {
+    const schema = Joi.object({
+      token:    Joi.string().required(),
+      password: Joi.string().min(8).required(),
+    });
+    const { error, value } = schema.validate(body, { abortEarly: false });
+    if (error) throw AppError.badRequest(error.details[0].message);
+    const { token, password } = value as { token: string; password: string };
+
+    const userId = await redisClient.get(passwordResetKey(token));
+    if (!userId) throw AppError.badRequest("This reset link is invalid or has expired.");
+
+    const newHash = await bcrypt.hash(password, 12);
+    await userRepository.updatePasswordHash(userId, newHash);
+    await redisClient.del(passwordResetKey(token));
+
+    // Invalidate any currently-live access token for this user, same
+    // short-lived blocklist logout() already uses (JWT_EXPIRY_SEC, the
+    // remaining lifetime of a normal token). NOT a long block: authenticate()
+    // rejects any token for this userId while the key exists, a long TTL
+    // here would lock the user out of their own account, including a
+    // fresh login with their new password, for as long as the block lasts.
+    await redisClient.set(blocklistKey(userId), "1", "EX", JWT_EXPIRY_SEC);
+
+    logger.info("password_reset_confirmed", { event: "password_reset_confirmed", userId });
+    return { message: "Password reset. You can now sign in with your new password." };
   },
 };
