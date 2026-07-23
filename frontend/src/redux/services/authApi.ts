@@ -104,6 +104,17 @@ export const authApi = apiSlice.injectEndpoints({
         body,
       }),
     }),
+
+    changePassword: builder.mutation<
+      ApiSuccessResponse,
+      { currentPassword: string; newPassword: string }
+    >({
+      query: (body) => ({
+        url: `${AUTH_URL}/password`,
+        method: "PATCH",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -119,4 +130,5 @@ export const {
   useGetMeQuery,
   useRequestPasswordResetMutation,
   useConfirmPasswordResetMutation,
+  useChangePasswordMutation,
 } = authApi;
