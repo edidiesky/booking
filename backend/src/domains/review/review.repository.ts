@@ -121,4 +121,51 @@ export const reviewRepository = {
       totalReviews: total, verifiedCount: verified, ratingDistribution: distribution,
     };
   },
+
+  // Atomic: one query, approval breakdown + avg rating + month-over-month
+  // new-review growth, tenant-wide (all properties/room types).
+  async getStatsForTenant(tenantId: string): Promise<ReviewStats> {
+    const row = await queryOne<{
+      approved_count: string;
+      rejected_count: string;
+      avg_rating: string | null;
+      current_month_count: string;
+      previous_month_count: string;
+    }>(
+      `SELECT
+         COUNT(*) FILTER (WHERE status = 'approved') AS approved_count,
+         COUNT(*) FILTER (WHERE status = 'rejected') AS rejected_count,
+         AVG(rating) FILTER (WHERE status = 'approved') AS avg_rating,
+         COUNT(*) FILTER (WHERE created_at >= date_trunc('month', now())) AS current_month_count,
+         COUNT(*) FILTER (
+           WHERE created_at >= date_trunc('month', now()) - interval '1 month'
+             AND created_at <  date_trunc('month', now())
+         ) AS previous_month_count
+       FROM reviews
+       WHERE tenant_id = $1`,
+      [tenantId],
+    );
+
+    const current  = Number(row?.current_month_count ?? 0);
+    const previous = Number(row?.previous_month_count ?? 0);
+    const growthPct = previous === 0 ? (current > 0 ? 100 : 0) : ((current - previous) / previous) * 100;
+
+    return {
+      approvedCount: Number(row?.approved_count ?? 0),
+      rejectedCount: Number(row?.rejected_count ?? 0),
+      averageRating: row?.avg_rating ? Number(Number(row.avg_rating).toFixed(2)) : 0,
+      currentMonthCount:  current,
+      previousMonthCount: previous,
+      reviewGrowthPct: Math.round(growthPct * 10) / 10,
+    };
+  },
 };
+
+export interface ReviewStats {
+  approvedCount: number;
+  rejectedCount: number;
+  averageRating: number;
+  currentMonthCount:  number;
+  previousMonthCount: number;
+  reviewGrowthPct: number;
+}
