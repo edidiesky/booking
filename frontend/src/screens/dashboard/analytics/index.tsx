@@ -26,18 +26,18 @@ function groupByMonth<T extends { createdAt: string }>(items: T[]) {
     const month = new Date(item.createdAt).toLocaleString("en-NG", { month: "short", year: "2-digit" });
     map[month] = (map[month] ?? 0) + 1;
   });
-  return Object.entries(map).map(([month, count]) => ({ month, count }));
+  return Object.entries(map).map(([date, count]) => ({ date, count }));
 }
 
-function groupRevenueByMonth(payments: { amountNgn: number; status: string; createdAt: string }[]) {
+function groupRevenueByMonth(payments: { amount_ngn: string; status: string; created_at: string }[]) {
   const map: Record<string, number> = {};
   payments
     .filter((p) => p.status === "success")
     .forEach((p) => {
-      const month = new Date(p.createdAt).toLocaleString("en-NG", { month: "short", year: "2-digit" });
-      map[month] = (map[month] ?? 0) + p.amountNgn;
+      const month = new Date(p.created_at).toLocaleString("en-NG", { month: "short", year: "2-digit" });
+      map[month] = (map[month] ?? 0) + Number(p.amount_ngn);
     });
-  return Object.entries(map).map(([month, revenue]) => ({ month, revenue }));
+  return Object.entries(map).map(([date, revenue]) => ({ date, revenue }));
 }
 
 //  Stat card 
@@ -113,8 +113,8 @@ function RevenueTab() {
   const { data, isLoading } = useGetTenantPaymentsQuery({ limit: 200 });
   const payments = data?.data ?? [];
 
-  const totalRevenue  = payments.filter((p) => p.status === "success").reduce((s, p) => s + p.amountNgn, 0);
-  const totalRefunded = payments.filter((p) => p.status === "refunded").reduce((s, p) => s + p.amountNgn, 0);
+  const totalRevenue  = payments.filter((p) => p.status === "success").reduce((s, p) => s + Number(p.amount_ngn), 0);
+  const totalRefunded = payments.filter((p) => p.status === "refunded").reduce((s, p) => s + Number(p.amount_ngn), 0);
   const overTime      = groupRevenueByMonth(payments);
   const chartConfig: ChartConfig = { revenue: { label: "Revenue (₦)", color: "#0f172a" } };
 
