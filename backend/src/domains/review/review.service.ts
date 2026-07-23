@@ -87,6 +87,10 @@ export const reviewService = {
     return reviewRepository.findByTenant(tenantId, page, limit);
   },
 
+  async getTenantReviewStats(tenantId: string) {
+    return reviewRepository.getStatsForTenant(tenantId);
+  },
+
   async respondToReview(reviewId: string, text: string, respondedBy: string) {
     const review = await reviewRepository.addResponse(
       reviewId,
