@@ -237,5 +237,58 @@ export const paymentRepository = {
       [tenantId, limit, offset],
     );
   },
+
+  // Atomic: one query, all status counts + month-over-month volume growth.
+  async getStatsForTenant(tenantId: string): Promise<PaymentStats> {
+    const row = await queryOne<{
+      success_count: string;
+      failed_count: string;
+      pending_count: string;
+      refunded_count: string;
+      current_month_volume: number;
+      previous_month_volume: number;
+    }>(
+      `SELECT
+         COUNT(*) FILTER (WHERE status = 'success')  AS success_count,
+         COUNT(*) FILTER (WHERE status = 'failed')   AS failed_count,
+         COUNT(*) FILTER (WHERE status = 'pending')  AS pending_count,
+         COUNT(*) FILTER (WHERE status = 'refunded') AS refunded_count,
+         COALESCE(SUM(amount_ngn) FILTER (
+           WHERE status = 'success' AND created_at >= date_trunc('month', now())
+         ), 0) AS current_month_volume,
+         COALESCE(SUM(amount_ngn) FILTER (
+           WHERE status = 'success'
+             AND created_at >= date_trunc('month', now()) - interval '1 month'
+             AND created_at <  date_trunc('month', now())
+         ), 0) AS previous_month_volume
+       FROM payments
+       WHERE tenant_id = $1`,
+      [tenantId],
+    );
+
+    const current  = Number(row?.current_month_volume ?? 0);
+    const previous = Number(row?.previous_month_volume ?? 0);
+    const growthPct = previous === 0 ? (current > 0 ? 100 : 0) : ((current - previous) / previous) * 100;
+
+    return {
+      successCount:  Number(row?.success_count ?? 0),
+      failedCount:   Number(row?.failed_count ?? 0),
+      pendingCount:  Number(row?.pending_count ?? 0),
+      refundedCount: Number(row?.refunded_count ?? 0),
+      currentMonthVolumeNgn:  current,
+      previousMonthVolumeNgn: previous,
+      volumeGrowthPct: Math.round(growthPct * 10) / 10,
+    };
+  },
 };
+
+export interface PaymentStats {
+  successCount:  number;
+  failedCount:   number;
+  pendingCount:  number;
+  refundedCount: number;
+  currentMonthVolumeNgn:  number;
+  previousMonthVolumeNgn: number;
+  volumeGrowthPct: number;
+}
 // user_type
