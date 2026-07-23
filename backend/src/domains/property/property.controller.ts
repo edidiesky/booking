@@ -118,6 +118,12 @@ export const GetTenantPropertiesHandler = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data });
 });
 
+export const GetTenantPropertyStatsHandler = asyncHandler(async (req, res) => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const stats = await propertyRepository.getStatsForTenant(req.tenantId);
+  res.status(200).json({ success: true, data: stats });
+});
+
 export const GetPropertyHandler = asyncHandler(async (req, res) => {
   const data = await propertyRepository.findPropertyWithRoomTypes(
     req.params["propertyId"] as string,
