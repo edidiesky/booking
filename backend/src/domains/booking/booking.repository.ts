@@ -47,6 +47,17 @@ function ctx() {
   return requestContext.get() ?? {};
 }
 
+export interface BookingStats {
+  confirmedCount:  number;
+  checkedInCount:  number;
+  checkedOutCount: number;
+  cancelledCount:  number;
+  pendingCount:    number;
+  currentMonthRevenueNgn:  number;
+  previousMonthRevenueNgn: number;
+  revenueGrowthPct: number;
+}
+
 export const bookingRepository = {
   async create(
     data: {
@@ -267,5 +278,53 @@ export const bookingRepository = {
       trackError("booking_count_failed", "booking_repository", "low");
       throw err;
     }
+  },
+
+  // Atomic: one query, all status counts + month-over-month revenue growth
+  // in a single consistent snapshot.
+  async getStatsForTenant(tenantId: string): Promise<BookingStats> {
+    const row = await queryOne<{
+      confirmed_count: string;
+      checked_in_count: string;
+      checked_out_count: string;
+      cancelled_count: string;
+      pending_count: string;
+      current_month_revenue: number;
+      previous_month_revenue: number;
+    }>(
+      `SELECT
+         COUNT(*) FILTER (WHERE status = 'confirmed')        AS confirmed_count,
+         COUNT(*) FILTER (WHERE status = 'checked_in')       AS checked_in_count,
+         COUNT(*) FILTER (WHERE status = 'checked_out')      AS checked_out_count,
+         COUNT(*) FILTER (WHERE status = 'cancelled')        AS cancelled_count,
+         COUNT(*) FILTER (WHERE status = 'pending_payment')  AS pending_count,
+         COALESCE(SUM(total_amount_ngn) FILTER (
+           WHERE status IN ('confirmed', 'checked_in', 'checked_out')
+             AND created_at >= date_trunc('month', now())
+         ), 0) AS current_month_revenue,
+         COALESCE(SUM(total_amount_ngn) FILTER (
+           WHERE status IN ('confirmed', 'checked_in', 'checked_out')
+             AND created_at >= date_trunc('month', now()) - interval '1 month'
+             AND created_at <  date_trunc('month', now())
+         ), 0) AS previous_month_revenue
+       FROM bookings
+       WHERE tenant_id = $1`,
+      [tenantId],
+    );
+
+    const current  = Number(row?.current_month_revenue ?? 0);
+    const previous = Number(row?.previous_month_revenue ?? 0);
+    const growthPct = previous === 0 ? (current > 0 ? 100 : 0) : ((current - previous) / previous) * 100;
+
+    return {
+      confirmedCount:  Number(row?.confirmed_count ?? 0),
+      checkedInCount:  Number(row?.checked_in_count ?? 0),
+      checkedOutCount: Number(row?.checked_out_count ?? 0),
+      cancelledCount:  Number(row?.cancelled_count ?? 0),
+      pendingCount:    Number(row?.pending_count ?? 0),
+      currentMonthRevenueNgn:  current,
+      previousMonthRevenueNgn: previous,
+      revenueGrowthPct: Math.round(growthPct * 10) / 10,
+    };
   },
 };
