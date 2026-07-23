@@ -10,6 +10,7 @@ import {
   RefreshTokenHandler,
   LogoutHandler,
   MeHandler,
+  ChangePasswordHandler,
   ResendOtpHandler,
 } from "./auth.controller";
 import {
@@ -33,5 +34,6 @@ router.post("/login",                validate(loginSchema),          LoginHandle
 router.post("/refresh",              validate(refreshSchema),        RefreshTokenHandler);
 router.post("/logout",               authenticate,                   LogoutHandler);
 router.get("/me",                    authenticate,                   MeHandler);
+router.patch("/password",            authenticate,                   ChangePasswordHandler);
 
 export default router;
