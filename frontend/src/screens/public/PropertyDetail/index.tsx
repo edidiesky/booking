@@ -8,6 +8,7 @@ import PropertyHeader          from "./PropertyHeader";
 import PropertyDescription     from "./PropertyDescription";
 import PropertyAmenities       from "./PropertyAmenities";
 import PropertyCalendar        from "./PropertyCalendar";
+import ProductReview           from "./ProductReview";
 import BookingForm             from "./BookingForm";
 import { usePropertyDetail }   from "./hooks/usePropertyDetail";
 
@@ -95,6 +96,10 @@ export default function PropertyDetail() {
                     liveEvent={liveEvent}
                     availabilitySnapshot={availabilitySnapshot}
                   />
+
+                  {selectedRoomType && (
+                    <ProductReview roomTypeId={selectedRoomType.id} />
+                  )}
                 </div>
 
                 {/* ── right column ── */}
