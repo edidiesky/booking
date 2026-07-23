@@ -62,7 +62,7 @@ export default function StatsGrid({
 
   return (
     <div className="rounded-3xl border border-[var(--color-fog)] bg-[#f5f5f3] overflow-hidden px-1 pt-6 pb-1">
-      <div className="w-full rounded-3xl bg-white grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[var(--color-fog)]">
+      <div className="w-full rounded-3xl bg-white grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[var(--color-fog)]">
         {stats.map(({ id, label, value, sub }) => (
           <div
             key={id}
