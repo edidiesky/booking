@@ -2,7 +2,7 @@ import { apiSlice }    from "./apiSlice";
 import { PAYMENT_URL } from "@/constants/api";
 import type {
   InitializePaymentPayload, InitializePaymentResponse,
-  Payment, PaymentSummary,
+  Payment, PaymentSummary, PaymentStatsResponse,
 } from "@/types/api";
 
 interface PaymentResponse { success: boolean; data: Payment; }
@@ -26,6 +26,11 @@ export const paymentApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["Payment"],
     }),
+
+    getTenantPaymentStats: builder.query<PaymentStatsResponse, void>({
+      query: () => ({ url: `${PAYMENT_URL}/tenant/stats` }),
+      providesTags: ["Payment"],
+    }),
   }),
 });
 
@@ -33,4 +38,5 @@ export const {
   useInitializePaymentMutation,
   useGetPaymentByBookingQuery,
   useGetTenantPaymentsQuery,
+  useGetTenantPaymentStatsQuery,
 } = paymentApi;
