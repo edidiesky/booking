@@ -5,6 +5,8 @@ import PageLoader           from "@/components/common/PageLoader";
 
 const Login          = lazy(() => import("@/screens/auth/login"));
 const Onboarding     = lazy(() => import("@/screens/auth/onboarding"));
+const ResetPassword  = lazy(() => import("@/screens/auth/ResetPassword"));
+const NewPassword    = lazy(() => import("@/screens/auth/NewPassword"));
 
 const wrap = (el: React.ReactNode) => (
   <GuestOnlyRoute>
@@ -13,6 +15,8 @@ const wrap = (el: React.ReactNode) => (
 );
 
 export const authRoutes: RouteObject[] = [
-  { path: "/login",            element: wrap(<Login />)          },
-  { path: "/onboarding",       element: wrap(<Onboarding />)     },
+  { path: "/login",                    element: wrap(<Login />)          },
+  { path: "/onboarding",                element: wrap(<Onboarding />)     },
+  { path: "/reset-password",            element: wrap(<ResetPassword />)  },
+  { path: "/reset-password/:token",     element: wrap(<NewPassword />)    },
 ];
