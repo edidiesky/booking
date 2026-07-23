@@ -1,11 +1,14 @@
-import { useForm }     from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z }           from "zod";
+import { motion }       from "framer-motion";
+import { useForm }      from "react-hook-form";
+import { zodResolver }  from "@hookform/resolvers/zod";
+import { z }            from "zod";
+import { Loader2 }      from "lucide-react";
+import { slide }        from "@/constants/framer";
 import type { Role, AssignRolePayload } from "@/types/api";
 
 const schema = z.object({
   userId:   z.string().uuid("Must be a valid user UUID"),
-  roleSlug: z.enum(["host:admin", "host:staff", "host:inspector"]),
+  roleSlug: z.string().min(1, "Select a role"),
   reason:   z.string().optional(),
 });
 
@@ -19,12 +22,12 @@ interface Props {
 }
 
 const field      = "w-full h-10 px-3 text-xs border rounded-lg outline-none";
-const fieldStyle = { borderColor: "var(--color-fog)", color: "var(--color-ink)" };
+const fieldStyle = { borderColor: "#e8e6e3", color: "#17191c" };
 
 export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: Props) {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
     resolver:      zodResolver(schema),
-    defaultValues: { roleSlug: "host:staff" },
+    defaultValues: { roleSlug: roles[0]?.slug ?? "" },
   });
 
   const submit = async (data: FormData) => {
@@ -32,38 +35,39 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
     if (ok) { reset(); onClose(); }
   };
 
-  // Only host roles are assignable — platform:admin and guest are system-only
-  const assignable = roles.filter((r) =>
-    ["host:admin", "host:staff", "host:inspector"].includes(r.slug)
-  );
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center"
-         style={{ backgroundColor: "rgba(0,0,0,0.45)" }}>
-      <div className="w-full max-w-md rounded-2xl p-8 flex flex-col gap-6"
-           style={{ backgroundColor: "var(--color-canvas)" }}>
-
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm " style={{ color: "var(--color-ink)" }}>Assign Role</h2>
-          <button onClick={onClose} className="text-xl leading-none opacity-40 hover:opacity-100">×</button>
+    <div className="h-[100vh] bg-[#16161639] inset-0 backdrop-blur-sm w-full fixed top-0 left-0 z-[5000] flex items-end md:items-center justify-end md:justify-center px-4">
+      <motion.div
+        variants={slide}
+        initial="initial"
+        animate="enter"
+        exit="exit"
+        className="w-full md:w-[500px] md:max-w-[550px] rounded-2xl pt-6 justify-between relative items-start flex flex-col gap-4 bg-white"
+      >
+        <div className="w-full flex px-8 items-start justify-between gap-1">
+          <div>
+            <h3 className="text-lg text-[#17191c]">Assign Role</h3>
+            <p className="text-xs text-[#777b86] mt-1 max-w-[380px]">
+              Grant a team member one of your tenant's roles.
+            </p>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
-
+        <form onSubmit={handleSubmit(submit)} className="w-full flex flex-col gap-4 px-8">
           <div className="flex flex-col gap-1">
-            <label className="text-xs" style={{ color: "var(--color-muted-stone)" }}>User ID</label>
+            <label className="text-xs" style={{ color: "#777b86" }}>User ID</label>
             <input {...register("userId")} className={field} style={fieldStyle}
               placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
             {errors.userId && <p className="text-xs text-red-500">{errors.userId.message}</p>}
-            <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
+            <p className="text-xs" style={{ color: "#777b86" }}>
               Find user IDs from your backend audit logs or database.
             </p>
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs" style={{ color: "var(--color-muted-stone)" }}>Role</label>
+            <label className="text-xs" style={{ color: "#777b86" }}>Role</label>
             <select {...register("roleSlug")} className={field} style={fieldStyle}>
-              {assignable.map((r) => (
+              {roles.map((r) => (
                 <option key={r.id} value={r.slug}>{r.name}</option>
               ))}
             </select>
@@ -71,27 +75,38 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
+            <label className="text-xs" style={{ color: "#777b86" }}>
               Reason <span className="opacity-50">(optional)</span>
             </label>
             <input {...register("reason")} className={field} style={fieldStyle}
               placeholder="e.g. New property manager" />
           </div>
-
-          <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose}
-              className="flex-1 h-10 rounded-full border text-xs transition-opacity hover:opacity-70"
-              style={{ borderColor: "var(--color-fog)", color: "var(--color-muted-stone)" }}>
-              Cancel
-            </button>
-            <button type="submit" disabled={isSaving}
-              className="flex-1 h-10 rounded-full text-xs transition-opacity hover:opacity-80 disabled:opacity-50"
-              style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
-              {isSaving ? "Assigning..." : "Assign Role"}
-            </button>
-          </div>
         </form>
-      </div>
+
+        <div className="w-full flex px-8 py-4 border-t border-[#e8e6e3] items-center justify-end gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSaving}
+            className="h-9 px-5 text-xs bold rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit(submit)}
+            disabled={isSaving}
+            className="h-9 px-5 text-xs bold rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 size={13} className="animate-spin" />
+                Assigning...
+              </>
+            ) : "Assign Role"}
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 }
