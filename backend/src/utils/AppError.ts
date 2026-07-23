@@ -18,6 +18,7 @@ export class AppError extends Error {
   static notFound(msg = "Resource not found."): AppError      { return new AppError(msg, 404, true); }
   static conflict(msg: string, d?: unknown): AppError         { return new AppError(msg, 409, true, d); }
   static unprocessable(msg: string, d?: unknown): AppError    { return new AppError(msg, 422, true, d); }
+  static tooManyRequests(msg = "Too many requests."): AppError { return new AppError(msg, 429, true); }
   static serviceUnavailable(msg = "Service temporarily unavailable."): AppError { return new AppError(msg, 503, true); }
   static internal(msg = "An unexpected error occurred."): AppError { return new AppError(msg, 500, false); }
 }

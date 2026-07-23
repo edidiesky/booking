@@ -22,6 +22,7 @@ import sseRouter      from "./domains/sse/sse.routes";
 import roleRoutes       from "./domains/role/role.routes";
 import permissionRoutes from "./domains/permission/permission.routes";
 import renterRoutes from "./domains/renter/renter.routes";
+import securityRoutes from "./domains/security/security.routes";
 const app = express();
 
 if (!process.env.WEB_ORIGIN) throw new Error("WEB_ORIGIN env var not set.");
@@ -58,6 +59,7 @@ app.use("/api/v1/bookings",   tenantMiddleware, bookingRoutes);
 app.use("/api/v1/payments",   tenantMiddleware, paymentRoutes);
 app.use("/api/v1/escrow",     tenantMiddleware, escrowRoutes);
 app.use("/api/v1/profile",    profileRoutes);
+app.use("/api/v1/security",   securityRoutes);
 app.use("/api/v1/audit",      tenantMiddleware, auditRoutes);
 app.use("/api/v1/roles",       tenantMiddleware, roleRoutes);
 app.use("/api/v1/permissions", tenantMiddleware, permissionRoutes);
@@ -66,4 +68,3 @@ app.use(NotFound);
 app.use(errorHandler);
 
 export { app };
-

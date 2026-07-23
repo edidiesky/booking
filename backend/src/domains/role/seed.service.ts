@@ -21,7 +21,7 @@ class SeedService {
 
     // Step 3 - resolve IDs then seed role_permissions
     const [allRoles, allPerms] = await Promise.all([
-      roleRepository.findAll(),
+      roleRepository.findAllSystem(),
       permissionRepository.findAll(),
     ]);
 

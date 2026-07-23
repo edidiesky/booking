@@ -14,6 +14,34 @@ export const GetTenantRolesHandler = asyncHandler(async (req: Request, res: Resp
   res.status(200).json({ success: true, data: roles });
 });
 
+export const GetTenantRoleListHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const roles = await roleService.listRolesForTenant(req.tenantId);
+  res.status(200).json({ success: true, data: roles });
+});
+
+export const GetRoleDetailHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const { roleId } = req.params as { roleId: string };
+  const detail = await roleService.getRoleDetail(roleId, req.tenantId);
+  res.status(200).json({ success: true, data: detail });
+});
+
+export const CreateCustomRoleHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user)     throw AppError.unauthorized();
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const detail = await roleService.createCustomRole(req.tenantId, req.user.userId, req.body);
+  res.status(201).json({ success: true, message: "Role created.", data: detail });
+});
+
+export const UpdateRolePermissionsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user)     throw AppError.unauthorized();
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const { roleId } = req.params as { roleId: string };
+  const detail = await roleService.updateRolePermissions(roleId, req.tenantId, req.user.userId, req.body);
+  res.status(200).json({ success: true, message: "Role updated.", data: detail });
+});
+
 export const GetUserRoleHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
   const { userId } = req.params as { userId: string };

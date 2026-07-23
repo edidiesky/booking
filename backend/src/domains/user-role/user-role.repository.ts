@@ -95,6 +95,21 @@ export const userRoleRepository = {
     );
   },
 
+  // Active holders of a specific role within a tenant, for the role-detail
+  // "team members with this role" list.
+  async findActiveByRole(roleId: string, tenantId: string): Promise<
+    Array<UserRole & { first_name?: string; last_name?: string; email?: string }>
+  > {
+    return query(
+      `SELECT ur.*, u.first_name, u.last_name, u.email
+       FROM user_roles ur
+       JOIN users u ON u.id = ur.user_id
+       WHERE ur.role_id = $1 AND ur.tenant_id = $2 AND ur.is_active = true
+       ORDER BY u.first_name ASC`,
+      [roleId, tenantId],
+    );
+  },
+
   async deactivate(userId: string, tenantId: string): Promise<void> {
     await query(
       `UPDATE user_roles SET is_active = false, updated_at = now()

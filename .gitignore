@@ -23,3 +23,8 @@ vault.sh
 dist/
 node_modules/
 *.tsbuildinfo
+
+
+
+git add frontend/src/screens/guest/Profile/tabs/TripsTab.tsx
+git commit -m "fix(profile): read active tab from URL search param for deep-linkable tabs"

@@ -14,7 +14,7 @@ const DashboardPayments = lazy(() => import("@/screens/dashboard/Payment"));
 const DashboardEscrow = lazy(() => import("@/screens/dashboard/Escrow"));
 const DashboardRoles = lazy(() => import("@/screens/dashboard/Roles"));
 const DashboardCalendar = lazy(() => import("@/screens/dashboard/calendar"));
-const DashboardAccount = lazy(() => import("@/screens/dashboard/Account"));
+const DashboardAccount = lazy(() => import("@/screens/dashboard/account"));
 const PropertyDetail = lazy(
   () => import("@/screens/dashboard/Properties/PropertyDetail"),
 );

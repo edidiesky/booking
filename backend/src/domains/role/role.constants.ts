@@ -1,5 +1,18 @@
 import { SeedRole, SeedPermission, SeedRolePermission, RESOURCE, ACTION } from "../../types";
 
+export const RESOURCE_CATEGORY_LABEL: Record<string, string> = {
+  [RESOURCE.BOOKING]:    "Booking Management",
+  [RESOURCE.PROPERTY]:   "Property Management",
+  [RESOURCE.ROOM_TYPE]:  "Room Type Management",
+  [RESOURCE.PAYMENT]:    "Payment Management",
+  [RESOURCE.ESCROW]:     "Escrow Management",
+  [RESOURCE.TENANT]:     "Tenant Settings",
+  [RESOURCE.USER]:       "User Management",
+  [RESOURCE.PERMISSION]: "Permission Management",
+  [RESOURCE.ROLE]:       "Role Management",
+  [RESOURCE.REPORT]:     "Reporting",
+};
+
 export const ROLE_SEED: SeedRole[] = [
   {
     name:        "Platform Admin",
@@ -143,8 +156,8 @@ export const ROLE_PERMISSION_SEED: SeedRolePermission[] = [
   { role_slug: "guest", resource: RESOURCE.PROPERTY, action: ACTION.READ   },
 ];
 
-export const ORG_ASSIGNABLE_ROLE_SLUGS: string[] = [
-  "host:admin",
-  "host:staff",
-  "host:inspector",
-];
+// Note: role assignment is no longer gated by a hardcoded slug list here.
+// role.service#assignRole validates against the actual roles visible to
+// the tenant (system roles + that tenant's own custom roles) via the DB,
+// so a newly created custom role is assignable immediately without a
+// code change or redeploy.

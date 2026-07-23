@@ -1,8 +1,9 @@
 import { apiSlice }  from "./apiSlice";
 import { ROLE_URL }  from "@/constants/api";
 import type {
-  RoleListResponse, UserRoleAssignment,
-  AssignRolePayload, GrantPermissionPayload,
+  RoleListResponse, UserRoleAssignment, Role, RoleDetail, RoleDetailResponse,
+  AssignRolePayload, GrantPermissionPayload, CreateCustomRolePayload,
+  UpdateRolePermissionsPayload,
   UserPermissionOverride, ResolvedPermissions,
   ApiSuccessResponse,
 } from "@/types/api";
@@ -13,11 +14,88 @@ interface PermOverrideResponse   { success: boolean; data: UserPermissionOverrid
 interface PermOverrideListResp   { success: boolean; data: UserPermissionOverride[]; }
 interface ResolvedPermsResponse  { success: boolean; data: ResolvedPermissions;      }
 
+interface RawRole {
+  id: string; name: string; slug: string; description: string;
+  is_system: boolean; tenant_id: string | null;
+  created_at: string; updated_at: string;
+}
+interface RawPermission {
+  id: string; resource: string; action: string; description?: string; category: string;
+}
+interface RawRoleMember {
+  user_id: string; first_name?: string; last_name?: string; email?: string; assigned_at: string;
+}
+interface RawRoleDetail {
+  role: RawRole;
+  includedPermissions: RawPermission[];
+  availablePermissions: RawPermission[];
+  members: RawRoleMember[];
+}
+
+function toRole(raw: RawRole): Role {
+  return {
+    id: raw.id, name: raw.name, slug: raw.slug, description: raw.description,
+    isSystem: raw.is_system, tenantId: raw.tenant_id,
+    createdAt: raw.created_at, updatedAt: raw.updated_at,
+  };
+}
+
+function toRoleDetail(raw: RawRoleDetail): RoleDetail {
+  return {
+    role: toRole(raw.role),
+    includedPermissions: raw.includedPermissions,
+    availablePermissions: raw.availablePermissions,
+    members: raw.members.map((m) => ({
+      userId: m.user_id, firstName: m.first_name, lastName: m.last_name,
+      email: m.email, assignedAt: m.assigned_at,
+    })),
+  };
+}
+
 export const roleApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     listRoles: builder.query<RoleListResponse, void>({
       query: () => ({ url: ROLE_URL }),
+      transformResponse: (r: { success: boolean; data: RawRole[] }) => ({
+        success: r.success, data: r.data.map(toRole),
+      }),
       providesTags: ["Role"],
+    }),
+
+    listTenantRoles: builder.query<RoleListResponse, void>({
+      query: () => ({ url: `${ROLE_URL}/tenant/list` }),
+      transformResponse: (r: { success: boolean; data: RawRole[] }) => ({
+        success: r.success, data: r.data.map(toRole),
+      }),
+      providesTags: ["Role"],
+    }),
+
+    getRoleDetail: builder.query<RoleDetailResponse, string>({
+      query: (roleId) => ({ url: `${ROLE_URL}/tenant/roles/${roleId}` }),
+      transformResponse: (r: { success: boolean; data: RawRoleDetail }) => ({
+        success: r.success, data: toRoleDetail(r.data),
+      }),
+      providesTags: (_r, _e, roleId) => [{ type: "Role", id: roleId }],
+    }),
+
+    createCustomRole: builder.mutation<RoleDetailResponse, CreateCustomRolePayload>({
+      query: (body) => ({ url: `${ROLE_URL}/tenant/roles`, method: "POST", body }),
+      transformResponse: (r: { success: boolean; data: RawRoleDetail }) => ({
+        success: r.success, data: toRoleDetail(r.data),
+      }),
+      invalidatesTags: ["Role"],
+    }),
+
+    updateRolePermissions: builder.mutation<RoleDetailResponse, UpdateRolePermissionsPayload>({
+      query: ({ roleId, permissionIds }) => ({
+        url: `${ROLE_URL}/tenant/roles/${roleId}/permissions`,
+        method: "PATCH",
+        body: { permissionIds },
+      }),
+      transformResponse: (r: { success: boolean; data: RawRoleDetail }) => ({
+        success: r.success, data: toRoleDetail(r.data),
+      }),
+      invalidatesTags: (_r, _e, { roleId }) => [{ type: "Role", id: roleId }, "Role"],
     }),
 
     getTenantRoles: builder.query<UserRoleListResponse, void>({
@@ -67,6 +145,10 @@ export const roleApi = apiSlice.injectEndpoints({
 
 export const {
   useListRolesQuery,
+  useListTenantRolesQuery,
+  useGetRoleDetailQuery,
+  useCreateCustomRoleMutation,
+  useUpdateRolePermissionsMutation,
   useGetTenantRolesQuery,
   useGetUserRoleQuery,
   useAssignRoleMutation,

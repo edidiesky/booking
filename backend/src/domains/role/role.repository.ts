@@ -10,6 +10,7 @@ export interface Role {
   slug:        string;
   description: string;
   is_system:   boolean;
+  tenant_id:   string | null;
   created_at:  Date;
   updated_at:  Date;
 }
@@ -20,9 +21,9 @@ export const roleRepository = {
   async seed(roles: SeedRole[]): Promise<void> {
     for (const r of roles) {
       await query(
-        `INSERT INTO roles (name, slug, description, is_system)
-         VALUES ($1, $2, $3, $4)
-         ON CONFLICT (slug) DO UPDATE
+        `INSERT INTO roles (name, slug, description, is_system, tenant_id)
+         VALUES ($1, $2, $3, $4, NULL)
+         ON CONFLICT (slug) WHERE tenant_id IS NULL DO UPDATE
            SET name        = EXCLUDED.name,
                description = EXCLUDED.description,
                updated_at  = now()`,
@@ -40,18 +41,33 @@ export const roleRepository = {
     return queryOne<Role>(`SELECT * FROM roles WHERE id = $1`, [id]);
   },
 
-  async findAll(): Promise<Role[]> {
-    return query<Role>(`SELECT * FROM roles ORDER BY is_system DESC, name ASC`);
+  // System roles (tenant_id IS NULL) are visible to everyone. Custom roles
+  // are scoped to the tenant that created them, never leaked cross-tenant.
+  async findAllForTenant(tenantId: string): Promise<Role[]> {
+    return query<Role>(
+      `SELECT * FROM roles WHERE tenant_id IS NULL OR tenant_id = $1
+       ORDER BY is_system DESC, name ASC`,
+      [tenantId],
+    );
   },
 
-  async create(data: { name: string; slug: string; description: string; is_system?: boolean }): Promise<Role> {
+  // Platform-wide system roles only, used where there's no tenant context
+  // (e.g. the public role list endpoint).
+  async findAllSystem(): Promise<Role[]> {
+    return query<Role>(`SELECT * FROM roles WHERE tenant_id IS NULL ORDER BY name ASC`);
+  },
+
+  async create(data: {
+    name: string; slug: string; description: string;
+    is_system?: boolean; tenant_id: string | null;
+  }): Promise<Role> {
     try {
       const row = await queryOne<Role>(
-        `INSERT INTO roles (name, slug, description, is_system)
-         VALUES ($1, $2, $3, $4) RETURNING *`,
-        [data.name, data.slug, data.description, data.is_system ?? false]
+        `INSERT INTO roles (name, slug, description, is_system, tenant_id)
+         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+        [data.name, data.slug, data.description, data.is_system ?? false, data.tenant_id]
       );
-      logger.info("role_created", { event: "role_created", slug: data.slug, ...ctx() });
+      logger.info("role_created", { event: "role_created", slug: data.slug, tenantId: data.tenant_id, ...ctx() });
       return row!;
     } catch (err) {
       trackError("role_create_failed", "role_repository", "medium");
