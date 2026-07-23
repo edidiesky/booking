@@ -12,6 +12,7 @@ import type {
   ApiSuccessResponse,
   PropertyWithRoomTypes,
   RoomTypeWithOccupancy,
+  PropertyStatsResponse,
 } from "@/types/api";
 
 interface PropertiesResponse {
@@ -63,6 +64,10 @@ export const propertyApi = apiSlice.injectEndpoints({
       query: ({ page = 1, limit = 20 } = {}) => ({
         url: `${PROPERTY_URL}/mine?page=${page}&limit=${limit}`,
       }),
+      providesTags: ["Property"],
+    }),
+    getTenantPropertyStats: builder.query<PropertyStatsResponse, void>({
+      query: () => ({ url: `${PROPERTY_URL}/mine/stats` }),
       providesTags: ["Property"],
     }),
     getPropertyById: builder.query<PropertyResponse, string>({
@@ -192,6 +197,7 @@ export const {
   useBlockDatesMutation,
   useDeletePropertyMutation,
   useGetMyPropertiesQuery,
+  useGetTenantPropertyStatsQuery,
   useGetPropertyDetailQuery,
   useGetRoomTypeDetailQuery,
 } = propertyApi;
