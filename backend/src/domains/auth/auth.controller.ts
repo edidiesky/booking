@@ -47,6 +47,12 @@ export const MeHandler = asyncHandler(async (req: Request, res: Response): Promi
   res.status(200).json({ success: true, data: req.user });
 });
 
+export const ChangePasswordHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) throw AppError.unauthorized();
+  const result = await authService.changePassword(req.user.userId, req.body);
+  res.status(200).json({ success: true, ...result });
+});
+
 export const ResendOtpHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { email } = req.body as { email: string };
   const result = await authService.resendOtp(email);
