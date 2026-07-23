@@ -382,4 +382,54 @@ export const propertyRepository = {
     [propertyId],
   );
 },
+
+// Atomic: one query, all status counts + month-over-month new-listing growth.
+async getStatsForTenant(tenantId: string): Promise<PropertyStats> {
+  const row = await queryOne<{
+    active_count: string;
+    draft_count: string;
+    paused_count: string;
+    archived_count: string;
+    current_month_new: string;
+    previous_month_new: string;
+  }>(
+    `SELECT
+       COUNT(*) FILTER (WHERE status = 'active')   AS active_count,
+       COUNT(*) FILTER (WHERE status = 'draft')    AS draft_count,
+       COUNT(*) FILTER (WHERE status = 'paused')   AS paused_count,
+       COUNT(*) FILTER (WHERE status = 'archived') AS archived_count,
+       COUNT(*) FILTER (WHERE created_at >= date_trunc('month', now())) AS current_month_new,
+       COUNT(*) FILTER (
+         WHERE created_at >= date_trunc('month', now()) - interval '1 month'
+           AND created_at <  date_trunc('month', now())
+       ) AS previous_month_new
+     FROM properties
+     WHERE tenant_id = $1`,
+    [tenantId],
+  );
+
+  const current  = Number(row?.current_month_new ?? 0);
+  const previous = Number(row?.previous_month_new ?? 0);
+  const growthPct = previous === 0 ? (current > 0 ? 100 : 0) : ((current - previous) / previous) * 100;
+
+  return {
+    activeCount:   Number(row?.active_count ?? 0),
+    draftCount:    Number(row?.draft_count ?? 0),
+    pausedCount:   Number(row?.paused_count ?? 0),
+    archivedCount: Number(row?.archived_count ?? 0),
+    currentMonthNewListings:  current,
+    previousMonthNewListings: previous,
+    newListingsGrowthPct: Math.round(growthPct * 10) / 10,
+  };
+},
 };
+
+export interface PropertyStats {
+  activeCount:   number;
+  draftCount:    number;
+  pausedCount:   number;
+  archivedCount: number;
+  currentMonthNewListings:  number;
+  previousMonthNewListings: number;
+  newListingsGrowthPct: number;
+}
