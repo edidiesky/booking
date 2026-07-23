@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { X } from "lucide-react";
+import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
+import { slide } from "@/constants/framer";
 import { useListRolesQuery, useCreateCustomRoleMutation, useGetRoleDetailQuery } from "@/redux/services/roleApi";
 import { showToast } from "@/components/common/Toast";
 
@@ -8,10 +10,6 @@ interface Props {
   onCreated: (roleId: string) => void;
 }
 
-// Reuses an existing system role's permission list as the checklist source
-// (host:admin has every permission relevant to a tenant), rather than a
-// second endpoint just for "all permissions", since role detail already
-// returns includedPermissions + availablePermissions for any role id.
 export default function CreateRoleModal({ onClose, onCreated }: Props) {
   const { data: systemRoles } = useListRolesQuery();
   const hostAdminId = systemRoles?.data.find((r) => r.slug === "host:admin")?.id;
@@ -52,43 +50,52 @@ export default function CreateRoleModal({ onClose, onCreated }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden flex flex-col" style={{ maxHeight: "85vh" }}>
-        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "#e8e6e3" }}>
-          <h4 className="text-sm bold" style={{ color: "var(--color-ink)" }}>Create Custom Role</h4>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-[#f2f0ed]">
-            <X size={16} />
-          </button>
+    <div className="h-[100vh] bg-[#16161639] inset-0 backdrop-blur-sm w-full fixed top-0 left-0 z-[5000] flex items-end md:items-center justify-end md:justify-center px-4">
+      <motion.div
+        variants={slide}
+        initial="initial"
+        animate="enter"
+        exit="exit"
+        className="w-full md:w-[500px] md:max-w-[550px] rounded-2xl pt-6 justify-between relative items-start flex flex-col gap-4 bg-white overflow-hidden"
+        style={{ maxHeight: "85vh" }}
+      >
+        <div className="w-full flex px-8 items-start justify-between gap-1">
+          <div>
+            <h3 className="text-lg text-[#17191c]">Create Custom Role</h3>
+            <p className="text-xs text-[#777b86] mt-1 max-w-[380px]">
+              Name your role and choose exactly what it can access.
+            </p>
+          </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5">
+        <div className="w-full flex-1 overflow-y-auto px-8 flex flex-col gap-5">
           <div className="flex flex-col gap-1">
-            <label className="text-xs bold" style={{ color: "var(--color-ink)" }}>Role Name</label>
+            <label className="text-xs" style={{ color: "#777b86" }}>Role Name</label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Name your role"
               className="h-10 px-3 text-xs border rounded-lg outline-none"
-              style={{ borderColor: "#e8e6e3" }}
+              style={{ borderColor: "#e8e6e3", color: "#17191c" }}
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-xs bold" style={{ color: "var(--color-ink)" }}>Role Description</label>
+            <label className="text-xs" style={{ color: "#777b86" }}>Role Description</label>
             <input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe your role"
               className="h-10 px-3 text-xs border rounded-lg outline-none"
-              style={{ borderColor: "#e8e6e3" }}
+              style={{ borderColor: "#e8e6e3", color: "#17191c" }}
             />
           </div>
 
           {Object.entries(grouped).map(([category, perms]) => (
             <div key={category}>
-              <p className="text-xs bold mb-2" style={{ color: "var(--color-ink)" }}>{category}</p>
+              <p className="text-xs bold mb-2" style={{ color: "#17191c" }}>{category}</p>
               <div className="flex flex-col gap-2">
                 {perms.map((p) => (
-                  <label key={p.id} className="flex items-center gap-2 text-xs" style={{ color: "var(--color-ink)" }}>
+                  <label key={p.id} className="flex items-center gap-2 text-xs" style={{ color: "#17191c" }}>
                     <input
                       type="checkbox"
                       checked={selected.has(p.id)}
@@ -102,20 +109,30 @@ export default function CreateRoleModal({ onClose, onCreated }: Props) {
           ))}
         </div>
 
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t" style={{ borderColor: "#e8e6e3" }}>
-          <button onClick={onClose} className="text-xs bold px-4 py-2" style={{ color: "#777b86" }}>
+        <div className="w-full flex px-8 py-4 border-t border-[#e8e6e3] items-center justify-end gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={creating}
+            className="h-9 px-5 text-xs bold rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
+          >
             Cancel
           </button>
           <button
+            type="button"
             onClick={handleCreate}
             disabled={creating || !name.trim() || selected.size === 0}
-            className="text-xs bold px-5 py-2 rounded-full disabled:opacity-50"
-            style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+            className="h-9 px-5 text-xs bold rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
           >
-            {creating ? "Creating..." : "Create Role"}
+            {creating ? (
+              <>
+                <Loader2 size={13} className="animate-spin" />
+                Creating...
+              </>
+            ) : "Create Role"}
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
