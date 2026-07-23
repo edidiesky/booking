@@ -1,5 +1,6 @@
 import bcrypt  from "bcryptjs";
 import jwt     from "jsonwebtoken";
+import Joi     from "joi";
 import { nanoid } from "nanoid";
 import { v4 as uuid } from "uuid";
 import redisClient from "../../config/redis";
@@ -385,5 +386,27 @@ async refreshToken(token: string): Promise<{ accessToken: string; refreshToken: 
       refreshToken,
       user: { id: userId, firstName: user?.first_name, lastName: user?.last_name, userType, tenantId },
     };
+  },
+
+  async changePassword(userId: string, body: unknown) {
+    const schema = Joi.object({
+      currentPassword: Joi.string().required(),
+      newPassword:     Joi.string().min(8).required(),
+    });
+    const { error, value } = schema.validate(body, { abortEarly: false });
+    if (error) throw AppError.badRequest(error.details[0].message);
+    const { currentPassword, newPassword } = value as { currentPassword: string; newPassword: string };
+
+    const user = await userRepository.findByIdWithSecrets(userId);
+    if (!user) throw AppError.notFound("User.");
+    if (!(await bcrypt.compare(currentPassword, user.password_hash))) {
+      throw AppError.unauthorized("Current password is incorrect.");
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 12);
+    await userRepository.updatePasswordHash(userId, newHash);
+
+    logger.info("password_changed", { event: "password_changed", userId });
+    return { message: "Password changed." };
   },
 };
