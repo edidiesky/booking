@@ -1,5 +1,5 @@
 import { PoolClient } from "pg";
-import { queryOne } from "@booking/shared";
+import { query, queryOne } from "@booking/shared";
 import { UserType, UserStatus } from "../../types";
 import { trackError } from "../../utils/metrics";
 
@@ -15,17 +15,23 @@ export interface User {
   tenant_id?:        string;
   status:            UserStatus;
   is_email_verified: boolean;
+  is_phone_verified: boolean;
+  two_factor_enabled: boolean;
+  login_with_pin_enabled: boolean;
+  country_code?:     string;
+  pin_hash?:         string;
   last_active_at?:   Date;
   created_at:        Date;
   updated_at:        Date;
 }
 
-export type UserWithoutHash = Omit<User, "password_hash">;
+export type UserWithoutHash = Omit<User, "password_hash" | "pin_hash">;
 
 const SELECT_WITHOUT_HASH = `
   id, email, phone, first_name, last_name, profile_image,
-  user_type, tenant_id, status, is_email_verified, last_active_at,
-  created_at, updated_at
+  user_type, tenant_id, status, is_email_verified, is_phone_verified,
+  two_factor_enabled, login_with_pin_enabled, country_code,
+  last_active_at, created_at, updated_at
 `;
 
 export const userRepository = {
@@ -41,6 +47,13 @@ export const userRepository = {
     return queryOne<UserWithoutHash>(
       `SELECT ${SELECT_WITHOUT_HASH} FROM users WHERE id = $1`, [id]
     );
+  },
+
+  // Includes password_hash/pin_hash/otp_code_hash, only for internal
+  // verification logic (PIN check, OTP check, password confirm). Never
+  // return this shape directly in an API response.
+  async findByIdWithSecrets(id: string): Promise<User | null> {
+    return queryOne<User>(`SELECT * FROM users WHERE id = $1`, [id]);
   },
 
   async create(data: {
@@ -78,6 +91,8 @@ export const userRepository = {
     update: Partial<Pick<User,
       "status" | "is_email_verified" | "first_name" | "last_name"
       | "phone" | "profile_image" | "last_active_at" | "tenant_id"
+      | "is_phone_verified" | "two_factor_enabled" | "pin_hash"
+      | "login_with_pin_enabled" | "country_code"
     >>,
     client?: PoolClient
   ): Promise<UserWithoutHash | null> {
@@ -100,6 +115,16 @@ export const userRepository = {
 
     if (client) return (await client.query(sql, values)).rows[0] as UserWithoutHash | null ?? null;
     return queryOne<UserWithoutHash>(sql, values);
+  },
+
+  // Deliberately separate from updateById: password_hash isn't in that
+  // method's allowlist, so a caller can't accidentally overwrite it via a
+  // generic partial-update call, this is the one explicit path for it.
+  async updatePasswordHash(id: string, passwordHash: string): Promise<void> {
+    await query(
+      `UPDATE users SET password_hash = $1, updated_at = now() WHERE id = $2`,
+      [passwordHash, id],
+    );
   },
 
   async emailExists(email: string): Promise<boolean> {
