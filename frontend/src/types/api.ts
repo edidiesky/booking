@@ -286,6 +286,22 @@ export type BookingStatus =
   | "cancelled"
   | "refunded";
 
+export interface BookingStats {
+  confirmedCount:  number;
+  checkedInCount:  number;
+  checkedOutCount: number;
+  cancelledCount:  number;
+  pendingCount:    number;
+  currentMonthRevenueNgn:  number;
+  previousMonthRevenueNgn: number;
+  revenueGrowthPct: number;
+}
+
+export interface BookingStatsResponse {
+  success: boolean;
+  data:    BookingStats;
+}
+
 export interface Booking {
   bookingId:        string;
   bookingRef:       string;
@@ -356,6 +372,36 @@ export interface TenantBookingQueryParams {
 
 export type PaymentStatus  = "pending" | "success" | "failed" | "refunded";
 export type PaymentGateway = "paystack" | "flutterwave";
+export interface PaymentStats {
+  successCount:  number;
+  failedCount:   number;
+  pendingCount:  number;
+  refundedCount: number;
+  currentMonthVolumeNgn:  number;
+  previousMonthVolumeNgn: number;
+  volumeGrowthPct: number;
+}
+
+export interface PaymentStatsResponse {
+  success: boolean;
+  data:    PaymentStats;
+}
+
+export interface PropertyStats {
+  activeCount:   number;
+  draftCount:    number;
+  pausedCount:   number;
+  archivedCount: number;
+  currentMonthNewListings:  number;
+  previousMonthNewListings: number;
+  newListingsGrowthPct: number;
+}
+
+export interface PropertyStatsResponse {
+  success: boolean;
+  data:    PropertyStats;
+}
+
 export interface PaymentSummary {
   id:                   string;
   booking_id:           string;
@@ -416,7 +462,6 @@ export interface PaymentListResponse {
   data:    Payment[];
 }
 
-
 //  Escrow 
 
 export type EscrowStatus =
@@ -433,14 +478,35 @@ export interface Escrow {
   platformFeeNgn:  number;
   hostPayoutNgn:   number;
   status:          EscrowStatus;
+  heldAt:          string;
   releasedAt?:     string;
   refundedAt?:     string;
+  refundAmountNgn?: number;
   createdAt:       string;
+  updatedAt:       string;
+  // joined in from bookings by the list endpoint
+  bookingRef:      string;
+  checkIn:         string;
+  checkOut:        string;
 }
 
 export interface EscrowListResponse {
   success: boolean;
   data:    Escrow[];
+}
+
+export interface EscrowStats {
+  held:     { count: number; amountNgn: number };
+  released: { count: number; amountNgn: number };
+  refunded: { count: number; amountNgn: number };
+  currentMonthVolumeNgn:  number;
+  previousMonthVolumeNgn: number;
+  volumeGrowthPct: number;
+}
+
+export interface EscrowStatsResponse {
+  success: boolean;
+  data:    EscrowStats;
 }
 
 //  Audit 
