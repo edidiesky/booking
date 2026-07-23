@@ -46,3 +46,11 @@ export const GetTenantPaymentsHandler = asyncHandler(
     res.status(200).json({ success: true, data: payments });
   }
 );
+
+export const GetTenantPaymentStatsHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+    const stats = await paymentRepository.getStatsForTenant(req.tenantId);
+    res.status(200).json({ success: true, data: stats });
+  }
+);
