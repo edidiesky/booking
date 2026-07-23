@@ -43,6 +43,14 @@ export const GetTenantReviewsHandler = asyncHandler(
   },
 );
 
+export const GetTenantReviewStatsHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+    const stats = await reviewService.getTenantReviewStats(req.tenantId);
+    res.status(200).json({ success: true, data: stats });
+  },
+);
+
 export const RespondToReviewHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     if (!req.user) throw AppError.unauthorized();
