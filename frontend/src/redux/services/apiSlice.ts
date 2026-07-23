@@ -21,6 +21,7 @@ export const apiSlice = createApi({
     "Renter",
     "Permission",
     "Security",
+    "Review",
   ],
   endpoints: () => ({}),
 });
