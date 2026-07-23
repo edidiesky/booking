@@ -67,9 +67,9 @@ export function useOnboarding(userChoice: UserChoice) {
     try {
       const result = await registerGuest({ email: pendingEmail, ...data }).unwrap();
       dispatch(setCredentials({
-        user:         result.user as unknown as User,
-        accessToken:  result.accessToken,
-        refreshToken: result.refreshToken,
+        user:         result.data.user as unknown as User,
+        accessToken:  result.data.accessToken,
+        refreshToken: result.data.refreshToken,
       }));
       showToast("Account created! Welcome.", "success");
       dispatch(resetOnboarding());
@@ -97,9 +97,9 @@ export function useOnboarding(userChoice: UserChoice) {
         platformFeePct: propertyData.platformFeePct,
       }).unwrap();
       dispatch(setCredentials({
-        user:         result.user as unknown as User,
-        accessToken:  result.accessToken,
-        refreshToken: result.refreshToken,
+        user:         result.data.user as unknown as User,
+        accessToken:  result.data.accessToken,
+        refreshToken: result.data.refreshToken,
       }));
       showToast("Account created! Welcome to your dashboard.", "success");
       dispatch(resetOnboarding());
