@@ -1,10 +1,8 @@
-
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { selectCurrentUser } from "@/redux/slices/authSlice";
-import { useGetAllStoresQuery } from "@/redux/services/storeApi";
 import { useRef } from "react";
 
 
@@ -12,16 +10,9 @@ export default function Hero() {
   const currentUser = useSelector(selectCurrentUser);
   const navigate = useNavigate();
   const stripRef = useRef<HTMLDivElement>(null);
-
-  const { data: storesData } = useGetAllStoresQuery(
-    {},
-    { skip: !currentUser }
-  );
-  const firstStore = storesData?.data?.[0];
-
   const handleCta = () => {
     if (!currentUser) { navigate("/onboarding"); return; }
-    navigate(firstStore ? `/dashboard/store/${firstStore._id}` : "/onboarding");
+    navigate(currentUser.userType.startsWith("host:") ? "/dashboard" : "/trips");
   };
 
   const { scrollYProgress } = useScroll({
@@ -68,7 +59,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xs lg:text-lg text-center leading-relaxed max-w-md"
+            className="text-sm lg:text-lg text-center leading-relaxed max-w-md"
             style={{
               color: "var(--color-muted-stone)",
               letterSpacing: "-0.009em",
@@ -86,7 +77,7 @@ export default function Hero() {
           >
             <button
               onClick={handleCta}
-              className="h-16 px-7 text-xs  flex items-center gap-2 transition-opacity hover:opacity-80"
+              className="h-16 px-7 text-sm  flex items-center gap-2 transition-opacity hover:opacity-80"
               style={{
                 backgroundColor: "var(--color-ink)",
                 color: "var(--color-canvas)",
@@ -98,7 +89,7 @@ export default function Hero() {
             </button>
             <button
               onClick={() => navigate("/login")}
-              className="h-16 px-7 text-xs  border transition-opacity hover:opacity-70"
+              className="h-16 px-7 text-sm  border transition-opacity hover:opacity-70"
               style={{
                 color: "var(--color-ink)",
                 borderColor: "var(--color-ink)",
@@ -125,7 +116,7 @@ export default function Hero() {
               ].map((bg, i) => (
                 <div
                   key={i}
-                  className="w-12 h-12 rounded-full border-2 flex items-center justify-center text-xs  text-white"
+                  className="w-12 h-12 rounded-full border-2 flex items-center justify-center text-sm  text-white"
                   style={{
                     backgroundColor: bg,
                     borderColor: "var(--color-canvas)",
@@ -136,7 +127,7 @@ export default function Hero() {
               ))}
             </div>
             <p
-              className="text-xs"
+              className="text-sm"
               style={{ color: "var(--color-muted-stone)" }}
             >
               Joined by{" "}
