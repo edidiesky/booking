@@ -11,6 +11,8 @@ import {
   LogoutHandler,
   MeHandler,
   ChangePasswordHandler,
+  RequestPasswordResetHandler,
+  ConfirmPasswordResetHandler,
   ResendOtpHandler,
 } from "./auth.controller";
 import {
@@ -35,5 +37,7 @@ router.post("/refresh",              validate(refreshSchema),        RefreshToke
 router.post("/logout",               authenticate,                   LogoutHandler);
 router.get("/me",                    authenticate,                   MeHandler);
 router.patch("/password",            authenticate,                   ChangePasswordHandler);
+router.post("/password-reset/request", RequestPasswordResetHandler);
+router.post("/password-reset/confirm", ConfirmPasswordResetHandler);
 
 export default router;
