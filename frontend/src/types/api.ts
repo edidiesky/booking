@@ -52,6 +52,7 @@ export interface User {
   userType:         UserType;
   tenantId?:        string;
   phone?:           string;
+  profileImage?:    string;
   status:           "draft" | "active" | "inactive" | "suspended";
   isEmailVerified:  boolean;
   lastActiveAt?:    string;
@@ -264,10 +265,11 @@ export interface SeedCalendarPayload {
 }
 
 export interface AvailabilitySlot {
-  date:            string;
-  availableCount:  number;
-  isBlocked:       boolean;
-  priceOverrideNgn?: number;
+  date:              string;
+  room_type_id:      string;
+  available_count:   number;
+  is_blocked:        boolean;
+  price_override_ngn?: number;
 }
 
 export interface BlockDatesPayload {
@@ -320,7 +322,7 @@ export interface Booking {
   tenantId:         string;
   sessionId:        string;
   specialRequests?: string;
-  createdAt:        Date;
+  createdAt:        string;
   receiptUrl?:string;
   room_type_images: string[];
   propertyName?:  string;
@@ -425,19 +427,19 @@ export interface PaymentSummary {
   guest_user_type: string;
 }
 export interface Payment {
-  id:            string;
-  booking_id:     string;
-  tenantId:      string;
-  guestUserId:   string;
-  gateway:       PaymentGateway;
-  transactionId: string;
-  amount_ngn:     number;
-  status:        PaymentStatus;
-  redirectUrl?:  string;
-  paidAt?:       string;
-  createdAt:     string;
-  receiptUrl?:string;
-  totalAmountNgn:number
+  id:             string;
+  bookingId:      string;
+  tenantId:       string;
+  guestUserId:    string;
+  gateway:        PaymentGateway;
+  transactionId?: string;
+  amountNgn:      number;
+  status:         PaymentStatus;
+  channel?:       string;
+  paidAt?:        string;
+  refundedAt?:    string;
+  createdAt:      string;
+  updatedAt:      string;
 }
 
 export interface InitializePaymentPayload {
@@ -723,4 +725,19 @@ export interface RoomTypeWithOccupancy extends RoomType {
 export interface PropertyWithRoomTypes extends Property {
   roomTypes: RoomType[];
   fromPrice?: number | null;
+}
+
+// Matches backend/src/domains/renter/renter.repository.ts's Renter
+// interface exactly, the API returns these fields as-is (snake_case),
+// no transformResponse layer exists for this endpoint.
+export interface Renter {
+  id:                       string;
+  owner_id:                 string;
+  full_name:                string;
+  email:                    string | null;
+  phone:                    string | null;
+  emergency_contact_name:   string | null;
+  emergency_contact_phone:  string | null;
+  created_at:               string;
+  updated_at:               string;
 }
