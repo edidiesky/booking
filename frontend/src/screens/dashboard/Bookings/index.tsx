@@ -13,6 +13,8 @@ import {
 import { showToast } from "@/components/common/Toast";
 import CancelBookingModal from "@/screens/guest/MyBookings/CancelBookingModal";
 import BookingTableRow from "./BookingTableRow";
+import StatsOverview from "@/components/dashboard/common/StatsOverview";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 // const STATUS_CONFIG: Record<
 //   BookingStatus,
@@ -60,6 +62,8 @@ export default function DashboardBookings() {
     setSearch,
     statusFilter,
     setStatusFilter,
+    stats,
+    isStatsLoading,
   } = useTenantBookings();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
@@ -143,6 +147,22 @@ export default function DashboardBookings() {
             {bookings.length} total
           </span>
         </div>
+
+        <StatsOverview
+          isLoading={isStatsLoading}
+          growthPct={stats?.revenueGrowthPct}
+          growthTooltip="Confirmed booking revenue this calendar month vs. last calendar month"
+          cards={[
+            { label: "Confirmed",  value: String(stats?.confirmedCount ?? 0),  color: "#1e40af", bg: "#dbeafe" },
+            { label: "Checked In", value: String(stats?.checkedInCount ?? 0),  color: "#166534", bg: "#dcfce7" },
+            { label: "Cancelled",  value: String(stats?.cancelledCount ?? 0),  color: "#991b1b", bg: "#fee2e2" },
+            {
+              label: "Revenue (Month)",
+              value: formatCurrency(stats?.currentMonthRevenueNgn ?? 0),
+              color: "#5b21b6", bg: "#ede9fe",
+            },
+          ]}
+        />
 
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex-1">
