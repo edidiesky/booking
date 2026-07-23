@@ -8,6 +8,7 @@ import {
   CreateReviewHandler,
   GetRoomTypeReviewsHandler,
   GetTenantReviewsHandler,
+  GetTenantReviewStatsHandler,
   RespondToReviewHandler,
   MarkHelpfulHandler,
 } from "./review.controller";
@@ -31,6 +32,12 @@ router.get(
   authenticate,
   requireTenantMember,
   GetTenantReviewsHandler,
+);
+router.get(
+  "/tenant/stats",
+  authenticate,
+  requireTenantMember,
+  GetTenantReviewStatsHandler,
 );
 router.post(
   "/:reviewId/respond",
