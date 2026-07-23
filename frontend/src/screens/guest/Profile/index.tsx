@@ -19,23 +19,38 @@ export default function GuestProfile() {
   const [active, setActive] = useState<(typeof TABS)[number]["key"]>("account");
   const user = useSelector(selectCurrentUser);
   const ActiveComponent = TABS.find((t) => t.key === active)!.Component;
+  const initial = user?.firstName?.charAt(0).toUpperCase() ?? "?";
+  const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ");
 
   return (
     <div className="w-full flex flex-col gap-8">
       <Header />
-      <div className="max-w-3xl mx-auto py-10 px-4">
-        <div className="flex gap-2 border-b border-[#e8e6e3] mb-6">
-          {TABS.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setActive(t.key)}
-              className={`px-4 py-2 text-xs ${active === t.key ? "border-b-2 border-[#17191c] text-[#17191c] font-semibold" : "text-[#a3a6af]"}`}
-            >
-              {t.label}
-            </button>
-          ))}
+      <div className="max-w-screen-2xl w-full lg:w-[90%] mx-auto lg:px-12 flex items-start justify-start flex-col gap-4">
+        <div className="w-full flex items-center gap-4">
+          <div className="w-20 h-20 rounded-full flex items-center justify-center text-xl lg:text-3xl bg-[rgb(255,224,195)]">
+            {initial}
+          </div>
+          <div className="flex flex-col gap-2">
+            <h4 className="text-2xl font-semibold">{fullName} Settings</h4>
+            <span className="text-sm lg:text-base capitalize text-[#777b86] truncate">{`${user?.userType} profile`}</span>
+          </div>
         </div>
-        <ActiveComponent user={user as User} />
+        <div className="w-full gap-10">
+          <div className="py-10 flex gap-8 lg:gap-8 items-start px-4">
+            <div className="flex gap-2 flex-col items-start">
+              {TABS.map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => setActive(t.key)}
+                  className={`px-4 min-w-56 lg:min-w-48 text-start  hover:bg-[#f5f5f3] py-3 text-xs lg:text-base ${active === t.key ? "border-r-2 bg-[#f5f5f3] border-[#17191c] font-semibold" : "text-[#a3a6af]"}`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+            <ActiveComponent user={user as User} />
+          </div>
+        </div>
       </div>
     </div>
   );
