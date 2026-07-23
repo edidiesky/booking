@@ -4,6 +4,7 @@ import { validate } from "../../middleware/validate.middleware";
 import {
   ListPublicPropertiesHandler,
   GetTenantPropertiesHandler,
+  GetTenantPropertyStatsHandler,
   GetPropertyHandler,
   CreatePropertyHandler,
   CreateRoomTypeHandler,
@@ -24,6 +25,7 @@ import {
 
 const propertyRouter = Router();
 propertyRouter.get("/mine", authenticate, requireTenantMember, GetTenantPropertiesHandler);
+propertyRouter.get("/mine/stats", authenticate, requireTenantMember, GetTenantPropertyStatsHandler);
 propertyRouter.get("/room-types/:roomTypeId/availability", GetAvailabilityHandler);
 propertyRouter.get("/dashboard/:propertyId", authenticate, requireTenantMember, GetPropertyDetailHandler);
 
