@@ -52,6 +52,12 @@ export const GetTenantBookingsHandler = asyncHandler(async (req: Request, res: R
   res.status(200).json({ success: true, data: bookings });
 });
 
+export const GetTenantBookingStatsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const stats = await bookingService.getTenantBookingStats(req.tenantId);
+  res.status(200).json({ success: true, data: stats });
+});
+
 export const CancelBookingHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.user) throw AppError.unauthorized();
   const result = await bookingService.cancelBooking(
