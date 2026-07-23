@@ -12,6 +12,12 @@ const GetTenantEscrowHandler = asyncHandler(async (req: Request, res: Response):
   res.status(200).json({ success: true, data: records });
 });
 
+const GetTenantEscrowStatsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const stats = await escrowRepository.getStatsForTenant(req.tenantId);
+  res.status(200).json({ success: true, data: stats });
+});
+
 const GetEscrowByBookingHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const record = await escrowRepository.findByBookingId(req.params["bookingId"] as string);
   if (!record) throw AppError.notFound("Escrow record not found.");
@@ -24,6 +30,7 @@ const GetEscrowByBookingHandler = asyncHandler(async (req: Request, res: Respons
 const router = Router();
 
 router.get("/",                     authenticate, requireTenantMember, GetTenantEscrowHandler);
+router.get("/stats",                authenticate, requireTenantMember, GetTenantEscrowStatsHandler);
 router.get("/booking/:bookingId",   authenticate, requireTenantMember, GetEscrowByBookingHandler);
 
 export default router;
