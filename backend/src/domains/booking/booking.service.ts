@@ -780,4 +780,8 @@ export const bookingService = {
       toDto(b),
     );
   },
+
+  async getTenantBookingStats(tenantId: string) {
+    return bookingRepository.getStatsForTenant(tenantId);
+  },
 };
