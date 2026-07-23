@@ -6,7 +6,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { Lock, CheckCircle } from "lucide-react";
 import AuthLayout from "./shared/AuthLayout";
 import { Input } from "@/components/ui/input";
-import { usePasswordResetMutation } from "@/redux/services/authApi";
+import { useConfirmPasswordResetMutation } from "@/redux/services/authApi";
 import toast from "react-hot-toast";
 
 const schema = z
@@ -25,7 +25,7 @@ export default function NewPassword() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const [done, setDone] = React.useState(false);
-  const [passwordReset, { isLoading }] = usePasswordResetMutation();
+  const [passwordReset, { isLoading }] = useConfirmPasswordResetMutation();
 
   const {
     register,
@@ -125,12 +125,12 @@ export default function NewPassword() {
       >
         <div className="flex flex-col gap-3">
           <h1
-            className="text-[32px]  leading-[1.1]"
+            className="text-xl  leading-[1.1]"
             style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
           >
             Set new password
           </h1>
-          <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
             Choose a strong password to secure your account.
           </p>
         </div>
