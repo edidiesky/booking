@@ -29,12 +29,15 @@ export interface Booking {
   updated_at: Date;
   receipt_url: string;
   room_type_images?: string[];
-  propertyName?:  string;
-  propertyCity?:  string;
-  roomTypeName?:  string;
-  roomTypeImage?: string;
+  // Joined columns from listByTenant/listByGuest (property_name, etc. via
+  // `AS` aliases in the SQL), declared here with their real names, not the
+  // camelCase versions that were silently always undefined before.
+  property_name?:    string;
+  property_city?:    string;
+  room_type_name?:   string;
+  room_types_image?: string[];
   guest_first_name?: string;
-  guest_last_name?: string;
+  guest_last_name?:  string;
 }
 
 function generateBookingRef(): string {

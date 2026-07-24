@@ -12,7 +12,7 @@ export class PaymentConfirmedHandler extends BaseNotificationHandler {
   protected async handle(data: unknown): Promise<void> {
     const e = data as NotifyPaymentPayload;
      const booking = await bookingRepository.findById(e.bookingId);
-    const roomTypeName = e.roomTypeName ?? booking?.roomTypeName ?? "your room";
+    const roomTypeName = e.roomTypeName ?? booking?.room_type_name ?? "your room";
     const receiptUrl = booking?.receipt_url ?? undefined;
 
     const { subject, html } = paymentConfirmedTemplate({

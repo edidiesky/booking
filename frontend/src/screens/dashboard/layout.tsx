@@ -12,7 +12,7 @@ const DashboardLayout = () => {
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden bg-white">
       <Header />
-      <div className="flex flex-1 w-full max-w-[1280px] mx-auto overflow-hidden">
+      <div className="flex flex-1 w-full max-w-[1290px] mx-auto overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-y-auto">
           <Outlet />

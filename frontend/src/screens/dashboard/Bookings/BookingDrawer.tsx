@@ -89,7 +89,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
         </div>
 
         <div className="flex-1 flex overflow-y-auto flex-col gap-2">
-          <div className="flex-1  px-6 py-5 border-b flex flex-col gap-6">
+          <div className="w-full px-6 py-5 border-b flex flex-col gap-6">
             <div className="flex flex-col gap-4 lg:gap-4 lg:w-[75%]">
               {[
                 ["Created at", formatDateTime(booking.createdAt)],

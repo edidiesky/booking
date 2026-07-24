@@ -93,15 +93,14 @@ function toDto(
     sessionId,
     specialRequests: b.special_requests,
     createdAt: b.created_at,
-    propertyName: b?.propertyName,
-    roomTypeImage: enrichment?.roomTypeImage,
+    propertyName: b.property_name ?? enrichment?.propertyName,
+    roomTypeImage: b.room_types_image?.[0] ?? enrichment?.roomTypeImage,
     receiptUrl: b.receipt_url ?? undefined,
     room_type_images: b.room_type_images ?? [],
-    propertyCity: b.propertyCity,
-    roomTypeName: b.roomTypeName,
+    propertyCity: b.property_city ?? enrichment?.propertyCity,
+    roomTypeName: b.room_type_name ?? enrichment?.roomTypeName,
     guestFirstName: b.guest_first_name,
     guestLastName:  b.guest_last_name,
-    
   };
 }
 
