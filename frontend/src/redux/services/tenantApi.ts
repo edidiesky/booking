@@ -18,10 +18,22 @@ interface TenantListResponse {
 interface HostProfileResponse {
   success: boolean;
   data: {
-    tenant: { id: string; name: string; slug: string; created_at: string; settings: { city?: string; bio?: string } };
-    properties: { id: string; name: string; images: string[]; address: { city: string } }[];
-    recentReviews: { id: string; rating: number; title: string; comment: string; guest_first_name: string; created_at: string }[];
-    stats: { avg_rating: number; total_reviews: number; total_bookings: number };
+    tenant: {
+      id: string; name: string; slug: string; createdAt: string;
+      settings: { timezone: string; currency: string; locale: string };
+      bio: string | null; avatarUrl: string | null;
+      city: string | null; state: string | null; country: string | null;
+    };
+    properties: {
+      id: string; name: string; images: string[]; city: string; property_type: string;
+      roomTypes: { id: string; property_id: string; name: string; base_price_ngn: number; max_occupancy: number; images: string[] }[];
+    }[];
+    recentReviews: {
+      id: string; rating: number; title: string; comment: string;
+      guest_first_name?: string; guest_last_name?: string; guest_profile_image?: string | null;
+      created_at: string;
+    }[];
+    stats: { avgRating: number; totalReviews: number; totalBookings: number };
   };
 }
 
@@ -46,6 +58,20 @@ export const tenantApi = apiSlice.injectEndpoints({
     >({
       query: (body) => ({
         url: `${TENANT_URL}/me/settings`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Tenant"],
+    }),
+
+    // Host: update own bio/avatar/location, real dedicated columns on
+    // tenants, not part of the settings JSONB blob.
+    updateProfile: builder.mutation<
+      TenantResponse,
+      { bio?: string; avatarUrl?: string; city?: string; state?: string; country?: string }
+    >({
+      query: (body) => ({
+        url: `${TENANT_URL}/me/profile`,
         method: "PATCH",
         body,
       }),
@@ -100,6 +126,7 @@ export const {
   useGetMyTenantQuery,
   useGetHostProfileQuery,
   useUpdateSettingsMutation,
+  useUpdateProfileMutation,
   useUpdateCancellationPolicyMutation,
   useListTenantsQuery,
   useSuspendTenantMutation,
