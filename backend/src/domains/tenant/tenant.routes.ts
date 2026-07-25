@@ -9,6 +9,7 @@ import { validate } from "../../middleware/validate.middleware";
 import {
   GetMyTenantHandler,
   UpdateTenantSettingsHandler,
+  UpdateTenantProfileHandler,
   UpdateCancellationPolicyHandler,
   ListTenantsHandler,
   SuspendTenantHandler,
@@ -20,6 +21,14 @@ const updateSettingsSchema = Joi.object({
   timezone: Joi.string().optional(),
   currency: Joi.string().length(3).uppercase().optional(),
   locale: Joi.string().optional(),
+});
+
+const updateProfileSchema = Joi.object({
+  bio:        Joi.string().max(1000).allow("").optional(),
+  avatarUrl:  Joi.string().uri().allow("").optional(),
+  city:       Joi.string().max(100).allow("").optional(),
+  state:      Joi.string().max(100).allow("").optional(),
+  country:    Joi.string().max(100).allow("").optional(),
 });
 
 const cancellationPolicySchema = Joi.object({
@@ -44,6 +53,13 @@ router.patch(
   requireTenantMember,
   validate(updateSettingsSchema),
   UpdateTenantSettingsHandler,
+);
+router.patch(
+  "/me/profile",
+  authenticate,
+  requireTenantMember,
+  validate(updateProfileSchema),
+  UpdateTenantProfileHandler,
 );
 router.patch(
   "/me/policy",

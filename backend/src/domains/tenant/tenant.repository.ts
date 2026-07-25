@@ -11,6 +11,11 @@ export interface Tenant {
   cancellation_policy: CancellationPolicyTier[];
   status:              TenantStatus;
   settings:            TenantSettings;
+  bio?:                string;
+  avatar_url?:         string;
+  city?:               string;
+  state?:              string;
+  country?:            string;
   created_at:          Date;
   updated_at:          Date;
 }
@@ -50,6 +55,21 @@ async create(data: {
     return queryOne<Tenant>(
       `UPDATE tenants SET settings = settings || $1::jsonb, updated_at = now() WHERE id = $2 RETURNING *`,
       [JSON.stringify(settings), id]
+    );
+  },
+
+  async updateProfile(id: string, data: { bio?: string; avatarUrl?: string; city?: string; state?: string; country?: string }): Promise<Tenant | null> {
+    return queryOne<Tenant>(
+      `UPDATE tenants SET
+         bio        = COALESCE($1, bio),
+         avatar_url = COALESCE($2, avatar_url),
+         city       = COALESCE($3, city),
+         state      = COALESCE($4, state),
+         country    = COALESCE($5, country),
+         updated_at = now()
+       WHERE id = $6
+       RETURNING *`,
+      [data.bio ?? null, data.avatarUrl ?? null, data.city ?? null, data.state ?? null, data.country ?? null, id],
     );
   },
 

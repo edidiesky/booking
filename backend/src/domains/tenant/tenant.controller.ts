@@ -22,6 +22,16 @@ export const UpdateTenantSettingsHandler = asyncHandler(async (req: Request, res
   res.status(200).json({ success: true, data: updated });
 });
 
+export const UpdateTenantProfileHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const updated = await tenantService.updateProfile(req.tenantId, req.body);
+  await auditRepository.log({
+    action: "updated", resource: "tenant_profile", resourceId: req.tenantId,
+    tenantId: req.tenantId, userId: req.user?.userId, newValue: req.body,
+  });
+  res.status(200).json({ success: true, data: updated });
+});
+
 export const UpdateCancellationPolicyHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
   const { policy } = req.body as { policy: CancellationPolicyTier[] };
