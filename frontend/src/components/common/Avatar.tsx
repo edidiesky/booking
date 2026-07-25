@@ -1,38 +1,52 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import { getGravatarUrl } from "@/utils/getGravatarUrl";
 
-export default function Avatar({ username }: { username: string }) {
-  const colors = [
-    "#FF5733",
-    "#33FF57",
-    "#3357FF",
-    "#F1C40F",
-    "#8E44AD",
-    "#2ECC71",
-    "#E74C3C",
-    "#3498DB",
-    "#E67E22",
-    "#1ABC9C",
-  ];
+interface Props {
+  /** Explicit uploaded image URL (profileImage, tenant.avatarUrl, etc.), highest priority. */
+  src?:   string | null;
+  /** Used for the Gravatar fallback, and to derive an initial if name isn't given. */
+  email?: string | null;
+  /** Used for the initials fallback and derives the initial when email is the only thing available. */
+  name?:  string | null;
+  size?:  number;
+  className?: string;
+}
 
-  const stringToHash = (string: string) => {
-    let hash = 0;
-    for (let i = 0; i < string.length; i++) {
-      hash = string.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return Math.abs(hash);
-  };
+export default function Avatar({ src, email, name, size = 40, className = "" }: Props) {
+  const gravatarUrl = getGravatarUrl(email ?? "essienedidiong@gmail.com", size * 2); // 2x for retina
+  const imageUrl = src || gravatarUrl;
 
-  const getAvatarColor = (username: string):string =>  {
-    const hash = stringToHash(username);
-    return colors[hash % colors.length];
-  };
+  const [failed, setFailed] = useState(false);
+  useEffect(() => { setFailed(false); }, [imageUrl]);
 
-  const avatarColor = getAvatarColor(username);
+  const initial = (name?.trim()?.charAt(0) || email?.trim()?.charAt(0) || "?").toUpperCase();
+
+  if (imageUrl && !failed) {
+    return (
+      <img
+        src={imageUrl}
+        alt={name ?? ""}
+        onError={() => setFailed(true)}
+        className={`rounded-full object-cover shrink-0 ${className}`}
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+
+  console.log(gravatarUrl)
+
   return (
-    <div style={{
-        background:`${avatarColor}`
-    }} className="w-[45px] h-[45px] rounded-full  flex items-center justify-center text-sm text-white bg-[#35373e41]">
-      {username.split("")[0]}
-    </div>
+    <span
+      className={`rounded-full flex items-center justify-center shrink-0 bold ${className}`}
+      style={{
+        width: size,
+        height: size,
+        fontSize: size * 0.4,
+        backgroundColor: "var(--color-ink, #17191c)",
+        color: "var(--color-canvas, #fff)",
+      }}
+    >
+      {initial}
+    </span>
   );
 }

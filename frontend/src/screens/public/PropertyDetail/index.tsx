@@ -11,6 +11,7 @@ import PropertyCalendar        from "./PropertyCalendar";
 import ProductReview           from "./ProductReview";
 import BookingForm             from "./BookingForm";
 import { usePropertyDetail }   from "./hooks/usePropertyDetail";
+import SellerSection from "./SellerSection";
 
 function Skeleton() {
   return (
@@ -100,6 +101,9 @@ export default function PropertyDetail() {
                   {selectedRoomType && (
                     <ProductReview roomTypeId={selectedRoomType.id} />
                   )}
+                  <SellerSection
+                    tenantId={property.tenant_id}
+                  />
                 </div>
 
                 {/* ── right column ── */}

@@ -188,7 +188,7 @@ export interface PropertyAddress {
 // src/types/api.ts
 export interface Property {
   id:            string;
-  tenantId:      string;
+  tenant_id:      string;
   name:          string;
   description:   string;
   propertyType:  PropertyType;

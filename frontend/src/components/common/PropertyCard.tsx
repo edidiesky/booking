@@ -3,12 +3,33 @@ import { useNavigate }   from "react-router-dom";
 import { motion, useInView } from "framer-motion";
 import { MapPin, Bath, Wifi, BedDouble } from "lucide-react";
 import { IoStar }        from "react-icons/io5";
-import type { Property } from "@/types/api";
 import { formatCurrency } from "@/utils/formatCurrency";
+// import FavoriteButton     from "./FavoriteButton";
+
+// Deliberately narrower than the full Property type: this card is used
+// against both the full search-listing response (nested address, full
+// roomTypes) and the public seller-profile response (flat city, no
+// country at all, curated roomTypes). Requiring the full Property type
+// here would force the narrower, intentionally-curated public-profile
+// shape to either over-fetch fields it doesn't need or get unsafely cast.
+// Any object satisfying this structural subset works, the full Property
+// type already does, since a superset always satisfies a subset.
+interface PropertyCardData {
+  id:            string;
+  name:          string;
+  images?:       string[];
+  amenities?:    string[];
+  property_type?: string;
+  propertyType?:  string;
+  address?:      { city: string; country: string };
+  city?:         string; // flat alternative, used by the public-profile shape which has no address object and no country at all
+  roomTypes?:    { images?: string[]; base_price_ngn: number | string }[];
+}
 
 interface Props {
-  property: Property;
-  index?:   number;
+  property:    PropertyCardData;
+  index?:      number;
+  isFavorited?: boolean;
 }
 
 const AMENITY_ICONS: Record<string, React.ReactNode> = {
@@ -24,17 +45,20 @@ function AmenityIcon({ label }: { label: string }) {
   const key  = label.toLowerCase();
   const icon = Object.entries(AMENITY_ICONS).find(([k]) => key.includes(k))?.[1];
   return (
-    <span className="flex items-center gap-1 text-xs lg:text-sm" style={{ color: "var(--color-light-steel)" }}>
+    <span className="flex items-center gap-1 text-sm" style={{ color: "var(--color-light-steel)" }}>
       {icon ?? <span className="w-1 h-1 rounded-full bg-current inline-block" />}
       {label}
     </span>
   );
 }
 
-export default function PropertyCard({ property, index = 0 }: Props) {
+export default function PropertyCard({ property, index = 0, isFavorited = false }: Props) {
   const navigate = useNavigate();
   const ref      = useRef<HTMLDivElement>(null);
   const inView   = useInView(ref, { margin: "0px 100px -120px 0px", once: true });
+
+  const city    = property.address?.city ?? property.city ?? "";
+  const country = property.address?.country;
 
   const primaryImage   = property.images?.[0]
     ?? property.roomTypes?.[0]?.images?.[0]
@@ -78,7 +102,7 @@ export default function PropertyCard({ property, index = 0 }: Props) {
       className="w-full flex flex-col rounded-xl overflow-hidden border cursor-pointer group"
     >
       {/* image area */}
-      <div className="w-full h-[370px] overflow-hidden relative">
+      <div className="w-full h-[340px] overflow-hidden relative">
 
         {primaryImage ? (
           <motion.div
@@ -131,10 +155,19 @@ export default function PropertyCard({ property, index = 0 }: Props) {
 
         {/* property type badge */}
         <div className="absolute top-3 left-3 z-10">
-          <span className={`text-xs px-3 py-1 rounded-full capitalize font-bold ${typeClass}`}>
+          <span className={`text-sm bold px-3 py-1 rounded-full capitalize font-medium ${typeClass}`}>
             {property.property_type ?? property.propertyType}
           </span>
         </div>
+
+        {/* favorite */}
+        {/* <div className="absolute top-3 right-3 z-10">
+          <FavoriteButton
+            propertyId={property.id}
+            isFavorited={isFavorited}
+            className="w-8 h-8 bg-white/90 backdrop-blur-sm"
+          />
+        </div> */}
       </div>
 
       {/* card body */}
@@ -149,9 +182,9 @@ export default function PropertyCard({ property, index = 0 }: Props) {
             {property.name}
           </h3>
           {lowestPrice !== null && (
-            <p className="text-xs lg:text-sm lg:text-sm bold shrink-0" style={{ color: "var(--color-ink)" }}>
+            <p className="text-sm lg:text-base bold shrink-0" style={{ color: "var(--color-ink)" }}>
               {formatCurrency(lowestPrice)}
-              <span className="text-xs lg:text-sm font-normal" style={{ color: "var(--color-light-steel)" }}>
+              <span className="text-sm font-normal" style={{ color: "var(--color-light-steel)" }}>
                 /night
               </span>
             </p>
@@ -159,9 +192,9 @@ export default function PropertyCard({ property, index = 0 }: Props) {
         </div>
 
         {/* location */}
-        <p className="text-xs lg:text-sm bold flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
+        <p className="text-sm bold flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
           <MapPin size={16} />
-          {property.address.city}, {property.address.country}
+          {city}{country ? `, ${country}` : ""}
         </p>
 
         {/* star rating placeholder */}
@@ -171,8 +204,8 @@ export default function PropertyCard({ property, index = 0 }: Props) {
               <IoStar key={i} className="text-[13px] text-[#f5a623]" />
             ))}
           </div>
-          <span className="text-xs lg:text-sm bold" style={{ color: "var(--color-ink)" }}>4.7</span>
-          <span className="text-xs lg:text-sm" style={{ color: "var(--color-light-steel)" }}>87 reviews</span>
+          <span className="text-sm bold" style={{ color: "var(--color-ink)" }}>4.7</span>
+          <span className="text-sm" style={{ color: "var(--color-light-steel)" }}>87 reviews</span>
         </div>
 
         {/* amenities */}
