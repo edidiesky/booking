@@ -482,7 +482,7 @@ const migrations: string[] = [
   CREATE INDEX IF NOT EXISTS idx_reviews_guest     ON reviews(guest_user_id);
 `,
 
-  /* 021 roles.tenant_id: custom, tenant-scoped roles alongside the seeded
+  /* 021 roles.tenant_id — custom, tenant-scoped roles alongside the seeded
      system roles. NULL tenant_id = system role (host:admin etc), visible to
      everyone. Slug uniqueness has to be split into two partial indexes:
      system role slugs stay globally unique, custom role slugs only need to
@@ -496,19 +496,171 @@ const migrations: string[] = [
    CREATE UNIQUE INDEX IF NOT EXISTS uq_roles_tenant_slug ON roles(tenant_id, slug) WHERE tenant_id IS NOT NULL;
    CREATE INDEX IF NOT EXISTS idx_roles_tenant ON roles(tenant_id);`,
 
-  /* 022 users: transaction PIN, 2FA, phone verification.
-     PIN and 2FA secret are hashed/encrypted at the app layer before storage,
-     this migration only reserves the columns. otp_code/otp_expires_at back
-     an email-OTP 2FA flow (reuses the existing Resend integration, no SMS
-     provider is configured anywhere in this codebase, so SMS-based 2FA
-     isn't an option without adding one first). */
-  `
-    ALTER TABLE users ADD COLUMN IF NOT EXISTS pin_hash VARCHAR(255);
-  ALTER TABLE users ADD COLUMN IF NOT EXISTS is_phone_verified BOOLEAN NOT NULL DEFAULT false;
-  ALTER TABLE users ADD COLUMN IF NOT EXISTS two_factor_enabled BOOLEAN NOT NULL DEFAULT false;
-  ALTER TABLE users ADD COLUMN IF NOT EXISTS login_with_pin_enabled BOOLEAN NOT NULL DEFAULT false;
-  ALTER TABLE users ADD COLUMN IF NOT EXISTS country_code VARCHAR(5);
-  `
+  /* 022 users: transaction PIN + 2FA/phone-verification state.
+     OTP codes themselves are NOT stored here, see security.service.ts,
+     they live in Redis with a native TTL instead (short-lived,
+     high-write-frequency, no need for durability or relational
+     integrity, a plain Postgres UPDATE per OTP request is wasted write
+     load on a table you actually care about querying/replicating). Only
+     the durable outcomes (has a PIN, is 2FA on, is phone verified) live
+     here. */
+  `ALTER TABLE users ADD COLUMN IF NOT EXISTS pin_hash            VARCHAR(255);
+   ALTER TABLE users ADD COLUMN IF NOT EXISTS is_phone_verified   BOOLEAN NOT NULL DEFAULT false;
+   ALTER TABLE users ADD COLUMN IF NOT EXISTS two_factor_enabled  BOOLEAN NOT NULL DEFAULT false;
+   ALTER TABLE users ADD COLUMN IF NOT EXISTS login_with_pin_enabled BOOLEAN NOT NULL DEFAULT false;
+   ALTER TABLE users ADD COLUMN IF NOT EXISTS country_code        VARCHAR(5);`,
+
+  /* Invoices: guest tax invoices (on-demand) and host payout statements
+     (automatic at checkout). Two document types, one table, one row per
+     (booking_id, type) so re-requesting an already-generated document
+     returns the same one instead of creating a duplicate with a new
+     number. Sequential numbering uses native Postgres SEQUENCEs, atomic
+     and duplicate-proof under concurrency without hand-rolled locking
+     (the same class of bug the booking availability fix addressed).
+     Known simplification: these sequences climb forever, they don't
+     reset to 1 each January the way some formal per-year numbering
+     schemes do, the year in "INV-2026-000142" reflects when it was
+     issued, not a per-year counter. Revisit only if a specific
+     jurisdiction's invoice rules require strict per-year reset. */
+  `CREATE SEQUENCE IF NOT EXISTS guest_invoice_seq START 1;
+   CREATE SEQUENCE IF NOT EXISTS host_statement_seq START 1;
+
+   CREATE TABLE IF NOT EXISTS invoices (
+     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     invoice_number  VARCHAR(50) UNIQUE NOT NULL,
+     type            VARCHAR(20) NOT NULL CHECK (type IN ('guest_invoice', 'host_statement')),
+     booking_id      UUID NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
+     tenant_id       UUID NOT NULL REFERENCES tenants(id)  ON DELETE CASCADE,
+     guest_user_id   UUID REFERENCES users(id),
+     amount_ngn      NUMERIC(12,2) NOT NULL,
+     pdf_url         TEXT,
+     created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+     UNIQUE (booking_id, type)
+   );
+   CREATE INDEX IF NOT EXISTS idx_invoices_booking ON invoices(booking_id);
+   CREATE INDEX IF NOT EXISTS idx_invoices_tenant  ON invoices(tenant_id, type);`,
+
+  /* In-app bell-icon notification feed for sellers/hosts. Deliberately a
+     separate table from `notifications` (that one is an email/SMS
+     delivery log: channel, recipient_email/phone, sent_at, failure_reason
+     — no is_read concept, wrong shape for "click the bell, see a list").
+     Populated by the isolated seller-notification-worker process, which
+     consumes the same notification.events exchange the existing
+     email/SMS worker already does, RabbitMQ topic exchanges support
+     multiple independent queue bindings to the same routing key, so this
+     is additive, no change needed to what already publishes these
+     events. */
+  `CREATE TABLE IF NOT EXISTS seller_notifications (
+     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     tenant_id   UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+     booking_id  UUID REFERENCES bookings(id) ON DELETE CASCADE,
+     type        VARCHAR(30) NOT NULL CHECK (type IN ('booking_confirmed', 'booking_checked_in', 'booking_checked_out')),
+     title       VARCHAR(200) NOT NULL,
+     body        TEXT NOT NULL,
+     is_read     BOOLEAN NOT NULL DEFAULT false,
+     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+   );
+   CREATE INDEX IF NOT EXISTS idx_seller_notifications_tenant ON seller_notifications(tenant_id, is_read, created_at DESC);`,
+
+  /* Campaign notification system. Audience is resolved from a structured
+     filter (see audience.resolver.ts), not a saved list, so a draft
+     campaign's audience count stays live until send time, when it's
+     snapshotted into campaign_recipients (one row per user per channel,
+     that snapshot is what makes "who exactly got this" answerable after
+     the fact, and what makes idempotent claim-based sending possible,
+     the same discipline as the booking availability fix: atomic
+     claim-before-send, not check-then-send). */
+  `CREATE TABLE IF NOT EXISTS user_notification_preferences (
+     user_id     UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     channel     VARCHAR(10) NOT NULL CHECK (channel IN ('email', 'sms', 'in_app')),
+     category    VARCHAR(20) NOT NULL CHECK (category IN ('marketing', 'transactional')),
+     opted_in    BOOLEAN NOT NULL DEFAULT true,
+     updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+     PRIMARY KEY (user_id, channel, category)
+   );
+
+   CREATE TABLE IF NOT EXISTS campaigns (
+     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     tenant_id       UUID REFERENCES tenants(id) ON DELETE CASCADE,
+     name            VARCHAR(200) NOT NULL,
+     status          VARCHAR(20) NOT NULL DEFAULT 'draft'
+                        CHECK (status IN ('draft', 'scheduled', 'sending', 'completed', 'failed', 'cancelled')),
+     audience_filter JSONB NOT NULL DEFAULT '{}'::jsonb,
+     channels        TEXT[] NOT NULL DEFAULT '{}',
+     scheduled_at    TIMESTAMPTZ,
+     created_by      UUID REFERENCES users(id),
+     created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+     updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+   );
+
+   CREATE TABLE IF NOT EXISTS campaign_templates (
+     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     campaign_id  UUID NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+     channel      VARCHAR(10) NOT NULL CHECK (channel IN ('email', 'sms', 'in_app')),
+     subject      VARCHAR(200),
+     body         TEXT NOT NULL,
+     created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+     UNIQUE (campaign_id, channel)
+   );
+
+   CREATE TABLE IF NOT EXISTS campaign_recipients (
+     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     campaign_id  UUID NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+     user_id      UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     channel      VARCHAR(10) NOT NULL CHECK (channel IN ('email', 'sms', 'in_app')),
+     status       VARCHAR(20) NOT NULL DEFAULT 'pending'
+                     CHECK (status IN ('pending', 'sending', 'sent', 'failed', 'skipped_preference', 'skipped_provider_down')),
+     attempt_count INTEGER NOT NULL DEFAULT 0,
+     error        TEXT,
+     sent_at      TIMESTAMPTZ,
+     created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+     UNIQUE (campaign_id, user_id, channel)
+   );
+   CREATE INDEX IF NOT EXISTS idx_campaign_recipients_claim ON campaign_recipients(campaign_id, status);
+   CREATE INDEX IF NOT EXISTS idx_campaigns_tenant ON campaigns(tenant_id, status);`,
+
+  /* Generic, audience-agnostic in-app notification, keyed by user_id only
+     (no tenant_id requirement), unlike seller_notifications (host/tenant
+     dashboard bell, booking-lifecycle events only). This is what a
+     campaign's in_app channel actually needs: a guest with no tenant_id
+     can receive one too. Deliberately not merging this with
+     seller_notifications, they have different audiences and different
+     required columns (tenant_id NOT NULL there, nullable here), forcing
+     one shape to fit both would mean either loosening a constraint that
+     protects real data (tenant scoping on the host feed) or adding
+     nullable columns nobody needs on the host side. */
+  `CREATE TABLE IF NOT EXISTS user_notifications (
+     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     user_id     UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     source      VARCHAR(20) NOT NULL DEFAULT 'campaign' CHECK (source IN ('campaign', 'system')),
+     campaign_id UUID REFERENCES campaigns(id) ON DELETE SET NULL,
+     title       VARCHAR(200) NOT NULL,
+     body        TEXT NOT NULL,
+     is_read     BOOLEAN NOT NULL DEFAULT false,
+     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+   );
+   CREATE INDEX IF NOT EXISTS idx_user_notifications_user ON user_notifications(user_id, is_read, created_at DESC);`,
+
+  /* Core seller (host/tenant) public profile metadata: bio, avatar,
+     location. Real dedicated columns, not the settings JSONB blob,
+     that's operational config (timezone/currency/locale), this is
+     public profile content a guest sees on the property page, deserves
+     its own queryable columns the same way PropertyAddress does, not a
+     schemaless bag. */
+  `ALTER TABLE tenants ADD COLUMN IF NOT EXISTS bio         TEXT;
+   ALTER TABLE tenants ADD COLUMN IF NOT EXISTS avatar_url  TEXT;
+   ALTER TABLE tenants ADD COLUMN IF NOT EXISTS city        VARCHAR(100);
+   ALTER TABLE tenants ADD COLUMN IF NOT EXISTS state       VARCHAR(100);
+   ALTER TABLE tenants ADD COLUMN IF NOT EXISTS country     VARCHAR(100);`,
+
+  `CREATE TABLE IF NOT EXISTS favorites (
+     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     guest_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     property_id   UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+     created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+     UNIQUE (guest_user_id, property_id)
+   );
+   CREATE INDEX IF NOT EXISTS idx_favorites_guest ON favorites(guest_user_id, created_at DESC);`
 ];
 
 export async function runMigrations(): Promise<void> {
