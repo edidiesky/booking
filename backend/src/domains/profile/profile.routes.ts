@@ -23,8 +23,10 @@ const updateProfileSchema = Joi.object({
 const GetMyProfileHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.user) throw AppError.unauthorized();
 
-  const profile = await profileRepository.findByUserId(req.user.userId);
-  if (!profile) throw AppError.notFound("Profile not found.");
+  let profile = await profileRepository.findByUserId(req.user.userId);
+  if (!profile) {
+    profile = await profileRepository.create({ userId: req.user.userId });
+  }
 
   res.status(200).json({ success: true, data: profile });
 });

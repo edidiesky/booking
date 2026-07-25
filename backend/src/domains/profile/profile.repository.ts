@@ -33,25 +33,29 @@ export const profileRepository = {
   async findByUserId(userId: string): Promise<Profile | null> {
     return queryOne<Profile>(`SELECT * FROM profiles WHERE user_id = $1`, [userId]);
   },
-
+  
   async update(userId: string, data: Partial<Pick<Profile, "display_name" | "bio" | "avatar_url" | "address" | "preferences">>): Promise<Profile | null> {
-    const fields: string[] = [];
-    const values: unknown[] = [];
-    let idx = 1;
-
-    if (data.display_name !== undefined) { fields.push(`display_name = $${idx++}`); values.push(data.display_name); }
-    if (data.bio          !== undefined) { fields.push(`bio = $${idx++}`);           values.push(data.bio); }
-    if (data.avatar_url   !== undefined) { fields.push(`avatar_url = $${idx++}`);    values.push(data.avatar_url); }
-    if (data.address      !== undefined) { fields.push(`address = $${idx++}::jsonb`); values.push(JSON.stringify(data.address)); }
-    if (data.preferences  !== undefined) { fields.push(`preferences = $${idx++}::jsonb`); values.push(JSON.stringify(data.preferences)); }
-
-    if (!fields.length) return null;
-    fields.push("updated_at = now()");
-    values.push(userId);
+    if (Object.keys(data).length === 0) return profileRepository.findByUserId(userId);
 
     return queryOne<Profile>(
-      `UPDATE profiles SET ${fields.join(", ")} WHERE user_id = $${idx} RETURNING *`,
-      values
+      `INSERT INTO profiles (user_id, display_name, bio, avatar_url, address, preferences)
+       VALUES ($1, $2, $3, $4, COALESCE($5::jsonb, '{}'::jsonb), COALESCE($6::jsonb, '{}'::jsonb))
+       ON CONFLICT (user_id) DO UPDATE SET
+         display_name = COALESCE(EXCLUDED.display_name, profiles.display_name),
+         bio          = COALESCE(EXCLUDED.bio, profiles.bio),
+         avatar_url   = COALESCE(EXCLUDED.avatar_url, profiles.avatar_url),
+         address      = CASE WHEN $5::jsonb IS NOT NULL THEN EXCLUDED.address ELSE profiles.address END,
+         preferences  = CASE WHEN $6::jsonb IS NOT NULL THEN EXCLUDED.preferences ELSE profiles.preferences END,
+         updated_at   = now()
+       RETURNING *`,
+      [
+        userId,
+        data.display_name ?? null,
+        data.bio ?? null,
+        data.avatar_url ?? null,
+        data.address !== undefined ? JSON.stringify(data.address) : null,
+        data.preferences !== undefined ? JSON.stringify(data.preferences) : null,
+      ],
     );
   },
 };
