@@ -1,8 +1,8 @@
 import { PoolClient } from "pg";
-import { query, queryOne } from "@booking/shared";
 import { availabilityLockCounter, trackError } from "../../utils/metrics";
 import { requestContext } from "../../context/requestContext";
 import logger from "../../utils/logger";
+import { query } from "@booking/shared";
 
 export interface AvailabilitySlot {
   id:                 string;
@@ -89,11 +89,31 @@ async seedCalendar(
     checkIn:     string,
     checkOut:    string,
     roomsNeeded: number,
-    client?:     PoolClient
+    client:      PoolClient
   ): Promise<boolean> {
+    // FOR UPDATE OF ac locks the availability_calendar rows for this room
+    // type + date range for the rest of this transaction. Without this, two
+    // concurrent requests for the same room type and overlapping dates
+    // could both read "1 room available" before either had inserted its
+    // booking_locks row (classic check-then-act race), both pass this
+    // check, both proceed to acquireLock, double-booking the room. With
+    // the lock: the second transaction blocks here until the first commits
+    // (making its booking_locks INSERT visible), then re-reads and
+    // correctly sees reduced availability. This also correctly handles
+    // room types with quantity > 1 (multiple legitimately-overlapping
+    // bookings up to capacity), unlike a blanket exclusion constraint
+    // would, since it's the actual remaining-capacity count being
+    // serialized, not "no overlap at all".
+    //
+    // `client` is now required, not optional: this row lock only means
+    // anything inside the same transaction as the subsequent
+    // acquireLock() call, calling this outside withTransaction silently
+    // provides zero protection (the lock releases the instant the query
+    // auto-commits), so making it optional was itself part of the bug
+    // surface, this signature change forces every call site to prove it's
+    // transactional.
     const sql = `
-      SELECT COUNT(*) AS nights_available
-      FROM (
+      WITH locked_rows AS (
         SELECT
           ac.date,
           ac.available_count - COALESCE(
@@ -109,14 +129,16 @@ async seedCalendar(
           AND ac.date >= $2::date
           AND ac.date <  $3::date
           AND ac.is_blocked = false
-      ) sub
-      WHERE sub.net_available >= $4`;
+        ORDER BY ac.date
+        FOR UPDATE OF ac
+      )
+      SELECT COUNT(*) AS nights_available
+      FROM locked_rows
+      WHERE net_available >= $4`;
 
     const params = [roomTypeId, checkIn, checkOut, roomsNeeded];
     try {
-      const result = client
-        ? (await client.query(sql, params)).rows[0] as { nights_available: string }
-        : await queryOne<{ nights_available: string }>(sql, params);
+      const result = (await client.query(sql, params)).rows[0] as { nights_available: string };
 
       const nightsNeeded = Math.ceil(
         (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86_400_000

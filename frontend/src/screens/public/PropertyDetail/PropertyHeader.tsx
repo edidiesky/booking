@@ -48,25 +48,30 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
         </div>
 
         <span className="text-xs px-3 py-1 bold rounded-full capitalize self-start"
-          style={{ backgroundColor: "var(--color-fog)", color: "var(--color-muted-stone)" }}>
+          style={{ backgroundColor: "var(--color-fog)"}}>
           {TYPE_LABEL[property.property_type ?? property.propertyType ?? "shortlet"]}
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 border border-[#e8e6e3] rounded-xl">
+      <div className="flex items-center flex-wrap gap-3">
         {[
-          { label: "Room Types",  value: String(roomTypes.length),         icon: <Bed size={22} />    },
-          { label: "Total Units", value: String(totalRooms),               icon: <Bed size={22} />    },
-          { label: "Max Guests",  value: maxOccupancy ? `${maxOccupancy} guests` : "—", icon: <Users size={22} /> },
-          { label: "Check-in",    value: property.checkInTime ?? "—", icon: <Wifi size={22} /> },
-        ].map(({ label, value, icon }, i, arr) => (
+          { label: "Room Types",  value: String(roomTypes.length),         icon: <Bed size={14} />    },
+          { label: "Total Units", value: String(totalRooms),               icon: <Bed size={14} />    },
+          { label: "Max Guests",  value: maxOccupancy ? `${maxOccupancy} guests` : "—", icon: <Users size={14} /> },
+          { label: "Check-in",    value: property.checkInTime ?? "—", icon: <Wifi size={14} /> },
+        ].map(({ label, value, icon }) => (
           <div key={label}
-            className={`flex flex-col p-4 pl-6 min-h-[110px] justify-center gap-1 ${i < arr.length - 1 ? "border-r border-[#e8e6e3]" : ""}`}>
-            <h4 className="text-xs bold text-[#17191c]">{label}</h4>
-            <div className="flex items-center gap-3 text-[#777b86]">
-              <span className="text-xs">{value}</span>
+            className={`flex items-center gap-1 p-2 bg-[#f2f0ed] rounded-full justify-center`}>
+
+            <div className="flex items-center gap-1 text-[#777b86]">
+              
               {icon}
             </div>
+            <div className="flex items-center gap-1">
+              <span className="text-xs">{value}</span>
+<h4 className="text-xs bold text-[#17191c]">{label}</h4>
+            </div>
+                        
           </div>
         ))}
       </div>

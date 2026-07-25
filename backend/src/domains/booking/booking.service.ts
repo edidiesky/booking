@@ -61,6 +61,7 @@ export interface BookingDto {
   propertyName?:  string;
   propertyCity?:  string;
   roomTypeName?:  string;
+  roomTypeQuantity?: number;
   roomTypeImage?: string;
   guestFirstName?: string;
   guestLastName?:  string;
@@ -93,12 +94,19 @@ function toDto(
     sessionId,
     specialRequests: b.special_requests,
     createdAt: b.created_at,
+    // b is a raw pg row: the joins in listByTenant/listByGuest alias these
+    // as property_name/property_city/room_type_name (snake_case), reading
+    // b.propertyName/b.roomTypeName off that row was always undefined,
+    // that's why these fields never showed up on the frontend. Falls back
+    // to the explicit `enrichment` argument for call sites that pass it
+    // separately instead of joining it onto the row.
     propertyName: b.property_name ?? enrichment?.propertyName,
     roomTypeImage: b.room_types_image?.[0] ?? enrichment?.roomTypeImage,
     receiptUrl: b.receipt_url ?? undefined,
     room_type_images: b.room_type_images ?? [],
     propertyCity: b.property_city ?? enrichment?.propertyCity,
     roomTypeName: b.room_type_name ?? enrichment?.roomTypeName,
+    roomTypeQuantity: b.room_type_quantity,
     guestFirstName: b.guest_first_name,
     guestLastName:  b.guest_last_name,
   };

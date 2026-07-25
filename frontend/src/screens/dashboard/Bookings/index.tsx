@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
 import { useTenantBookings } from "./hooks/useTenantBookings";
-import { ChartSelect } from "@/components/common/charts/Chartselect";
 import type { Booking, BookingStatus } from "@/types/api";
 import BookingDrawer from "./BookingDrawer";
 import {
@@ -15,6 +14,10 @@ import CancelBookingModal from "@/screens/guest/MyBookings/CancelBookingModal";
 import BookingTableRow from "./BookingTableRow";
 import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { FilterBar, FilterSearchInput } from "@/components/common/filters/FilterBar";
+import DateRangeDropdown from "@/components/common/filters/DateRangeDropdown";
+import { STATUS_MAP } from "@/components/common/StatusBadge";
+import MultiSelectDropdown from "@/components/dashboard/common/gant/MultiSelectDropdown";
 
 // const STATUS_CONFIG: Record<
 //   BookingStatus,
@@ -61,7 +64,10 @@ export default function DashboardBookings() {
     search,
     setSearch,
     statusFilter,
-    setStatusFilter,
+    toggleStatus,
+    dateRange,
+    setDateRange,
+    resetFilters,
     stats,
     isStatsLoading,
   } = useTenantBookings();
@@ -164,27 +170,31 @@ export default function DashboardBookings() {
           ]}
         />
 
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex-1">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-              placeholder="Search by booking reference..."
-              className="w-full max-w-xs h-[38px] px-4 border border-[#e8e6e3] text-xs outline-none focus:border-[#17191c] transition-colors"
-            />
-          </div>
-          <ChartSelect
-            value={statusFilter}
-            onValueChange={(v) => setStatusFilter(v as BookingStatus | "")}
-            options={STATUS_OPTIONS.map((o) => ({
-              label: o.label,
-              value: o.value,
-            }))}
+        <FilterBar>
+          <FilterSearchInput
+            value={search}
+            onChange={setSearch}
+            placeholder="Search by booking reference..."
           />
-        </div>
+          <MultiSelectDropdown
+            label="Status"
+            options={STATUS_OPTIONS.filter((o) => o.value !== "").map((o) => ({
+              value: o.value,
+              label: o.label,
+              color: STATUS_MAP[o.value]?.color,
+            }))}
+            selected={statusFilter}
+            onToggle={toggleStatus}
+          />
+          <DateRangeDropdown
+            value={dateRange}
+            onApply={setDateRange}
+            placeholder="Check-in date range"
+          />
+          <button onClick={resetFilters} className="text-xs underline" style={{ color: "#777b86" }}>
+            Reset
+          </button>
+        </FilterBar>
 
         <div className="border border-[#e8e6e3] overflow-x-auto">
           <table className="w-full text-xs">

@@ -328,6 +328,7 @@ export interface Booking {
   propertyName?:  string;
   propertyCity?:  string;
   roomTypeName?:  string;
+  roomTypeQuantity?: number;
   roomTypeImage?: string;
   guestFirstName?: string;
   guestLastName?:  string;
@@ -727,6 +728,8 @@ export interface PropertyWithRoomTypes extends Property {
   fromPrice?: number | null;
 }
 
+// Matches backend/src/domains/review/review.repository.ts exactly, no
+// transform layer exists for this domain, snake_case as returned.
 export interface Review {
   id:                    string;
   room_type_id:          string;
@@ -747,7 +750,6 @@ export interface Review {
   response_at:           string | null;
   created_at:            string;
   updated_at:            string;
-  // present on the guest-joined variant (room-type review list)
   guest_first_name?:     string;
   guest_last_name?:      string;
   guest_profile_image?:  string | null;

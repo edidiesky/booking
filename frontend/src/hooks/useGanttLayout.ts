@@ -17,7 +17,9 @@ export interface RoomTypeRow {
   roomTypeId:   string;
   roomTypeName: string;
   propertyName: string;
+  quantity:     number | null; // null = unknown, can't judge over-capacity
   laneCount:    number;
+  overCapacity: boolean;
   bars:         PositionedBar[];
 }
 
@@ -29,13 +31,6 @@ interface Options {
   statusFilter:    Set<string> | null;
 }
 
-// Packs bookings that overlap in date range into separate lanes (rows within
-// a row), same algorithm calendar apps use for overlapping events: sort by
-// start date, place each item in the first lane whose last item ends before
-// this one starts, otherwise open a new lane. This is what actually makes
-// overlapping bookings for the same room type (multiple physical units
-// under one room type, or a double-booking bug) visually obvious, instead
-// of bars silently stacking on top of each other.
 function packLanes(bookings: Booking[]): { lanes: Booking[][]; laneOf: Map<string, number> } {
   const sorted = [...bookings].sort(
     (a, b) => new Date(a.checkIn).getTime() - new Date(b.checkIn).getTime(),
@@ -88,6 +83,9 @@ export function useGanttLayout({ bookings, windowStart, visibleDays, roomTypeFil
 
       const bars: PositionedBar[] = roomBookings
         .filter((b) => {
+          // Only bars that overlap the visible window at all, keeps the
+          // percentage math meaningful (a booking entirely outside the
+          // window would otherwise get a negative or >100% position).
           const checkIn = startOfDay(new Date(b.checkIn));
           const checkOut = startOfDay(new Date(b.checkOut));
           const windowEnd = new Date(start);
@@ -117,7 +115,17 @@ export function useGanttLayout({ bookings, windowStart, visibleDays, roomTypeFil
         roomTypeId,
         roomTypeName: first.roomTypeName ?? "Untitled room type",
         propertyName: first.propertyName ?? "",
+        quantity: first.roomTypeQuantity ?? null,
         laneCount: Math.max(1, lanes.length),
+        // Genuine over-capacity (a real double-booking, the kind the
+        // FOR UPDATE fix in availability.repository.ts now prevents going
+        // forward, this flags anything that slipped through before that
+        // fix, or any other path that bypasses it) is lanes exceeding the
+        // room type's actual unit count, not "lanes > 1". A room type with
+        // quantity 2 legitimately having 2 overlapping bookings is
+        // expected, not a violation, quantity unknown (null) means "can't
+        // judge", not "violation".
+        overCapacity: first.roomTypeQuantity != null && lanes.length > first.roomTypeQuantity,
         bars,
       };
     });

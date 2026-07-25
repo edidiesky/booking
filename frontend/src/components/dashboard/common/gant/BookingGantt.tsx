@@ -94,7 +94,7 @@ export default function BookingGantt({ bookings, onSelectBooking }: Props) {
           </div>
         ) : (
           rows.map((row) => (
-            <GanttRow key={row.roomTypeId} row={row} onSelectBooking={handleSelectBookingId} />
+            <GanttRow key={row.roomTypeId} row={row} visibleDays={visibleDays} onSelectBooking={handleSelectBookingId} />
           ))
         )}
       </div>

@@ -35,6 +35,7 @@ export interface Booking {
   property_name?:    string;
   property_city?:    string;
   room_type_name?:   string;
+  room_type_quantity?: number;
   room_types_image?: string[];
   guest_first_name?: string;
   guest_last_name?:  string;
@@ -250,7 +251,8 @@ export const bookingRepository = {
     try {
       return await query<Booking>(
         `SELECT b.*, u.first_name AS guest_first_name, u.last_name AS guest_last_name,
-                u.email AS guest_email, rt.images AS room_types_image, p.name AS property_name, rt.name AS room_type_name
+                u.email AS guest_email, rt.images AS room_types_image, p.name AS property_name,
+                rt.name AS room_type_name, rt.quantity AS room_type_quantity
          FROM bookings b
          JOIN users      u  ON u.id  = b.guest_user_id
          JOIN properties p  ON p.id  = b.property_id

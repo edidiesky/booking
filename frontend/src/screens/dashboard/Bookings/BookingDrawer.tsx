@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { formatDate, formatDateTime } from "@/utils/formatDate";
 import { formatCurrency } from "@/utils/formatCurrency";
 import type { Booking, BookingStatus } from "@/types/api";
+import LazyImage from "@/components/common/LazyImage";
 
 const STATUS_CFG: Record<BookingStatus, { label: string; className: string }> =
   {
@@ -63,7 +64,9 @@ export default function BookingDrawer({ booking, onClose }: Props) {
   const idx = stepIndex(booking.status);
   const isTerminal =
     booking.status === "cancelled" || booking.status === "refunded";
-
+  const nights = Math.round(
+    (new Date(booking.checkOut).getTime() - new Date(booking.checkIn).getTime()) / 86_400_000
+  );
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-base p-4 flex items-center justify-end z-50">
       <motion.div
@@ -75,8 +78,8 @@ export default function BookingDrawer({ booking, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           <div>
-            <p className="text-base bold text-[#17191c]">Booking details</p>
-            <p className="text-sm text-[#777b86] mt-0.5">
+            <p className="text-xs bold text-[#17191c]">Booking details</p>
+            <p className="text-xs text-[#777b86] mt-0.5">
               {booking.bookingRef}
             </p>
           </div>
@@ -89,6 +92,23 @@ export default function BookingDrawer({ booking, onClose }: Props) {
         </div>
 
         <div className="flex-1 flex overflow-y-auto flex-col gap-2">
+          <div className="w-full px-6 py-5 border-b flex flex-col gap-4">
+                      <p className="text-xs uppercase text-[#a3a6af] bold">Room</p>
+                      <div className="flex items-center gap-3">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#f2f0ed] shrink-0">
+                          {booking.roomTypeImage?.[0] ?? booking.roomTypeImage ? (
+                            <LazyImage src={booking.roomTypeImage[0] ?? booking.roomTypeImage} alt={booking.roomTypeName} />
+                          ) : null}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs lg:text-sm bold text-[#17191c] truncate">{booking.roomTypeName}</p>
+                          <p className="text-xs text-[#777b86]">{nights} night{nights !== 1 ? "s" : ""}</p>
+                        </div>
+                        <p className="text-xs bold text-[#17191c] whitespace-nowrap">
+                          {formatCurrency(Number(booking.totalAmountNgn))}
+                        </p>
+                      </div>
+                    </div>
           <div className="w-full px-6 py-5 border-b flex flex-col gap-6">
             <div className="flex flex-col gap-4 lg:gap-4 lg:w-[75%]">
               {[
@@ -104,10 +124,10 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                   key={label}
                   className="flex w-full items-center gap-8 lg:gap-10"
                 >
-                  <span className="text-sm medium flex-1 text-[#777b86]">
+                  <span className="text-xs bold flex-1 text-[#777b86]">
                     {label}
                   </span>
-                  <span className="text-sm text-end flex-1 text-[#17191c] bold">
+                  <span className="text-xs text-end flex-1 text-[#17191c] bold">
                     {value}
                   </span>
                 </div>
@@ -128,8 +148,8 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                 key={label}
                 className={`w-full flex items-center gap-8 lg:gap-10`}
               >
-                <p className="text-sm medium text-[#777b86]">{label}</p>
-                <p className="text-sm text-[#17191c] bold">{value}</p>
+                <p className="text-xs bold text-[#777b86]">{label}</p>
+                <p className="text-xs text-[#17191c] bold">{value}</p>
               </div>
             ))}
           </div>
@@ -147,7 +167,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                       />
                       <div>
                         <p
-                          className={`text-sm bold ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}
+                          className={`text-xs bold ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}
                         >
                           {step.label}
                         </p>
