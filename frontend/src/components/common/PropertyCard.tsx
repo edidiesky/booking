@@ -99,10 +99,10 @@ export default function PropertyCard({ property, index = 0, isFavorited = false 
       initial="initial"
       animate={inView ? "animate" : "exit"}
       onClick={() => navigate(`/properties/${property.id}`)}
-      className="w-full flex flex-col rounded-xl overflow-hidden border cursor-pointer group"
+      className="w-full flex flex-col overflow-hidden cursor-pointer group"
     >
       {/* image area */}
-      <div className="w-full h-[340px] overflow-hidden relative">
+      <div className="w-full h-[340px] rounded-xl  overflow-hidden relative">
 
         {primaryImage ? (
           <motion.div
@@ -171,7 +171,7 @@ export default function PropertyCard({ property, index = 0, isFavorited = false 
       </div>
 
       {/* card body */}
-      <div className="w-full flex flex-col px-4 py-8 gap-2">
+      <div className="w-full flex flex-col py-4 gap-1">
 
         {/* name + price */}
         <div className="flex items-start justify-between gap-2">
@@ -193,7 +193,6 @@ export default function PropertyCard({ property, index = 0, isFavorited = false 
 
         {/* location */}
         <p className="text-sm bold flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
-          <MapPin size={16} />
           {city}{country ? `, ${country}` : ""}
         </p>
 
