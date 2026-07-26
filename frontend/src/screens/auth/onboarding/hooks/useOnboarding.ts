@@ -41,7 +41,7 @@ export function useOnboarding(userChoice: UserChoice) {
       dispatch(setOnboardingPendingEmail(data.email));
       dispatch(setOnboardingShowVerify(true));
       if (res.debug) {
-        showToast(`Dev OTP: ${res.debug}`, "info", { duration: 30_000 });
+        showToast(`Dev OTP: ${res.debug}`, "info", { duration: 3_000 });
       }
     } catch { /* errorMiddleware handles toast */ }
   };

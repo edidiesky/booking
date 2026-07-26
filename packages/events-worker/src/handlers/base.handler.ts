@@ -48,7 +48,7 @@ export abstract class BaseNotificationHandler {
           channel.nack(msg, false, false);
           return;
         }
-        const delay = Math.min(BASE_DELAY_MS * Math.pow(2, attempt), 30_000) + jitter();
+        const delay = Math.min(BASE_DELAY_MS * Math.pow(2, attempt), 3_000) + jitter();
         await new Promise((r) => setTimeout(r, delay));
       }
     }

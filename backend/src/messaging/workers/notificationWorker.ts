@@ -14,6 +14,7 @@ import { randomUUID } from "crypto";
 import logger from "../../utils/logger";
 import { trackError } from "../../utils/metrics";
 import { bookingReceiptHandler } from "../../infra/handlers/booking-receipt.handler";
+import { hostStatementHandler } from "../../infra/handlers/host-statement.handler";
 import { rentalsRecordUpsertedHandle } from "../../infra/handlers/renter.upsert.requested.handler";
 
 const HANDLER_MAP: Record<string, BaseNotificationHandler> = {
@@ -26,6 +27,7 @@ const HANDLER_MAP: Record<string, BaseNotificationHandler> = {
   [ROUTING_KEYS.NOTIFY_AUTH_OTP]: authOtpHandler,
   [ROUTING_KEYS.NOTIFY_AUTH_REGISTERED]: authRegisteredHandler,
   [ROUTING_KEYS.BOOKING_RECEIPT_REQUESTED]: bookingReceiptHandler,
+  [ROUTING_KEYS.HOST_STATEMENT_REQUESTED]: hostStatementHandler,
   [ROUTING_KEYS.RENTERS_RECORED_UPSERTED]: rentalsRecordUpsertedHandle,
 };
 
@@ -64,6 +66,10 @@ const NOTIFY_QUEUES: Record<string, { queue: string; exchange: string }> = {
   },
   [ROUTING_KEYS.BOOKING_RECEIPT_REQUESTED]: {
     queue: "notify.q.booking.receipt",
+    exchange: EXCHANGES.BOOKING,
+  },
+  [ROUTING_KEYS.HOST_STATEMENT_REQUESTED]: {
+    queue: "notify.q.booking.host_statement",
     exchange: EXCHANGES.BOOKING,
   },
   [ROUTING_KEYS.RENTERS_RECORED_UPSERTED]: {

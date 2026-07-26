@@ -1,6 +1,6 @@
 import { Link, useNavigate }         from "react-router-dom";
 import { useDispatch, useSelector }  from "react-redux";
-import { ChevronDown, LogOut }       from "lucide-react";
+import {LogOut }       from "lucide-react";
 import type { LucideIcon }           from "lucide-react";
 import {
   DropdownMenu,
@@ -12,6 +12,7 @@ import {
 import { selectCurrentUser, selectRefreshToken, clearCredentials } from "@/redux/slices/authSlice";
 import { useLogoutMutation } from "@/redux/services/authApi";
 import { showToast }         from "@/components/common/Toast";
+import Avatar from "./Avatar";
 
 export interface AccountDropdownItem {
   label:  string;
@@ -57,13 +58,20 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="h-9 px-5 text-sm text-[#000] transition-opacity hover:opacity-80 flex items-center gap-2 rounded-full outline-none hover:bg-[#f5f5f3]">
-          <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs bold bg-[#f5f5f3] text-[#17191c] shrink-0">
-            {initial}
-          </span>
-          {triggerLabel}
-          <ChevronDown size={14} />
-        </button>
+         <div className="flex items-center gap-2">
+            <Avatar
+              src={currentUser?.profileImage}
+              email={currentUser?.email}
+              name={triggerLabel}
+              size={32}
+            />
+            <span
+              className="text-sm bold hidden md:block truncate max-w-[140px]"
+              style={{ color: "var(--color-ink)" }}
+            >
+              {triggerLabel}
+            </span>
+          </div>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent

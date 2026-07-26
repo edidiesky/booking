@@ -5,7 +5,7 @@ import { trackError } from "../utils/metrics";
 const pool = new Pool({
   connectionString:        process.env.DATABASE_URL,
   max:                     20,
-  idleTimeoutMillis:       30_000,
+  idleTimeoutMillis:       3_000,
   connectionTimeoutMillis: 10_000,
 });
 
@@ -16,7 +16,7 @@ pool.on("error", (err) => {
 
 const MAX_RETRIES   = 5;
 const BASE_DELAY_MS = 3_000;
-const MAX_DELAY_MS  = 30_000;
+const MAX_DELAY_MS  = 3_000;
 
 export async function connectDB(): Promise<void> {
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {

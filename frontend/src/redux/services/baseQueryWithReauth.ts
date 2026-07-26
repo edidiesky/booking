@@ -7,7 +7,7 @@ import {
 import { Mutex } from "async-mutex";
 import type { RootState } from "@/redux/store";
 import { setCredentials, clearCredentials } from "@/redux/slices/authSlice";
-import { AUTH_URL } from "@/constants";
+import { AUTH_URL } from "@/constants/api";
 const refreshMutex = new Mutex();
 
 const rawBaseQuery = fetchBaseQuery({

@@ -5,7 +5,7 @@ import { trackCircuitBreakerEvent } from "./metrics";
 const options = {
   timeout:                  15_000,
   errorThresholdPercentage: 50,
-  resetTimeout:             30_000,
+  resetTimeout:             3_000,
   rollingCountTimeout:      10_000,
   volumeThreshold:          5,
 };

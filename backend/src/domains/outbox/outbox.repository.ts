@@ -10,6 +10,8 @@ export type OutboxEventType =
   | "booking.checked_in"
   | "booking.checked_out"
   | "booking.receipt.requested"   
+  | "booking.host_statement.requested"
+  | "audit.log.requested"
   | "payment.confirmed"
   | "payment.failed"
   | "payment.initiated"
@@ -44,6 +46,19 @@ export const outboxRepository = {
       [eventType, JSON.stringify(payload)]
     )).rows[0] as OutboxEvent;
     return row;
+  },
+
+  async createStandalone(
+    eventType: OutboxEventType,
+    payload:   Record<string, unknown>,
+  ): Promise<OutboxEvent> {
+    const row = await queryOne<OutboxEvent>(
+      `INSERT INTO outbox_events (event_type, payload)
+       VALUES ($1, $2::jsonb)
+       RETURNING *`,
+      [eventType, JSON.stringify(payload)]
+    );
+    return row!;
   },
 
   async getPending(): Promise<OutboxEvent[]> {

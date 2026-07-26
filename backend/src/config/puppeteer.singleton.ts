@@ -58,7 +58,7 @@ export async function generatePdfFromHtml(html: string): Promise<Buffer> {
   const page = await b.newPage();
 
   try {
-    await page.setContent(html, { waitUntil: "load", timeout: 30_000 });
+    await page.setContent(html, { waitUntil: "load", timeout: 3_000 });
 
     const pdf = await page.pdf({
       format:          "A4",

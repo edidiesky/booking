@@ -8,6 +8,7 @@ export interface SSEEvent {
   payload: unknown;
 }
 
+
 const HEARTBEAT_INTERVAL_MS = 25_000;
 
 class SSEManager {

@@ -65,7 +65,7 @@ async function tick(): Promise<void> {
 const scheduler = createLockedScheduler({
   lockKey: "scheduler:booking_expiry:lock",
   lockTtlSec: 15,
-  tickMs: 30_000,
+  tickMs: 3_000,
   serviceName: "booking-expiry-worker",
   onTick: tick,
 });

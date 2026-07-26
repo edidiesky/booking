@@ -137,6 +137,54 @@ services:
       postgres:
         condition: service_healthy
 
+  campaign-worker:
+    build:
+      context: ..
+      dockerfile: packages/campaign-worker/Dockerfile
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    depends_on: 
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  audit-worker:
+    build:
+      context: ..
+      dockerfile: packages/audit-worker/Dockerfile
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    depends_on: 
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+  
+  seller-notification-worker:
+    build:
+      context: ..
+      dockerfile: packages/seller-notification-worker/Dockerfile
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    depends_on: 
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
   csv-room-import-worker:
     build:
       context: ..

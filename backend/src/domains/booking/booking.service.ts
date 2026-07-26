@@ -690,6 +690,23 @@ export const bookingService = {
       ))!;
       await escrowRepository.release(bookingId, client);
       await outboxRepository.create(
+        "booking.host_statement.requested",
+        {
+          bookingId,
+          bookingRef: booking.booking_ref,
+          propertyId: booking.property_id,
+          roomTypeId: booking.room_type_id,
+          tenantId: booking.tenant_id,
+          totalAmountNgn: Number(booking.total_amount_ngn),
+          platformFeeNgn: Number(booking.platform_fee_ngn),
+          hostPayoutNgn: Number(booking.host_payout_ngn),
+          checkIn: booking.check_in,
+          checkOut: booking.check_out,
+          releasedAt: new Date().toISOString(),
+        },
+        client,
+      );
+      await outboxRepository.create(
         "booking.checked_out",
         {
           bookingId,

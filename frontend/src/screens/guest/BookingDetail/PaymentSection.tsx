@@ -2,6 +2,9 @@ import StatusBadge    from "@/components/common/StatusBadge";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate }     from "@/utils/formatDate";
 import type { Booking, Payment } from "@/types/api";
+import { FileText, Loader2 } from "lucide-react";
+import { useLazyGetGuestInvoiceQuery } from "@/redux/services/invoiceApi";
+import { showToast } from "@/components/common/Toast";
 
 interface Props {
   booking:  Booking;
@@ -11,6 +14,19 @@ interface Props {
 }
 
 export default function PaymentSection({ booking, payment, onPay, isPaying }: Props) {
+  const [fetchInvoice, { isFetching: isGeneratingInvoice }] = useLazyGetGuestInvoiceQuery();
+
+  const handleDownloadInvoice = async () => {
+    try {
+      const result = await fetchInvoice(booking.bookingId).unwrap();
+      if (result.data.pdf_url) {
+        window.open(result.data.pdf_url, "_blank", "noopener,noreferrer");
+      }
+    } catch {
+      showToast("Couldn't generate the invoice, try again in a moment.", "error");
+    }
+  };
+
   if (booking.status !== "pending_payment" && !payment) return null;
 
   return (
@@ -39,6 +55,26 @@ export default function PaymentSection({ booking, payment, onPay, isPaying }: Pr
               <span style={{ color: "var(--color-muted-stone)" }}>Paid at</span>
               <span style={{ color: "var(--color-ink)" }}>{formatDate(payment.paidAt)}</span>
             </div>
+          )}
+          {payment.status === "success" && (
+            <button
+              onClick={handleDownloadInvoice}
+              disabled={isGeneratingInvoice}
+              className="flex items-center justify-center gap-1.5 h-9 mt-1 rounded-full text-xs border transition-colors hover:bg-[#f2f0ed] disabled:opacity-50"
+              style={{ borderColor: "#e8e6e3", color: "var(--color-ink)" }}
+            >
+              {isGeneratingInvoice ? (
+                <>
+                  <Loader2 size={13} className="animate-spin" />
+                  Generating invoice...
+                </>
+              ) : (
+                <>
+                  <FileText size={13} />
+                  Download invoice
+                </>
+              )}
+            </button>
           )}
         </div>
       )}

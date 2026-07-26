@@ -16,3 +16,7 @@ export const SSE_URL          = `${BASE}/api/v1/sse`;
 export const RENTER_URL          = `${BASE}/api/v1/renters`;
 export const SECURITY_URL     = `${BASE}/api/v1/security`;
 export const REVIEW_URL       = `${BASE}/api/v1/reviews`;
+export const INVOICE_URL      = `${BASE}/api/v1/invoices`;
+export const SELLER_NOTIFICATION_URL = `${BASE}/api/v1/seller-notifications`;
+export const FAVORITE_URL = `${BASE}/api/v1/favorites`;
+export const JOB_URL = `${BASE}/api/v1/jobs`;
