@@ -409,6 +409,8 @@ async refreshToken(token: string): Promise<{ accessToken: string; refreshToken: 
     const newHash = await bcrypt.hash(newPassword, 12);
     await userRepository.updatePasswordHash(userId, newHash);
 
+    await auditRepository.log({ action: "updated", resource: "password", resourceId: userId, userId });
+
     logger.info("password_changed", { event: "password_changed", userId });
     return { message: "Password changed." };
   },
@@ -463,13 +465,9 @@ async refreshToken(token: string): Promise<{ accessToken: string; refreshToken: 
     await userRepository.updatePasswordHash(userId, newHash);
     await redisClient.del(passwordResetKey(token));
 
-    // Invalidate any currently-live access token for this user, same
-    // short-lived blocklist logout() already uses (JWT_EXPIRY_SEC, the
-    // remaining lifetime of a normal token). NOT a long block: authenticate()
-    // rejects any token for this userId while the key exists, a long TTL
-    // here would lock the user out of their own account, including a
-    // fresh login with their new password, for as long as the block lasts.
     await redisClient.set(blocklistKey(userId), "1", "EX", JWT_EXPIRY_SEC);
+
+    await auditRepository.log({ action: "updated", resource: "password_reset", resourceId: userId, userId });
 
     logger.info("password_reset_confirmed", { event: "password_reset_confirmed", userId });
     return { message: "Password reset. You can now sign in with your new password." };
