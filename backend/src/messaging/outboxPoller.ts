@@ -11,6 +11,8 @@ import {
   publishEscrowReleased,
   publishEscrowRefunded,
   publishBookingReceiptRequested,
+  publishHostStatementRequested,
+  publishAuditLogRequested,
   publishRentalsRecordUpserted,
 } from "./publisher";
 import { outboxProcessedCounter, trackError } from "../utils/metrics";
@@ -32,6 +34,8 @@ const PUBLISHER_MAP: Record<OutboxEventType, PublisherFn> = {
   "escrow.released":    publishEscrowReleased    as unknown as PublisherFn,
   "escrow.refunded":    publishEscrowRefunded    as unknown as PublisherFn,
   "booking.receipt.requested": publishBookingReceiptRequested as unknown as PublisherFn,
+  "booking.host_statement.requested": publishHostStatementRequested as unknown as PublisherFn,
+  "audit.log.requested": publishAuditLogRequested as unknown as PublisherFn,
   "renter.upsert.requested": publishRentalsRecordUpserted as unknown as PublisherFn,
 };
 

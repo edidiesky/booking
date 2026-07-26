@@ -29,7 +29,9 @@ export const ROUTING_KEYS = {
   NOTIFY_AUTH_REGISTERED:    "notify.auth.registered",
   NOTIFY_ESCROW_RELEASED:    "notify.escrow.released",
   BOOKING_RECEIPT_REQUESTED: "booking.receipt.requested",
+  HOST_STATEMENT_REQUESTED: "booking.host_statement.requested",
   RENTERS_RECORED_UPSERTED: "renter.upsert.requested",
+  AUDIT_LOG_REQUESTED: "audit.log.requested",
 } as const;
 
 let _connection: amqp.ChannelModel | null = null;
@@ -62,7 +64,7 @@ export async function connectRabbitMQ(): Promise<void> {
     } catch (err) {
       logger.error("rabbitmq_connect_failed", { event: "rabbitmq_connect_failed", attempt, error: (err as Error).message });
       if (attempt === MAX_RETRIES - 1) throw err;
-      const delay = Math.min(BASE_DELAY_MS * Math.pow(2, attempt), 30_000) + Math.random() * 1_000;
+      const delay = Math.min(BASE_DELAY_MS * Math.pow(2, attempt), 3_000) + Math.random() * 1_000;
       await new Promise((r) => setTimeout(r, delay));
     }
   }

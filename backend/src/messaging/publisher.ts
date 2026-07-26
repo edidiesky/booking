@@ -213,8 +213,47 @@ export function publishBookingReceiptRequested(
   publish(EXCHANGES.BOOKING, ROUTING_KEYS.BOOKING_RECEIPT_REQUESTED, p);
 }
 
+export interface HostStatementRequestedPayload {
+  bookingId:      string;
+  bookingRef:     string;
+  propertyId:     string;
+  roomTypeId:     string;
+  tenantId:       string;
+  totalAmountNgn: number;
+  platformFeeNgn: number;
+  hostPayoutNgn:  number;
+  checkIn:        string;
+  checkOut:       string;
+  releasedAt:     string;
+}
+
+export function publishHostStatementRequested(
+  p: HostStatementRequestedPayload,
+): void {
+  publish(EXCHANGES.BOOKING, ROUTING_KEYS.HOST_STATEMENT_REQUESTED, p);
+}
+
 export function publishRentalsRecordUpserted(
   p: RentalsRecordUpsertedPayload,
 ): void {
   publish(EXCHANGES.BOOKING, ROUTING_KEYS.RENTERS_RECORED_UPSERTED, p);
+}
+
+export interface AuditLogRequestedPayload {
+  tenantId?:    string;
+  userId?:      string;
+  action:       string;
+  resource:     string;
+  resourceId?:  string;
+  oldValue?:    Record<string, unknown>;
+  newValue?:    Record<string, unknown>;
+  ipAddress?:   string;
+  userAgent?:   string;
+  requestId?:   string;
+}
+
+export function publishAuditLogRequested(
+  p: AuditLogRequestedPayload,
+): void {
+  publish(EXCHANGES.BOOKING, ROUTING_KEYS.AUDIT_LOG_REQUESTED, p);
 }

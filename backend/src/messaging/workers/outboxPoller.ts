@@ -1,4 +1,3 @@
-
 import { OutboxEventType, outboxRepository } from "@/domains/outbox/outbox.repository";
 import * as publisher from "../publisher";
 import { outboxProcessedCounter, trackError, logger } from "@booking/shared";
@@ -19,6 +18,8 @@ const PUBLISHER_MAP: Record<OutboxEventType, PublisherFn> = {
   "escrow.released":            publisher.publishEscrowReleased    as unknown as PublisherFn,
   "escrow.refunded":            publisher.publishEscrowRefunded    as unknown as PublisherFn,
   "booking.receipt.requested":  publisher.publishBookingReceiptRequested as unknown as PublisherFn,
+  "booking.host_statement.requested": publisher.publishHostStatementRequested as unknown as PublisherFn,
+  "audit.log.requested": publisher.publishAuditLogRequested as unknown as PublisherFn,
   "renter.upsert.requested":  publisher.publishRentalsRecordUpserted as unknown as PublisherFn
 };
 
