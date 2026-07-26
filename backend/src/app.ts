@@ -24,6 +24,12 @@ import permissionRoutes from "./domains/permission/permission.routes";
 import renterRoutes from "./domains/renter/renter.routes";
 import securityRoutes from "./domains/security/security.routes";
 import reviewRoutes from "./domains/review/review.routes";
+import invoiceRoutes from "./domains/invoice/invoice.routes";
+import sellerNotificationRoutes from "./domains/seller-notification/seller-notification.routes";
+import campaignRoutes from "./domains/campaign/campaign.routes";
+import userNotificationRoutes from "./domains/user-notification/user-notification.routes";
+import favoriteRoutes from "./domains/favorite/favorite.routes";
+import jobRoutes from "./domains/jobs/job.routes";
 const app = express();
 
 if (!process.env.WEB_ORIGIN) throw new Error("WEB_ORIGIN env var not set.");
@@ -65,6 +71,12 @@ app.use("/api/v1/audit",      tenantMiddleware, auditRoutes);
 app.use("/api/v1/roles",       tenantMiddleware, roleRoutes);
 app.use("/api/v1/permissions", tenantMiddleware, permissionRoutes);
 app.use("/api/v1/reviews",     reviewRoutes);
+app.use("/api/v1/invoices",    invoiceRoutes);
+app.use("/api/v1/seller-notifications", sellerNotificationRoutes);
+app.use("/api/v1/campaigns", campaignRoutes);
+app.use("/api/v1/user-notifications", userNotificationRoutes);
+app.use("/api/v1/favorites", favoriteRoutes);
+app.use("/api/v1/jobs", jobRoutes);
 
 app.use(NotFound);
 app.use(errorHandler);
