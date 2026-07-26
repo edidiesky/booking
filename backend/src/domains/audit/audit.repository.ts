@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { query } from "@booking/shared";
+import { query, outboxRepository } from "@booking/shared";
 import { AuditAction } from "../../types";
 import { requestContext } from "../../context/requestContext";
 import logger from "../../utils/logger";
@@ -38,25 +38,20 @@ export const auditRepository = {
   }): Promise<void> {
     const ctx = requestContext.get();
     try {
-      await query(
-        `INSERT INTO audit_logs
-           (tenant_id, user_id, action, resource, resource_id, old_value, new_value, ip_address, user_agent, request_id)
-         VALUES ($1,$2,$3,$4,$5,$6::jsonb,$7::jsonb,$8,$9,$10)`,
-        [
-          data.tenantId  ?? ctx?.tenantId  ?? null,
-          data.userId    ?? ctx?.userId    ?? null,
-          data.action,
-          data.resource,
-          data.resourceId ?? null,
-          data.oldValue ? JSON.stringify(data.oldValue) : null,
-          data.newValue ? JSON.stringify(data.newValue) : null,
-          data.req ? getIp(data.req) : null,
-          data.req ? (data.req.headers["user-agent"] as string | undefined) ?? null : null,
-          data.req ? (data.req.headers["x-request-id"] as string | undefined) ?? ctx?.requestId ?? null : ctx?.requestId ?? null,
-        ]
-      );
+      await outboxRepository.createStandalone("audit.log.requested", {
+        tenantId:   data.tenantId  ?? ctx?.tenantId  ?? undefined,
+        userId:     data.userId    ?? ctx?.userId    ?? undefined,
+        action:     data.action,
+        resource:   data.resource,
+        resourceId: data.resourceId ?? undefined,
+        oldValue:   data.oldValue,
+        newValue:   data.newValue,
+        ipAddress:  data.req ? getIp(data.req) : undefined,
+        userAgent:  data.req ? (data.req.headers["user-agent"] as string | undefined) : undefined,
+        requestId:  data.req ? (data.req.headers["x-request-id"] as string | undefined) ?? ctx?.requestId : ctx?.requestId,
+      });
     } catch (err) {
-      logger.error("audit_log_failed", { event: "audit_log_failed", error: (err as Error).message, resource: data.resource });
+      logger.error("audit_log_enqueue_failed", { event: "audit_log_enqueue_failed", error: (err as Error).message, resource: data.resource });
     }
   },
 
