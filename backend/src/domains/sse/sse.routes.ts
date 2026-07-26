@@ -7,8 +7,8 @@ import { requestContext }                 from "../../context/requestContext";
 const router = Router();
 
 router.get("/connect", authenticate, (req, res) => {
-  const userId   = req.user!.userId;
-  const tenantId = req.tenantId;
+  const userId = req.user!.userId;
+  const tenantId = req.tenantId ?? req.user!.tenantId;
 
   res.setHeader("Content-Type",      "text/event-stream");
   res.setHeader("Cache-Control",     "no-cache");
