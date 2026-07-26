@@ -15,6 +15,10 @@ import {
   GetRoomTypeDetailHandler,
   GetPropertyDetailHandler,
   StreamRoomTypeAvailabilityHandler,
+  ImportRoomTypesHandler,
+  SetRoomSortModeHandler,
+  ReorderRoomTypesHandler,
+  ExportTenantRoomsHandler,
 } from "./property.controller";
 import {
   blockDatesSchema,
@@ -25,6 +29,7 @@ import {
 
 const propertyRouter = Router();
 propertyRouter.get("/mine", authenticate, requireTenantMember, GetTenantPropertiesHandler);
+propertyRouter.get("/mine/export", authenticate, requireTenantMember, ExportTenantRoomsHandler);
 propertyRouter.get("/mine/stats", authenticate, requireTenantMember, GetTenantPropertyStatsHandler);
 propertyRouter.get("/room-types/:roomTypeId/availability", GetAvailabilityHandler);
 propertyRouter.get("/dashboard/:propertyId", authenticate, requireTenantMember, GetPropertyDetailHandler);
@@ -38,6 +43,9 @@ propertyRouter.post("/", authenticate, requireTenantMember, validate(createPrope
 propertyRouter.delete("/:propertyId", authenticate, requireTenantMember, DeletePropertyHandler);
 propertyRouter.get("/room-types/:roomTypeId", authenticate, requireTenantMember, GetRoomTypeDetailHandler);
 propertyRouter.post("/:propertyId/room-types", authenticate, requireTenantMember, validate(createRoomTypeSchema), CreateRoomTypeHandler);
+propertyRouter.post("/:propertyId/room-types/import", authenticate, requireTenantMember, ImportRoomTypesHandler);
+propertyRouter.patch("/:propertyId/room-sort-mode", authenticate, requireTenantMember, SetRoomSortModeHandler);
+propertyRouter.patch("/:propertyId/room-types/reorder", authenticate, requireTenantMember, ReorderRoomTypesHandler);
 propertyRouter.post("/room-types/:roomTypeId/calendar", authenticate, requireTenantMember, validate(seedCalendarSchema), SeedCalendarHandler);
 propertyRouter.patch("/room-types/:roomTypeId/block", authenticate, requireTenantMember, validate(blockDatesSchema), BlockDatesHandler);
 propertyRouter.get("/room-types/:roomTypeId/availability/stream", StreamRoomTypeAvailabilityHandler);
