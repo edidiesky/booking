@@ -12,12 +12,14 @@ import {
 import { showToast } from "@/components/common/Toast";
 import CancelBookingModal from "@/screens/guest/MyBookings/CancelBookingModal";
 import BookingTableRow from "./BookingTableRow";
+import ExportPdfButton from "@/components/common/ExportPdfButton";
+import { BOOKING_URL } from "@/constants/api";
 import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { FilterBar, FilterSearchInput } from "@/components/common/filters/FilterBar";
-import DateRangeDropdown from "@/components/common/filters/DateRangeDropdown";
 import { STATUS_MAP } from "@/components/common/StatusBadge";
 import MultiSelectDropdown from "@/components/dashboard/common/gant/MultiSelectDropdown";
+import DateRangeDropdown from "@/components/common/filters/DateRangeDropdown";
 
 // const STATUS_CONFIG: Record<
 //   BookingStatus,
@@ -195,6 +197,10 @@ export default function DashboardBookings() {
             Reset
           </button>
         </FilterBar>
+
+        <div className="flex justify-end">
+          <ExportPdfButton triggerUrl={`${BOOKING_URL}/tenant/export`} label="Export bookings PDF" />
+        </div>
 
         <div className="border border-[#e8e6e3] overflow-x-auto">
           <table className="w-full text-xs">
