@@ -41,7 +41,6 @@ export const GetMyBookingsHandler = asyncHandler(async (req: Request, res: Respo
   res.status(200).json({ success: true, data: bookings });
 });
 
-
 export const GetTenantBookingsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
   const q = req.query as Record<string, string>;
@@ -88,4 +87,45 @@ export const InternalCancelBookingHandler = asyncHandler(async (req: Request, re
 
   const booking = await bookingService.cancelBooking(bookingId, "system", reason ?? "Payment window expired.");
   res.status(200).json({ success: true, data: booking });
+});
+export const ExportTenantBookingsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const tenantId = req.tenantId;
+
+  const { nanoid } = await import("nanoid");
+  const { enqueueExportJob, runExportJob } = await import("../../utils/runExportJob");
+  const { bookingRepository } = await import("./booking.repository");
+
+  const jobId = nanoid(21);
+  await enqueueExportJob(jobId);
+  res.status(202).json({ success: true, data: { jobId } });
+
+  const { auditRepository } = await import("../audit/audit.repository");
+  await auditRepository.log({ action: "exported", resource: "bookings_pdf", tenantId, userId: req.user?.userId, req });
+
+  // Not awaited, the response already went out, this runs after.
+  void runExportJob(jobId, async () => {
+    const bookings = await bookingRepository.listByTenant(tenantId, { limit: 1000 });
+    return {
+      title: "Bookings Export",
+      subtitle: "All bookings for your properties",
+      generatedAt: new Date(),
+      columns: [
+        { key: "ref", label: "Reference" },
+        { key: "guest", label: "Guest" },
+        { key: "checkIn", label: "Check-in" },
+        { key: "checkOut", label: "Check-out" },
+        { key: "status", label: "Status" },
+        { key: "total", label: "Total (₦)", align: "right" as const },
+      ],
+      rows: bookings.map((b) => ({
+        ref: b.booking_ref,
+        guest: [b.guest_first_name, b.guest_last_name].filter(Boolean).join(" ") || b.guest_user_id,
+        checkIn: new Date(b.check_in).toLocaleDateString("en-NG"),
+        checkOut: new Date(b.check_out).toLocaleDateString("en-NG"),
+        status: b.status,
+        total: Number(b.total_amount_ngn).toLocaleString("en-NG"),
+      })),
+    };
+  }, `bookings_export_${tenantId}`);
 });

@@ -19,6 +19,10 @@ export interface EscrowRecord {
   refund_amount_ngn?: number;
   created_at:        Date;
   updated_at:        Date;
+  // joined by listByTenant's query only, undefined elsewhere
+  booking_ref?:      string;
+  check_in?:         Date;
+  check_out?:        Date;
 }
 
 export const escrowRepository = {
