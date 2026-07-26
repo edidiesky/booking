@@ -1,14 +1,12 @@
 import { useSelector }          from "react-redux";
 import { Link }                  from "react-router-dom";
-import { Bell, Search }          from "lucide-react";
+import { Search }                from "lucide-react";
+import Avatar                    from "@/components/common/Avatar";
 import { selectCurrentUser }     from "@/redux/slices/authSlice";
+import NotificationBell from "@/components/common/NotificationBell";
 
 export default function Header() {
   const currentUser = useSelector(selectCurrentUser);
-
-  const initials = currentUser
-    ? `${currentUser.firstName?.charAt(0) ?? ""}${currentUser.lastName?.charAt(0) ?? ""}`.toUpperCase()
-    : "?";
 
   const displayName = currentUser
     ? `${currentUser.firstName} ${currentUser.lastName}`
@@ -34,13 +32,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
 
           {/* Notifications */}
-          <button
-            className="relative w-8 h-8 flex items-center justify-center rounded-full transition-colors hover:opacity-70 outline-none"
-            style={{ color: "var(--color-muted-stone)" }}
-            title="Notifications"
-          >
-            <Bell size={16} />
-          </button>
+          <NotificationBell />
 
           {/* View public site */}
           <Link
@@ -58,14 +50,14 @@ export default function Header() {
 
           {/* User avatar */}
           <div className="flex items-center gap-2">
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-xs bold  shrink-0"
-              style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
-            >
-              {initials}
-            </div>
+            <Avatar
+              src={currentUser?.profileImage}
+              email={currentUser?.email}
+              name={displayName}
+              size={32}
+            />
             <span
-              className="text-xs bold hidden md:block truncate max-w-[140px]"
+              className="text-sm bold hidden md:block truncate max-w-[140px]"
               style={{ color: "var(--color-ink)" }}
             >
               {displayName}
