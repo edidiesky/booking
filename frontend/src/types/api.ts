@@ -188,7 +188,7 @@ export interface PropertyAddress {
 // src/types/api.ts
 export interface Property {
   id:            string;
-  tenant_id:      string;
+  tenantId:      string;
   name:          string;
   description:   string;
   propertyType:  PropertyType;
@@ -202,6 +202,7 @@ export interface Property {
   createdAt:     string;
   updatedAt:     string;
   property_type?:string
+  room_sort_mode?: "alphabetical" | "price" | "rating" | "newest" | "oldest" | "custom";
 }
 export interface CreatePropertyPayload {
   name:          string;
@@ -600,12 +601,6 @@ export interface RequestOtpResponse {
   expiresInSeconds: number;
 }
 
-//  RBAC 
-
-// Fixed system role slugs still exist and are useful for UI logic (e.g.
-// "is this the host:admin row"), but custom roles have dynamic slugs now,
-// so anywhere a role slug is accepted/returned generally, the type is
-// `string`, not this union.
 export type SystemRoleSlug =
   | "platform:admin"
   | "host:admin"
@@ -728,8 +723,6 @@ export interface PropertyWithRoomTypes extends Property {
   fromPrice?: number | null;
 }
 
-// Matches backend/src/domains/review/review.repository.ts exactly, no
-// transform layer exists for this domain, snake_case as returned.
 export interface Review {
   id:                    string;
   room_type_id:          string;
@@ -750,6 +743,7 @@ export interface Review {
   response_at:           string | null;
   created_at:            string;
   updated_at:            string;
+  // present on the guest-joined variant (room-type review list)
   guest_first_name?:     string;
   guest_last_name?:      string;
   guest_profile_image?:  string | null;
@@ -796,4 +790,54 @@ export interface Renter {
   emergency_contact_phone:  string | null;
   created_at:               string;
   updated_at:               string;
+}
+
+export type InvoiceType = "guest_invoice" | "host_statement";
+
+export interface Invoice {
+  id:             string;
+  invoice_number: string;
+  type:           InvoiceType;
+  booking_id:     string;
+  tenant_id:      string;
+  guest_user_id?: string;
+  amount_ngn:     number;
+  pdf_url:        string | null;
+  created_at:     string;
+}
+
+export interface InvoiceResponse {
+  success: boolean;
+  data:    Invoice;
+}
+
+export type SellerNotificationType = "booking_confirmed" | "booking_checked_in" | "booking_checked_out";
+
+export interface SellerNotification {
+  id:         string;
+  tenant_id:  string;
+  booking_id: string | null;
+  type:       SellerNotificationType;
+  title:      string;
+  body:       string;
+  is_read:    boolean;
+  created_at: string;
+}
+
+export interface SellerNotificationListResponse {
+  success: boolean;
+  data: {
+    notifications: SellerNotification[];
+    unreadCount:   number;
+  };
+}
+
+export interface FavoriteProperty {
+  id:            string;
+  name:          string;
+  images:        string[];
+  city:          string;
+  property_type: string;
+  from_price:    number | null;
+  favorited_at:  string;
 }

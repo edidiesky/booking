@@ -183,6 +183,24 @@ export const propertyApi = apiSlice.injectEndpoints({
       }),
       providesTags: (_result, _error, id) => [{ type: "Property", id }],
     }),
+
+    setRoomSortMode: builder.mutation<{ success: boolean }, { propertyId: string; mode: string }>({
+      query: ({ propertyId, mode }) => ({
+        url: `${PROPERTY_URL}/${propertyId}/room-sort-mode`,
+        method: "PATCH",
+        body: { mode },
+      }),
+      invalidatesTags: (_r, _e, { propertyId }) => [{ type: "Property", id: propertyId }],
+    }),
+
+    reorderRoomTypes: builder.mutation<{ success: boolean }, { propertyId: string; roomTypeIds: string[] }>({
+      query: ({ propertyId, roomTypeIds }) => ({
+        url: `${PROPERTY_URL}/${propertyId}/room-types/reorder`,
+        method: "PATCH",
+        body: { roomTypeIds },
+      }),
+      invalidatesTags: (_r, _e, { propertyId }) => [{ type: "Property", id: propertyId }],
+    }),
   }),
 });
 
@@ -200,4 +218,6 @@ export const {
   useGetTenantPropertyStatsQuery,
   useGetPropertyDetailQuery,
   useGetRoomTypeDetailQuery,
+  useSetRoomSortModeMutation,
+  useReorderRoomTypesMutation,
 } = propertyApi;
