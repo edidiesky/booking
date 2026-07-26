@@ -4,7 +4,8 @@ import { propertyService }   from "./property.service";
 import { AppError }          from "../../utils/AppError";
 import { PropertyAddress, PropertyType } from "../../types";
 import { propertyRepository } from "./property.repository";
-import { availabilityBroadcaster, logger } from "@booking/shared";
+import { availabilityBroadcaster, logger, jobRepository } from "@booking/shared";
+import { nanoid } from "nanoid";
 
 export const StreamRoomTypeAvailabilityHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const roomTypeId = req.params["roomTypeId"] as string;
@@ -76,6 +77,7 @@ export const ListPublicPropertiesHandler = asyncHandler(async (req: Request, res
     sort:         q["sort"] as "price_asc" | "price_desc" | "newest" | undefined,
     page:         Number(q["page"] ?? 1),
     limit:        Number(q["limit"] ?? 20),
+    tenantId:     req.tenantId,
   });
   res.status(200).json({ success: true, data: results });
 });
@@ -143,4 +145,87 @@ export const GetPropertyDetailHandler = asyncHandler(async (req: Request, res: R
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
   const result = await propertyService.getPropertyDetail(req.params["propertyId"] as string, req.tenantId);
   res.status(200).json({ success: true, data: result });
+});
+
+export const ImportRoomTypesHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const { propertyId } = req.params as { propertyId: string };
+  const { fileUrl } = req.body as { fileUrl?: string };
+  if (!fileUrl) throw AppError.badRequest("fileUrl is required, upload the CSV first, then pass its URL here.");
+
+  const property = await propertyRepository.findPropertyById(propertyId, req.tenantId);
+  if (!property) throw AppError.notFound("Property.");
+
+  const jobId = nanoid(21);
+  // Initial state set before the worker even picks it up, so a client
+  // that starts polling immediately after this responds doesn't get a
+  // 404 (job not found) in the gap before the worker's first setState
+  // call actually runs.
+  await jobRepository.setState("csv_room_import", jobId, {
+    jobId, jobType: "csv_room_import", state: "queued", progress: 0,
+    updatedAt: new Date().toISOString(),
+  });
+  jobRepository.publishToQueue("room.import", "process", { jobId, propertyId, tenantId: req.tenantId, fileUrl });
+
+  res.status(202).json({ success: true, data: { jobId } });
+});
+const SORT_MODES = ["alphabetical", "price", "rating", "newest", "oldest", "custom"];
+
+export const SetRoomSortModeHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const { propertyId } = req.params as { propertyId: string };
+  const { mode } = req.body as { mode?: string };
+  if (!mode || !SORT_MODES.includes(mode)) {
+    throw AppError.badRequest(`mode must be one of: ${SORT_MODES.join(", ")}`);
+  }
+  await propertyRepository.setRoomSortMode(propertyId, req.tenantId, mode);
+  res.status(200).json({ success: true, message: "Sort mode updated." });
+});
+
+export const ReorderRoomTypesHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const { propertyId } = req.params as { propertyId: string };
+  const { roomTypeIds } = req.body as { roomTypeIds?: string[] };
+  if (!roomTypeIds?.length) throw AppError.badRequest("roomTypeIds (ordered array) is required.");
+  await propertyRepository.reorderRoomTypes(propertyId, req.tenantId, roomTypeIds);
+  res.status(200).json({ success: true, message: "Order updated." });
+});
+
+export const ExportTenantRoomsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const tenantId = req.tenantId;
+
+  const { enqueueExportJob, runExportJob } = await import("../../utils/runExportJob");
+
+  const jobId = nanoid(21);
+  await enqueueExportJob(jobId);
+  res.status(202).json({ success: true, data: { jobId } });
+
+  const { auditRepository } = await import("../audit/audit.repository");
+  await auditRepository.log({ action: "exported", resource: "rooms_pdf", tenantId, userId: req.user?.userId, req });
+
+  void runExportJob(jobId, async () => {
+    const properties = await propertyRepository.listPropertiesWithRoomTypes(tenantId, 1, 200);
+    const allRooms = properties.flatMap((p) => p.roomTypes);
+
+    return {
+      title: "Rooms Export",
+      subtitle: "All room types across your properties",
+      generatedAt: new Date(),
+      columns: [
+        { key: "name", label: "Room Type" },
+        { key: "quantity", label: "Units", align: "right" as const },
+        { key: "occupancy", label: "Max Occupancy", align: "right" as const },
+        { key: "price", label: "Price (₦/night)", align: "right" as const },
+        { key: "status", label: "Status" },
+      ],
+      rows: allRooms.map((r) => ({
+        name: r.name,
+        quantity: String(r.quantity),
+        occupancy: String(r.max_occupancy),
+        price: Number(r.base_price_ngn).toLocaleString("en-NG"),
+        status: r.status,
+      })),
+    };
+  }, `rooms_export_${tenantId}`);
 });

@@ -33,6 +33,7 @@ export interface PropertySearchFilters {
   sort?: "price_asc" | "price_desc" | "newest";
   page: number;
   limit: number;
+  tenantId?: string; // set when the request came through a seller's subdomain
 }
 
 
@@ -129,6 +130,10 @@ export const propertyRepository = {
     if (filters.city) {
       conditions.push(`p.address->>'city' ILIKE $${idx++}`);
       params.push(`%${filters.city}%`);
+    }
+    if (filters.tenantId) {
+      conditions.push(`p.tenant_id = $${idx++}`);
+      params.push(filters.tenantId);
     }
 
     const havingConditions: string[] = [];
@@ -350,12 +355,50 @@ export const propertyRepository = {
   },
 
   async listRoomTypes(propertyId: string): Promise<RoomType[]> {
+    const propertyRow = await queryOne<{ room_sort_mode: string }>(
+      `SELECT room_sort_mode FROM properties WHERE id = $1`,
+      [propertyId],
+    );
+    const sortMode = propertyRow?.room_sort_mode ?? "price";
+
+    const ORDER_BY: Record<string, string> = {
+      alphabetical: "rt.name ASC",
+      price:        "rt.base_price_ngn ASC",
+      newest:       "rt.created_at DESC",
+      oldest:       "rt.created_at ASC",
+      custom:       "rt.display_order ASC NULLS LAST, rt.base_price_ngn ASC",
+      rating:       "avg_rating DESC NULLS LAST, rt.base_price_ngn ASC",
+    };
+    const orderClause = ORDER_BY[sortMode] ?? ORDER_BY["price"];
+
     return query<RoomType>(
-      `SELECT * FROM room_types WHERE property_id = $1 AND status = 'active'
-       ORDER BY base_price_ngn ASC`,
+      `SELECT rt.*,
+              (SELECT AVG(rating) FROM reviews WHERE room_type_id = rt.id AND status = 'approved') AS avg_rating
+       FROM room_types rt
+       WHERE rt.property_id = $1 AND rt.status = 'active'
+       ORDER BY ${orderClause}`,
       [propertyId],
     );
   },
+
+  async setRoomSortMode(propertyId: string, tenantId: string, mode: string): Promise<void> {
+    await query(
+      `UPDATE properties SET room_sort_mode = $1 WHERE id = $2 AND tenant_id = $3`,
+      [mode, propertyId, tenantId],
+    );
+  },
+
+  // Batched, not one UPDATE per room type: a host reordering 10 rooms via
+  // drag-and-drop shouldn't fire 10 round trips.
+  async reorderRoomTypes(propertyId: string, tenantId: string, orderedIds: string[]): Promise<void> {
+    await query(
+      `UPDATE room_types rt SET display_order = data.ord
+       FROM (SELECT * FROM UNNEST($1::uuid[], $2::int[]) AS t(id, ord)) data
+       WHERE rt.id = data.id AND rt.property_id = $3 AND rt.tenant_id = $4`,
+      [orderedIds, orderedIds.map((_, i) => i), propertyId, tenantId],
+    );
+  },
+
   async listRoomTypesWithOccupancy(propertyId: string): Promise<RoomTypeWithOccupancy[]> {
   return query<RoomTypeWithOccupancy>(
     `SELECT
