@@ -660,7 +660,25 @@ const migrations: string[] = [
      created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
      UNIQUE (guest_user_id, property_id)
    );
-   CREATE INDEX IF NOT EXISTS idx_favorites_guest ON favorites(guest_user_id, created_at DESC);`
+   CREATE INDEX IF NOT EXISTS idx_favorites_guest ON favorites(guest_user_id, created_at DESC);`,
+
+  /* Room type display order: only meaningful for the "custom" sort mode,
+     every other mode (alphabetical/price/newest/oldest/rating) sorts by
+     an existing real column, doesn't need this. NULL by default, custom
+     order only applies to room types a host has explicitly reordered. */
+  `ALTER TABLE room_types ADD COLUMN IF NOT EXISTS display_order INTEGER;
+   ALTER TABLE properties ADD COLUMN IF NOT EXISTS room_sort_mode VARCHAR(20) NOT NULL DEFAULT 'price'
+     CHECK (room_sort_mode IN ('alphabetical', 'price', 'rating', 'newest', 'oldest', 'custom'));`,
+
+  /* New audit_action value for PDF export/download actions. Previously
+     there was no distinguishable action for "who downloaded/exported
+     data", callers were about to misuse 'created' for something that
+     isn't creating anything. Kept as its own migration entry since
+     Postgres requires ADD VALUE to run outside the same transaction it's
+     then used in. */
+  `DO $$ BEGIN
+     ALTER TYPE audit_action ADD VALUE IF NOT EXISTS 'exported';
+   EXCEPTION WHEN duplicate_object THEN NULL; END $$;`
 ];
 
 export async function runMigrations(): Promise<void> {
