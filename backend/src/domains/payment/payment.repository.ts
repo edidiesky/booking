@@ -34,6 +34,16 @@ export interface PaymentSummary {
   paid_at: string | null;
   created_at: string;
   booking_ref: string;
+  check_in: string;
+  check_out: string;
+  receipt_url: string | null;
+  guest_first_name: string | null;
+  guest_last_name: string | null;
+  guest_user_type: string;
+  guest_email: string;
+  guest_profile_image: string | null;
+  room_type_name: string;
+  room_type_images: string[];
 }
 
 function ctx() {
