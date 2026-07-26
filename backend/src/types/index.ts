@@ -37,7 +37,8 @@ export type AuditAction =
   | "status_changed"
   | "payment"
   | "login"
-  | "logout";
+  | "logout"
+  | "exported";
 
 export interface JWTPayload {
   userId: string;
