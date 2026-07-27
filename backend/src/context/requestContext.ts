@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from "async_hooks";
+import type { PoolClient } from "pg";
 
 export interface RequestContext {
   requestId:    string;
@@ -11,6 +12,7 @@ export interface RequestContext {
   method?:      string;
   path?:        string;
   eventType?:   string;
+  dbClient?:    PoolClient;
 }
 
 class RequestContextStore {

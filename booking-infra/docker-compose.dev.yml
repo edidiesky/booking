@@ -96,6 +96,26 @@ services:
       - redis-insight-data:/db
     restart: unless-stopped
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: elasticsearch
+    networks:
+      - app-tier
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "127.0.0.1:9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 1m
+
   booking:
     build:
       context: ..
@@ -112,6 +132,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
       postgres:
         condition: service_healthy
     healthcheck:
@@ -121,195 +143,12 @@ services:
       retries: 5
       start_period: 60s
 
-  booking-expiry-worker:
-    build:
-      context: ..
-      dockerfile: packages/booking-expiry-worker/Dockerfile
-    env_file:
-      - ./.env.production
-    networks:
-      - app-tier
-    depends_on: 
-      rabbitmq:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-
-  campaign-worker:
-    build:
-      context: ..
-      dockerfile: packages/campaign-worker/Dockerfile
-    env_file:
-      - ./.env.production
-    networks:
-      - app-tier
-    depends_on: 
-      rabbitmq:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-
-  audit-worker:
-    build:
-      context: ..
-      dockerfile: packages/audit-worker/Dockerfile
-    env_file:
-      - ./.env.production
-    networks:
-      - app-tier
-    depends_on: 
-      rabbitmq:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-  
-  seller-notification-worker:
-    build:
-      context: ..
-      dockerfile: packages/seller-notification-worker/Dockerfile
-    env_file:
-      - ./.env.production
-    networks:
-      - app-tier
-    depends_on: 
-      rabbitmq:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-
-  csv-room-import-worker:
-    build:
-      context: ..
-      dockerfile: packages/csv-room-import-worker/Dockerfile
-    env_file:
-      - ./.env.production
-    networks:
-      - app-tier
-    depends_on: 
-      rabbitmq:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-
-  availability-worker:
-    build:
-      context: ..
-      dockerfile: packages/availability-worker/Dockerfile
-    env_file:
-      - ./.env.production
-    networks:
-      - app-tier
-    depends_on: 
-      rabbitmq:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-
-  # events-worker:
-  #   build:
-  #     context: ..
-  #     dockerfile: packages/events-worker/Dockerfile
-  #   env_file:
-  #     - ./.env.production
-  #   networks:
-  #     - app-tier
-  #   depends_on: 
-  #     rabbitmq:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #     postgres:
-  #       condition: service_healthy
-
-  # prometheus:
-  #   image: prom/prometheus:latest
-  #   container_name: prometheus
-  #   command:
-  #     - "--config.file=/etc/prometheus/prometheus.yml"
-  #   ports:
-  #     - "127.0.0.1:9090:9090"
-  #   volumes:
-  #     - ./_infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-  #     - prom_data:/prometheus
-  #   networks:
-  #     - app-tier
-
-  # loki:
-  #   image: grafana/loki:latest
-  #   ports:
-  #     - "127.0.0.1:3100:3100"
-  #   volumes:
-  #     - loki_data:/loki
-  #     - ./_infra/etc/loki/loki-config.yml:/etc/loki/loki-config.yml
-  #   command: -config.file=/etc/loki/loki-config.yml -config.expand-env=true
-  #   networks:
-  #     - app-tier
-
-  # promtail:
-  #   image: grafana/promtail:latest
-  #   command: -config.file=/etc/promtail/promtail-config.yml
-  #   networks:
-  #     - app-tier
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #     - ./_infra/etc/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml
-  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
-
-  # grafana:
-  #   image: grafana/grafana:latest
-  #   container_name: grafana
-  #   env_file:
-  #     - ./.env.production
-  #   environment:
-  #     - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
-  #     - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
-  #     - GF_AUTH_ANONYMOUS_ENABLED=false
-  #     - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-  #     - GF_FEATURE_TOGGLES_ENABLE=alertingSimplifiedRouting,alertingQueryAndExpressionsStepMode
-  #   entrypoint:
-  #     - sh
-  #     - -euc
-  #     - |
-  #       mkdir -p /etc/grafana/provisioning/datasources
-  #       cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
-  #       apiVersion: 1
-  #       datasources:
-  #       - name: Loki
-  #         type: loki
-  #         access: proxy
-  #         orgId: 1
-  #         url: http://loki:3100
-  #         basicAuth: false
-  #         isDefault: true
-  #         version: 1
-  #         editable: false
-  #       EOF
-  #       /run.sh
-  #   ports:
-  #     - "127.0.0.1:3000:3000"
-  #   volumes:
-  #     - ./_infra/grafana.ini:/etc/grafana/grafana.ini
-  #     - grafana_data:/var/lib/grafana
-  #   networks:
-  #     - app-tier
-
 volumes:
   redis-data:
   rabbitmq_data:
   postgres_data:
-  # prom_data:
-  # grafana_data:
-  # loki_data:
+  es-data:
   redis-insight-data:
+
+
+  

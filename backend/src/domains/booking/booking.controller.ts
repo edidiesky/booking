@@ -88,6 +88,8 @@ export const InternalCancelBookingHandler = asyncHandler(async (req: Request, re
   const booking = await bookingService.cancelBooking(bookingId, "system", reason ?? "Payment window expired.");
   res.status(200).json({ success: true, data: booking });
 });
+
+
 export const ExportTenantBookingsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
   const tenantId = req.tenantId;
@@ -103,7 +105,6 @@ export const ExportTenantBookingsHandler = asyncHandler(async (req: Request, res
   const { auditRepository } = await import("../audit/audit.repository");
   await auditRepository.log({ action: "exported", resource: "bookings_pdf", tenantId, userId: req.user?.userId, req });
 
-  // Not awaited, the response already went out, this runs after.
   void runExportJob(jobId, async () => {
     const bookings = await bookingRepository.listByTenant(tenantId, { limit: 1000 });
     return {

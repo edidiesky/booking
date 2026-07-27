@@ -18,6 +18,10 @@ export interface Property {
   images: string[];
   check_in_time: string;
   check_out_time: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  room_sort_mode?: "alphabetical" | "price" | "rating" | "newest" | "oldest" | "custom";
+  gantt_max_visible_rooms?: number;
   status: PropertyStatus;
   created_at: Date;
   updated_at: Date;
@@ -216,13 +220,15 @@ export const propertyRepository = {
       images?: string[];
       checkInTime?: string;
       checkOutTime?: string;
+      latitude?: number;
+      longitude?: number;
     },
     client?: PoolClient,
   ): Promise<Property> {
     const sql = `
       INSERT INTO properties
-        (tenant_id, name, description, property_type, address, amenities, images, check_in_time, check_out_time, status)
-      VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,'active')
+        (tenant_id, name, description, property_type, address, amenities, images, check_in_time, check_out_time, latitude, longitude, status)
+      VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,$11,'active')
       RETURNING *`;
     const params = [
       data.tenantId,
@@ -234,6 +240,8 @@ export const propertyRepository = {
       data.images ?? [],
       data.checkInTime ?? "14:00",
       data.checkOutTime ?? "11:00",
+      data.latitude ?? null,
+      data.longitude ?? null,
     ];
     const row = client
       ? ((await client.query(sql, params)).rows[0] as Property)
@@ -354,6 +362,9 @@ export const propertyRepository = {
     return queryOne<RoomType>(sql, tenantId ? [id, tenantId] : [id]);
   },
 
+  // ORDER BY branch built from a fixed whitelist, never from raw user
+  // input, room_sort_mode is a CHECK-constrained column we control, not
+  // something a request body sets directly.
   async listRoomTypes(propertyId: string): Promise<RoomType[]> {
     const propertyRow = await queryOne<{ room_sort_mode: string }>(
       `SELECT room_sort_mode FROM properties WHERE id = $1`,
@@ -385,6 +396,13 @@ export const propertyRepository = {
     await query(
       `UPDATE properties SET room_sort_mode = $1 WHERE id = $2 AND tenant_id = $3`,
       [mode, propertyId, tenantId],
+    );
+  },
+
+  async setGanttMaxVisibleRooms(propertyId: string, tenantId: string, max: number): Promise<void> {
+    await query(
+      `UPDATE properties SET gantt_max_visible_rooms = $1 WHERE id = $2 AND tenant_id = $3`,
+      [max, propertyId, tenantId],
     );
   },
 

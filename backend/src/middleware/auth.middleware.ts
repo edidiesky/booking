@@ -80,11 +80,13 @@ export function authorize(...roles: UserType[]) {
   };
 }
 
-export function requireTenantMember(
+import { beginTenantScopedTransaction } from "./rlsMiddleware";
+
+export async function requireTenantMember(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   if (!req.user) throw AppError.unauthorized();
 
   const hostTypes: UserType[] = [
@@ -115,6 +117,14 @@ export function requireTenantMember(
   }
 
   req.tenantId = tenantId;
+
+  // Same RLS setup rlsMiddleware uses for subdomain-resolved public
+  // routes, this is the chokepoint for every authenticated dashboard
+  // request instead, requireTenantMember already runs on every route
+  // that touches tenant-scoped data, so this activates RLS everywhere
+  // it needs to without adding a new middleware call to every route file.
+  const ok = await beginTenantScopedTransaction(req, res, tenantId);
+  if (!ok) { next(new Error("Failed to establish tenant-scoped database session.")); return; }
 
   next();
 }

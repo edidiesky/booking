@@ -9,6 +9,7 @@ import { startWebhookRetryWorker } from "../messaging/workers/webhookRetryWorker
 import { serverHealthGauge, trackError } from "../utils/metrics";
 import { seedService } from "../domains/role/seed.service";
 import { runMigrations } from "../migrations/runner";
+import { bootstrapPropertyIndex } from "../config/elasticSearch";
 
 interface InitStep {
   name: string;
@@ -34,6 +35,7 @@ export async function bootstrapServer(): Promise<void> {
     { name: "redis",                fn: async () => { await redisClient.ping(); } },
     { name: "rabbitmq",             fn: connectRabbitMQ },
     { name: "migrations",           fn: runMigrations },
+    { name: "elasticsearch_index",  fn: bootstrapPropertyIndex },
     { name: "outbox_poller",        fn: async () => { startOutboxPoller(); } },
     { name: "seed_rbac",            fn: async () => { await seedService.seedAll(); } },
     { name: "sse_fanout_worker",    fn: startSseFanoutWorker },

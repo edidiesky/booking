@@ -203,6 +203,9 @@ export interface Property {
   updatedAt:     string;
   property_type?:string
   room_sort_mode?: "alphabetical" | "price" | "rating" | "newest" | "oldest" | "custom";
+  gantt_max_visible_rooms?: number;
+  latitude?:     number | null;
+  longitude?:    number | null;
 }
 export interface CreatePropertyPayload {
   name:          string;
@@ -213,6 +216,8 @@ export interface CreatePropertyPayload {
   images?:       string[];
   checkInTime?:  string;
   checkOutTime?: string;
+  latitude?:     number;
+  longitude?:    number;
 }
 
 
@@ -601,6 +606,12 @@ export interface RequestOtpResponse {
   expiresInSeconds: number;
 }
 
+//  RBAC 
+
+// Fixed system role slugs still exist and are useful for UI logic (e.g.
+// "is this the host:admin row"), but custom roles have dynamic slugs now,
+// so anywhere a role slug is accepted/returned generally, the type is
+// `string`, not this union.
 export type SystemRoleSlug =
   | "platform:admin"
   | "host:admin"
@@ -723,6 +734,8 @@ export interface PropertyWithRoomTypes extends Property {
   fromPrice?: number | null;
 }
 
+// Matches backend/src/domains/review/review.repository.ts exactly, no
+// transform layer exists for this domain, snake_case as returned.
 export interface Review {
   id:                    string;
   room_type_id:          string;
@@ -780,6 +793,9 @@ export interface CreateReviewResponse {
   data:    Review;
 }
 
+// Matches backend/src/domains/renter/renter.repository.ts's Renter
+// interface exactly, the API returns these fields as-is (snake_case),
+// no transformResponse layer exists for this endpoint.
 export interface Renter {
   id:                       string;
   owner_id:                 string;
@@ -792,6 +808,8 @@ export interface Renter {
   updated_at:               string;
 }
 
+// Matches backend/src/domains/invoice/invoice.repository.ts exactly, no
+// transform layer for this domain, snake_case as returned.
 export type InvoiceType = "guest_invoice" | "host_statement";
 
 export interface Invoice {
@@ -811,6 +829,7 @@ export interface InvoiceResponse {
   data:    Invoice;
 }
 
+// Matches backend/src/domains/seller-notification/seller-notification.repository.ts
 export type SellerNotificationType = "booking_confirmed" | "booking_checked_in" | "booking_checked_out";
 
 export interface SellerNotification {

@@ -65,6 +65,7 @@ export default function GanttToolbar({
             options={roomTypes.map((r) => ({ value: r.id, label: r.name }))}
             selected={selectedRoomTypes}
             onToggle={onToggleRoomType}
+            searchable={true}
           />
           <MultiSelectDropdown
             label="Status"

@@ -1,5 +1,5 @@
 import { apiSlice }     from "./apiSlice";
-import { BOOKING_URL }  from "@/constants/api";
+import { BOOKING_URL, PROPERTY_URL }  from "@/constants/api";
 import type {
   Booking, InitiateBookingPayload, InitiateBookingResponse,
   CancelBookingPayload, BookingListResponse,
@@ -55,6 +55,10 @@ export const bookingApi = apiSlice.injectEndpoints({
       query: (id) => ({ url: `${BOOKING_URL}/${id}/checkout`, method: "PATCH" }),
       invalidatesTags: (_r, _e, id) => [{ type: "Booking", id }, "Booking", "Escrow"],
     }),
+
+    getBookingsInRange: builder.query<{ success: boolean; data: import("@/types/api").Booking[] }, { from: string; to: string }>({
+      query: ({ from, to }) => ({ url: `${PROPERTY_URL}/gantt/bookings-in-range?from=${from}&to=${to}` }),
+    }),
   }),
 });
 
@@ -67,4 +71,5 @@ export const {
   useCancelBookingMutation,
   useCheckInMutation,
   useCheckOutMutation,
+  useLazyGetBookingsInRangeQuery,
 } = bookingApi;

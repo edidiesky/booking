@@ -2,7 +2,7 @@ export { runConsumerLoop, getInFlightCount, stopAllConsumers } from "./messaging
 export type { MessageHandler } from "./messaging/consumerLoop";
 export { registerGracefulShutdown } from "./shutdown/gracefulShutdown";
 export type { GracefulShutdownOptions } from "./shutdown/gracefulShutdown";
-export { connectDB, query, queryOne, withTransaction, disconnectDB } from "./config/database";
+export { connectDB, query, queryOne, withTransaction, checkoutClient, disconnectDB } from "./config/database";
 export { default as redisClient, connectRedis }                     from "./config/redis";
 export { connectRabbitMQ, getRabbitMQConnection, getRabbitMQChannel, disconnectRabbitMQ, EXCHANGES, ROUTING_KEYS } from "./config/rabbitmq";
 export { createScheduleIndex, createLockedScheduler } from "./scheduling/scheduleIndex";

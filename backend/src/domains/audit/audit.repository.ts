@@ -55,10 +55,14 @@ export const auditRepository = {
     }
   },
 
-  async listByTenant(tenantId: string, page = 1, limit = 50): Promise<AuditLogEntry[]> {
+  async listByTenant(tenantId: string, page = 1, limit = 50): Promise<(AuditLogEntry & { actor_first_name: string | null; actor_last_name: string | null })[]> {
     const offset = (page - 1) * limit;
-    return query<AuditLogEntry>(
-      `SELECT * FROM audit_logs WHERE tenant_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
+    return query<AuditLogEntry & { actor_first_name: string | null; actor_last_name: string | null }>(
+      `SELECT a.*, u.first_name AS actor_first_name, u.last_name AS actor_last_name
+       FROM audit_logs a
+       LEFT JOIN users u ON u.id = a.user_id
+       WHERE a.tenant_id = $1
+       ORDER BY a.created_at DESC LIMIT $2 OFFSET $3`,
       [tenantId, limit, offset]
     );
   },

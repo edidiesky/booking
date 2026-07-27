@@ -1,11 +1,14 @@
-import { Pool, PoolClient } from "pg";
+import { Pool, PoolClient, types } from "pg";
 import logger from "../utils/logger";
 import { trackError } from "../utils/metrics";
+import { requestContext } from "../context/requestContext";
+
+types.setTypeParser(1700, (val: string) => parseFloat(val));
 
 const pool = new Pool({
   connectionString:        process.env.DATABASE_URL,
   max:                     20,
-  idleTimeoutMillis:       3_000,
+  idleTimeoutMillis:       30_000,
   connectionTimeoutMillis: 10_000,
 });
 
@@ -16,7 +19,7 @@ pool.on("error", (err) => {
 
 const MAX_RETRIES   = 5;
 const BASE_DELAY_MS = 3_000;
-const MAX_DELAY_MS  = 3_000;
+const MAX_DELAY_MS  = 30_000;
 
 export async function connectDB(): Promise<void> {
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -42,8 +45,9 @@ export async function query<T = Record<string, unknown>>(
   text:    string,
   params?: unknown[]
 ): Promise<T[]> {
-  const start  = Date.now();
-  const result = await pool.query(text, params);
+  const start = Date.now();
+  const runner = requestContext.get()?.dbClient ?? pool;
+  const result = await runner.query(text, params);
   const dur    = Date.now() - start;
   if (dur > 500) {
     logger.warn("pg_slow_query", { event: "pg_slow_query", dur, text: text.slice(0, 120) });
@@ -57,6 +61,10 @@ export async function queryOne<T = Record<string, unknown>>(
 ): Promise<T | null> {
   const rows = await query<T>(text, params);
   return rows[0] ?? null;
+}
+
+export async function checkoutClient(): Promise<PoolClient> {
+  return pool.connect();
 }
 
 export async function withTransaction<T>(

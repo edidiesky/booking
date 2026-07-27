@@ -102,7 +102,7 @@ export default function PropertyDetail() {
                     <ProductReview roomTypeId={selectedRoomType.id} />
                   )}
                   <SellerSection
-                    tenantId={property.tenant_id}
+                    tenantId={property.tenantId}
                   />
                 </div>
 

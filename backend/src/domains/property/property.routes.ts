@@ -19,6 +19,8 @@ import {
   SetRoomSortModeHandler,
   ReorderRoomTypesHandler,
   ExportTenantRoomsHandler,
+  SetGanttMaxVisibleRoomsHandler,
+  GetTenantBookingsInRangeHandler,
 } from "./property.controller";
 import {
   blockDatesSchema,
@@ -45,6 +47,8 @@ propertyRouter.get("/room-types/:roomTypeId", authenticate, requireTenantMember,
 propertyRouter.post("/:propertyId/room-types", authenticate, requireTenantMember, validate(createRoomTypeSchema), CreateRoomTypeHandler);
 propertyRouter.post("/:propertyId/room-types/import", authenticate, requireTenantMember, ImportRoomTypesHandler);
 propertyRouter.patch("/:propertyId/room-sort-mode", authenticate, requireTenantMember, SetRoomSortModeHandler);
+propertyRouter.patch("/:propertyId/gantt-max-visible-rooms", authenticate, requireTenantMember, SetGanttMaxVisibleRoomsHandler);
+propertyRouter.get("/gantt/bookings-in-range", authenticate, requireTenantMember, GetTenantBookingsInRangeHandler);
 propertyRouter.patch("/:propertyId/room-types/reorder", authenticate, requireTenantMember, ReorderRoomTypesHandler);
 propertyRouter.post("/room-types/:roomTypeId/calendar", authenticate, requireTenantMember, validate(seedCalendarSchema), SeedCalendarHandler);
 propertyRouter.patch("/room-types/:roomTypeId/block", authenticate, requireTenantMember, validate(blockDatesSchema), BlockDatesHandler);

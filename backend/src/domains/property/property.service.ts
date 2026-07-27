@@ -42,9 +42,57 @@ export const propertyService = {
       images?: string[];
       checkInTime?: string;
       checkOutTime?: string;
+      latitude?: number;
+      longitude?: number;
     },
   ) {
-    return propertyRepository.createProperty({ tenantId, ...body });
+    const { outboxRepository, requestContext } = await import("@booking/shared");
+
+    // Reuses the request's existing RLS-scoped transaction
+    // (beginTenantScopedTransaction already opened one, for any
+    // authenticated tenant-scoped request), rather than opening a
+    // second, separate one via withTransaction. That matters concretely
+    // for properties specifically: it's RLS-protected, a fresh pool
+    // connection from withTransaction would have no
+    // app.current_tenant_id set and the INSERT would be rejected by the
+    // policy. Falls back to withTransaction only for callers with no
+    // active request context (a script, a test), where there's nothing
+    // to reuse.
+    const existingClient = requestContext.get()?.dbClient;
+
+    if (existingClient) {
+      const property = await propertyRepository.createProperty({ tenantId, ...body }, existingClient);
+      await outboxRepository.create("property.created", {
+        propertyId:   property.id,
+        tenantId,
+        name:         property.name,
+        description:  property.description,
+        city:         body.address?.city,
+        propertyType: property.property_type,
+        amenities:    property.amenities,
+        latitude:     property.latitude,
+        longitude:    property.longitude,
+        createdAt:    property.created_at,
+      }, existingClient);
+      return property;
+    }
+
+    return withTransaction(async (client) => {
+      const property = await propertyRepository.createProperty({ tenantId, ...body }, client);
+      await outboxRepository.create("property.created", {
+        propertyId:   property.id,
+        tenantId,
+        name:         property.name,
+        description:  property.description,
+        city:         body.address?.city,
+        propertyType: property.property_type,
+        amenities:    property.amenities,
+        latitude:     property.latitude,
+        longitude:    property.longitude,
+        createdAt:    property.created_at,
+      }, client);
+      return property;
+    });
   },
 
   async createRoomType(

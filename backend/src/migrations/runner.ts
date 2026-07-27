@@ -678,7 +678,170 @@ const migrations: string[] = [
      then used in. */
   `DO $$ BEGIN
      ALTER TYPE audit_action ADD VALUE IF NOT EXISTS 'exported';
-   EXCEPTION WHEN duplicate_object THEN NULL; END $$;`
+   EXCEPTION WHEN duplicate_object THEN NULL; END $$;`,
+
+  /* Team invitations. A real table, not a Redis token like password
+     reset, hosts need to see pending/expired/revoked invites, not just
+     redeem a one-shot link. The role is fixed at invite time, the
+     invitee can't choose it, that's the whole point: the link IS the
+     authorization to join with that specific role, not a self-signup
+     form. */
+  `CREATE TABLE IF NOT EXISTS invitations (
+     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     tenant_id    UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+     role_id      UUID NOT NULL REFERENCES roles(id) ON DELETE RESTRICT,
+     email        VARCHAR(255) NOT NULL,
+     code_hash    VARCHAR(100) NOT NULL,
+     invited_by   UUID NOT NULL REFERENCES users(id),
+     status       VARCHAR(20) NOT NULL DEFAULT 'pending'
+                    CHECK (status IN ('pending', 'accepted', 'expired', 'revoked')),
+     expires_at   TIMESTAMPTZ NOT NULL,
+     accepted_at  TIMESTAMPTZ,
+     accepted_by  UUID REFERENCES users(id),
+     created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+     updated_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+   );
+   CREATE INDEX IF NOT EXISTS idx_invitations_tenant ON invitations(tenant_id, status);
+   CREATE UNIQUE INDEX IF NOT EXISTS idx_invitations_pending_email
+     ON invitations(tenant_id, email) WHERE status = 'pending';`,
+
+  /* Defensive: if invitations already exists from the earlier
+     token-based design, the CREATE TABLE IF NOT EXISTS above is a
+     no-op there and never adds code_hash or drops the old token
+     column. This brings an already-created table in line regardless. */
+  `ALTER TABLE invitations ADD COLUMN IF NOT EXISTS code_hash VARCHAR(100);
+   ALTER TABLE invitations DROP COLUMN IF EXISTS token;`,
+
+  /* Real clock-time precision for check-in/check-out, not just dates.
+     Needed for the maintenance buffer (3 hours after actual checkout,
+     not "the next calendar day") and for a real hour-level day view.
+     USING clause backfills existing DATE values at midnight UTC, hosts
+     with existing bookings will see 00:00 check-in/check-out times
+     until they're corrected, that's an accurate reflection of "we only
+     ever knew the date," not new data being fabricated. */
+  `ALTER TABLE bookings DROP COLUMN nights;
+   ALTER TABLE bookings ALTER COLUMN check_in TYPE TIMESTAMPTZ USING check_in::timestamptz;
+   ALTER TABLE bookings ALTER COLUMN check_out TYPE TIMESTAMPTZ USING check_out::timestamptz;
+   ALTER TABLE booking_locks ALTER COLUMN check_in TYPE TIMESTAMPTZ USING check_in::timestamptz;
+   ALTER TABLE booking_locks ALTER COLUMN check_out TYPE TIMESTAMPTZ USING check_out::timestamptz;
+   ALTER TABLE bookings ADD COLUMN nights INT GENERATED ALWAYS AS
+     (CEIL(EXTRACT(EPOCH FROM (check_out - check_in)) / 86400)::int) STORED;`,
+
+  /* Tenant row-level security. Only applied to tables confirmed (by
+     directly reading each one's own CREATE TABLE block, not assumed) to
+     have a real tenant_id column. Deliberately NOT applied to
+     booking_locks, campaign_templates, campaign_recipients, renters,
+     user_notifications, favorites, none of them have a direct tenant_id
+     column, they're tenant-scoped only transitively through a parent
+     record. Protecting those correctly needs either denormalizing
+     tenant_id onto them directly or JOIN-based policies, real follow-up
+     work, not silently skipped, explicitly not done here.
+
+     Every policy requires app.current_tenant_id to be set for the
+     session (via beginTenantScopedTransaction in rlsMiddleware.ts /
+     requireTenantMember), current_setting(..., true) returns NULL
+     rather than erroring if unset, which means any query running
+     without that context (a bug, a missed middleware, a future code
+     path) sees zero rows rather than crashing, fails closed, not open.
+
+     roles and campaigns both allow tenant_id IS NULL through
+     unconditionally: system roles (is_system = true, tenant_id NULL)
+     must stay visible to every tenant, they're not any one tenant's
+     data. Same reasoning for campaigns with a NULL tenant_id, if that's
+     genuinely a platform-wide campaign concept and not a data-quality
+     gap, worth confirming which it actually is before relying on this. */
+  `ALTER TABLE properties            ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE properties            FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE room_types            ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE room_types            FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE bookings              ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE bookings              FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE payments              ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE payments              FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE escrow_ledger         ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE escrow_ledger         FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE invoices              ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE invoices              FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE invitations           ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE invitations           FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE seller_notifications  ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE seller_notifications  FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE reviews               ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE reviews               FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE availability_calendar ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE availability_calendar FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE user_roles            ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE user_roles            FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE roles                 ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE roles                 FORCE  ROW LEVEL SECURITY;
+   ALTER TABLE campaigns             ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE campaigns             FORCE  ROW LEVEL SECURITY;
+
+   DROP POLICY IF EXISTS tenant_isolation ON properties;
+   CREATE POLICY tenant_isolation ON properties
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON room_types;
+   CREATE POLICY tenant_isolation ON room_types
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON bookings;
+   CREATE POLICY tenant_isolation ON bookings
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON payments;
+   CREATE POLICY tenant_isolation ON payments
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON escrow_ledger;
+   CREATE POLICY tenant_isolation ON escrow_ledger
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON invoices;
+   CREATE POLICY tenant_isolation ON invoices
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON invitations;
+   CREATE POLICY tenant_isolation ON invitations
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON seller_notifications;
+   CREATE POLICY tenant_isolation ON seller_notifications
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON reviews;
+   CREATE POLICY tenant_isolation ON reviews
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON availability_calendar;
+   CREATE POLICY tenant_isolation ON availability_calendar
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON user_roles;
+   CREATE POLICY tenant_isolation ON user_roles
+     USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON roles;
+   CREATE POLICY tenant_isolation ON roles
+     USING (tenant_id IS NULL OR tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+
+   DROP POLICY IF EXISTS tenant_isolation ON campaigns;
+   CREATE POLICY tenant_isolation ON campaigns
+     USING (tenant_id IS NULL OR tenant_id = current_setting('app.current_tenant_id', true)::uuid);`,
+
+  /* Dedicated lat/lng columns, not buried in the address JSONB.
+     Postgres stays the source of truth for writes, Elasticsearch (see
+     the property-search-worker) is the read path for anything geo or
+     full-text, this is what gets synced to ES's geo_point field. */
+  `ALTER TABLE properties ADD COLUMN IF NOT EXISTS latitude  NUMERIC(9,6);
+   ALTER TABLE properties ADD COLUMN IF NOT EXISTS longitude NUMERIC(9,6);`,
+
+  /* Host-configurable row cap for the Gantt view (ADR: gantt-scroll-and-sort,
+     decision 2). Default 8, matching the reference implementation's own
+     default. Lives on properties, not a tenant-wide setting, a host
+     with one huge property and several small ones may want different
+     caps per property. */
+  `ALTER TABLE properties ADD COLUMN IF NOT EXISTS gantt_max_visible_rooms INTEGER NOT NULL DEFAULT 8;`
 ];
 
 export async function runMigrations(): Promise<void> {

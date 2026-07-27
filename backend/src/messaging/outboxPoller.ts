@@ -13,6 +13,9 @@ import {
   publishBookingReceiptRequested,
   publishHostStatementRequested,
   publishAuditLogRequested,
+  publishPropertyCreated,
+  publishPropertyUpdated,
+  publishPropertyDeleted,
   publishRentalsRecordUpserted,
 } from "./publisher";
 import { outboxProcessedCounter, trackError } from "../utils/metrics";
@@ -36,6 +39,9 @@ const PUBLISHER_MAP: Record<OutboxEventType, PublisherFn> = {
   "booking.receipt.requested": publishBookingReceiptRequested as unknown as PublisherFn,
   "booking.host_statement.requested": publishHostStatementRequested as unknown as PublisherFn,
   "audit.log.requested": publishAuditLogRequested as unknown as PublisherFn,
+  "property.created": publishPropertyCreated as unknown as PublisherFn,
+  "property.updated": publishPropertyUpdated as unknown as PublisherFn,
+  "property.deleted": publishPropertyDeleted as unknown as PublisherFn,
   "renter.upsert.requested": publishRentalsRecordUpserted as unknown as PublisherFn,
 };
 

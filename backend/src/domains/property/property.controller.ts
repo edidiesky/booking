@@ -108,7 +108,15 @@ export const GetAvailabilityHandler = asyncHandler(async (req: Request, res: Res
 
 export const DeletePropertyHandler = asyncHandler(async (req, res) => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
-  await propertyRepository.deleteProperty(req.params["propertyId"] as string, req.tenantId);
+  const propertyId = req.params["propertyId"] as string;
+  await propertyRepository.deleteProperty(propertyId, req.tenantId);
+
+  const { outboxRepository, requestContext } = await import("@booking/shared");
+  const client = requestContext.get()?.dbClient;
+  if (client) {
+    await outboxRepository.create("property.deleted", { propertyId }, client);
+  }
+
   res.status(200).json({ success: true, message: "Property deleted." });
 });
 
@@ -228,4 +236,42 @@ export const ExportTenantRoomsHandler = asyncHandler(async (req: Request, res: R
       })),
     };
   }, `rooms_export_${tenantId}`);
+});
+
+export const SetGanttMaxVisibleRoomsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const { propertyId } = req.params as { propertyId: string };
+  const { max } = req.body as { max?: number };
+  if (!max || max < 1 || max > 50) throw AppError.badRequest("max must be between 1 and 50.");
+  await propertyRepository.setGanttMaxVisibleRooms(propertyId, req.tenantId, max);
+  res.status(200).json({ success: true, message: "Updated." });
+});
+
+// Real date-range window for the Gantt's incremental lateral loading,
+// ADR gantt-scroll-and-sort. Previously the Gantt loaded a flat 100
+// bookings once with no range filter at all, this returns only
+// bookings overlapping [from, to), so the frontend can request just the
+// chunk it needs and extend the range as the user scrolls, rather than
+// paging through an unbounded, unfiltered set.
+export const GetTenantBookingsInRangeHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const { from, to } = req.query as { from?: string; to?: string };
+  if (!from || !to) throw AppError.badRequest("from and to (ISO dates) are required.");
+
+  const { query } = await import("@booking/shared");
+  const bookings = await query(
+    `SELECT b.*, rt.name AS room_type_name, rt.images AS room_type_images,
+            u.first_name AS guest_first_name, u.last_name AS guest_last_name
+     FROM bookings b
+     JOIN room_types rt ON rt.id = b.room_type_id
+     JOIN users u ON u.id = b.guest_user_id
+     WHERE b.tenant_id = $1
+       AND b.status IN ('confirmed','checked_in','checked_out')
+       AND b.check_in < $3::timestamptz
+       AND b.check_out > $2::timestamptz
+     ORDER BY b.check_in ASC`,
+    [req.tenantId, from, to],
+  );
+
+  res.status(200).json({ success: true, data: bookings });
 });

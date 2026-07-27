@@ -12,6 +12,8 @@ import {
   useGetPropertyByIdQuery,
 } from "@/redux/services/propertyApi";
 import { ChartSelect } from "@/components/common/charts/Chartselect";
+import LocationPicker from "@/components/common/LocationPicker";
+import { geocodeAddress } from "@/hooks/useGeocodeAddress";
 
 const schema = z.object({
   name: z.string().min(3, "Min 3 characters"),
@@ -109,6 +111,9 @@ interface Props {
 export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
   const isEdit = Boolean(propertyId);
   const [amenities, setAmenities] = useState<string[]>([]);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [geocoding, setGeocoding] = useState(false);
   const { data: propertyData, isLoading: loadingProperty } =
     useGetPropertyByIdQuery(propertyId ?? "", { skip: !propertyId });
 
@@ -120,6 +125,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
     handleSubmit,
     reset,
     control,
+    getValues,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -135,6 +141,8 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
     const p = propertyData?.data;
     if (p) {
       setAmenities(p.amenities ?? []);
+      setLatitude(p.latitude ?? null);
+      setLongitude(p.longitude ?? null);
       reset({
         name: p.name,
         description: p.description,
@@ -148,6 +156,8 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
       });
     } else if (!propertyId) {
       setAmenities([]);
+      setLatitude(null);
+      setLongitude(null);
       reset({
         propertyType: "shortlet",
         country: "Nigeria",
@@ -185,6 +195,8 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
           amenities,
           checkInTime: data.checkInTime,
           checkOutTime: data.checkOutTime,
+          latitude: latitude ?? undefined,
+          longitude: longitude ?? undefined,
         }).unwrap();
         showToast("Property created.", "success");
       }
@@ -195,6 +207,24 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
   };
 
   const isBusy = creating || updating;
+
+  const handleAddressBlur = async () => {
+    const { street, city, state, country } = getValues();
+    if (!street || !city || !state || !country) return; // wait until the address is actually complete
+    setGeocoding(true);
+    try {
+      const result = await geocodeAddress({ street, city, state, country });
+      if (result) {
+        setLatitude(result.latitude);
+        setLongitude(result.longitude);
+      }
+    } catch {
+      // geocoding failure isn't fatal, the host can still place the pin
+      // manually on the map once it renders, or save without one
+    } finally {
+      setGeocoding(false);
+    }
+  };
 
   const inputClass =
     "h-[42px] border border-[#e8e6e3] px-3 text-xs outline-none focus:border-[#17191c] transition-colors w-full";
@@ -211,7 +241,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
         {/* header */}
         <div className="border-b flex items-center justify-between px-8 h-[72px] shrink-0">
           <div>
-            <h4 className="text-sm bold text-[#17191c]">
+            <h4 className="text-base bold text-[#17191c]">
               {isEdit ? "Edit Property" : "Create Property"}
             </h4>
             <p className="text-xs text-[#777b86] mt-0.5">
@@ -320,23 +350,43 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                         ["state", "State", "Lagos"],
                         ["country", "Country", "Nigeria"],
                       ] as const
-                    ).map(([key, label, ph]) => (
-                      <div key={key} className="flex flex-col gap-1.5">
-                        <label className="text-xs  text-[#17191c]">
-                          {label}
-                        </label>
-                        <Input
-                          {...register(key)}
-                          className={inputClass}
-                          placeholder={ph}
-                        />
-                        {errors[key] && (
-                          <p className="text-xs text-red-500">
-                            {errors[key]?.message}
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                    ).map(([key, label, ph]) => {
+                      const fieldProps = register(key);
+                      return (
+                        <div key={key} className="flex flex-col gap-1.5">
+                          <label className="text-xs  text-[#17191c]">
+                            {label}
+                          </label>
+                          <Input
+                            {...fieldProps}
+                            onBlur={(e) => {
+                              fieldProps.onBlur(e); // keep react-hook-form's own validation-on-blur
+                              if (key === "country") void handleAddressBlur();
+                            }}
+                            className={inputClass}
+                            placeholder={ph}
+                          />
+                          {errors[key] && (
+                            <p className="text-xs text-red-500">
+                              {errors[key]?.message}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs text-[#a3a6af]">
+                        {geocoding ? "Locating..." : latitude ? "Drag the pin if this isn't quite right." : "Fill in the address above to locate this property, or place the pin manually."}
+                      </span>
+                    </div>
+                    <LocationPicker
+                      latitude={latitude}
+                      longitude={longitude}
+                      onChange={(lat, lng) => { setLatitude(lat); setLongitude(lng); }}
+                    />
                   </div>
                 </div>
 

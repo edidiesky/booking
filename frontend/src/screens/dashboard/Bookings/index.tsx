@@ -172,7 +172,8 @@ export default function DashboardBookings() {
           ]}
         />
 
-        <FilterBar>
+       <div className="w-full flex lg:items-center justify-between lg:flex-row flex-col gap-3">
+         <FilterBar>
           <FilterSearchInput
             value={search}
             onChange={setSearch}
@@ -198,9 +199,10 @@ export default function DashboardBookings() {
           </button>
         </FilterBar>
 
-        <div className="flex justify-end">
+        <div className="flex lg:justify-end">
           <ExportPdfButton triggerUrl={`${BOOKING_URL}/tenant/export`} label="Export bookings PDF" />
         </div>
+       </div>
 
         <div className="border border-[#e8e6e3] overflow-x-auto">
           <table className="w-full text-xs">

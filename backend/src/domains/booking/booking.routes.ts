@@ -11,7 +11,7 @@ const router = Router();
 router.post("/",                     authenticate, authorize("guest"),    validate(initiateSchema),    InitiateBookingHandler);
 router.get("/mine",                  authenticate, authorize("guest"),    validate(listQuerySchema, "query"), GetMyBookingsHandler);
 router.get("/tenant",                authenticate, requireTenantMember,   validate(listQuerySchema, "query"), GetTenantBookingsHandler);
-router.get("/tenant/export",         authenticate, requireTenantMember,   ExportTenantBookingsHandler);
+router.post("/tenant/export",         authenticate, requireTenantMember,   ExportTenantBookingsHandler);
 router.get("/tenant/stats",          authenticate, requireTenantMember,   GetTenantBookingStatsHandler);
 router.post("/internal/:bookingId/cancel", requireInternalSecret,         InternalCancelBookingHandler);
 router.get("/:bookingId",            authenticate,                        GetBookingHandler);

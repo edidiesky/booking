@@ -20,6 +20,9 @@ const PUBLISHER_MAP: Record<OutboxEventType, PublisherFn> = {
   "booking.receipt.requested":  publisher.publishBookingReceiptRequested as unknown as PublisherFn,
   "booking.host_statement.requested": publisher.publishHostStatementRequested as unknown as PublisherFn,
   "audit.log.requested": publisher.publishAuditLogRequested as unknown as PublisherFn,
+  "property.created": publisher.publishPropertyCreated as unknown as PublisherFn,
+  "property.updated": publisher.publishPropertyUpdated as unknown as PublisherFn,
+  "property.deleted": publisher.publishPropertyDeleted as unknown as PublisherFn,
   "renter.upsert.requested":  publisher.publishRentalsRecordUpserted as unknown as PublisherFn
 };
 

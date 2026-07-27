@@ -233,12 +233,6 @@ export function publishHostStatementRequested(
   publish(EXCHANGES.BOOKING, ROUTING_KEYS.HOST_STATEMENT_REQUESTED, p);
 }
 
-export function publishRentalsRecordUpserted(
-  p: RentalsRecordUpsertedPayload,
-): void {
-  publish(EXCHANGES.BOOKING, ROUTING_KEYS.RENTERS_RECORED_UPSERTED, p);
-}
-
 export interface AuditLogRequestedPayload {
   tenantId?:    string;
   userId?:      string;
@@ -256,4 +250,35 @@ export function publishAuditLogRequested(
   p: AuditLogRequestedPayload,
 ): void {
   publish(EXCHANGES.BOOKING, ROUTING_KEYS.AUDIT_LOG_REQUESTED, p);
+}
+
+export interface PropertySyncPayload {
+  propertyId:    string;
+  tenantId:      string;
+  name?:         string;
+  description?:  string;
+  city?:         string;
+  propertyType?: string;
+  amenities?:    string[];
+  fromPriceNgn?: number | null;
+  latitude?:     number | null;
+  longitude?:    number | null;
+  createdAt?:    string;
+  updatedAt?:    string;
+}
+
+export function publishPropertyCreated(p: PropertySyncPayload): void {
+  publish(EXCHANGES.BOOKING, ROUTING_KEYS.PROPERTY_CREATED, p);
+}
+export function publishPropertyUpdated(p: PropertySyncPayload): void {
+  publish(EXCHANGES.BOOKING, ROUTING_KEYS.PROPERTY_UPDATED, p);
+}
+export function publishPropertyDeleted(p: { propertyId: string }): void {
+  publish(EXCHANGES.BOOKING, ROUTING_KEYS.PROPERTY_DELETED, p);
+}
+
+export function publishRentalsRecordUpserted(
+  p: RentalsRecordUpsertedPayload,
+): void {
+  publish(EXCHANGES.BOOKING, ROUTING_KEYS.RENTERS_RECORED_UPSERTED, p);
 }

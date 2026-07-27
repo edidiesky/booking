@@ -1,8 +1,8 @@
 import { useDispatch, useSelector }          from "react-redux";
-import { useNavigate }        from "react-router-dom";
+import { Link, useNavigate }        from "react-router-dom";
 import {
   LuLayoutDashboard, LuBuilding, LuCalendar,
-  LuCreditCard, LuVault, LuUsers, LuShield,
+  LuCreditCard, LuVault, LuUsers, LuShield, LuHistory,
 } from "react-icons/lu";
 import { selectCurrentUser, clearCredentials } from "@/redux/slices/authSlice";
 import { useLogoutMutation }                 from "@/redux/services/authApi";
@@ -39,6 +39,7 @@ export const NAV_GROUPS = [
     label: "Team",
     items: [
       { icon: LuUsers,  text: "Roles",   path: "roles",   tour: "nav-roles"   },
+      { icon: LuHistory, text: "Activity", path: "activity", tour: "nav-activity" },
       { icon: LuShield, text: "Account", path: "account", tour: "nav-account" },
     ],
   },
@@ -68,6 +69,12 @@ export default function Sidebar() {
       className="hidden lg:flex flex-col w-[220px] h-screen shrink-0 border-r"
       style={{ backgroundColor: "var(--color-canvas)", borderColor: "#ebebeb" }}
     >
+      <div className="px-4 py-5 border-b" style={{ borderColor: "#ebebeb" }}>
+        <Link to="/" className="text-sm bold" style={{ color: "var(--color-ink)" }}>
+          Booking
+        </Link>
+      </div>
+
       <nav className="flex-1 overflow-y-auto py-4 px-3">
         {NAV_GROUPS.map((group) => (
           <NavGroup key={group.label} group={group} />

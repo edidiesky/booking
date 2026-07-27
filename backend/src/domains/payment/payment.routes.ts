@@ -17,7 +17,7 @@ const router = Router();
 router.post("/initialize",           authenticate, validate(initPaymentSchema), InitializePaymentHandler);
 router.get("/booking/:bookingId",    authenticate,                              GetPaymentByBookingHandler);
 router.get("/tenant",                authenticate, requireTenantMember,         GetTenantPaymentsHandler);
-router.get("/tenant/export",         authenticate, requireTenantMember,         ExportTenantPaymentsHandler);
+router.post("/tenant/export",         authenticate, requireTenantMember,         ExportTenantPaymentsHandler);
 router.get("/tenant/stats",          authenticate, requireTenantMember,         GetTenantPaymentStatsHandler);
 
 export default router;

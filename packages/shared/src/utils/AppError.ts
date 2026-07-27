@@ -19,5 +19,6 @@ export class AppError extends Error {
   static conflict(msg: string, d?: unknown): AppError         { return new AppError(msg, 409, true, d); }
   static unprocessable(msg: string, d?: unknown): AppError    { return new AppError(msg, 422, true, d); }
   static serviceUnavailable(msg = "Service temporarily unavailable."): AppError { return new AppError(msg, 503, true); }
-  static internal(msg = "An unexpected error occurred."): AppError { return new AppError(msg, 500, false); }
+  static internal(msg = "An unexpected error occurred."): AppError { return new AppError(msg, 500, false); } // tooManyRequests
+  static tooManyRequests(msg = "Too much requests. Please kindly wait a few minutes before retying again."): AppError { return new AppError(msg, 429, false); } // tooManyRequests
 }

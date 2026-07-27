@@ -201,6 +201,15 @@ export const propertyApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (_r, _e, { propertyId }) => [{ type: "Property", id: propertyId }],
     }),
+
+    setGanttMaxVisibleRooms: builder.mutation<{ success: boolean }, { propertyId: string; max: number }>({
+      query: ({ propertyId, max }) => ({
+        url: `${PROPERTY_URL}/${propertyId}/gantt-max-visible-rooms`,
+        method: "PATCH",
+        body: { max },
+      }),
+      invalidatesTags: (_r, _e, { propertyId }) => [{ type: "Property", id: propertyId }],
+    }),
   }),
 });
 
@@ -220,4 +229,5 @@ export const {
   useGetRoomTypeDetailQuery,
   useSetRoomSortModeMutation,
   useReorderRoomTypesMutation,
+  useSetGanttMaxVisibleRoomsMutation,
 } = propertyApi;

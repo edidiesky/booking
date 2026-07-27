@@ -1,7 +1,7 @@
 import { PoolClient } from "pg";
 import { OutboxStatus } from "../../types";
-import { query, queryOne } from "../../config/database";
 import logger from "../../utils/logger";
+import { query, queryOne } from "../../config/database";
 
 export type OutboxEventType =
   | "booking.created"
@@ -12,6 +12,9 @@ export type OutboxEventType =
   | "booking.receipt.requested"   
   | "booking.host_statement.requested"
   | "audit.log.requested"
+  | "property.created"
+  | "property.updated"
+  | "property.deleted"
   | "payment.confirmed"
   | "payment.failed"
   | "payment.initiated"
@@ -48,6 +51,16 @@ export const outboxRepository = {
     return row;
   },
 
+  // Same table, no active transaction required. For callers that aren't
+  // already inside one (most audit-log call sites, scattered across many
+  // domains) and shouldn't be forced to refactor just to get outbox
+  // durability. This trades strict atomicity (the business action and
+  // this insert aren't guaranteed to commit together) for not requiring
+  // every call site to thread a transactional client through, an
+  // acceptable tradeoff for audit logs specifically: losing an entry on
+  // a rare crash between the action committing and this insert running
+  // is a much smaller risk than losing a payment or booking event would
+  // be, which is why create() above still requires a client.
   async createStandalone(
     eventType: OutboxEventType,
     payload:   Record<string, unknown>,

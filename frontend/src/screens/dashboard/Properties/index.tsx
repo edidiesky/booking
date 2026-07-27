@@ -9,6 +9,8 @@ import { ChartSelect } from "@/components/common/charts/Chartselect";
 import type { PropertyStatus } from "@/types/api";
 import { useNavigate } from "react-router-dom";
 import StatsOverview from "@/components/dashboard/common/StatsOverview";
+import ExportPdfButton from "@/components/common/ExportPdfButton";
+import { PROPERTY_URL } from "@/constants/api";
 
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
@@ -29,7 +31,7 @@ export default function DashboardProperties() {
     name: string;
   } | null>(null);
   const [statusFilter, setStatusFilter] = useState<PropertyStatus | "">("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { properties, isLoading, stats, isStatsLoading } = useProperties();
 
@@ -87,22 +89,49 @@ export default function DashboardProperties() {
           growthLabel="new listings this month"
           growthTooltip="New listings created this calendar month vs. last calendar month"
           cards={[
-            { label: "Active",   value: String(stats?.activeCount ?? 0),   color: "#166534", bg: "#dcfce7" },
-            { label: "Draft",    value: String(stats?.draftCount ?? 0),    color: "#92400e", bg: "#fef3c7" },
-            { label: "Paused",   value: String(stats?.pausedCount ?? 0),   color: "#374151", bg: "#f3f4f6" },
-            { label: "Archived", value: String(stats?.archivedCount ?? 0), color: "#991b1b", bg: "#fee2e2" },
+            {
+              label: "Active",
+              value: String(stats?.activeCount ?? 0),
+              color: "#166534",
+              bg: "#dcfce7",
+            },
+            {
+              label: "Draft",
+              value: String(stats?.draftCount ?? 0),
+              color: "#92400e",
+              bg: "#fef3c7",
+            },
+            {
+              label: "Paused",
+              value: String(stats?.pausedCount ?? 0),
+              color: "#374151",
+              bg: "#f3f4f6",
+            },
+            {
+              label: "Archived",
+              value: String(stats?.archivedCount ?? 0),
+              color: "#991b1b",
+              bg: "#fee2e2",
+            },
           ]}
         />
-
-        <div className="flex items-center gap-3">
-          <ChartSelect
-            value={statusFilter}
-            onValueChange={(v) => setStatusFilter(v as PropertyStatus | "")}
-            options={STATUS_OPTIONS}
-          />
-          <span className="text-xs text-[#a3a6af]">
-            {filtered.length} propert{filtered.length === 1 ? "y" : "ies"}
-          </span>
+        <div className="w-full flex lg:items-center justify-between lg:flex-row flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <ChartSelect
+              value={statusFilter}
+              onValueChange={(v) => setStatusFilter(v as PropertyStatus | "")}
+              options={STATUS_OPTIONS}
+            />
+            <span className="text-xs text-[#a3a6af]">
+              {filtered.length} propert{filtered.length === 1 ? "y" : "ies"}
+            </span>
+          </div>
+          <div className="flex lg:justify-end">
+            <ExportPdfButton
+              triggerUrl={`${PROPERTY_URL}/mine/export`}
+              label="Export Property PDF"
+            />
+          </div>
         </div>
 
         <div className="border border-[#e8e6e3] overflow-x-auto">
