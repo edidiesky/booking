@@ -1,5 +1,5 @@
 import { useDispatch, useSelector }          from "react-redux";
-import { Link, useNavigate }        from "react-router-dom";
+import {  useNavigate }        from "react-router-dom";
 import {
   LuLayoutDashboard, LuBuilding, LuCalendar,
   LuCreditCard, LuVault, LuUsers, LuShield, LuHistory,
@@ -69,11 +69,11 @@ export default function Sidebar() {
       className="hidden lg:flex flex-col w-[220px] h-screen shrink-0 border-r"
       style={{ backgroundColor: "var(--color-canvas)", borderColor: "#ebebeb" }}
     >
-      <div className="px-4 py-5 border-b" style={{ borderColor: "#ebebeb" }}>
+      {/* <div className="px-4 py-5 border-b" style={{ borderColor: "#ebebeb" }}>
         <Link to="/" className="text-sm bold" style={{ color: "var(--color-ink)" }}>
           Booking
         </Link>
-      </div>
+      </div> */}
 
       <nav className="flex-1 overflow-y-auto py-4 px-3">
         {NAV_GROUPS.map((group) => (

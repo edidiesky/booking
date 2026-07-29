@@ -12,6 +12,7 @@ export default function Header() {
   const currentUser     = useSelector(selectCurrentUser);
   const isHost          = currentUser?.userType.startsWith("host:") ?? false;
 
+  
   return (
     <nav
       className="w-full sticky top-0 z-50"

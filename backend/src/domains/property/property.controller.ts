@@ -221,11 +221,11 @@ export const ExportTenantRoomsHandler = asyncHandler(async (req: Request, res: R
       subtitle: "All room types across your properties",
       generatedAt: new Date(),
       columns: [
-        { key: "name", label: "Room Type" },
-        { key: "quantity", label: "Units", align: "right" as const },
-        { key: "occupancy", label: "Max Occupancy", align: "right" as const },
-        { key: "price", label: "Price (₦/night)", align: "right" as const },
-        { key: "status", label: "Status" },
+        { key: "name", label: "Room Type", width: "34%" },
+        { key: "quantity", label: "Units", align: "right" as const, width: "14%" },
+        { key: "occupancy", label: "Max Occupancy", align: "right" as const, width: "18%" },
+        { key: "price", label: "Price (₦/night)", align: "right" as const, width: "20%" },
+        { key: "status", label: "Status", width: "14%" },
       ],
       rows: allRooms.map((r) => ({
         name: r.name,
@@ -247,20 +247,15 @@ export const SetGanttMaxVisibleRoomsHandler = asyncHandler(async (req: Request, 
   res.status(200).json({ success: true, message: "Updated." });
 });
 
-// Real date-range window for the Gantt's incremental lateral loading,
-// ADR gantt-scroll-and-sort. Previously the Gantt loaded a flat 100
-// bookings once with no range filter at all, this returns only
-// bookings overlapping [from, to), so the frontend can request just the
-// chunk it needs and extend the range as the user scrolls, rather than
-// paging through an unbounded, unfiltered set.
 export const GetTenantBookingsInRangeHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
   const { from, to } = req.query as { from?: string; to?: string };
   if (!from || !to) throw AppError.badRequest("from and to (ISO dates) are required.");
 
   const { query } = await import("@booking/shared");
-  const bookings = await query(
-    `SELECT b.*, rt.name AS room_type_name, rt.images AS room_type_images,
+  const { toDto } = await import("../booking/booking.service");
+  const rows = await query(
+    `SELECT b.*, rt.name AS room_type_name, rt.images AS room_type_images, rt.quantity AS room_type_quantity,
             u.first_name AS guest_first_name, u.last_name AS guest_last_name
      FROM bookings b
      JOIN room_types rt ON rt.id = b.room_type_id
@@ -273,5 +268,6 @@ export const GetTenantBookingsInRangeHandler = asyncHandler(async (req: Request,
     [req.tenantId, from, to],
   );
 
+  const bookings = rows.map((r: any) => toDto(r));
   res.status(200).json({ success: true, data: bookings });
 });

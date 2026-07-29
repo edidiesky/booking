@@ -14,10 +14,22 @@ function fmtNaira(amount: number | string): string {
   }).format(n);
 }
 
-function initialsFromRef(ref?: string): string {
+function payerName(first?: string, last?: string): string {
+  const name = [first, last].filter(Boolean).join(" ");
+  return name || "Guest";
+}
+
+// Initials now come from the actual payer's name, not the booking
+// reference code, an avatar representing a person should be initials
+// of that person, "MS" from a booking ref reads as meaningless letters
+// next to a real name in the row beside it.
+function initialsFromName(first?: string, last?: string, ref?: string): string {
+  const a = first?.[0] ?? "";
+  const b = last?.[0] ?? "";
+  const fromName = (a + b).toUpperCase();
+  if (fromName) return fromName;
   if (!ref) return "--";
-  const cleaned = ref.replace(/^BK-/, "");
-  return cleaned.slice(0, 2).toUpperCase();
+  return ref.replace(/^BK-/, "").slice(0, 2).toUpperCase();
 }
 
 const STATUS_STYLES: Record<PaymentSummary["status"], { label: string; color: string }> = {
@@ -42,8 +54,9 @@ export default function RecentTransactionsCard({ recentTransactions }: Props) {
         </div>
       ) : (
         <div className="flex flex-col divide-y divide-[var(--color-fog)]">
-          {recent.map(({ id, booking_ref, amount_ngn, gateway, transaction_id, status }) => {
+          {recent.map(({ id, booking_ref, amount_ngn, gateway, transaction_id, status, guest_first_name, guest_last_name }) => {
             const statusMeta = STATUS_STYLES[status] ?? { label: status, color: "var(--color-muted-stone)" };
+            const name = payerName(guest_first_name, guest_last_name);
             return (
               // TODO: wrap with your router's Link to the payment/booking detail view
               <div key={id} className="flex cursor-pointer hover:bg-[#f2f0ed58] transition-all items-center gap-3 px-5 py-3.5">
@@ -51,11 +64,11 @@ export default function RecentTransactionsCard({ recentTransactions }: Props) {
                   className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 text-xs bold"
                   style={{ backgroundColor: "var(--color-fog)", color: "var(--color-ink)" }}
                 >
-                  {initialsFromRef(booking_ref)}
+                  {initialsFromName(guest_first_name, guest_last_name, booking_ref)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs bold truncate" style={{ color: "var(--color-ink)" }}>
-                    {fmtNaira(amount_ngn)} via <span className="capitalize">{gateway}</span>
+                    {name} &middot; {fmtNaira(amount_ngn)} via <span className="capitalize">{gateway}</span>
                   </p>
                   <p className="text-xs medium mt-0.5 truncate" style={{ color: "var(--color-muted-stone)" }}>
                     {transaction_id ?? booking_ref}

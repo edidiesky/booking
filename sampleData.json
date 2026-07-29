@@ -1,0 +1,76 @@
+[
+  {
+    "id": "prop_a1b2c3",
+    "tenantId": "tenant_ivory_hospitality",
+    "name": "Ivory Court Residences",
+    "description": "There's a particular kind of quiet that settles over Ikoyi in the early evening, and Ivory Court Residences was built to let you actually feel it. Set back from the road behind a row of flame trees, this six-unit boutique property trades the frantic energy of Victoria Island for something more deliberate: marble-floored living rooms that catch the afternoon light just right, kitchens stocked and ready for a home-cooked meal instead of another takeout order, and a rooftop terrace where the Lagos skyline turns gold at sunset. Every apartment here was designed by the same interior team that did the Meridian's flagship suites, and it shows, from the brass fixtures in the bathrooms to the curated bookshelf in the study nook. Guests tend to be the kind of traveler who wants a base, not just a bed: consultants on a three-week engagement, families relocating and house-hunting, couples who'd rather cook breakfast than queue for it. The building itself has quietly become a small landmark on the street, mostly because of the ivory-white facade that gives the property its name, and partly because the doorman remembers everyone's name by day two. Come for the location, stay for the fact that leaving starts to feel genuinely difficult.",
+    "propertyType": "shortlet",
+    "address": {
+      "street": "14 Bourdillon Road",
+      "city": "Lagos",
+      "state": "Lagos",
+      "country": "Nigeria",
+      "zipCode": "101233"
+    },
+    "amenities": ["WiFi", "Air Conditioning", "Backup Generator", "24/7 Security", "Kitchenette", "Rooftop Terrace", "Parking"],
+    "images": [
+      "https://cdn.staycloud.io/properties/ivory-court/facade.jpg",
+      "https://cdn.staycloud.io/properties/ivory-court/rooftop.jpg",
+      "https://cdn.staycloud.io/properties/ivory-court/living-room.jpg"
+    ],
+    "checkInTime": "14:00",
+    "checkOutTime": "11:00",
+    "latitude": 6.4531,
+    "longitude": 3.4356,
+    "roomSortMode": "price"
+  },
+  {
+    "id": "prop_d4e5f6",
+    "tenantId": "tenant_whispering_group",
+    "name": "Whispering Palms Retreat",
+    "description": "Forty minutes outside Lagos, past the point where the traffic thins and the air starts smelling like salt, the road opens onto a stretch of coastline that most people who work in the city never actually see. Whispering Palms Retreat sits right at that edge, a cluster of low timber cottages spread along a private beach that the property has quietly protected from the resort development creeping up the rest of the coast. This is not a place with a nightclub or a kids' club or a schedule of poolside activities, it's a place where the loudest thing that happens most afternoons is the wind moving through the palm trees the property is named for, which is precisely the point. Guests spend their days doing very little on purpose: reading in a hammock strung between two trunks, walking the tideline at low water, watching the fishermen bring in the morning catch that shows up on the dinner menu a few hours later. The cottages themselves are simple by design, thatched roofs, mosquito netting, a ceiling fan instead of AC in the older units, but the newer builds along the north path have been quietly retrofitted with proper cooling and hot water pressure that actually works, for anyone who wants the escape without giving up the basics. It's the kind of property people book once for a weekend and then rebook every few months for the rest of the year.",
+    "propertyType": "guesthouse",
+    "address": {
+      "street": "Km 45, Lekki-Epe Expressway",
+      "city": "Lagos",
+      "state": "Lagos",
+      "country": "Nigeria",
+      "zipCode": "106104"
+    },
+    "amenities": ["WiFi", "Private Beach", "Breakfast Included", "Fireplace", "Garden", "Parking"],
+    "images": [
+      "https://cdn.staycloud.io/properties/whispering-palms/beach.jpg",
+      "https://cdn.staycloud.io/properties/whispering-palms/cottage.jpg"
+    ],
+    "checkInTime": "13:00",
+    "checkOutTime": "10:00",
+    "latitude": 6.4698,
+    "longitude": 3.7186,
+    "roomSortMode": "rating"
+  },
+  {
+    "id": "prop_g7h8i9",
+    "tenantId": "tenant_meridian_group",
+    "name": "Meridian Grand Hotel & Suites",
+    "description": "The kind of hotel that gets described in three different ways depending on who's talking about it. To the diplomat staying for a conference, it's the reliable choice near the Central Business District, the one where the WiFi never drops mid-call and the front desk actually remembers your room number by the second morning. To the wedding party that books the entire east wing every December, it's the venue with the ballroom that photographs beautifully and a catering team that has, at this point, memorized every regional dish a Nigerian wedding might require. To the solo business traveler working through a week of back-to-back meetings, it's the rooftop lounge at 9pm, the one spot in the building where the day's agenda finally stops mattering for an hour. The Meridian Grand has been quietly expanding since it opened, adding the spa wing three years ago and the executive floor the year after that, but the original promise has stayed the same: five-star service delivered without the five-star attitude. The rooms lean toward understated rather than ornate, dark wood, soft lighting, a workspace that's actually usable rather than decorative, and the conference facilities on the second floor have hosted everything from tech product launches to government policy briefings. It is, in the fullest sense of the word, a hotel that works.",
+    "propertyType": "hotel",
+    "address": {
+      "street": "9 Aguiyi Ironsi Street",
+      "city": "Abuja",
+      "state": "FCT",
+      "country": "Nigeria",
+      "zipCode": "900288"
+    },
+    "amenities": ["WiFi", "Gym", "Spa", "Restaurant", "Room Service", "Airport Shuttle", "Conference Hall"],
+    "images": [
+      "https://cdn.staycloud.io/properties/meridian-grand/facade.jpg",
+      "https://cdn.staycloud.io/properties/meridian-grand/lobby.jpg",
+      "https://cdn.staycloud.io/properties/meridian-grand/pool.jpg"
+    ],
+    "checkInTime": "15:00",
+    "checkOutTime": "12:00",
+    "latitude": 9.0579,
+    "longitude": 7.4951,
+    "roomSortMode": "custom"
+  }
+]

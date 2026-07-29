@@ -4,6 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { MapPin, Bath, Wifi, BedDouble } from "lucide-react";
 import { IoStar }        from "react-icons/io5";
 import { formatCurrency } from "@/utils/formatCurrency";
+import FavoriteButton from "./FavoriteButton";
 // import FavoriteButton     from "./FavoriteButton";
 
 // Deliberately narrower than the full Property type: this card is used
@@ -161,13 +162,13 @@ export default function PropertyCard({ property, index = 0, isFavorited = false 
         </div>
 
         {/* favorite */}
-        {/* <div className="absolute top-3 right-3 z-10">
+        <div className="absolute top-3 right-3 z-10">
           <FavoriteButton
             propertyId={property.id}
             isFavorited={isFavorited}
             className="w-8 h-8 bg-white/90 backdrop-blur-sm"
           />
-        </div> */}
+        </div>
       </div>
 
       {/* card body */}

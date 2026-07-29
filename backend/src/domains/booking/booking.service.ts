@@ -67,7 +67,7 @@ export interface BookingDto {
   guestLastName?:  string;
 }
 
-function toDto(
+export function toDto(
   b: Booking,
   sessionId = "",
   enrichment?: { propertyName?: string;

@@ -31,7 +31,7 @@ import {
 
 const propertyRouter = Router();
 propertyRouter.get("/mine", authenticate, requireTenantMember, GetTenantPropertiesHandler);
-propertyRouter.get("/mine/export", authenticate, requireTenantMember, ExportTenantRoomsHandler);
+propertyRouter.post("/mine/export", authenticate, requireTenantMember, ExportTenantRoomsHandler);
 propertyRouter.get("/mine/stats", authenticate, requireTenantMember, GetTenantPropertyStatsHandler);
 propertyRouter.get("/room-types/:roomTypeId/availability", GetAvailabilityHandler);
 propertyRouter.get("/dashboard/:propertyId", authenticate, requireTenantMember, GetPropertyDetailHandler);

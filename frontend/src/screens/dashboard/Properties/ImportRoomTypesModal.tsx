@@ -81,6 +81,13 @@ export default function ImportRoomTypesModal({ propertyId, onClose }: Props) {
                 <Upload size={18} />
                 {file ? file.name : "Click to choose a .csv file"}
               </button>
+              <div className="text-[11px] leading-relaxed rounded-lg p-3" style={{ backgroundColor: "#fafaf9", color: "#777b86" }}>
+                <p className="bold mb-1" style={{ color: "#17191c" }}>Required columns</p>
+                <p>name, description, max_occupancy, base_price_ngn, quantity, amenities, images</p>
+                <p className="mt-1">
+                  <span className="bold">amenities</span> and <span className="bold">images</span> accept multiple values in one cell, comma-separated (e.g. "WiFi, Pool" or two image URLs separated by a comma). A broken or non-URL image entry is dropped silently, it won't fail the row.
+                </p>
+              </div>
             </>
           )}
 

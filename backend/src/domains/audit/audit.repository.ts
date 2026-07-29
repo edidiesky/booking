@@ -55,15 +55,41 @@ export const auditRepository = {
     }
   },
 
-  async listByTenant(tenantId: string, page = 1, limit = 50): Promise<(AuditLogEntry & { actor_first_name: string | null; actor_last_name: string | null })[]> {
+  async listByTenant(
+    tenantId: string,
+    page = 1,
+    limit = 50,
+    filters?: { actions?: string[]; search?: string; dateFrom?: string; dateTo?: string },
+  ): Promise<(AuditLogEntry & { actor_first_name: string | null; actor_last_name: string | null })[]> {
     const offset = (page - 1) * limit;
+    const params: unknown[] = [tenantId];
+    const conditions: string[] = ["a.tenant_id = $1"];
+
+    if (filters?.actions?.length) {
+      params.push(filters.actions);
+      conditions.push(`a.action = ANY($${params.length}::audit_action[])`);
+    }
+    if (filters?.search) {
+      params.push(`%${filters.search}%`);
+      conditions.push(`(a.resource ILIKE $${params.length} OR u.first_name ILIKE $${params.length} OR u.last_name ILIKE $${params.length})`);
+    }
+    if (filters?.dateFrom) {
+      params.push(filters.dateFrom);
+      conditions.push(`a.created_at >= $${params.length}`);
+    }
+    if (filters?.dateTo) {
+      params.push(filters.dateTo);
+      conditions.push(`a.created_at <= $${params.length}`);
+    }
+
+    params.push(limit, offset);
     return query<AuditLogEntry & { actor_first_name: string | null; actor_last_name: string | null }>(
       `SELECT a.*, u.first_name AS actor_first_name, u.last_name AS actor_last_name
        FROM audit_logs a
        LEFT JOIN users u ON u.id = a.user_id
-       WHERE a.tenant_id = $1
-       ORDER BY a.created_at DESC LIMIT $2 OFFSET $3`,
-      [tenantId, limit, offset]
+       WHERE ${conditions.join(" AND ")}
+       ORDER BY a.created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
     );
   },
 

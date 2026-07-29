@@ -4,6 +4,7 @@ export interface ReportColumn {
   key:   string;
   label: string;
   align?: "left" | "right";
+  width?: string; // e.g. "18%", explicit widths + table-layout:fixed guarantee true column alignment across all rows, not just approximate auto-sizing
 }
 
 export interface TabularReportData {
@@ -12,9 +13,15 @@ export interface TabularReportData {
   generatedAt: Date;
   columns:    ReportColumn[];
   rows:       Record<string, string>[];
-  totalsRow?: Record<string, string>;
+  totalsRow?: Record<string, string>; // optional summary row, e.g. totals for a payments export
 }
 
+// One generic report template, not five near-identical ones, every
+// export (bookings/payments/rooms/tenants/escrow) is the same shape:
+// a title, a generated-at date, a column header row, data rows, an
+// optional totals row. Same CSS/layout family as
+// booking-receipt/guest-invoice/host-statement templates, so every PDF
+// this app produces looks like it comes from the same company.
 function escapeHtml(v: string): string {
   return String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
@@ -26,6 +33,10 @@ const LOGO_SVG = `
 
 export function buildTabularReportHtml(data: TabularReportData): string {
   const generatedAt = data.generatedAt.toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric" });
+
+  const colgroup = data.columns.some((c) => c.width)
+    ? `<colgroup>${data.columns.map((c) => `<col style="width:${c.width ?? "auto"}"/>`).join("")}</colgroup>`
+    : "";
 
   const headerRow = data.columns
     .map((c) => `<th class="${c.align === "right" ? "th-right" : ""}">${escapeHtml(c.label)}</th>`)
@@ -65,7 +76,8 @@ export function buildTabularReportHtml(data: TabularReportData): string {
 
     <p class="generated-at">Generated ${generatedAt} &middot; ${data.rows.length} record${data.rows.length === 1 ? "" : "s"}</p>
 
-    <table class="report-table">
+    <table class="report-table${colgroup ? " fixed-layout" : ""}">
+      ${colgroup}
       <thead><tr>${headerRow}</tr></thead>
       <tbody>${bodyRows}${totalsHtml}</tbody>
     </table>
@@ -92,6 +104,7 @@ html, body { font-family: 'Cabinet', -apple-system, BlinkMacSystemFont, "Segoe U
 .logo { line-height: 0; }
 .generated-at { font-size: 11px; font-weight: 400; color: #9a9a9a; margin-bottom: 16px; }
 .report-table { width: 100%; border-collapse: collapse; }
+.report-table.fixed-layout { table-layout: fixed; }
 .report-table thead tr { border-bottom: 1.5px solid #1a1a1a; }
 .report-table th { font-size: 11px; font-weight: 700; color: #444; text-align: left; padding: 0 8px 8px 0; text-transform: uppercase; letter-spacing: 0.3px; }
 .th-right, .td-right { text-align: right; }

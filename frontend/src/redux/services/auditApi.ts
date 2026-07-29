@@ -19,8 +19,19 @@ export interface AuditLogEntry {
 
 export const auditApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    listTenantActivity: builder.query<{ success: boolean; data: AuditLogEntry[] }, { page?: number } | void>({
-      query: (params) => ({ url: `${AUDIT_URL}/tenant?page=${params?.page ?? 1}` }),
+    listTenantActivity: builder.query<
+      { success: boolean; data: AuditLogEntry[] },
+      { page?: number; actions?: string[]; search?: string; dateFrom?: string; dateTo?: string } | void
+    >({
+      query: (params) => {
+        const q = new URLSearchParams();
+        q.set("page", String(params?.page ?? 1));
+        if (params?.actions?.length) q.set("actions", params.actions.join(","));
+        if (params?.search) q.set("search", params.search);
+        if (params?.dateFrom) q.set("dateFrom", params.dateFrom);
+        if (params?.dateTo) q.set("dateTo", params.dateTo);
+        return { url: `${AUDIT_URL}/tenant?${q.toString()}` };
+      },
     }),
   }),
 });

@@ -36,8 +36,16 @@ export const VIEW_CONFIG: Record<GanttView, {
 };
 
 export const HOURS = Array.from({ length: 24 }, (_, i) => i);
-export const LANE_HEIGHT = 28;
-export const MIN_ROOM_ROW_HEIGHT = 56;
-export const ROOM_COL_WIDTH = 176;
+export const LANE_HEIGHT = 40;
+export const MIN_ROOM_ROW_HEIGHT = 40;
+export const ROOM_COL_WIDTH = 206;
 export const DEFAULT_MAX_VISIBLE_ROOMS = 8;
 
+
+
+export const MAX_CSV_BYTES = 20 * 1024 * 1024;
+export const MAX_ROWS      = 5_000;
+
+export const ROOM_TYPE_CSV_TEMPLATE = [
+  "name", "description", "max_occupancy", "base_price_ngn", "quantity", "amenities", "images",
+] as const;

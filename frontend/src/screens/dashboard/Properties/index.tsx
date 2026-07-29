@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import ExportPdfButton from "@/components/common/ExportPdfButton";
 import { PROPERTY_URL } from "@/constants/api";
+import ImportRoomTypesModal from "./ImportRoomTypesModal";
 
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
@@ -26,6 +27,8 @@ export default function DashboardProperties() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editPropertyId, setEditPropertyId] = useState<string | null>(null);
   const [roomTypeId, setRoomTypeId] = useState<string | null>(null);
+  const [showImportPicker, setShowImportPicker] = useState(false);
+  const [importPropertyId, setImportPropertyId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     name: string;
@@ -66,7 +69,7 @@ export default function DashboardProperties() {
         transition={{ duration: 0.4 }}
         className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
       >
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between lg:flex-row flex-col gap-4">
           <div>
             <h4 className="text-lg bold lg:text-xl text-[#17191c]">
               Properties
@@ -75,12 +78,51 @@ export default function DashboardProperties() {
               Manage your listings, room types, and availability calendars.
             </p>
           </div>
-          <button
-            onClick={handleOpenCreate}
-            className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-xs p-2 bold px-6"
-          >
-            Add Property
-          </button>
+          <div className="flex items-center gap-2 lg:justify-end">
+            <div className="relative">
+              <button
+                onClick={() => setShowImportPicker((v) => !v)}
+                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-xs p-2 bold px-6"
+              >
+                Bulk Import
+              </button>
+              {showImportPicker && (
+                <div
+                  className="absolute right-0 mt-1.5 w-64 bg-white border rounded-xl shadow-lg z-30 p-2"
+                  style={{ borderColor: "#e8e6e3" }}
+                >
+                  <p className="text-[11px] px-2 py-1" style={{ color: "#a3a6af" }}>
+                    Choose which property this CSV is for:
+                  </p>
+                  {properties.length === 0 ? (
+                    <p className="text-xs px-2 py-2" style={{ color: "#a3a6af" }}>
+                      Add a property first.
+                    </p>
+                  ) : (
+                    properties.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => {
+                          setImportPropertyId(p.id);
+                          setShowImportPicker(false);
+                        }}
+                        className="w-full text-left text-xs px-2 py-2 rounded-lg hover:bg-[#f2f0ed] transition-colors truncate"
+                        style={{ color: "#17191c" }}
+                      >
+                        {p.name}
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+            <button
+              onClick={handleOpenCreate}
+              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-xs p-2 bold px-6"
+            >
+              Add Property
+            </button>
+          </div>
         </div>
 
         <StatsOverview
@@ -195,6 +237,14 @@ export default function DashboardProperties() {
             isOpen={Boolean(roomTypeId)}
             propertyId={roomTypeId}
             onClose={() => setRoomTypeId(null)}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {importPropertyId && (
+          <ImportRoomTypesModal
+            propertyId={importPropertyId}
+            onClose={() => setImportPropertyId(null)}
           />
         )}
       </AnimatePresence>

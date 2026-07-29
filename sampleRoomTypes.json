@@ -1,0 +1,59 @@
+[
+  {
+    "id": "room_j1k2l3",
+    "propertyId": "prop_a1b2c3",
+    "name": "The Study Suite",
+    "description": "The smallest of the six units at Ivory Court, and by a fair margin the most requested, mostly because of the built-in reading nook someone on the design team fought hard to keep in the final layout when the budget got tight. It's a single, generously proportioned room rather than a separate bedroom and living area, but the way it's zoned, a low bookshelf dividing the sleeping side from the seating side, makes it feel considerably larger than its square footage suggests. The bed is a proper king, dressed in linen rather than the polyester-blend sheets that show up in cheaper shortlets, and the desk by the window catches enough natural light that guests working remotely rarely bother turning on the overhead lamp before 4pm. The ensuite bathroom has a rainfall shower and genuinely hot water pressure, a detail that sounds minor until you've stayed somewhere that doesn't have it. Best suited to a solo traveler or a couple who values quiet over square footage, though a rollaway can be arranged for a third guest on request.",
+    "maxOccupancy": 2,
+    "basePriceNgn": 65000,
+    "images": [
+      "https://cdn.staycloud.io/rooms/ivory-court/study-suite-1.jpg",
+      "https://cdn.staycloud.io/rooms/ivory-court/study-suite-2.jpg"
+    ],
+    "amenities": ["WiFi", "Air Conditioning", "Rainfall Shower", "Work Desk", "Smart TV"],
+    "quantity": 2
+  },
+  {
+    "id": "room_m4n5o6",
+    "propertyId": "prop_d4e5f6",
+    "name": "Beachfront Cottage",
+    "description": "Eight of the property's cottages sit directly on the sand, close enough that at high tide you can hear the water from the bed without the window open. This is the cottage type most people picture when they imagine Whispering Palms: thatched roof, a private wooden deck facing the water, an outdoor shower tucked behind a bamboo screen for rinsing off after a swim before you track sand through the main room. Inside, it's deliberately unfussy, a queen bed under mosquito netting, a small sitting area with two rattan chairs, and just enough storage for a week's worth of clothes and not much else, this isn't a cottage built around your luggage. The newer units in this category (numbers 5 through 8) have had their cooling upgraded from ceiling fans to a quiet split-unit AC, worth requesting specifically if you're visiting outside the harmattan season. No television, no minibar, and intentionally patchy WiFi that the property doesn't apologize for.",
+    "maxOccupancy": 2,
+    "basePriceNgn": 45000,
+    "images": [
+      "https://cdn.staycloud.io/rooms/whispering-palms/beachfront-1.jpg",
+      "https://cdn.staycloud.io/rooms/whispering-palms/beachfront-deck.jpg"
+    ],
+    "amenities": ["Private Beach Access", "Outdoor Shower", "Fan", "Hammock"],
+    "quantity": 8
+  },
+  {
+    "id": "room_p7q8r9",
+    "propertyId": "prop_g7h8i9",
+    "name": "Executive Suite",
+    "description": "One floor above the standard rooms and worlds apart in how it actually functions day to day. The Executive Suite splits into a proper separate living area and bedroom, a distinction that matters enormously on a five-day work trip when you want somewhere to take a call that isn't the same room you're sleeping in. The desk is a real workstation, not a side table pressed into service, with a second monitor available on request from housekeeping, a small but genuinely useful detail that repeat corporate guests specifically ask about when booking. The bathroom includes both a soaking tub and a separate walk-in shower, and the minibar is restocked daily rather than on checkout, which sounds like a small thing until you've stayed somewhere that only does it once. Floor-to-ceiling windows face either the CBD skyline or the internal courtyard depending on which of the twelve suites you're assigned, guests who care can request a skyline-facing room specifically when booking. This is the room the hotel puts long-stay corporate accounts into by default, and it's easy to see why once you've actually worked out of one for a week.",
+    "maxOccupancy": 2,
+    "basePriceNgn": 120000,
+    "images": [
+      "https://cdn.staycloud.io/rooms/meridian-grand/executive-suite-1.jpg",
+      "https://cdn.staycloud.io/rooms/meridian-grand/executive-suite-bathroom.jpg"
+    ],
+    "amenities": ["WiFi", "Air Conditioning", "Minibar", "Soaking Tub", "Work Desk", "Room Service"],
+    "quantity": 12
+  },
+  {
+    "id": "room_s1t2u3",
+    "propertyId": "prop_g7h8i9",
+    "name": "Presidential Suite",
+    "description": "There is exactly one of these, and it books out months in advance for December and during the National Assembly's busier sitting weeks, so much so that the hotel keeps a standing waitlist for it rather than a normal booking calendar. The suite occupies the entire northeast corner of the top floor, a private foyer opening into a living room large enough to comfortably host a small delegation, a formal dining area that seats eight, a study with its own separate entrance for meetings that don't need to involve the rest of the party, and a primary bedroom with a dressing room attached that's nearly the size of a standard room elsewhere in the hotel. Butler service is included, not offered as an upsell, and the suite has its own dedicated check-in process that bypasses the main lobby entirely for guests who'd rather not be seen arriving. The view stretches across most of the CBD and, on a clear morning, out toward the hills beyond the city. It is, without much competition, the single best room in Abuja's hotel market, and the rate reflects exactly that.",
+    "maxOccupancy": 4,
+    "basePriceNgn": 450000,
+    "images": [
+      "https://cdn.staycloud.io/rooms/meridian-grand/presidential-living.jpg",
+      "https://cdn.staycloud.io/rooms/meridian-grand/presidential-bedroom.jpg",
+      "https://cdn.staycloud.io/rooms/meridian-grand/presidential-view.jpg"
+    ],
+    "amenities": ["WiFi", "Butler Service", "Private Dining", "Study", "Separate Entrance", "Air Conditioning"],
+    "quantity": 1
+  }
+]

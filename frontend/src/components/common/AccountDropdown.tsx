@@ -128,7 +128,7 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
 
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="flex items-center gap-3 px-2.5 py-2 text-xs bold text-red-600 cursor-pointer hover:bg-red-50 rounded-lg outline-none"
+          className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-sm bold text-red-600 cursor-pointer hover:bg-red-50 rounded-lg outline-none"
         >
           <LogOut size={16} className="shrink-0" />
           Sign out

@@ -1,22 +1,20 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { CalendarX2, ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addDays, isSameDay } from "date-fns";
-import type { Property } from "@/types/api";
 import { VIEW_CONFIG, type GanttView, ROOM_COL_WIDTH, MIN_ROOM_ROW_HEIGHT, LANE_HEIGHT } from "@/constants";
 import { useGanttLayout } from "@/hooks/useGanttLayout";
 import { useIncrementalBookingWindow } from "@/hooks/useIncrementalBookingWindow";
 import BookingBar from "./BookingBar";
-import GanttFilterDropdown from "./GanttFilterPanel";
+import MultiSelectDropdown from "./MultiSelectDropdown";
 
 interface Props {
-  property: Property;
   onSelectBooking: (bookingId: string) => void;
 }
-
-export default function BookingGantt({ property, onSelectBooking }: Props) {
+export default function BookingGantt({ onSelectBooking }: Props) {
   const [view, setView] = useState<GanttView>("month");
   const [windowStart, setWindowStart] = useState(() => new Date());
-  const [maxVisibleRooms, setMaxVisibleRooms] = useState(property.gantt_max_visible_rooms ?? 8);
+  const [maxVisibleRooms, setMaxVisibleRooms] = useState(8);
+  const [roomTypeFilter, setRoomTypeFilter] = useState<Set<string> | null>(null);
 
   const config = VIEW_CONFIG[view];
   const { bookings, loadedDays, loadingMore, reachedCap, loadMore } = useIncrementalBookingWindow({
@@ -30,9 +28,24 @@ export default function BookingGantt({ property, onSelectBooking }: Props) {
   const rows = useGanttLayout({
     bookings, windowStart, totalUnits,
     granularity: config.granularity,
-    propertyId: property.id,
-    roomTypeFilter: null, statusFilter: null,
+    roomTypeFilter, statusFilter: null,
   });
+
+  // Filter options derived directly from the fetched bookings (every
+  // booking already carries roomTypeName via the real toDto() mapping),
+  // not a separate per-property room-types fetch, avoids an N+1 fetch
+  // across every property just to populate a dropdown. Tradeoff worth
+  // knowing: a room type with zero bookings anywhere in the currently
+  // loaded window won't appear as a filterable option, that's an
+  // acceptable gap for a filter (nothing to filter to anyway), not
+  // acceptable for something that needs to be exhaustive.
+  const roomTypeOptions = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const b of bookings) {
+      if (!seen.has(b.roomTypeId)) seen.set(b.roomTypeId, b.roomTypeName ?? "Room type");
+    }
+    return Array.from(seen.entries()).map(([value, label]) => ({ value, label }));
+  }, [bookings]);
 
   const totalWidth = totalUnits * unitWidth;
   const rowHeight = (laneCount: number) => Math.max(MIN_ROOM_ROW_HEIGHT, laneCount * (LANE_HEIGHT + 4) + 12);
@@ -86,12 +99,31 @@ export default function BookingGantt({ property, onSelectBooking }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
-          <GanttFilterDropdown
-            propertyId={property.id}
-            currentSortMode={property.room_sort_mode ?? "price"}
-            currentMaxVisibleRooms={maxVisibleRooms}
-            onMaxVisibleRoomsChange={setMaxVisibleRooms}
+          <MultiSelectDropdown
+            label="Room type"
+            options={roomTypeOptions}
+            selected={roomTypeFilter ?? new Set(roomTypeOptions.map((r) => r.value))}
+            onToggle={(value) => {
+              setRoomTypeFilter((prev) => {
+                const next = new Set(prev ?? roomTypeOptions.map((r) => r.value));
+                if (next.has(value)) next.delete(value); else next.add(value);
+                return next;
+              });
+            }}
+            searchable
           />
+          <label className="flex items-center gap-1.5 text-xs px-2" style={{ color: "#777b86" }}>
+            Max rows
+            <input
+              type="number"
+              min={1}
+              max={50}
+              value={maxVisibleRooms}
+              onChange={(e) => setMaxVisibleRooms(Math.max(1, Math.min(50, Number(e.target.value) || 1)))}
+              className="w-12 h-7 border rounded-full px-2 text-xs outline-none"
+              style={{ borderColor: "#e8e6e3" }}
+            />
+          </label>
           <div className="flex items-center gap-1">
             <button onClick={goPrevious} className="w-7 h-7 flex items-center justify-center rounded-full border hover:bg-[#f2f0ed]" style={{ borderColor: "#e8e6e3" }}>
               <ChevronLeft size={14} />
@@ -120,9 +152,9 @@ export default function BookingGantt({ property, onSelectBooking }: Props) {
                 style={{ height: rowHeight(row.laneCount), borderColor: "#f2f0ed" }}
               >
                 {row.roomImage ? (
-                  <img src={row.roomImage} alt="" className="w-7 h-7 rounded object-cover shrink-0" />
+                  <img src={row.roomImage} alt="" className="w-12 h-12 rounded object-cover shrink-0" />
                 ) : (
-                  <div className="w-7 h-7 rounded shrink-0" style={{ backgroundColor: "#f2f0ed" }} />
+                  <div className="w-12 h-12 rounded shrink-0" style={{ backgroundColor: "#f2f0ed" }} />
                 )}
                 <div className="min-w-0">
                   <p className="text-xs bold truncate" style={{ color: "#17191c" }}>{row.roomTypeName}</p>
@@ -179,6 +211,20 @@ export default function BookingGantt({ property, onSelectBooking }: Props) {
                     className="relative border-b"
                     style={{ height: rowHeight(row.laneCount), borderColor: "#f2f0ed" }}
                   >
+                    {/* Day-boundary gridlines, same width math as the
+                        header (isHour ? unitWidth*24 : unitWidth), drawn
+                        behind the bars, not a separate set of numbers
+                        that can drift out of sync with the header. */}
+                    <div className="absolute inset-0 pointer-events-none flex">
+                      {days.map((day) => (
+                        <div
+                          key={day.toISOString()}
+                          className="shrink-0 border-r"
+                          style={{ width: isHour ? unitWidth * 24 : unitWidth, borderColor: "#f2f0ed" }}
+                        />
+                      ))}
+                    </div>
+
                     {row.bars.map((bar) => (
                       <BookingBar
                         key={bar.booking.bookingId}
