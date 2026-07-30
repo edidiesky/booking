@@ -106,9 +106,9 @@ html, body { font-family: 'Cabinet', -apple-system, BlinkMacSystemFont, "Segoe U
 .report-table { width: 100%; border-collapse: collapse; }
 .report-table.fixed-layout { table-layout: fixed; }
 .report-table thead tr { border-bottom: 1.5px solid #1a1a1a; }
-.report-table th { font-size: 11px; font-weight: 700; color: #444; text-align: left; padding: 0 8px 8px 0; text-transform: uppercase; letter-spacing: 0.3px; }
+.report-table th { font-size: 11px; font-weight: 700; color: #444; text-align: left; padding: 0 16px 8px 0; text-transform: uppercase; letter-spacing: 0.3px; }
 .th-right, .td-right { text-align: right; }
-.report-table td { padding: 7px 8px 7px 0; border-bottom: 1px solid #eaeaea; font-size: 11px; font-weight: 400; vertical-align: top; }
+.report-table td { padding: 7px 16px 7px 0; border-bottom: 1px solid #eaeaea; font-size: 11px; font-weight: 400; vertical-align: top; }
 .totals-row td { border-top: 1.5px solid #1a1a1a; border-bottom: none; font-weight: 700; padding-top: 10px; }
 .footer { font-size: 10px; font-weight: 400; color: #9a9a9a; text-align: center; margin-top: 20px; }
 `;

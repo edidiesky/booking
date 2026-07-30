@@ -1,188 +1,212 @@
-import { GiCutDiamond } from "react-icons/gi";
-import { FaMountainCity } from "react-icons/fa6";
-import { FaLongArrowAltRight } from "react-icons/fa";
-import { GiModernCity } from "react-icons/gi";
-import AnimateTextWord from "@/components/common/AnimateTextWord";
-import LazyImage from "@/components/common/LazyImage";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { CalendarCheck, ShieldCheck, Bell, Wallet } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const Expert = () => {
-  const zyncStength = [
-    {
-      title: "Security",
-      percentage: 80,
-    },
-    {
-      title: "24 / 7 Power Electricity",
-      percentage: 90,
-    },
-    {
-      title: "Luxury",
-      percentage: 90,
-    },
-  ];
+gsap.registerPlugin(ScrollTrigger);
+
+const features = [
+  {
+    tag: "AVAILABILITY CALENDAR",
+    title: "One calendar, every property, no double bookings.",
+    bullets: [
+      "Live availability computed at the moment of checkout, not a cached count",
+      "Automatic 3-hour turnover buffer between guests",
+      "Gantt and month views, both real-time",
+    ],
+    icon: CalendarCheck,
+    accentColor: "var(--color-terracotta)",
+    tagBg: "var(--color-warm-mist)",
+    image: "/images/hero/feature1.jpg",
+  },
+  {
+    tag: "ESCROW",
+    title: "Guest pays, funds hold, host gets paid at checkout.",
+    bullets: [
+      "Every booking's payment held in escrow until the stay completes",
+      "Automatic payout release, no manual reconciliation",
+      "Full refund handling built in, not bolted on",
+    ],
+    icon: Wallet,
+    accentColor: "var(--color-ink)",
+    tagBg: "var(--color-fog)",
+    image: "/images/hero/feature2.jpg",
+  },
+  {
+    tag: "TEAM & ROLES",
+    title: "Invite staff with exactly the access they need.",
+    bullets: [
+      "Custom roles per tenant, not just admin/staff",
+      "Invitation by email code, no shared logins",
+      "Full activity log of who did what, and when",
+    ],
+    icon: ShieldCheck,
+    accentColor: "var(--color-terracotta)",
+    tagBg: "var(--color-warm-mist)",
+    image: "/images/hero/feature3.jpg",
+  },
+  {
+    tag: "NOTIFICATIONS",
+    title: "Know the moment a guest checks in, not an hour later.",
+    bullets: [
+      "Real-time bell notifications on booking, check-in, check-out",
+      "Email and SMS for guests, in-app for your team",
+      "Campaign tools for reaching past guests directly",
+    ],
+    icon: Bell,
+    accentColor: "var(--color-ink)",
+    tagBg: "var(--color-fog)",
+    image: "/images/hero/feature4.jpg",
+  },
+];
+
+export default function Expert() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
+    const ctx = gsap.context(() => {
+      cards.forEach((card, index) => {
+        if (index < cards.length - 1) {
+          ScrollTrigger.create({
+            trigger: card,
+            start: "top top",
+            endTrigger: cards[cards.length - 1],
+            end: "top top",
+            pin: true,
+            pinSpacing: false,
+          });
+        }
+      });
+
+      cards.forEach((card, index) => {
+        const overlay = card.querySelector(".card-overlay") as HTMLElement;
+
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top center",
+          end: "bottom center",
+          onEnter:     () => setActiveIndex(index),
+          onEnterBack: () => setActiveIndex(index),
+        });
+
+        if (index < cards.length - 1) {
+          ScrollTrigger.create({
+            trigger: cards[index + 1],
+            start: "top bottom",
+            end: "top top",
+            onUpdate: (self) => {
+              const progress = self.progress;
+              const scale = 1 - progress * 0.1;
+              const rotation = (index % 2 === 0 ? 2 : -2) * progress;
+              gsap.set(card, { scale, rotation, transformOrigin: "center top" });
+              if (overlay) gsap.set(overlay, { opacity: progress * 0.55 });
+            },
+            onLeave: () => {
+              gsap.set(card, { scale: 0.94, rotation: index % 2 === 0 ? 2 : -2 });
+              if (overlay) gsap.set(overlay, { opacity: 0.55 });
+            },
+            onEnterBack: () => {
+              gsap.set(card, { scale: 1, rotation: 0 });
+              if (overlay) gsap.set(overlay, { opacity: 0 });
+            },
+          });
+        }
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const active = features[activeIndex];
+
   return (
-    <div className="flex w-full flex-col">
-      <div
-        data-scroll-section
-        className="w-full flex relative bg-[#f4f5fa] py-20 flex-col gap-40"
-      >
-        <div className="background_grey"></div>
-        <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
-          <div className="grid lg:grid-cols-2 items-start md:items-center w-full gap-12">
-            <div className="flex flex-col gap-4">
-              <h4 className="text-sm md:text-lg text-[var(--primary)]">
-                Passionate – Dedicated – Professional
-              </h4>
-              <h4 className="text-4xl max-w-[500px] md:text-4xl capitalize family2 text-[var(--dark-1)]">
-                <AnimateTextWord type={"bigtext"}>
-                  Why we are the best at Luxury Homes?
-                </AnimateTextWord>
-              </h4>
-              <h4 className="text-sm md:text-lg text-[var(--dark-1)]">
-                <AnimateTextWord>
-                  Auisque cursus sed magnads vitae conubia pharetra auctor
-                  interdum dui metus augue. Xursus sed magnads vitae conubia
-                  pharetra auctor interdum dui metus augue.
-                </AnimateTextWord>
-              </h4>
-            </div>
-            <div className="flex lg:items-center flex-col gap-4 md:justify-end">
-              {zyncStength?.map((data, index) => {
-                return (
-                  <div key={index} className="w-full flex flex-col gap-3">
-                    <span className="text-xs md:text-sm text-dark font-normal">
-                      {data?.title} {data?.percentage}%
-                    </span>
-                    <div className="w-full h-4 rounded-xl bg-[#d8d8d8]">
-                      <div
-                        style={{
-                          width: `${data?.percentage}%`,
-                        }}
-                        className="h-[100%] rounded-xl bg-[#f73760]"
-                      ></div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+    <section ref={containerRef} style={{ backgroundColor: "var(--color-canvas)" }}>
+      <div className="mx-auto px-6 lg:px-8 pt-32 pb-20 text-center" style={{ maxWidth: "1280px" }}>
+        <span className="text-base lg:text-xl uppercase" style={{ color: "var(--color-light-steel)" }}>
+          Everything you need
+        </span>
+        <h2 className="text-5xl lg:text-7xl mt-2 max-w-2xl mx-auto leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
+          One platform. Every tool your booking business needs.
+        </h2>
       </div>
-      <div data-scroll-section className="w-full flex relative flex-col gap-40">
-        <div className="w-[100%] flex flex-col gap-20">
-          <div className="grid lg:grid-cols-2 items-start md:items-center w-full">
-            <div className="w-full h-full">
-              <LazyImage
-                src={
-                  "https://avada.website/business/wp-content/uploads/sites/171/2022/10/about-features-1.jpg"
-                }
-              />
-            </div>
-            <div className="flex h-full relative bg-[#22253d] items-start justify-center py-20 px-12 md:px-20 flex-col gap-8">
-              <div className="background_grey"></div>
 
-              <h4 className="text-sm md:text-lg text-[var(--primary)]">
-                Passionate – Dedicated – Professional
-              </h4>
-              <h3 className="text-4xl max-w-[500px] md:text-4xl capitalize family2 text-white">
-                <AnimateTextWord>
-                  Why you should choose ZyncLuxury?
-                </AnimateTextWord>
+      <div className="mx-auto grid lg:grid-cols-2 gap-16" style={{ maxWidth: "1280px" }}>
+        {/* Left: fixed, text swaps per active card */}
+        <div className="hidden lg:block sticky self-start" style={{ top: "30vh" }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="flex flex-col gap-6 px-6"
+            >
+              <span
+                className="text-xs px-3 py-1.5 rounded-full w-fit"
+                style={{ color: active.accentColor,backgroundColor: active.tagBg }}
+              >
+                {active.tag}
+              </span>
+              <h3 className="text-3xl lg:text-5xl leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
+                {active.title}
               </h3>
-              <p className="text-xs md:text-sm family1 leading-[1.4] font-normal text-grey">
-                <AnimateTextWord>
-                  Buisque cursus metus vitae sed pharetra auctor semy interdum
-                  magna augue eget diam ante ipsum faucibus luctus ultrices
-                  losuere cubilia. Vestibulum lacinia arcu eget nulla.
-                </AnimateTextWord>
-              </p>
-              <div className="w-full flex items-center gap-4">
-                <div className="w-24 h-24 bg-[#282c48] flex text-5xl items-center rounded-full text-white justify-center">
-                  <GiCutDiamond />
-                </div>
-                <div className="w-24 h-24 bg-[#282c48] flex text-5xl items-center rounded-full text-white justify-center">
-                  <FaMountainCity />
-                </div>
-                <div className="w-24 h-24 bg-[#282c48] flex text-5xl items-center rounded-full text-white justify-center">
-                  <GiModernCity />
-                </div>
-              </div>
-              <div className="w-full flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <FaLongArrowAltRight
-                    fontSize={"26px"}
-                    color="var(--primary)"
-                  />
-                  <span className="text-xs md:text-lg text-white">
-                    <AnimateTextWord>
-                      Awards won with business intelligence
-                    </AnimateTextWord>
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FaLongArrowAltRight
-                    fontSize={"26px"}
-                    color="var(--primary)"
-                  />
-                  <span className="text-xs md:text-lg text-white">
-                    <AnimateTextWord>
-                      Our mission is to grow your business faster
-                    </AnimateTextWord>
-                  </span>
-                </div>{" "}
-                <div className="flex items-center gap-3">
-                  <FaLongArrowAltRight
-                    fontSize={"26px"}
-                    color="var(--primary)"
-                  />
+              <ul className="flex flex-col gap-3">
+                {active.bullets.map((bullet, j) => (
+                  <li key={j} className="flex items-start gap-3 text-lg leading-relaxed" style={{ color: "var(--color-muted-stone)", letterSpacing: "-0.009em" }}>
+                    <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ backgroundColor: active.accentColor }} />
+                    {bullet}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-                  <span className="text-xs md:text-lg text-white">
-                    <AnimateTextWord>
-                      Global presence makes us top rated company
-                    </AnimateTextWord>
-                  </span>
-                </div>
+        {/* Right: card wrapper height now comes from its actual content
+            (the 520px image + padding), not an arbitrary 70vh minimum.
+            That min-h-[70vh] was the real bug, 4 cards x 70vh each
+            stacked into ~280vh of forced scroll distance regardless of
+            how tall the cards actually were, which is exactly the huge
+            gray gap between cards in the screenshot. */}
+        <div className="relative">
+          {features.map((feature, i) => (
+            <div
+              key={i}
+              ref={(el) => { cardRefs.current[i] = el; }}
+              className="sticky flex items-center py-8 will-change-transform"
+              style={{ top: "0px", zIndex: i + 1 }}
+            >
+              <div className="card-overlay absolute inset-0 pointer-events-none rounded-[24px]" style={{ backgroundColor: "rgba(0,0,0,1)", opacity: 0, zIndex: 10 }} />
+
+              <div className="lg:hidden flex flex-col gap-4 mb-6">
+                <span
+                  className="text-xs px-3 py-1.5 rounded-full w-fit border"
+                  style={{ color: feature.accentColor, borderColor: feature.accentColor, backgroundColor: feature.tagBg }}
+                >
+                  {feature.tag}
+                </span>
+                <h3 className="text-2xl leading-[1.1]" style={{ color: "var(--color-ink)" }}>{feature.title}</h3>
               </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                viewport={{ once: true, margin: "-80px" }}
+                className="w-full h-[420px] lg:h-[520px] rounded-[24px] overflow-hidden"
+                style={{ boxShadow: "var(--shadow-steep)" }}
+              >
+                <img src={feature.image} alt={feature.tag} className="w-full h-full object-cover" />
+              </motion.div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
-      <div
-        data-scroll-section
-        className="w-full flex relative border-b border-dotted py-24 flex-col gap-40"
-      >
-        <div className="max-w-screen-xl justify-center md:items-center mx-auto flex gap-20">
-          <div className="w-full flex md:flex-row flex-col justify-center md:items-center gap-12 md:gap-24">
-            <div className="flex flex-col gap-3">
-              <h2 className="text-7xl md:text-9xl text-[#868dbb]">
-                <AnimateTextWord type={"bigtext"}>15k+</AnimateTextWord>
-              </h2>
-              <span className="text-sm md:text-lg text-[#000]">
-                <AnimateTextWord> Supported Listings</AnimateTextWord>
-              </span>
-            </div>
-            <div className="flex flex-col gap-3">
-              <h2 className="text-7xl md:text-9xl text-[#868dbb]">
-                <AnimateTextWord type={"bigtext"}> 3.5M</AnimateTextWord>
-              </h2>
-              <span className="text-sm md:text-lg text-[#000]">
-                <AnimateTextWord> Supported Listings</AnimateTextWord>
-              </span>
-            </div>{" "}
-            <div className="flex flex-col gap-3">
-              <h2 className="text-7xl md:text-9xl text-[#868dbb]">
-                {" "}
-                <AnimateTextWord type={"bigtext"}>600</AnimateTextWord>
-              </h2>
-              <span className="text-sm md:text-lg text-[#000]">
-                <AnimateTextWord> Supported Listings</AnimateTextWord>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </section>
   );
-};
-
-export default Expert;
+}

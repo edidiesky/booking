@@ -14,12 +14,6 @@ interface Props {
   icon?:      React.ReactNode;
 }
 
-// Matches the Customer Segmentation reference exactly: a full ring of
-// uniform dark tick marks (decorative, not color-coded per segment,
-// the data lives in the legend and the hover tooltip, not in the ring
-// itself), a centered total, and a floating tooltip that appears over
-// the ring on hover of a legend row. Not a recharts preset, this
-// specific tick-ring style needs raw SVG.
 export default function RadialTickCard({ title, totalValue, totalLabel = "Total", segments, icon }: Props) {
   const [hovered, setHovered] = useState<RadialTickSegment | null>(null);
   const TICK_COUNT = 48;
@@ -27,13 +21,24 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
   const RADIUS_INNER = 58;
   const CENTER = 80;
 
+  const total = segments.reduce((sum, s) => sum + s.value, 0) || 1;
+
   const ticks = Array.from({ length: TICK_COUNT }, (_, i) => {
     const angle = (i / TICK_COUNT) * 2 * Math.PI - Math.PI / 2;
     const x1 = CENTER + RADIUS_INNER * Math.cos(angle);
     const y1 = CENTER + RADIUS_INNER * Math.sin(angle);
     const x2 = CENTER + RADIUS_OUTER * Math.cos(angle);
     const y2 = CENTER + RADIUS_OUTER * Math.sin(angle);
-    return { x1, y1, x2, y2 };
+
+    const cumulativeAtTick = (i + 0.5) / TICK_COUNT;
+    let running = 0;
+    let segment = segments[segments.length - 1];
+    for (const s of segments) {
+      running += s.value / total;
+      if (cumulativeAtTick <= running) { segment = s; break; }
+    }
+
+    return { x1, y1, x2, y2, segment };
   });
 
   const LEGEND_COLORS = ["#17191c", "#777b86", "#c8c6c1"];
@@ -48,7 +53,7 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
       <div className="relative flex items-center justify-center py-4" style={{ height: 180 }}>
         {hovered && (
           <div
-            className="absolute top-2 left-1/2 -translate-x-1/2 bg-white border rounded-xl shadow-lg px-3 py-2 z-10 whitespace-nowrap"
+            className="absolute top-2 left-1/2 -translate-x-1/2 bg-white border rounded-xl shadow-lg px-3 py-2 z-10 whitespace-nowrap pointer-events-none"
             style={{ borderColor: "#e8e6e3" }}
           >
             <p className="text-xs bold flex items-center gap-1.5" style={{ color: "#17191c" }}>
@@ -66,9 +71,37 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
           </div>
         )}
 
-        <svg width={160} height={160} viewBox="0 0 160 160">
+        <svg width={200} height={180} viewBox="0 0 160 160">
           {ticks.map((t, i) => (
-            <line key={i} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke="#1a1a1a" strokeWidth={2} strokeLinecap="round" />
+            <line
+              key={i}
+              x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
+              stroke="#1a1a1a"
+              strokeWidth={2}
+              strokeLinecap="round"
+              // Wider invisible hit area than the visible 2px stroke,
+              // a 2px line is hard to actually land a hover on,
+              // strokeWidth alone would make the hover region as thin
+              // as the tick itself.
+              style={{ cursor: "default" }}
+              onMouseEnter={() => setHovered(t.segment)}
+              onMouseLeave={() => setHovered(null)}
+              pointerEvents="stroke"
+            />
+          ))}
+          {/* Wider, invisible hover targets layered under the visible
+              ticks, same segment mapping, purely to make the hover area
+              forgiving instead of needing to land exactly on a 2px line. */}
+          {ticks.map((t, i) => (
+            <line
+              key={`hit-${i}`}
+              x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
+              stroke="transparent"
+              strokeWidth={10}
+              strokeLinecap="round"
+              onMouseEnter={() => setHovered(t.segment)}
+              onMouseLeave={() => setHovered(null)}
+            />
           ))}
         </svg>
         <div className="absolute flex flex-col items-center pointer-events-none">

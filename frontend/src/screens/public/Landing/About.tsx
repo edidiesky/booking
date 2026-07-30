@@ -1,179 +1,207 @@
-import { Phone } from "lucide-react";
-import { GrSecure } from "react-icons/gr";
-import { MdOutlineElectricalServices } from "react-icons/md";
-import { SiInfluxdb } from "react-icons/si";
-import { MdCleaningServices } from "react-icons/md";
-import { GiConsoleController } from "react-icons/gi";
-import { FaKitchenSet } from "react-icons/fa6";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import AnimateTextWord from "@/components/common/AnimateTextWord";
-import LazyImage from "@/components/common/LazyImage";
 
-const whychooseList = [
+gsap.registerPlugin(ScrollTrigger);
+
+const cards = [
   {
-    text: "Gateway to a full luxury lifestyle",
-    subText:
-      "Dynamically recapitalize bleeding-edge leadership skills for all apps.",
-    icons: <GrSecure />,
-    title: "Security",
+    image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
+    value: "12,000+",
+    label: "Bookings confirmed",
+    description:
+      "Real stays, real guests, across every property type on the platform.",
+    bg: "#e8e6e3",
+    color: "#111111",
   },
   {
-    text: "Gateway to a full luxury lifestyle",
-    subText:
-      "Dynamically recapitalize bleeding-edge leadership skills for all apps.",
-    icons: <MdOutlineElectricalServices />,
-    title: "24 / 7 Electricity",
-  },
-  ,
-  {
-    text: "Gateway to a full luxury lifestyle",
-    subText:
-      "Dynamically recapitalize bleeding-edge leadership skills for all apps.",
-    icons: <SiInfluxdb />,
-    title: "House Keeping",
+    image: "https://2025.moniepoint.com/_next/static/media/Fruit.527795c5.svg",
+    value: "850+",
+    label: "Properties listed",
+    description: "Shortlets, hotels, and guesthouses, all in one calendar.",
+    bg: "#f8e600",
+    color: "#111111",
   },
   {
-    text: "Gateway to a full luxury lifestyle",
-    subText:
-      "Dynamically recapitalize bleeding-edge leadership skills for all apps.",
-    icons: <MdCleaningServices />,
-    title: "Serene Environment",
+    image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
+    value: "₦2B+",
+    label: "Host payouts released",
+    description:
+      "Held in escrow, released automatically at checkout, no chasing payments.",
+    bg: "#00a86b",
+    color: "#ffffff",
   },
   {
-    text: "Gateway to a full luxury lifestyle",
-    subText:
-      "Dynamically recapitalize bleeding-edge leadership skills for all apps.",
-    icons: <FaKitchenSet />,
-    title: "Equipped Kitchen",
+    image: "https://2025.moniepoint.com/_next/static/media/Fruit.527795c5.svg",
+    value: "3hr",
+    label: "Turnover buffer, automatic",
+    description:
+      "The calendar blocks cleaning time between guests, so you never double-book by accident.",
+    bg: "#1a56ff",
+    color: "#ffffff",
   },
   {
-    text: "Equipped Gaming Console",
-    subText:
-      "Dynamically recapitalize bleeding-edge leadership skills for all apps.",
-    icons: <GiConsoleController />,
-    title: "Gaming Console",
+    image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
+    value: "99.9%",
+    label: "Uptime, every night",
+    description: "Your booking calendar doesn't go down during a busy weekend.",
+    bg: "#17191c",
+    color: "#ffffff",
+  },
+  {
+    image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
+    value: "24/7",
+    label: "Guest support",
+    description: "Someone's awake when a 2am check-in question comes in.",
+    bg: "#dc2626",
+    color: "#ffffff",
   },
 ];
 
-const About = () => {
- 
+// Finite arc carousel: cards sit at fixed points along a shallow arc
+// (center highest and upright, edges dip down and tilt outward), and
+// scroll position drives a continuous "virtual index" that shifts
+// every card's position along that same arc. Hard-clamped between the
+// first and last card, no wraparound.
+//
+// The header is NOT part of the pinned section anymore, it's a plain,
+// normal-flow block above it that scrolls away like any other content.
+// Only the cards stage gets pinned. That's what makes a fixed 580px
+// card height comfortable again: the pinned section no longer has to
+// share its height with a header block, the full viewport is
+// available to the cards once the header has already scrolled past.
+const ANGLE_STEP_DEG = 40;
+const ARC_RADIUS = 900;
+const TOP_Y = 80; // small top padding now, not "room for the header", the header isn't in this section anymore
+const CARD_HEIGHT = 680;
+const MAX_DIP = 90
+
+export default function About() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const ctx = gsap.context(() => {
+      const layout = (virtualIndex: number) => {
+        const centerX = stage.offsetWidth / 2;
+
+        cards.forEach((_, i) => {
+          const card = cardRefs.current[i];
+          if (!card) return;
+
+          const angleDeg = (i - virtualIndex) * ANGLE_STEP_DEG;
+          const angleRad = (angleDeg * Math.PI) / 180;
+
+          const x = centerX + ARC_RADIUS * Math.sin(angleRad);
+          const y = TOP_Y + ARC_RADIUS * (1 - Math.cos(angleRad));
+
+          gsap.set(card, {
+            x,
+            y,
+            xPercent: -50,
+            yPercent: 0,
+            height: CARD_HEIGHT,
+            rotation: angleDeg * 0.6,
+            opacity: Math.abs(angleDeg) > ANGLE_STEP_DEG * 3.2 ? 0 : 1,
+          });
+        });
+      };
+
+      let currentIndex = 0;
+      const maxIndex = cards.length - 1;
+
+      layout(currentIndex);
+      window.addEventListener("resize", () => layout(currentIndex));
+
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: "+=150%",
+        scrub: 1,
+        pin: true,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          currentIndex = gsap.utils.clamp(
+            0,
+            maxIndex,
+            self.progress * maxIndex,
+          );
+          layout(currentIndex);
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div data-scroll-section className="w-full relative flex flex-col gap-20">
-     
-      <div className="w-full py-20">
-        <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
-          <div className="grid lg:grid-cols-2 items-start md:items-center w-full gap-8">
-            <div className="flex flex-col gap-4">
-              <h4 className="text-sm md:text-lg text-[var(--primary)]">
-                Passionate – Dedicated – Professional
-              </h4>
-              <h3 className="text-4xl max-w-[600px]  bold md:text-4xl text-[var(--dark-1)]">
-                <AnimateTextWord type={"bigtext"}>
-                  Why you should should Choose ZyncLuxury?
-                </AnimateTextWord>
-              </h3>
-            </div>
-            <div className="flex lg:items-center md:justify-end">
-              <span className="text-lg max-w-[100%] md:max-w-[400px] text-grey font-normal">
-                <AnimateTextWord>
-                  Auisque cursus metus vitae sed pharetra auctor semy mas
-                  interdum magnads augue.
-                </AnimateTextWord>
-              </span>
-            </div>
-          </div>
-          <div className="w-full grid sm:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-12">
-            {whychooseList?.map((data, index) => {
-              return (
-                <div
-                  className="w-full cursor-pointer flex flex-col"
-                >
-                  <div
-                    style={{ transition: "all .3s" }}
-                    key={index}
-                    className="w-full z-20 group hover:-translate-y-10 p-12 bg-[#f4f5fa] rounded-xl
-                     flex flex-col gap-4"
-                  >
-                    <div className="w-36 h-36 mb-4 border-8 group-hover:text-white group-hover:bg-[var(--primary)] border-[hsla(232, 28%, 73%,calc(100% - 80%))] md:text-6xl flex items-center justify-center rounded-full bg-white text-4xl">
-                      {data?.icons}
-                    </div>
-                    <h3 className="text-xl md:text-xl family2 text-dark">
-                      {data?.title}
-                    </h3>
-                    <h4 className="text-xs md:text-xs family1 font-normal text-grey">
-                      {data?.subText}
-                    </h4>
-                  </div>
-                  <div className="w-full z-10">
-                    <div
-                      className="w-[90%] capitalize family1 font-normal -mt-20 text-xs text-center py-4 pt-12 px-4
-                     rounded-xl text-white mx-auto bg-[var(--primary)]"
-                    >
-                      {data?.text}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+    <div style={{ backgroundColor: "var(--color-canvas)" }}>
+      <div className="mx-auto px-6 lg:px-8 pt-32 pb-10 flex items-center justify-center flex-col" style={{ maxWidth: "1280px" }}>
+        <span className="text-base lg:text-xl uppercase" style={{ color: "var(--color-light-steel)" }}>
+          Everything you need
+        </span>
+        <h3 className=" text-4xl lg:text-6xl lg:text-center mx-auto max-w-[800px] bold text-[var(--dark-1)]">
+          {/* <AnimateTextWord type={"bigtext"}>
+            Built for hosts who don't have time to babysit a calendar.
+          </AnimateTextWord> */}
+          Built for hosts who don't have time to babysit a calendar.
+        </h3>
       </div>
-      <div className="w-full bg-[#22253d] py-40 z-40">
-        {" "}
-        <div className="max-w-screen-xl mx-auto grid md:grid-cols-2 gap-24">
-          <div className="w-full h-[450px]">
-            <LazyImage
-              src={
-                "https://avada.website/business/wp-content/uploads/sites/171/2022/09/about-us-2.jpg"
-              }
-            />
-          </div>
-          <div className="flex w-full flex-col gap-4">
-            <h4 className="text-sm md:text-lg text-[var(--primary)]">
-              <AnimateTextWord>
-                Passionate – Dedicated – Professional
-              </AnimateTextWord>
-            </h4>
-            <h3 className="text-4xl leading-[1.2] max-w-[500px] md:text-4xl family2 capitalize family2 text-white">
-              <AnimateTextWord type={"bigtext"}>
-                its’ not about business, it’s about ‘YOU’!
-              </AnimateTextWord>{" "}
-            </h3>
-            <div className="flex items-center py-4 gap-8">
-              <div className="family2 text-lg md:text-lg family2 text-white">
-                The Mission
-              </div>
-              <div className="family2 text-lg md:text-lg family2 text-white">
-                The Mission
-              </div>
-              <div className="family2 text-lg md:text-lg family2 text-white">
-                The Mission
-              </div>
-            </div>
-            <p className="text-lg family1 leading-[1.4] font-normal text-white">
-              <AnimateTextWord>
-                Buisque cursus metus vitae sed pharetra auctor semy interdum
-                magna augue eget diam ante ipsum faucibus luctus ultrices
-                losuere cubilia. Vestibulum lacinia arcu eget nulla.
-              </AnimateTextWord>
-            </p>
-            <div className="flex pt-8 flex-col gap-4">
-              <p className="text-sm text-grey">
-                Call us for inquiry : Monday to Friday : 9 am – 5 pm
+      <section ref={sectionRef} className="relative h-screen overflow-hidden">
+        <div
+          ref={stageRef}
+          className="absolute inset-0"
+          style={{ willChange: "transform" }}
+        >
+          {cards.map((card, i) => (
+            <div
+              key={i}
+              ref={(el) => {
+                cardRefs.current[i] = el;
+              }}
+              className="absolute top-0 w-[300px] lg:w-[440px] min-h-[680px] rounded-[24px] p-8 flex flex-col gap-6 lg:gap-8 overflow-hidden"
+              style={{
+                backgroundColor: card.bg,
+              }}
+            >
+              <div
+                className="absolute -top-12 -right-12 w-40 h-40 rounded-full opacity-10"
+                style={{ backgroundColor: card.color }}
+              />
+              <p
+                className="text-5xl lg:text-6xl  leading-none"
+                style={{ color: card.color }}
+              >
+                {card.value}
               </p>
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 flex items-center bg-[var(--primary)] justify-center rounded-full text-white text-lg">
-                  <Phone />
-                </div>
-                <h4 className="text-white text-xl md:text-xl family2">
-                  +1 (800) 555 555{" "}
-                </h4>
+              <p
+                className="text-xl  leading-snug"
+                style={{ color: card.color }}
+              >
+                {card.label}
+              </p>
+              <p
+                className="text-base lg:text-xl leading-relaxed mt-auto"
+                style={{ color: `${card.color}99` }}
+              >
+                {card.description}
+              </p>
+              <div className="w-full">
+                <img
+                  src={card.image}
+                  // alt={stat.tag}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
-          </div>
+          ))}
         </div>
-      </div>
+      </section>
     </div>
   );
-};
-
-export default About;
+}

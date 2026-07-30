@@ -1,7 +1,9 @@
+import { useState } from "react";
+
 export interface LinearTickSegment {
   label: string;
   value: number;
-  color: string; // e.g. "#17191c", "#777b86", "#c8c6c1", darkest = largest share by convention
+  color: string;
 }
 
 interface Props {
@@ -20,16 +22,20 @@ interface Props {
 export default function LinearTickBarCard({ title, totalValue, trend, distributionLabel = "Distribution", segments, icon }: Props) {
   const total = segments.reduce((sum, s) => sum + s.value, 0) || 1;
   const TICK_COUNT = 40;
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
-  // Which segment each tick index falls into, based on cumulative share.
-  const tickColors = Array.from({ length: TICK_COUNT }, (_, i) => {
+  // Which segment each tick index falls into, based on cumulative share,
+  // tracked as the full segment (not just color) so hover can show its
+  // name and percentage, matching the "Product Sales (65%)" tooltip in
+  // the reference.
+  const tickSegments = Array.from({ length: TICK_COUNT }, (_, i) => {
     const cumulativeAtTick = (i + 0.5) / TICK_COUNT;
     let running = 0;
     for (const s of segments) {
       running += s.value / total;
-      if (cumulativeAtTick <= running) return s.color;
+      if (cumulativeAtTick <= running) return s;
     }
-    return segments[segments.length - 1]?.color ?? "#e8e6e3";
+    return segments[segments.length - 1];
   });
 
   return (
@@ -51,10 +57,31 @@ export default function LinearTickBarCard({ title, totalValue, trend, distributi
       )}
 
       <p className="text-xs bold mt-4 mb-2" style={{ color: "#17191c" }}>{distributionLabel}</p>
-      <div className="flex items-end gap-[3px]" style={{ height: 28 }}>
-        {tickColors.map((color, i) => (
-          <div key={i} className="flex-1 rounded-sm" style={{ height: "100%", backgroundColor: color }} />
-        ))}
+      <div className="relative">
+        {hoveredIdx !== null && (
+          <div
+            className="absolute -top-9 bg-white border rounded-lg shadow-lg px-2.5 py-1.5 z-10 whitespace-nowrap text-xs bold pointer-events-none"
+            style={{
+              borderColor: "#e8e6e3",
+              color: "#17191c",
+              left: `${((hoveredIdx + 0.5) / TICK_COUNT) * 100}%`,
+              transform: "translateX(-50%)",
+            }}
+          >
+            {tickSegments[hoveredIdx]?.label} ({Math.round(((tickSegments[hoveredIdx]?.value ?? 0) / total) * 100)}%)
+          </div>
+        )}
+        <div className="flex items-end gap-[3px]" style={{ height: 28 }}>
+          {tickSegments.map((s, i) => (
+            <div
+              key={i}
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
+              className="flex-1 rounded-sm cursor-default"
+              style={{ height: "100%", backgroundColor: s?.color ?? "#e8e6e3" }}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="flex flex-col mt-4">

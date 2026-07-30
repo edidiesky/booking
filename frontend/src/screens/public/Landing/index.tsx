@@ -2,8 +2,6 @@ import { motion }          from "framer-motion";
 import Header              from "@/components/common/Header";
 import Footer              from "@/components/common/Footer";
 import Hero from "./Hero";
-import Features from "./Features";
-import HowItWorks from "./HowItWorks";
 import Listing from "./Listings";
 import About from "./About";
 import Expert from "./Expert";
@@ -21,8 +19,9 @@ export default function Landing() {
 
       <main className="flex-1 flex-col gap-14">
         <Hero/>
-        <Listing/>
         <About/>
+        <Listing/>
+        
         <Expert/>
         <Blog/>
       </main>
