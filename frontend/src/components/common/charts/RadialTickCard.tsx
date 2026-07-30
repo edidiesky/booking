@@ -47,7 +47,7 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
     <div className="border rounded-xl p-4" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center gap-2 mb-2">
         {icon}
-        <p className="text-sm bold" style={{ color: "#17191c" }}>{title}</p>
+        <p className="text-xs bold" style={{ color: "#17191c" }}>{title}</p>
       </div>
 
       <div className="relative flex items-center justify-center py-4" style={{ height: 180 }}>

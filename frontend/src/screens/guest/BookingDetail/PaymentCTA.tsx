@@ -32,7 +32,7 @@ export default function PaymentCTA({ onPay, isPaying, disabled }: Props) {
       <button
         disabled={disabled || isPaying}
         onClick={() => onPay(gateway)}
-        className="h-12 rounded-full px-8 text-xs lg:text-sm bold uppercase text-center text-white bg-[#17191c] hover:opacity-90 disabled:opacity-50 transition-opacity"
+        className="h-12 rounded-full px-8 text-xs lg:text-xs bold uppercase text-center text-white bg-[#17191c] hover:opacity-90 disabled:opacity-50 transition-opacity"
       >
         {isPaying ? "Redirecting to payment..." : "Pay now"}
       </button>

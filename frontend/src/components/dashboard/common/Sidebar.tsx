@@ -70,7 +70,7 @@ export default function Sidebar() {
       style={{ backgroundColor: "var(--color-canvas)", borderColor: "#ebebeb" }}
     >
       {/* <div className="px-4 py-5 border-b" style={{ borderColor: "#ebebeb" }}>
-        <Link to="/" className="text-sm bold" style={{ color: "var(--color-ink)" }}>
+        <Link to="/" className="text-xs bold" style={{ color: "var(--color-ink)" }}>
           Booking
         </Link>
       </div> */}

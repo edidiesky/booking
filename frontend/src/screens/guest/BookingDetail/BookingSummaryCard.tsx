@@ -66,7 +66,7 @@ export default function BookingSummaryCard({ booking, isLoading }: Props) {
             <span>Platform fee</span>
             <span>{formatCurrency(booking.platformFeeNgn)}</span>
           </div>
-          <div className="w-full text-sm bold pt-4 border-t flex items-center justify-between text-[#17191c]">
+          <div className="w-full text-xs bold pt-4 border-t flex items-center justify-between text-[#17191c]">
             <span>Total</span>
             <span>{formatCurrency(booking.totalAmountNgn)}</span>
           </div>

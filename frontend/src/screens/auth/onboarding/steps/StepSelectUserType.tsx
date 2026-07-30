@@ -52,12 +52,12 @@ export default function StepSelectUserType({ onSelect }: Props) {
           >
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-              style={{ backgroundColor: "var(--color-fog)" }}
+              style={{ backgroundColor: "var(--color-warm-mist)" }}
             >
               <Icon size={18} style={{ color: "var(--color-ink)" }} />
             </div>
             <div className="flex flex-col gap-0.5">
-              <p className="text-sm bold">
+              <p className="text-xs bold">
                 {label}
               </p>
               <h4 className="text-xs" style={{ color: "var(--color-muted-stone)" }}>

@@ -30,7 +30,7 @@ export default function RoomTypeDetailModal({ roomTypeId, onClose }: Props) {
         className="bg-white w-full rounded-2xl overflow-hidden relative flex flex-col lg:w-[750px] h-[95vh]"
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
-          <p className="text-sm bold text-[#17191c]">{roomType?.name ?? "Room type"}</p>
+          <p className="text-xs bold text-[#17191c]">{roomType?.name ?? "Room type"}</p>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center hover:bg-[#f2f0ed] transition-colors">
             <X size={15} />
           </button>

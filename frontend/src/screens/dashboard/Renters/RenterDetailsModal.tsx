@@ -24,7 +24,7 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           {isLoading || !renter ? (
-            <p className="text-sm  text-[#17191c]">Loading...</p>
+            <p className="text-xs  text-[#17191c]">Loading...</p>
           ) : (
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-[#17191c] text-white flex items-center justify-center text-xs ">

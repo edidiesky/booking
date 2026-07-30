@@ -39,7 +39,7 @@ export default function GanttToolbar({
   return (
     <div className="border-b" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <p className="text-sm bold whitespace-nowrap" style={{ color: "#17191c" }}>
+        <p className="text-xs bold whitespace-nowrap" style={{ color: "#17191c" }}>
           {format(windowStart, "MMM d")} – {format(addDays(windowStart, visibleDays - 1), "MMM d, yyyy")}
         </p>
 

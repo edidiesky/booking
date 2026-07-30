@@ -193,7 +193,7 @@ export default function BookingGantt({ onSelectBooking }: Props) {
               bookings.length === 0 ? (
                 <div className="flex flex-col items-center justify-center gap-2 p-16 text-center" style={{ width: totalWidth }}>
                   <CalendarX2 size={22} style={{ color: "#d1d1d1" }} />
-                  <p className="text-sm bold" style={{ color: "#17191c" }}>No bookings yet</p>
+                  <p className="text-xs bold" style={{ color: "#17191c" }}>No bookings yet</p>
                   <p className="text-xs max-w-xs" style={{ color: "#a3a6af" }}>
                     Bookings will show up here on this timeline once guests start reserving your rooms.
                   </p>

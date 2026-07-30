@@ -42,13 +42,13 @@ export default function SettingsLayout({
         <div className="flex items-center justify-between gap-3 px-5 py-5">
           <div className="flex items-center gap-3 min-w-0">
             <span
-              className="w-11 h-11 rounded-full flex items-center justify-center text-base lg:text-lg bold shrink-0"
+              className="w-11 h-11 rounded-full flex items-center justify-center text-xs lg:text-lg bold shrink-0"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
             >
               {headerName.charAt(0).toUpperCase()}
             </span>
             <div className="min-w-0">
-              <p className="text-base lg:text-base bold truncate" style={{ color: "var(--color-ink)" }}>{headerName}</p>
+              <p className="text-xs lg:text-xs bold truncate" style={{ color: "var(--color-ink)" }}>{headerName}</p>
               {headerSubtitle && (
                 <p className="text-xs truncate" style={{ color: "#777b86" }}>{headerSubtitle}</p>
               )}

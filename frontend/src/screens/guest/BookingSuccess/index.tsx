@@ -87,10 +87,10 @@ export default function BookingSuccess() {
                   {booking.roomTypeImage && <LazyImage src={booking.roomTypeImage} alt={booking.roomTypeName ?? ""} />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm lg:text-lg bold text-[#17191c] truncate">{booking.propertyName}</p>
+                  <p className="text-xs lg:text-lg bold text-[#17191c] truncate">{booking.propertyName}</p>
                   <p className="text-xs lg:text-xs text-[#777b86]">{booking.nights} night{booking.nights !== 1 ? "s" : ""} · {booking.guestCount} guest{booking.guestCount !== 1 ? "s" : ""}</p>
                 </div>
-                <p className="text-xs lg:text-sm bold text-[#17191c] whitespace-nowrap">{formatCurrency(booking.totalAmountNgn)}</p>
+                <p className="text-xs lg:text-xs bold text-[#17191c] whitespace-nowrap">{formatCurrency(booking.totalAmountNgn)}</p>
               </div>
 
               <div className="px-4 py-4 grid grid-cols-2 gap-4">
@@ -128,7 +128,7 @@ export default function BookingSuccess() {
                     {booking.propertyName.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-xs lg:text-sm bold text-[#17191c]">{booking.propertyName}</p>
+                    <p className="text-xs lg:text-xs bold text-[#17191c]">{booking.propertyName}</p>
                     <p className="text-xs lg:text-xs text-[#a3a6af]">{booking.propertyCity}</p>
                   </div>
                 </div>

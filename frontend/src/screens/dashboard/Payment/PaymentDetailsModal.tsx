@@ -49,7 +49,7 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           <div>
-            <p className="text-sm bold text-[#17191c]">Payment details</p>
+            <p className="text-xs bold text-[#17191c]">Payment details</p>
             <p className="text-xs text-[#777b86] mt-0.5">{payment?.id}</p>
           </div>
           <button
@@ -70,7 +70,7 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
                 ) : null}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs lg:text-sm bold text-[#17191c] truncate">{payment.room_type_name}</p>
+                <p className="text-xs lg:text-xs bold text-[#17191c] truncate">{payment.room_type_name}</p>
                 <p className="text-xs text-[#777b86]">{nights} night{nights !== 1 ? "s" : ""}</p>
               </div>
               <p className="text-xs bold text-[#17191c] whitespace-nowrap">

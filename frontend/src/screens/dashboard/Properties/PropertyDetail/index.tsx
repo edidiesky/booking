@@ -62,7 +62,7 @@ export default function PropertyDetail() {
           {/* Units / room types table */}
           <div className="w-full flex flex-col gap-7">
             <div className="flex items-center justify-between">
-              <p className="text-xs lg:text-sm bold text-[#17191c]">Units</p>
+              <p className="text-xs lg:text-xs bold text-[#17191c]">Units</p>
               <button
                 onClick={() => {
                   /* opens CreateRoomTypeModal, wire existing modal here */

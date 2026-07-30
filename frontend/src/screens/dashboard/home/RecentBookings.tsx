@@ -13,7 +13,7 @@ export default function RecentBookings({ bookings }: Props) {
     <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center justify-between px-5 py-4 border-b"
            style={{ borderColor: "#e8e6e3" }}>
-        <p className="text-xs lg:text-sm bold" style={{ color: "var(--color-ink)" }}>
+        <p className="text-xs lg:text-xs bold" style={{ color: "var(--color-ink)" }}>
           Recent Bookings
         </p>
         <button

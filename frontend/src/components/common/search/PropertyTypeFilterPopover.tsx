@@ -48,18 +48,18 @@ export default function PropertyTypeFilterPopover({ selected, onApply, label = "
         onClick={() => setOpen((v) => !v)}
         className="flex flex-col items-start text-left gap-2 px-4 py-2.5 rounded-full lg:rounded-none w-full lg:w-auto"
       >
-        <span className="text-xs lg:text-sm flex items-center gap-1.5" style={{ color: "#a3a6af" }}>
+        <span className="text-xs lg:text-xs flex items-center gap-1.5" style={{ color: "#a3a6af" }}>
           <Home size={18} /> {label}
         </span>
-        <span className="text-base lg:text-base bold truncate max-w-[160px]" style={{ color: "#17191c" }}>{displayValue}</span>
+        <span className="text-xs lg:text-xs bold truncate max-w-[160px]" style={{ color: "#17191c" }}>{displayValue}</span>
       </button>
 
       {open && (
         <div className="absolute left-0 top-full mt-2 w-72 bg-white border rounded-2xl shadow-xl z-30 p-5" style={{ borderColor: "#e8e6e3" }}>
           <div className="flex items-start justify-between mb-1">
             <div>
-              <p className="text-base lg:lg-xl bold" style={{ color: "#17191c" }}>Select Property Type</p>
-              <p className="text-xs lg:text-sm mt-0.5" style={{ color: "#a3a6af" }}>You can select multiple property types</p>
+              <p className="text-xs lg:lg-xl bold" style={{ color: "#17191c" }}>Select Property Type</p>
+              <p className="text-xs lg:text-xs mt-0.5" style={{ color: "#a3a6af" }}>You can select multiple property types</p>
             </div>
             <button onClick={() => setOpen(false)} className="p-1 rounded-full hover:bg-[#f2f0ed]">
               <X size={14} />
@@ -70,7 +70,7 @@ export default function PropertyTypeFilterPopover({ selected, onApply, label = "
             {PROPERTY_TYPES.map((t) => {
               const checked = draft.includes(t.value);
               return (
-                <label key={t.value} className="flex items-center gap-3 py-2 cursor-pointer text-sm" style={{ color: "#17191c" }}>
+                <label key={t.value} className="flex items-center gap-3 py-2 cursor-pointer text-xs" style={{ color: "#17191c" }}>
                   <input type="checkbox" checked={checked} onChange={() => toggle(t.value)} className="w-4 h-4 accent-[#17191c]" />
                   {t.label}
                 </label>
@@ -80,7 +80,7 @@ export default function PropertyTypeFilterPopover({ selected, onApply, label = "
 
           <button
             onClick={() => { onApply(draft); setOpen(false); }}
-            className="w-full h-11 rounded-full text-sm bold text-white mt-3"
+            className="w-full h-11 rounded-full text-xs bold text-white mt-3"
             style={{ backgroundColor: "#17191c" }}
           >
             Apply Filter

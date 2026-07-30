@@ -60,7 +60,7 @@ export default function ProductShortDescription({
 
           {/* color */}
           <div className="w-full flex items-center gap-8">
-            <h3 className="text-sm ">Color</h3>
+            <h3 className="text-xs ">Color</h3>
             <div className="flex items-center  gap-4">
               {data?.colors?.map((data, index) => {
                 return (
@@ -79,7 +79,7 @@ export default function ProductShortDescription({
 
           {/* size */}
           <div className="w-full flex items-center gap-8">
-            <h3 className="text-sm ">Size</h3>
+            <h3 className="text-xs ">Size</h3>
             <div className="flex items-center  gap-4">
               {data?.size?.map((data, index) => {
                 return (
@@ -126,19 +126,19 @@ export default function ProductShortDescription({
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-sm  hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-xs  hover:bg-[#FAF8F5]"
             >
               <FaXTwitter />
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-sm  hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-xs  hover:bg-[#FAF8F5]"
             >
               <FaInstagram />
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-sm  hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-xs  hover:bg-[#FAF8F5]"
             >
               <FaYoutube />
             </Link>

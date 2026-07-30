@@ -38,7 +38,7 @@ export default function BookingCard({ booking, onCancel }: Props) {
       <div className="w-full flex flex-col pt-3 gap-1.5">
         <h3
           onClick={() => navigate(`/trips/${booking?.bookingId}`)}
-          className="text-sm lg:text-lg bold leading-snug line-clamp-1 text-[#17191c]"
+          className="text-xs lg:text-lg bold leading-snug line-clamp-1 text-[#17191c]"
         >
           {booking?.propertyName ?? booking?.bookingRef}
         </h3>

@@ -142,7 +142,7 @@ export default function About() {
   return (
     <div style={{ backgroundColor: "var(--color-canvas)" }}>
       <div className="mx-auto px-6 lg:px-8 pt-32 pb-10 flex items-center justify-center flex-col" style={{ maxWidth: "1280px" }}>
-        <span className="text-base lg:text-xl uppercase" style={{ color: "var(--color-light-steel)" }}>
+        <span className="text-xs lg:text-xl uppercase" style={{ color: "var(--color-light-steel)" }}>
           Everything you need
         </span>
         <h3 className=" text-4xl lg:text-6xl lg:text-center mx-auto max-w-[800px] bold text-[var(--dark-1)]">
@@ -186,7 +186,7 @@ export default function About() {
                 {card.label}
               </p>
               <p
-                className="text-base lg:text-xl leading-relaxed mt-auto"
+                className="text-xs lg:text-xl leading-relaxed mt-auto"
                 style={{ color: `${card.color}99` }}
               >
                 {card.description}

@@ -130,7 +130,7 @@ export default function NewPassword() {
           >
             Set new password
           </h1>
-          <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
             Choose a strong password to secure your account.
           </p>
         </div>

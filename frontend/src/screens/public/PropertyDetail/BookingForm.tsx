@@ -198,7 +198,7 @@ export default function BookingForm({
       <div className="w-full fixed bottom-0 left-0 h-20 flex lg:hidden items-center justify-center border-t bg-white/90 backdrop-blur-md z-50">
         <div className="w-[90%] bold mx-auto flex items-center justify-between">
           <div className="flex flex-col relative">
-            <h4 className="text-sm bold text-[#17191c]">
+            <h4 className="text-xs bold text-[#17191c]">
               {selectedRoomType
                 ? formatCurrency(Number(selectedRoomType.base_price_ngn))
                 : "Select room"}

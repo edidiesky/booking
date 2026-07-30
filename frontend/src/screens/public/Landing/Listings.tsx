@@ -23,7 +23,7 @@ const Listing = () => {
       <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
         <div className="grid lg:grid-cols-2 gap-4 items-start lg:items-center w-full">
           <div className="flex flex-col gap-4">
-            <h4 className="text-base md:text-lg text-[var(--primary)]">
+            <h4 className="text-xs md:text-lg text-[var(--primary)]">
               Passionate – Dedicated – Professional
             </h4>
             <h4 className="text-4xl lg:text-5xl capitalize max-w-[900px] family2 text-[var(--dark-1)]">
@@ -33,7 +33,7 @@ const Listing = () => {
             </h4>
           </div>
           <div className="flex lg:items-center md:justify-end">
-            <button className="btn btn md:px-8 px-4 py-4 text-xs md:text-sm family1 text-white font-normal">
+            <button className="btn btn md:px-8 px-4 py-4 text-xs md:text-base family1 text-white font-normal">
               Browse all Homes
             </button>
           </div>
@@ -46,9 +46,9 @@ const Listing = () => {
               ))}
             </div>
           ) : (
-            <InfiniteDragRow gap={20}>
+            <InfiniteDragRow gap={14}>
               {(properties?.slice(0, 8) ?? []).map((p, index) => (
-                <div key={index} className="w-[280px] lg:w-[320px]">
+                <div key={index} className="w-[280px] lg:w-[370px] space-x-8">
                   <PropertyCard property={p} isFavorited={favoritedSet.has(p.id)} />
                 </div>
               ))}

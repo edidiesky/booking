@@ -46,7 +46,7 @@ function AmenityIcon({ label }: { label: string }) {
   const key  = label.toLowerCase();
   const icon = Object.entries(AMENITY_ICONS).find(([k]) => key.includes(k))?.[1];
   return (
-    <span className="flex items-center gap-1 text-sm" style={{ color: "var(--color-light-steel)" }}>
+    <span className="flex items-center gap-1 text-xs lg:text-sm" style={{ color: "var(--color-light-steel)" }}>
       {icon ?? <span className="w-1 h-1 rounded-full bg-current inline-block" />}
       {label}
     </span>
@@ -103,7 +103,7 @@ export default function PropertyCard({ property, index = 0, isFavorited = false 
       className="w-full flex flex-col overflow-hidden cursor-pointer group"
     >
       {/* image area */}
-      <div className="w-full h-[340px] rounded-xl  overflow-hidden relative">
+      <div className="w-full h-[400px] rounded-xl  overflow-hidden relative">
 
         {primaryImage ? (
           <motion.div
@@ -156,7 +156,7 @@ export default function PropertyCard({ property, index = 0, isFavorited = false 
 
         {/* property type badge */}
         <div className="absolute top-3 left-3 z-10">
-          <span className={`text-sm bold px-3 py-1 rounded-full capitalize font-medium ${typeClass}`}>
+          <span className={`text-sm lg:text-sm bold px-3 py-1 rounded-full capitalize font-medium ${typeClass}`}>
             {property.property_type ?? property.propertyType}
           </span>
         </div>
@@ -177,15 +177,15 @@ export default function PropertyCard({ property, index = 0, isFavorited = false 
         {/* name + price */}
         <div className="flex items-start justify-between gap-2">
           <h3
-            className="text-lg bold leading-snug line-clamp-1 flex-1"
+            className="text-lg lg:text-xl font-semibold leading-snug line-clamp-1 flex-1"
             style={{ color: "var(--color-ink)" }}
           >
             {property.name}
           </h3>
           {lowestPrice !== null && (
-            <p className="text-sm lg:text-base bold shrink-0" style={{ color: "var(--color-ink)" }}>
+            <p className="text-base lg:text-lg bold shrink-0" style={{ color: "var(--color-ink)" }}>
               {formatCurrency(lowestPrice)}
-              <span className="text-sm font-normal" style={{ color: "var(--color-light-steel)" }}>
+              <span className="text-base lg:text-base font-normal" style={{ color: "var(--color-light-steel)" }}>
                 /night
               </span>
             </p>
@@ -193,7 +193,7 @@ export default function PropertyCard({ property, index = 0, isFavorited = false 
         </div>
 
         {/* location */}
-        <p className="text-sm bold flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
+        <p className="text-base lg:text-base bold flex items-center gap-1" style={{ color: "var(--color-light-steel)" }}>
           {city}{country ? `, ${country}` : ""}
         </p>
 
@@ -204,13 +204,13 @@ export default function PropertyCard({ property, index = 0, isFavorited = false 
               <IoStar key={i} className="text-[13px] text-[#f5a623]" />
             ))}
           </div>
-          <span className="text-sm bold" style={{ color: "var(--color-ink)" }}>4.7</span>
-          <span className="text-sm" style={{ color: "var(--color-light-steel)" }}>87 reviews</span>
+          <span className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>4.7</span>
+          <span className="text-xs lg:text-sm" style={{ color: "var(--color-light-steel)" }}>87 reviews</span>
         </div>
 
         {/* amenities */}
         {visibleAmenities.length > 0 && (
-          <div className="flex flex-wrap items-center gap-3 pt-0.5">
+          <div className="flex flex-wrap items-center gap-2 pt-0.5">
             {visibleAmenities.map((a) => (
               <AmenityIcon key={a} label={a} />
             ))}

@@ -336,7 +336,7 @@ export default function CreateRoomTypeModal({
         {/* header */}
         <div className="border-b border-[#e8e6e3] flex items-center justify-between px-8 h-[72px] shrink-0">
           <div>
-            <h4 className="text-sm bold text-[#17191c]">Add Room Type</h4>
+            <h4 className="text-xs bold text-[#17191c]">Add Room Type</h4>
             <p className="text-xs text-[#777b86] mt-0.5">
               Define a room category, pricing, and availability for this
               property.

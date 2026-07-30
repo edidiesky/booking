@@ -57,7 +57,7 @@ export default function Header() {
               size={32}
             />
             <span
-              className="text-sm bold hidden md:block truncate max-w-[140px]"
+              className="text-xs bold hidden md:block truncate max-w-[140px]"
               style={{ color: "var(--color-ink)" }}
             >
               {displayName}

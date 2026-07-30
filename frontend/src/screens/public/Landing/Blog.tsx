@@ -33,7 +33,7 @@ const Blog = () => {
       <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
         <div className="flex flex-col items-start md:items-center md:justify-center w-full gap-4">
           <div className="flex flex-col md:items-center md:justify-center gap-4">
-            <h4 className="text-sm md:text-lg text-[var(--primary)]">
+            <h4 className="text-xs md:text-lg text-[var(--primary)]">
               Passionate – Dedicated – Professional
             </h4>
             <h3 className="text-4xl md:text-4xl capitalize family2 text-[var(--dark-1)]">
@@ -74,7 +74,7 @@ const Blog = () => {
                   </h4>
                 </div>
                 <div className="px-2 py-2">
-                  <h4 className="flex  items-center gap-4 text-sm">
+                  <h4 className="flex  items-center gap-4 text-xs">
                     <span
                       style={{
                         transition: "all .4s",

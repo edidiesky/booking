@@ -47,7 +47,7 @@ function CustomTooltip({ active, payload, series, isCurrency }: TooltipProps) {
                 <div className="w-2.5 h-2.5 shrink-0" style={{ backgroundColor: s?.color }} />
                 <span className="text-xs text-[#4c4c4c]">{s?.seriesLabel}</span>
               </div>
-              <span className="text-sm text-[#17191c]">{isCurrency ? `₦${entry.value.toLocaleString("en-NG")}` : entry.value.toLocaleString("en-NG")}</span>
+              <span className="text-xs text-[#17191c]">{isCurrency ? `₦${entry.value.toLocaleString("en-NG")}` : entry.value.toLocaleString("en-NG")}</span>
             </div>
           );
         })}
@@ -133,7 +133,7 @@ export function HorizontalBarChart({
     <div className="border w-full border-[#e8e6e3] flex flex-col rounded-2xl">
       <div className="px-5 py-4 border-b border-[#e8e6e3] flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm bold text-[#17191c]">{title}</p>
+          <p className="text-xs bold text-[#17191c]">{title}</p>
           <p className="text-xs text-[#777b86] mt-0.5">{description}</p>
         </div>
         {headerRight && <div className="shrink-0">{headerRight}</div>}

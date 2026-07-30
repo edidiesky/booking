@@ -59,7 +59,7 @@ export default function RoleDetailPanel({ roleId }: Props) {
     <div className="flex flex-col gap-6">
       <div>
         <div className="flex items-center gap-2">
-          <h4 className="text-sm bold" style={{ color: "var(--color-ink)" }}>{role.name}</h4>
+          <h4 className="text-xs bold" style={{ color: "var(--color-ink)" }}>{role.name}</h4>
           {role.isSystem && (
             <span className="text-[10px] bold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#f2f0ed", color: "#4c4c4c" }}>
               System role

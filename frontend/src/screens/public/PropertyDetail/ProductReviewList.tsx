@@ -153,7 +153,7 @@
 //       <div className="flex items-start justify-between gap-4">
 //         <div className="flex items-center gap-3">
 //           <div
-//             className="h-12 w-12 rounded-full flex items-center justify-center text-white text-sm lg:text-lg bold shrink-0"
+//             className="h-12 w-12 rounded-full flex items-center justify-center text-white text-xs lg:text-lg bold shrink-0"
 //             style={{ backgroundColor: review.reviewerAvatarColor }}
 //           >
 //             {initial}
@@ -161,23 +161,23 @@
 //           <div>
 //             <div className="flex items-center gap-2">
 //               <Stars rating={review.rating} />
-//               <span className="text-sm lg:text-lg bold">{review.reviewerName}</span>
+//               <span className="text-xs lg:text-lg bold">{review.reviewerName}</span>
 //             </div>
 //             {review.purchaseMeta && (
 //               <p className="text-xs text-[#666] mt-0.5">{review.purchaseMeta}</p>
 //             )}
 //           </div>
 //         </div>
-//         <div className="flex items-center gap-1 text-xs lg:text-sm text-[#2F5D4F] shrink-0">
+//         <div className="flex items-center gap-1 text-xs lg:text-xs text-[#2F5D4F] shrink-0">
 //           <ShieldCheck size={14} />
 //           Recommends
 //         </div>
 //       </div>
 
-//       <p className="text-sm lg:text-lg text-[#171717] mt-3 leading-relaxed">{review.comment}</p>
+//       <p className="text-xs lg:text-lg text-[#171717] mt-3 leading-relaxed">{review.comment}</p>
 
 //       <div className="flex items-center justify-between mt-3">
-//         <span className="text-xs lg:text-sm text-[#666]">{date}</span>
+//         <span className="text-xs lg:text-xs text-[#666]">{date}</span>
 //         {review.helpfulCount > 0 && (
 //           <button className="flex items-center gap-1 text-xs text-[#666] hover:text-[#171717] transition-colors">
 //             <ThumbsUp size={12} />
@@ -206,7 +206,7 @@
 //       <div className="flex items-center gap-2 flex-wrap ">
 //         <button
 //           onClick={() => setActiveTag("Suggested")}
-//           className={`shrink-0 rounded-full border px-4 py-1.5 text-xs lg:text-sm bold transition-colors ${
+//           className={`shrink-0 rounded-full border px-4 py-1.5 text-xs lg:text-xs bold transition-colors ${
 //             activeTag === "Suggested"
 //               ? "border-[#171717] bg-[#171717] text-white"
 //               : "border-[#EDEAE3] text-[#171717] hover:border-[#171717]"
@@ -273,39 +273,39 @@ function ReviewCard({ review }: { review: Review }) {
           {review.guest_profile_image ? (
             <img src={review.guest_profile_image} alt="" className="h-12 w-12 rounded-full object-cover shrink-0" />
           ) : (
-            <div className="h-12 w-12 rounded-full flex items-center justify-center text-white text-base lg:text-lg bold shrink-0 bg-[#171717]">
+            <div className="h-12 w-12 rounded-full flex items-center justify-center text-white text-xs lg:text-lg bold shrink-0 bg-[#171717]">
               {initial}
             </div>
           )}
           <div>
             <div className="flex items-center gap-2">
               <Stars rating={review.rating} />
-              <span className="text-base lg:text-lg bold">{displayName}</span>
+              <span className="text-xs lg:text-lg bold">{displayName}</span>
             </div>
-            <p className="text-sm lg:text-base bold text-[#171717] mt-0.5">{review.title}</p>
+            <p className="text-xs lg:text-xs bold text-[#171717] mt-0.5">{review.title}</p>
           </div>
         </div>
         {review.is_verified_purchase && (
-          <div className="flex items-center gap-1 text-sm lg:text-base text-[#2F5D4F] shrink-0">
+          <div className="flex items-center gap-1 text-xs lg:text-xs text-[#2F5D4F] shrink-0">
             <ShieldCheck size={14} />
             Verified stay
           </div>
         )}
       </div>
 
-      <p className="text-base lg:text-lg text-[#171717] mt-3 leading-relaxed">{review.comment}</p>
+      <p className="text-xs lg:text-lg text-[#171717] mt-3 leading-relaxed">{review.comment}</p>
 
       {review.response_text && (
-        <div className="mt-3 rounded-lg bg-[#f4f3ee] p-3 text-sm text-[#444]">
+        <div className="mt-3 rounded-lg bg-[#f4f3ee] p-3 text-xs text-[#444]">
           <span className="bold text-[#171717]">Host response: </span>
           {review.response_text}
         </div>
       )}
 
       <div className="flex items-center justify-between mt-3">
-        <span className="text-sm lg:text-base text-[#666]">{date}</span>
+        <span className="text-xs lg:text-xs text-[#666]">{date}</span>
         {review.helpful_count > 0 && (
-          <span className="flex items-center gap-1 text-sm text-[#666]">
+          <span className="flex items-center gap-1 text-xs text-[#666]">
             <ThumbsUp size={12} />
             {review.helpful_count} found this helpful
           </span>
@@ -325,7 +325,7 @@ export default function ProductReviewList({ reviews, limit }: Props) {
   const visible = limit ? reviews.slice(0, limit) : reviews;
 
   if (visible.length === 0) {
-    return <p className="text-sm text-[#666] py-6">No reviews yet for this room type.</p>;
+    return <p className="text-xs text-[#666] py-6">No reviews yet for this room type.</p>;
   }
 
   return (

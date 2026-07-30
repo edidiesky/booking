@@ -27,7 +27,7 @@ const navigate = useNavigate();
         ) : favorites.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
             <Heart size={28} style={{ color: "#d1d1d1" }} />
-            <p className="text-sm" style={{ color: "#777b86" }}>
+            <p className="text-xs" style={{ color: "#777b86" }}>
               Nothing saved yet. Tap the heart on any property to keep track of it here.
             </p>
             <button
@@ -64,7 +64,7 @@ const navigate = useNavigate();
                   </div>
                 </div>
                 <div className="flex flex-col gap-1 px-3 py-3">
-                  <p className="text-sm bold line-clamp-1" style={{ color: "#17191c" }}>{f.name}</p>
+                  <p className="text-xs bold line-clamp-1" style={{ color: "#17191c" }}>{f.name}</p>
                   <p className="text-xs flex items-center gap-1" style={{ color: "#777b86" }}>
                     <MapPin size={12} />
                     {f.city}

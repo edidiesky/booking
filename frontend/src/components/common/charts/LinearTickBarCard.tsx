@@ -42,7 +42,7 @@ export default function LinearTickBarCard({ title, totalValue, trend, distributi
     <div className="border rounded-xl p-4" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center gap-2 mb-3">
         {icon}
-        <p className="text-sm bold" style={{ color: "#17191c" }}>{title}</p>
+        <p className="text-xs bold" style={{ color: "#17191c" }}>{title}</p>
       </div>
 
       <p className="text-2xl bold" style={{ color: "#17191c" }}>{totalValue}</p>

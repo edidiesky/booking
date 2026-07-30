@@ -75,7 +75,7 @@ export default function DashboardNotifications() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm bold" style={{ color: "#17191c" }}>{n.title}</p>
+                    <p className="text-xs bold" style={{ color: "#17191c" }}>{n.title}</p>
                     <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
                       {cfg.label}
                     </span>

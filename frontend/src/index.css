@@ -3,6 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -11,8 +12,8 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 75 100% 60%;
+    --primary-foreground: 0 0% 10%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
@@ -26,11 +27,13 @@
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
     --color-canvas: #ffffff;
-    --color-ink: #292929;
-    --color-warm-mist: #fbe1d1;
+    --color-ink: #17191c;
+    --color-primary: #beff50;
+    --color-primary-foreground: #111111;
+    --color-warm-mist: #bfff502d;
     --color-terracotta: #5d2a1a;
     --color-fog: #eeece2;
-    --color-muted-stone: #9e9e9e;
+    --color-muted-stone: #4c4c4c;
     --color-light-steel: #777b86;
     --color-hint-of-grey: #a3a6af;
     --shadow-steep:

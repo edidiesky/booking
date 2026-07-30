@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import {  motion } from "framer-motion";
 import { CalendarCheck, ShieldCheck, Bell, Wallet } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -64,11 +64,12 @@ const features = [
 export default function Expert() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
     const ctx = gsap.context(() => {
+
+      // Pin each card 
       cards.forEach((card, index) => {
         if (index < cards.length - 1) {
           ScrollTrigger.create({
@@ -83,30 +84,26 @@ export default function Expert() {
       });
 
       cards.forEach((card, index) => {
-        const overlay = card.querySelector(".card-overlay") as HTMLElement;
-
-        ScrollTrigger.create({
-          trigger: card,
-          start: "top center",
-          end: "bottom center",
-          onEnter:     () => setActiveIndex(index),
-          onEnterBack: () => setActiveIndex(index),
-        });
-
         if (index < cards.length - 1) {
+          const overlay = card.querySelector(".card-overlay") as HTMLElement;
+
           ScrollTrigger.create({
             trigger: cards[index + 1],
             start: "top bottom",
             end: "top top",
             onUpdate: (self) => {
               const progress = self.progress;
-              const scale = 1 - progress * 0.1;
+              const scale = 1 - progress * 0.06;
               const rotation = (index % 2 === 0 ? 2 : -2) * progress;
+
               gsap.set(card, { scale, rotation, transformOrigin: "center top" });
               if (overlay) gsap.set(overlay, { opacity: progress * 0.55 });
             },
             onLeave: () => {
-              gsap.set(card, { scale: 0.94, rotation: index % 2 === 0 ? 2 : -2 });
+              const progress = 1;
+              const scale = 1 - progress * 0.06;
+              const rotation = (index % 2 === 0 ? 2 : -2) * progress;
+              gsap.set(card, { scale, rotation });
               if (overlay) gsap.set(overlay, { opacity: 0.55 });
             },
             onEnterBack: () => {
@@ -121,8 +118,6 @@ export default function Expert() {
     return () => ctx.revert();
   }, []);
 
-  const active = features[activeIndex];
-
   return (
     <section ref={containerRef} style={{ backgroundColor: "var(--color-canvas)" }}>
       <div className="mx-auto px-6 lg:px-8 pt-32 pb-20 text-center" style={{ maxWidth: "1280px" }}>
@@ -134,79 +129,93 @@ export default function Expert() {
         </h2>
       </div>
 
-      <div className="mx-auto grid lg:grid-cols-2 gap-16" style={{ maxWidth: "1280px" }}>
-        {/* Left: fixed, text swaps per active card */}
-        <div className="hidden lg:block sticky self-start" style={{ top: "30vh" }}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeIndex}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="flex flex-col gap-6 px-6"
-            >
-              <span
-                className="text-xs px-3 py-1.5 rounded-full w-fit"
-                style={{ color: active.accentColor,backgroundColor: active.tagBg }}
-              >
-                {active.tag}
-              </span>
-              <h3 className="text-3xl lg:text-5xl leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
-                {active.title}
-              </h3>
-              <ul className="flex flex-col gap-3">
-                {active.bullets.map((bullet, j) => (
-                  <li key={j} className="flex items-start gap-3 text-lg leading-relaxed" style={{ color: "var(--color-muted-stone)", letterSpacing: "-0.009em" }}>
-                    <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ backgroundColor: active.accentColor }} />
-                    {bullet}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Right: card wrapper height now comes from its actual content
-            (the 520px image + padding), not an arbitrary 70vh minimum.
-            That min-h-[70vh] was the real bug, 4 cards x 70vh each
-            stacked into ~280vh of forced scroll distance regardless of
-            how tall the cards actually were, which is exactly the huge
-            gray gap between cards in the screenshot. */}
-        <div className="relative">
-          {features.map((feature, i) => (
+      {features.map((feature, i) => {
+        return (
+          <div
+            key={i}
+            ref={(el) => { cardRefs.current[i] = el; }}
+            className="sticky-card max-w-[70rem] mx-auto sticky flex items-center px-6 lg:px-8 py-16 will-change-transform"
+            style={{
+              top: "0px",
+              zIndex: i + 1,
+              backgroundColor: "var(--color-canvas)",
+              position: "sticky",
+            }}
+          >
             <div
-              key={i}
-              ref={(el) => { cardRefs.current[i] = el; }}
-              className="sticky flex items-center py-8 will-change-transform"
-              style={{ top: "0px", zIndex: i + 1 }}
-            >
-              <div className="card-overlay absolute inset-0 pointer-events-none rounded-[24px]" style={{ backgroundColor: "rgba(0,0,0,1)", opacity: 0, zIndex: 10 }} />
+              className="card-overlay absolute inset-0 pointer-events-none"
+              style={{
+                backgroundColor: "rgba(0,0,0,1)",
+                opacity: 0,
+                zIndex: 10,
+              }}
+            />
 
-              <div className="lg:hidden flex flex-col gap-4 mb-6">
+            <div
+              className="mx-auto w-full grid lg:grid-cols-2 gap-16 items-center"
+              style={{ maxWidth: "1280px" }}
+            >
+              {/* left: text */}
+              <div className="flex flex-col gap-6">
                 <span
-                  className="text-xs px-3 py-1.5 rounded-full w-fit border"
-                  style={{ color: feature.accentColor, borderColor: feature.accentColor, backgroundColor: feature.tagBg }}
+                  className="text-base  px-3 py-1.5 rounded-full w-fit"
+                  style={{
+                    color: feature.accentColor,
+                    backgroundColor: feature.tagBg,
+                  }}
                 >
                   {feature.tag}
                 </span>
-                <h3 className="text-2xl leading-[1.1]" style={{ color: "var(--color-ink)" }}>{feature.title}</h3>
+
+                <h3
+                  className="text-3xl lg:text-5xl  leading-[1.1]"
+                  style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
+                >
+                  {feature.title}
+                </h3>
+
+                <ul className="flex flex-col gap-3">
+                  {feature.bullets.map((bullet, j) => (
+                    <li
+                      key={j}
+                      className="flex items-start gap-3 text-lg leading-relaxed"
+                      style={{
+                        color: "var(--color-muted-stone)",
+                        letterSpacing: "-0.009em",
+                      }}
+                    >
+                      <span
+                        className="w-1.5 h-1.5 rounded-full mt-2 shrink-0"
+                        style={{ backgroundColor: feature.accentColor }}
+                      />
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
               </div>
 
+              {/* right: image */}
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-80px" }}
-                className="w-full h-[420px] lg:h-[520px] rounded-[24px] overflow-hidden"
+                className="w-full h-[520px] rounded-[24px] overflow-hidden"
                 style={{ boxShadow: "var(--shadow-steep)" }}
               >
-                <img src={feature.image} alt={feature.tag} className="w-full h-full object-cover" />
+                <img
+                  src={feature.image}
+                  alt={feature.tag}
+                  className="w-full h-full object-cover"
+                />
               </motion.div>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        );
+      })}
+
+      {/* spacer so last card scrolls off naturally */}
+      <div style={{ height: "30vh" }} />
     </section>
   );
 }

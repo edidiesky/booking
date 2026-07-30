@@ -101,7 +101,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                           ) : null}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs lg:text-sm bold text-[#17191c] truncate">{booking.roomTypeName}</p>
+                          <p className="text-xs lg:text-xs bold text-[#17191c] truncate">{booking.roomTypeName}</p>
                           <p className="text-xs text-[#777b86]">{nights} night{nights !== 1 ? "s" : ""}</p>
                         </div>
                         <p className="text-xs bold text-[#17191c] whitespace-nowrap">

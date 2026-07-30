@@ -38,7 +38,7 @@ export default function PropertySearchBar({ initialValue, onSearch, className = 
           onChange={(e) => setValue((v) => ({ ...v, query: e.target.value }))}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Homes, Shortlets,..."
-          className="w-full text-sm lg:text-base bg-transparent h-14 outline-none placeholder:text-[#a3a6af]"
+          className="w-full text-xs lg:text-xs bg-transparent h-14 outline-none placeholder:text-[#a3a6af]"
         />
       </div>
 
@@ -49,7 +49,7 @@ export default function PropertySearchBar({ initialValue, onSearch, className = 
           onChange={(e) => setValue((v) => ({ ...v, location: e.target.value }))}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="e.g., Ikeja"
-          className="w-full text-sm lg:text-base bg-transparent h-14 outline-none placeholder:text-[#a3a6af]"
+          className="w-full text-xs lg:text-xs bg-transparent h-14 outline-none placeholder:text-[#a3a6af]"
         />
       </div>
 
@@ -78,11 +78,11 @@ export default function PropertySearchBar({ initialValue, onSearch, className = 
 
       <button
         onClick={handleSearch}
-        className="flex min-w-32 items-center justify-center gap-2 h-14 lg:h-11 lg:rounded-full text-sm bold text-white shrink-0"
+        className="flex min-w-32 items-center justify-center gap-2 h-14 lg:h-11 lg:rounded-full text-xs bold text-white shrink-0"
         style={{ backgroundColor: "var(--color-ink, #17191c)" }}
       >
         <SearchIcon size={15} />
-        <span className="text-base lg:text-sm">Search</span>
+        <span className="text-xs lg:text-xs">Search</span>
       </button>
     </div>
   );

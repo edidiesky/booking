@@ -90,7 +90,7 @@ export default function DashboardActivity() {
       </FilterBar>
 
       <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#e8e6e3" }}>
-        <table className="w-full text-sm">
+        <table className="w-full text-xs">
           <thead>
             <tr className="border-b" style={{ borderColor: "#e8e6e3", backgroundColor: "#fafaf9" }}>
               <th className="text-left px-4 py-3 text-xs bold" style={{ color: "#777b86" }}>id</th>
