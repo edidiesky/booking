@@ -1,9 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import {
-  selectCurrentUser,
-  selectIsAuthenticated,
-} from "@/redux/slices/authSlice";
 import MaskRevealText from "@/components/common/MaskRevealText";
 import PropertySearchBar, {
   type PropertySearchValue,
@@ -19,8 +14,6 @@ const profilesList = [
 
 export default function Hero() {
   const navigate = useNavigate();
-  const currentUser = useSelector(selectCurrentUser);
-  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   const handleSearch = (value: PropertySearchValue) => {
     const params = new URLSearchParams();

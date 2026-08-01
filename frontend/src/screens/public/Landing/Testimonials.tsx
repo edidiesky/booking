@@ -1,4 +1,4 @@
-import { Star, CheckCircle2, Plus } from "lucide-react";
+import { Star, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarImage, AvatarFallback } from "../../../components/ui/avatar";
 
@@ -213,24 +213,24 @@ function StandardCard({ t }: { t: Testimonial }) {
   );
 }
 
-function SocialCard({ t }: { t: Testimonial }) {
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <Avatar className="w-8 h-8">
-          <AvatarImage src={t.avatar} alt={t.name} />
-          <AvatarFallback>{t.name[0]}</AvatarFallback>
-        </Avatar>
-        <div className="flex items-center gap-1">
-          <span className="text-sm bold text-white">{t.name}</span>
-          <CheckCircle2 size={14} color="var(--color-terracotta)" fill="var(--color-terracotta)" />
-        </div>
-        <span className="text-xs ml-auto" style={{ color: "#9a9a9a" }}>
-          {t.date}
-        </span>
-      </div>
-      <p className="text-sm text-white">{t.body}</p>
-      <div className="w-full rounded-lg overflow-hidden" style={{ height: "160px", backgroundColor: "#2a2a2a" }} />
-    </div>
-  );
-}
+// function SocialCard({ t }: { t: Testimonial }) {
+//   return (
+//     <div className="flex flex-col gap-4">
+//       <div className="flex items-center gap-2">
+//         <Avatar className="w-8 h-8">
+//           <AvatarImage src={t.avatar} alt={t.name} />
+//           <AvatarFallback>{t.name[0]}</AvatarFallback>
+//         </Avatar>
+//         <div className="flex items-center gap-1">
+//           <span className="text-sm bold text-white">{t.name}</span>
+//           <CheckCircle2 size={14} color="var(--color-terracotta)" fill="var(--color-terracotta)" />
+//         </div>
+//         <span className="text-xs ml-auto" style={{ color: "#9a9a9a" }}>
+//           {t.date}
+//         </span>
+//       </div>
+//       <p className="text-sm text-white">{t.body}</p>
+//       <div className="w-full rounded-lg overflow-hidden" style={{ height: "160px", backgroundColor: "#2a2a2a" }} />
+//     </div>
+//   );
+// }

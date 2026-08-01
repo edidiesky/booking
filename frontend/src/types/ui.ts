@@ -1,4 +1,4 @@
-import type { BookingStatus, PaymentStatus, EscrowStatus, NotificationType } from "./api";
+import type { BookingStatus, PaymentStatus, EscrowStatus } from "./api";
 
 // ── Navigation ────────────────────────────────────────────────────────────────
 

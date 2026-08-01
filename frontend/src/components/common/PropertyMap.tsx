@@ -15,7 +15,7 @@ interface Props {
   name?:     string;
 }
 
-export default function PropertyMap({ latitude, longitude, name }: Props) {
+export default function PropertyMap({ latitude, longitude }: Props) {
   return (
     <div className="w-full rounded-xl overflow-hidden border" style={{ borderColor: "#e8e6e3", height: 280 }}>
       <MapContainer
