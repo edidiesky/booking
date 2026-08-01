@@ -11,6 +11,7 @@ import FilterPanel from "./FilterPanel";
 import SearchSidebar from "./SearchSidebar";
 import { useListFavoritedIdsQuery } from "@/redux/services/favoriteApi";
 import { selectAccessToken } from "@/redux/slices/authSlice";
+import { PropertyWithRoomTypes } from "@/types/api";
 
 const SORTS = [
   { label: "Newest", value: "newest" },
@@ -33,7 +34,7 @@ export default function SearchPage() {
   } = useSearch();
 
   const token = useSelector(selectAccessToken);
-  const ids = properties.map((p) => p.id);
+  const ids = properties.map((p: PropertyWithRoomTypes) => p.id);
   const { data: favoritedData } = useListFavoritedIdsQuery(ids, { skip: !token || ids.length === 0 });
   const favoritedSet = new Set(favoritedData?.data ?? []);
 
@@ -123,7 +124,7 @@ export default function SearchPage() {
               </p>
             ) : (
               <div className="columns-2 sm:columns-3 gap-4 space-y-4">
-                {properties.map((p, i) => (
+                {properties.map((p: PropertyWithRoomTypes, i: number) => (
                   <div key={p.id} className="break-inside-avoid">
                     <PropertyCard property={p} index={i} isFavorited={favoritedSet.has(p.id)} />
                   </div>
