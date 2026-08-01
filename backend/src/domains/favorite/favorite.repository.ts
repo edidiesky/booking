@@ -6,6 +6,7 @@ export interface FavoriteProperty {
   images:        string[];
   city:          string;
   property_type: string;
+  amenities:     string[];
   from_price:    number | null;
   favorited_at:  Date;
 }
@@ -46,7 +47,14 @@ export const favoriteRepository = {
   async listByGuest(guestUserId: string, page = 1, limit = 20): Promise<FavoriteProperty[]> {
     const offset = (page - 1) * limit;
     return query<FavoriteProperty>(
-      `SELECT p.id, p.name, p.images, p.address->>'city' AS city, p.property_type,
+      `SELECT p.id, p.name,
+              COALESCE(
+                NULLIF(p.images, '{}'),
+                (SELECT rt.images FROM room_types rt
+                 WHERE rt.property_id = p.id AND rt.status = 'active' AND array_length(rt.images, 1) > 0
+                 ORDER BY rt.created_at ASC LIMIT 1)
+              ) AS images,
+              p.address->>'city' AS city, p.property_type, p.amenities,
               (SELECT MIN(rt.base_price_ngn) FROM room_types rt WHERE rt.property_id = p.id AND rt.status = 'active') AS from_price,
               f.created_at AS favorited_at
        FROM favorites f

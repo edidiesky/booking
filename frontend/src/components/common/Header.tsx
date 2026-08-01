@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import {
   Calendar, User, CreditCard, Building2, Users,
   Palette, Settings, Shield, Bell, LayoutDashboard,
+  Heart,
 } from "lucide-react";
 import { selectCurrentUser, selectIsAuthenticated } from "@/redux/slices/authSlice";
 import AccountDropdown from "@/components/common/AccountDropdown";
@@ -15,7 +16,7 @@ export default function Header() {
   
   return (
     <nav
-      className="w-full sticky top-0 z-50"
+      className="w-full top-0 z-50"
       style={{ backgroundColor: "var(--color-canvas)", boxShadow: "rgba(0,0,0,0.04) 0px 0px 0px 1px" }}
     >
       <div className="mx-auto px-6 lg:px-0 h-16 flex items-center justify-between max-w-screen-xl">
@@ -28,7 +29,7 @@ export default function Header() {
             <Link
               key={item}
               to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="text-xs lg:text-xs transition-opacity px-4 py-2 rounded-full hover:bg-[#f5f5f3]"
+              className="text-xs lg:text-sm transition-opacity px-4 py-2 rounded-full hover:bg-[#f5f5f3]"
               style={{ color: "var(--color-ink)" }}
             >
               {item}
@@ -70,6 +71,7 @@ export default function Header() {
                 profilePath="/profile"
                 items={[
                   { label: "My Trips",   to: "/profile?tab=trips",        icon: Calendar, group: 0 },
+                  { label: "My Favorites", to: "/favorites",              icon: Heart,    group: 0 },
                   { label: "Profile",    to: "/profile?tab=account",      icon: User,     group: 0 },
                   { label: "Appearance", to: "/profile?tab=account",      icon: Palette,  group: 0 },
                   { label: "Settings",   to: "/profile?tab=account",      icon: Settings, group: 0 },
@@ -92,14 +94,14 @@ export default function Header() {
             <>
               <Link
                 to="/login"
-                className="h-9 px-5 text-xs transition-opacity hover:opacity-70 flex items-center rounded-full"
+                className="h-10 px-5 text-xs lg:text-sm hover:bg-[#f5f5f3] transition-opacity flex items-center rounded-full"
                 style={{ color: "var(--color-ink)" }}
               >
                 Log in
               </Link>
               <Link
                 to="/onboarding"
-                className="h-9 px-5 text-xs transition-opacity hover:opacity-80 flex items-center rounded-full"
+                className="h-10 px-5 text-xs lg:text-sm transition-opacity hover:opacity-80 flex items-center rounded-full"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 Get started

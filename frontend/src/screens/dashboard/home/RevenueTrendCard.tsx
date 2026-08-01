@@ -14,13 +14,13 @@ const MOCK_TREND_DATA = [
 ];
 
 const dataKeys: DataKey[] = [
-  { datakey: "base",   color: "#17191c" }, // bottom, darkest
+  { datakey: "base",   color: "var(--color-primary)" }, // bottom, darkest
   { datakey: "middle", color: "#4c4c4c" }, 
   { datakey: "top",    color: "#d8d8d8" }, 
 ];
 
 const chartConfig = {
-  base:   { label: "Base rate", color: "#17191c" },
+  base:   { label: "Base rate", color: "var(--color-primary)" },
   middle: { label: "Add-ons",   color: "#4c4c4c" },
   top:    { label: "Fees",      color: "#d8d8d8" },
 };

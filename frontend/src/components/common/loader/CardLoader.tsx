@@ -2,6 +2,37 @@ import React from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 const CardLoader = ({ type }: { type?: string }) => {
+  if (type === "property_card") {
+    return (
+      <SkeletonThemeCard>
+        <div className="w-full flex flex-col gap-3">
+          <span className="h-[280px] w-full block">
+            <Skeleton style={{ borderRadius: "12px", width: "100%", height: "100%" }} />
+          </span>
+          <span className="h-[16px] w-[55%] block">
+            <Skeleton style={{ borderRadius: "10px", width: "100%", height: "100%" }} />
+          </span>
+          <span className="h-[12px] w-[35%] block">
+            <Skeleton style={{ borderRadius: "10px", width: "100%", height: "100%" }} />
+          </span>
+          <div className="w-full flex items-center gap-2">
+            <span className="h-[22px] w-[60px] block">
+              <Skeleton style={{ borderRadius: "100px", width: "100%", height: "100%" }} />
+            </span>
+            <span className="h-[22px] w-[80px] block">
+              <Skeleton style={{ borderRadius: "100px", width: "100%", height: "100%" }} />
+            </span>
+            <span className="h-[22px] w-[70px] block">
+              <Skeleton style={{ borderRadius: "100px", width: "100%", height: "100%" }} />
+            </span>
+          </div>
+          <span className="h-[14px] w-[40%] block">
+            <Skeleton style={{ borderRadius: "10px", width: "100%", height: "100%" }} />
+          </span>
+        </div>
+      </SkeletonThemeCard>
+    );
+  }
   if (type === "dashboard_overview") {
     return (
       <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-4">

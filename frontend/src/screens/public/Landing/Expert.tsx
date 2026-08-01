@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
-import {  motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { CalendarCheck, ShieldCheck, Bell, Wallet } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import AnimateTextWord from "@/components/common/AnimateTextWord";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,13 +69,12 @@ export default function Expert() {
   useEffect(() => {
     const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
     const ctx = gsap.context(() => {
-
-      // Pin each card 
+      // Pin each card
       cards.forEach((card, index) => {
         if (index < cards.length - 1) {
           ScrollTrigger.create({
             trigger: card,
-            start: "top top",
+            start: "top 10%",
             endTrigger: cards[cards.length - 1],
             end: "top top",
             pin: true,
@@ -93,17 +93,26 @@ export default function Expert() {
             end: "top top",
             onUpdate: (self) => {
               const progress = self.progress;
-              const scale = 1 - progress * 0.06;
-              const rotation = (index % 2 === 0 ? 2 : -2) * progress;
+              const scale = 1 - progress * 0.2;
+              const rotation = (index % 2 === 0 ? 1 : -1) * progress;
 
-              gsap.set(card, { scale, rotation, transformOrigin: "center top" });
+              gsap.set(card, {
+                scale,
+                rotation,
+                transformOrigin: "center 20%",
+                border: "1px solid rgba(0,0,0,0.1)",
+              });
               if (overlay) gsap.set(overlay, { opacity: progress * 0.55 });
             },
             onLeave: () => {
               const progress = 1;
-              const scale = 1 - progress * 0.06;
+              const scale = 1 - progress * 0.2;
               const rotation = (index % 2 === 0 ? 2 : -2) * progress;
-              gsap.set(card, { scale, rotation });
+              gsap.set(card, {
+                scale,
+                rotation,
+                border: "1px solid rgba(0,0,0,0.1)",
+              });
               if (overlay) gsap.set(overlay, { opacity: 0.55 });
             },
             onEnterBack: () => {
@@ -119,13 +128,27 @@ export default function Expert() {
   }, []);
 
   return (
-    <section ref={containerRef} style={{ backgroundColor: "var(--color-canvas)" }}>
-      <div className="mx-auto px-6 lg:px-8 pt-32 pb-20 text-center" style={{ maxWidth: "1280px" }}>
-        <span className="text-base lg:text-xl uppercase" style={{ color: "var(--color-light-steel)" }}>
+    <section
+      ref={containerRef}
+      style={{ backgroundColor: "var(--color-canvas)" }}
+    >
+      <div
+        className="mx-auto px-6 lg:px-8 pt-32 pb-20 text-center"
+        style={{ maxWidth: "1280px" }}
+      >
+        <span
+          className="text-base lg:text-xl uppercase"
+          style={{ color: "var(--color-light-steel)" }}
+        >
           Everything you need
         </span>
-        <h2 className="text-5xl lg:text-7xl mt-2 max-w-2xl mx-auto leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
-          One platform. Every tool your booking business needs.
+        <h2
+          className="text-5xl lg:text-6xl mt-2 max-w-2xl mx-auto text-center leading-[1.1]"
+          style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
+        >
+          <AnimateTextWord type="bigtext_Center">
+            One platform. Every tool your booking business needs.
+          </AnimateTextWord>
         </h2>
       </div>
 
@@ -133,8 +156,10 @@ export default function Expert() {
         return (
           <div
             key={i}
-            ref={(el) => { cardRefs.current[i] = el; }}
-            className="sticky-card max-w-[70rem] mx-auto sticky flex items-center px-6 lg:px-8 py-16 will-change-transform"
+            ref={(el) => {
+              cardRefs.current[i] = el;
+            }}
+            className="sticky-card max-w-[90rem] mx-auto sticky flex items-center px-6 lg:px-8 py-16 will-change-transform"
             style={{
               top: "0px",
               zIndex: i + 1,
@@ -168,10 +193,16 @@ export default function Expert() {
                 </span>
 
                 <h3
-                  className="text-3xl lg:text-5xl  leading-[1.1]"
-                  style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
+                  className="text-3xl lg:text-5xl  leading-[1.4]"
+                  style={{
+                    color: "var(--color-ink)",
+                    letterSpacing: "-0.66px",
+                  }}
                 >
-                  {feature.title}
+                  <AnimateTextWord type="bigtext_Center">
+                    {feature.title}
+                  </AnimateTextWord>
+                  
                 </h3>
 
                 <ul className="flex flex-col gap-3">

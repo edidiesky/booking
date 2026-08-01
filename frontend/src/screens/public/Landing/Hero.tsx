@@ -64,13 +64,11 @@ export default function Hero() {
           </div>
 
           <div className="flex flex-col gap-3 max-w-[820px] text-start">
-            <MaskRevealText
-              as="h1"
-              delay={0.1}
-              className="text-white leading-[1.05] text-3xl md:text-5xl lg:text-7xl bold"
+            <h1
+              className="text-white family1 leading-7 text-3xl md:text-5xl lg:text-7xl bold"
             >
               Shortlets, hotels &amp; guesthouses, booked  <br /> in seconds.
-            </MaskRevealText>
+            </h1>
             <MaskRevealText
               as="p"
               delay={0.3}
@@ -86,14 +84,14 @@ export default function Hero() {
             <PropertySearchBar onSearch={handleSearch} />
           </div>
 
-          {!isAuthenticated && (
+          {/* {!isAuthenticated && (
             <button
               onClick={() => navigate("/select-user-type")}
               className="text-xs text-white underline"
             >
               List your property instead &rarr;
             </button>
-          )}
+          )} */}
         </div>
       </div>
     </div>
