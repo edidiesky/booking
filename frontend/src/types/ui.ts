@@ -1,6 +1,6 @@
 import type { BookingStatus, PaymentStatus, EscrowStatus } from "./api";
 
-// ── Navigation ────────────────────────────────────────────────────────────────
+//  Navigation 
 
 export interface NavItem {
   icon:  React.ComponentType<{ size?: number; className?: string }>;
@@ -14,7 +14,7 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-// ── Onboarding step checklist ─────────────────────────────────────────────────
+//  Onboarding step checklist 
 
 export type StepStatus = "done" | "active" | "pending";
 
@@ -23,7 +23,7 @@ export interface StepItem {
   status: StepStatus;
 }
 
-// ── Dashboard stat block ──────────────────────────────────────────────────────
+//  Dashboard stat block 
 
 export interface StatBlock {
   id:            string;
@@ -36,7 +36,7 @@ export interface StatBlock {
   deltaNote:     string;
 }
 
-// ── Table ─────────────────────────────────────────────────────────────────────
+//  Table 
 
 export interface TableHeader {
   key:       string;
@@ -45,7 +45,7 @@ export interface TableHeader {
   width?:    string;
 }
 
-// ── Modal registry ────────────────────────────────────────────────────────────
+//  Modal registry 
 
 export type ModalName =
   | "createProperty"
@@ -62,7 +62,7 @@ export interface ModalState {
   payload: Record<string, unknown>;
 }
 
-// ── Status display maps ───────────────────────────────────────────────────────
+//  Status display maps 
 
 export interface StatusDisplay {
   label: string;
@@ -74,7 +74,7 @@ export type BookingStatusMap  = Record<BookingStatus,  StatusDisplay>;
 export type PaymentStatusMap  = Record<PaymentStatus,  StatusDisplay>;
 export type EscrowStatusMap   = Record<EscrowStatus,   StatusDisplay>;
 
-// ── Chart ─────────────────────────────────────────────────────────────────────
+//  Chart 
 
 export interface ChartDataPoint {
   label: string;
@@ -87,14 +87,14 @@ export interface ChartSeries {
   color: string;
 }
 
-// ── Pagination ────────────────────────────────────────────────────────────────
+//  Pagination 
 
 export interface PaginationState {
   page:  number;
   limit: number;
 }
 
-// ── Availability display ──────────────────────────────────────────────────────
+//  Availability display 
 
 export interface CalendarDay {
   date:          string;
@@ -106,11 +106,11 @@ export interface CalendarDay {
   isCheckOut:    boolean;
 }
 
-// ── Toast variants ────────────────────────────────────────────────────────────
+//  Toast variants 
 
 export type ToastVariant = "success" | "error" | "info" | "warning";
 
-// ── SSE event ─────────────────────────────────────────────────────────────────
+//  SSE event 
 
 export interface SseEvent<T = Record<string, unknown>> {
   type:    string;
