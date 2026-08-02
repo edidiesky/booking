@@ -5,13 +5,13 @@ on:
     branches:
       - main
     paths-ignore:
-      - "k8s/kustomization.yaml"
+      - "booking-infra/k8s/kustomization.yaml"
       - ".github/workflows/ci.yml"
   push:
     branches:
       - main
     paths-ignore:
-      - "k8s/kustomization.yaml"
+      - "booking-infra/k8s/kustomization.yaml"
       - ".github/workflows/ci.yml"
   workflow_dispatch:
 
@@ -223,7 +223,10 @@ jobs:
       - name: Update image references
         shell: bash
         run: |
-          cd k8s
+          pwd
+          ls -la
+          ls -la booking-infra/
+          cd booking-infra/k8s
           python - <<'PY'
           import json
           import os
