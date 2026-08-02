@@ -36,10 +36,20 @@ kubectl create secret docker-registry ghcr-pull-secret \
 kubectl patch serviceaccount default -n booking-platform \
   -p '{"imagePullSecrets": [{"name": "ghcr-pull-secret"}]}'
 ```
+
+
 If the token ever expires, image pulls will start failing with `ImagePullBackOff`.
 To fix it, just get a new PAT and re-run the `kubectl create secret` command with
 `--dry-run=client -o yaml | kubectl apply -f -` added on the end — that updates the
 existing secret in place instead of erroring that it already exists.
+
+If pods were already running before this secret existed, they won't pick it up on their own 
+
+— patching the ServiceAccount only affects *new* pods. Force existing ones to restart so they're recreated with it:
+
+```bash
+kubectl rollout restart deployment -n booking-platform --all
+```
 
 ## 4. Deploy
 ```bash
