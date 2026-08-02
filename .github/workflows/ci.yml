@@ -111,13 +111,21 @@ jobs:
           PY
 
   build:
-    name: Build and push ${{ matrix.service }}
+    name: Build ${{ matrix.service }} (${{ matrix.arch }})
     needs: changes
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
         service: ${{ fromJSON(needs.changes.outputs.services) }}
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            platform: linux/amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
     steps:
       - name: No services changed
         if: matrix.service == '__skip__'
@@ -126,10 +134,6 @@ jobs:
       - name: Checkout
         if: matrix.service != '__skip__'
         uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        if: matrix.service != '__skip__'
-        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         if: matrix.service != '__skip__'
@@ -154,23 +158,52 @@ jobs:
             echo "path=packages/${{ matrix.service }}/Dockerfile" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Build and push image
+      - name: Build and push arch-specific image
         if: matrix.service != '__skip__'
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ${{ steps.dockerfile.outputs.path }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}
           push: true
           tags: |
-            ${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}:${{ github.sha }}
-            ${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}:latest
+            ${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}:${{ github.sha }}-${{ matrix.arch }}
+            ${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}:latest-${{ matrix.arch }}
+
+  merge-manifests:
+    name: Create multi-arch manifest for ${{ matrix.service }}
+    needs: [changes, build]
+    if: needs.changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ${{ fromJSON(needs.changes.outputs.services) }}
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push multi-arch manifest
+        run: |
+          IMAGE="${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}"
+          docker buildx imagetools create \
+            -t $IMAGE:${{ github.sha }} \
+            -t $IMAGE:latest \
+            $IMAGE:${{ github.sha }}-amd64 \
+            $IMAGE:${{ github.sha }}-arm64
 
   update-kustomization:
     name: Open PR for kustomization updates
     needs:
       - changes
-      - build
+      - merge-manifests
     if: needs.changes.outputs.has_changes == 'true' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
