@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: availability-worker
+  namespace: booking-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: availability-worker
+  template:
+    metadata:
+      labels:
+        app: availability-worker
+    spec:
+      containers:
+        - name: availability-worker
+          image: ghcr.io/sde-w/itachi-availability-worker:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: shared-config
+            - secretRef:
+                name: shared-secret
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pgrep -af node >/dev/null 2>&1 || exit 1
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 100m
+              memory: 512Mi

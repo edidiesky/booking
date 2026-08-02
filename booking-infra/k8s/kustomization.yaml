@@ -1,0 +1,60 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: booking-platform
+resources:
+  - namespace.yaml
+  - configmap-shared.yaml
+  - secret-shared.yaml
+  - booking-app/deployment.yaml
+  - booking-app/service.yaml
+  - data/postgres-statefulset.yaml
+  - data/redis-statefulset.yaml
+  - data/rabbitmq-statefulset.yaml
+  - data/elasticsearch-statefulset.yaml
+  - data/pgbouncer-deployment.yaml
+  - data/redis-insight-deployment.yaml
+  - workers/booking-expiry-worker/deployment.yaml
+  - workers/campaign-worker/deployment.yaml
+  - workers/audit-worker/deployment.yaml
+  - workers/seller-notification-worker/deployment.yaml
+  - workers/csv-room-import-worker/deployment.yaml
+  - workers/availability-worker/deployment.yaml
+  - workers/property-search-worker/deployment.yaml
+  - monitoring/prometheus/configmap.yaml
+  - monitoring/prometheus/statefulset.yaml
+  - monitoring/prometheus/service.yaml
+  - monitoring/loki/configmap.yaml
+  - monitoring/loki/statefulset.yaml
+  - monitoring/loki/service.yaml
+  - monitoring/promtail/configmap.yaml
+  - monitoring/promtail/daemonset.yaml
+  - monitoring/grafana/configmap.yaml
+  - monitoring/grafana/deployment.yaml
+  - monitoring/grafana/service.yaml
+  - monitoring/exporters/postgres-exporter-deployment.yaml
+  - monitoring/exporters/pgbouncer-exporter-deployment.yaml
+images:
+  - name: ghcr.io/sde-w/itachi-booking
+    newName: ghcr.io/sde-w/itachi-booking
+    newTag: latest
+  - name: ghcr.io/sde-w/itachi-booking-expiry-worker
+    newName: ghcr.io/sde-w/itachi-booking-expiry-worker
+    newTag: latest
+  - name: ghcr.io/sde-w/itachi-campaign-worker
+    newName: ghcr.io/sde-w/itachi-campaign-worker
+    newTag: latest
+  - name: ghcr.io/sde-w/itachi-audit-worker
+    newName: ghcr.io/sde-w/itachi-audit-worker
+    newTag: latest
+  - name: ghcr.io/sde-w/itachi-seller-notification-worker
+    newName: ghcr.io/sde-w/itachi-seller-notification-worker
+    newTag: latest
+  - name: ghcr.io/sde-w/itachi-csv-room-import-worker
+    newName: ghcr.io/sde-w/itachi-csv-room-import-worker
+    newTag: latest
+  - name: ghcr.io/sde-w/itachi-availability-worker
+    newName: ghcr.io/sde-w/itachi-availability-worker
+    newTag: latest
+  - name: ghcr.io/sde-w/itachi-property-search-worker
+    newName: ghcr.io/sde-w/itachi-property-search-worker
+    newTag: latest

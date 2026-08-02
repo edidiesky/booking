@@ -1,0 +1,252 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "booking-infra/k8s/kustomization.yaml"
+      - ".github/workflows/ci.yml"
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "booking-infra/k8s/kustomization.yaml"
+      - ".github/workflows/ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAMESPACE: ghcr.io/sde-w
+
+jobs:
+  changes:
+    name: Detect changed services
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.set.outputs.services }}
+      has_changes: ${{ steps.set.outputs.has_changes }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            shared:
+              - 'packages/shared/**'
+            booking:
+              - 'backend/**'
+            booking-expiry-worker:
+              - 'packages/booking-expiry-worker/**'
+            campaign-worker:
+              - 'packages/campaign-worker/**'
+            audit-worker:
+              - 'packages/audit-worker/**'
+            seller-notification-worker:
+              - 'packages/seller-notification-worker/**'
+            csv-room-import-worker:
+              - 'packages/csv-room-import-worker/**'
+            availability-worker:
+              - 'packages/availability-worker/**'
+            property-search-worker:
+              - 'packages/property-search-worker/**'
+
+      - name: Set build matrix
+        id: set
+        shell: bash
+        env:
+          SHARED: ${{ steps.filter.outputs.shared }}
+          BOOKING: ${{ steps.filter.outputs.booking }}
+          BOOKING_EXPIRY_WORKER: ${{ steps.filter.outputs.booking-expiry-worker }}
+          CAMPAIGN_WORKER: ${{ steps.filter.outputs.campaign-worker }}
+          AUDIT_WORKER: ${{ steps.filter.outputs.audit-worker }}
+          SELLER_NOTIFICATION_WORKER: ${{ steps.filter.outputs.seller-notification-worker }}
+          CSV_ROOM_IMPORT_WORKER: ${{ steps.filter.outputs.csv-room-import-worker }}
+          AVAILABILITY_WORKER: ${{ steps.filter.outputs.availability-worker }}
+          PROPERTY_SEARCH_WORKER: ${{ steps.filter.outputs.property-search-worker }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          
+          ALL_SERVICES = [
+              ('booking', 'BOOKING'),
+              ('booking-expiry-worker', 'BOOKING_EXPIRY_WORKER'),
+              ('campaign-worker', 'CAMPAIGN_WORKER'),
+              ('audit-worker', 'AUDIT_WORKER'),
+              ('seller-notification-worker', 'SELLER_NOTIFICATION_WORKER'),
+              ('csv-room-import-worker', 'CSV_ROOM_IMPORT_WORKER'),
+              ('availability-worker', 'AVAILABILITY_WORKER'),
+              ('property-search-worker', 'PROPERTY_SEARCH_WORKER'),
+          ]
+          
+          services = []
+          
+          if os.environ['SHARED'] == 'true':
+              services = [svc for svc, _ in ALL_SERVICES]
+          else:
+              for svc, env_name in ALL_SERVICES:
+                  if os.environ[env_name] == 'true':
+                      services.append(svc)
+          
+          has_changes = 'true' if services else 'false'
+          
+          # Use an explicit impossible service name to prevent the empty matrix crash
+          if not services:
+              services = ['__skip__']
+              
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
+              fh.write(f"services={json.dumps(services)}\n")
+              fh.write(f"has_changes={has_changes}\n")
+          PY
+
+  build:
+    name: Build ${{ matrix.service }} (${{ matrix.arch }})
+    needs: changes
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ${{ fromJSON(needs.changes.outputs.services) }}
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            platform: linux/amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    steps:
+      - name: No services changed
+        if: matrix.service == '__skip__'
+        run: echo "No buildable services changed. Skipping build steps."
+
+      - name: Checkout
+        if: matrix.service != '__skip__'
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        if: matrix.service != '__skip__'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: matrix.service != '__skip__'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve Dockerfile path
+        id: dockerfile
+        if: matrix.service != '__skip__'
+        shell: bash
+        run: |
+          if [[ "${{ matrix.service }}" == "booking" ]]; then
+            echo "path=backend/Dockerfile" >> "$GITHUB_OUTPUT"
+          else
+            echo "path=packages/${{ matrix.service }}/Dockerfile" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build and push arch-specific image
+        if: matrix.service != '__skip__'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ steps.dockerfile.outputs.path }}
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}:${{ github.sha }}-${{ matrix.arch }}
+            ${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}:latest-${{ matrix.arch }}
+
+  merge-manifests:
+    name: Create multi-arch manifest for ${{ matrix.service }}
+    needs: [changes, build]
+    if: needs.changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ${{ fromJSON(needs.changes.outputs.services) }}
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push multi-arch manifest
+        run: |
+          IMAGE="${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}"
+          docker buildx imagetools create \
+            -t $IMAGE:${{ github.sha }} \
+            -t $IMAGE:latest \
+            $IMAGE:${{ github.sha }}-amd64 \
+            $IMAGE:${{ github.sha }}-arm64
+
+  update-kustomization:
+    name: Open PR for kustomization updates
+    needs:
+      - changes
+      - merge-manifests
+    if: needs.changes.outputs.has_changes == 'true' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      SERVICES: ${{ needs.changes.outputs.services }}
+      SHA: ${{ github.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install kustomize
+        run: |
+          curl -s https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh | bash
+          sudo mv kustomize /usr/local/bin/kustomize
+
+      - name: Update image references
+        shell: bash
+        run: |
+          pwd
+          ls -la
+          ls -la booking-infra/
+          cd booking-infra/k8s
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          services = json.loads(os.environ['SERVICES'])
+          for svc in services:
+              subprocess.run([
+                  'kustomize', 'edit', 'set', 'image',
+                  f'ghcr.io/sde-w/itachi-{svc}=ghcr.io/sde-w/itachi-{svc}:{os.environ["SHA"]}'
+              ], check=True)
+          PY
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ci/image-tag-bump-${{ github.run_id }}
+          base: main
+          title: "ci: update kustomize image tags"
+          body: |
+            This PR updates the kustomization image tags for the services built by CI.
+          commit-message: "ci: update kustomize image tags"
+          delete-branch: true

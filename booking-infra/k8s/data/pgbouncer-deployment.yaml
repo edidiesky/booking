@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgbouncer-config
+  namespace: booking-platform
+data:
+  pgbouncer.ini: |
+    [databases]
+    booking = host=postgres port=5432 dbname=booking user=booking password=booking-pass
+
+    [pgbouncer]
+    listen_addr = 0.0.0.0
+    listen_port = 6432
+    auth_type = md5
+    auth_file = /etc/pgbouncer/userlist.txt
+    pool_mode = session
+    max_client_conn = 100
+    default_pool_size = 20
+  userlist.txt: |
+    "booking" "md5a2d1c2d4e5f6a7b8c9d0e1f2a3b4c5d"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgbouncer
+  namespace: booking-platform
+spec:
+  selector:
+    app: pgbouncer
+  ports:
+    - port: 6432
+      targetPort: 6432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgbouncer
+  namespace: booking-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgbouncer
+  template:
+    metadata:
+      labels:
+        app: pgbouncer
+    spec:
+      containers:
+        - name: pgbouncer
+          image: edoburu/pgbouncer:1.24.1-p1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6432
+          command: ["/bin/sh", "-c"]
+          args:
+            [
+              "cp /config/pgbouncer.ini /etc/pgbouncer/pgbouncer.ini && cp /config/userlist.txt /etc/pgbouncer/userlist.txt && pgbouncer /etc/pgbouncer/pgbouncer.ini",
+            ]
+          readinessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          volumeMounts:
+            - name: pgbouncer-config
+              mountPath: /config
+          resources:
+            requests:
+              cpu: 80m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
+      volumes:
+        - name: pgbouncer-config
+          configMap:
+            name: pgbouncer-config
