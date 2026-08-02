@@ -1,76 +1,40 @@
-# Deployment guide
+# Deployment Guide
 
-Use this flow from the repo root.
+## Prerequisites
+- k3s cluster, `kubectl` configured
+- Repo cloned locally
 
-## 1. Prepare the cluster access
-Make sure your kubeconfig points at the target cluster:
-
+## First-time setup
 ```bash
-kubectl config current-context
-kubectl get nodes
+kubectl config current-context && kubectl get nodes   # confirm right cluster
+```
+Fill in real values in `booking-infra/k8s/secret-shared.yaml` (placeholders are fine for local testing).
+
+## Deploy
+```bash
+kubectl apply -k booking-infra/k8s
+```
+Applies everything: namespace, shared ConfigMap/Secret, databases, booking API, workers, monitoring.
+
+## Verify
+```bash
+kubectl get pods,svc,pvc -n booking-platform
+curl http://<node-ip>:30080/health   # expect {"status":"ok"}
 ```
 
-## 2. Prepare secrets
-Edit the secret file so it has the values you want to use:
-
+## Deploying new image versions
+1. CI opens a PR bumping tags in `booking-infra/k8s/kustomization.yaml` — review and merge it.
+2. On the cluster machine:
 ```bash
-k8s/secret-shared.yaml
+git pull
+kubectl apply -k booking-infra/k8s
 ```
+No Deployment YAML changes — only image tags in the kustomization file.
 
-For local/dev testing, mock values are fine. For real deployment, replace them with real values.
-
-## 3. Apply everything with Kustomize
-From the repo root, run:
-
+## Troubleshooting
 ```bash
-kubectl apply -k ./k8s
+kubectl describe pod -n booking-platform <pod-name>       # why it won't start
+kubectl logs -n booking-platform <pod-name>                # what it's printing
+kubectl rollout restart deployment/<name> -n booking-platform
+kubectl rollout status deployment/<name> -n booking-platform
 ```
-
-This applies the full stack defined in the kustomization file:
-- namespace and shared config
-- data tier
-- app and workers
-- monitoring
-
-## 4. Verify the rollout
-Check that resources are created and pods come up:
-
-```bash
-kubectl get pods -n booking-platform
-kubectl get svc -n booking-platform
-kubectl get pvc -n booking-platform
-```
-
-## 5. Check the app
-For the booking app, confirm health and the NodePort:
-
-```bash
-kubectl get svc -n booking-platform booking
-kubectl logs -n booking-platform deploy/booking
-```
-
-Then test the health endpoint from the node or local machine:
-
-```bash
-curl http://<node-ip>:30080/health
-```
-
-## 6. When CI updates image tags
-When CI opens a PR that updates the image tags in kustomization.yaml:
-
-1. Review and merge the PR.
-2. Run the same apply command again:
-
-```bash
-kubectl apply -k ./k8s
-```
-
-## 7. If something fails
-Use:
-
-```bash
-kubectl describe pod -n booking-platform <pod-name>
-kubectl logs -n booking-platform <pod-name>
-```
-
-That is the basic deployment flow now that Kustomize is the entry point.
