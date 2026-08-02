@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       services: ${{ steps.set.outputs.services }}
+      has_changes: ${{ steps.set.outputs.has_changes }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -77,55 +78,65 @@ jobs:
           python - <<'PY'
           import json
           import os
+          
+          ALL_SERVICES = [
+              ('booking', 'BOOKING'),
+              ('booking-expiry-worker', 'BOOKING_EXPIRY_WORKER'),
+              ('campaign-worker', 'CAMPAIGN_WORKER'),
+              ('audit-worker', 'AUDIT_WORKER'),
+              ('seller-notification-worker', 'SELLER_NOTIFICATION_WORKER'),
+              ('csv-room-import-worker', 'CSV_ROOM_IMPORT_WORKER'),
+              ('availability-worker', 'AVAILABILITY_WORKER'),
+              ('property-search-worker', 'PROPERTY_SEARCH_WORKER'),
+          ]
+          
           services = []
+          
           if os.environ['SHARED'] == 'true':
-              services = [
-                  'booking',
-                  'booking-expiry-worker',
-                  'campaign-worker',
-                  'audit-worker',
-                  'seller-notification-worker',
-                  'csv-room-import-worker',
-                  'availability-worker',
-                  'property-search-worker',
-              ]
+              services = [svc for svc, _ in ALL_SERVICES]
           else:
-              for svc, flag in [
-                  ('booking', os.environ['BOOKING']),
-                  ('booking-expiry-worker', os.environ['BOOKING_EXPIRY_WORKER']),
-                  ('campaign-worker', os.environ['CAMPAIGN_WORKER']),
-                  ('audit-worker', os.environ['AUDIT_WORKER']),
-                  ('seller-notification-worker', os.environ['SELLER_NOTIFICATION_WORKER']),
-                  ('csv-room-import-worker', os.environ['CSV_ROOM_IMPORT_WORKER']),
-                  ('availability-worker', os.environ['AVAILABILITY_WORKER']),
-                  ('property-search-worker', os.environ['PROPERTY_SEARCH_WORKER']),
-              ]:
-                  if flag == 'true':
+              for svc, env_name in ALL_SERVICES:
+                  if os.environ[env_name] == 'true':
                       services.append(svc)
+          
+          has_changes = 'true' if services else 'false'
+          
+          # Use an explicit impossible service name to prevent the empty matrix crash
+          if not services:
+              services = ['__skip__']
+              
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
-              fh.write(f"services={json.dumps(services)}\\n")
+              fh.write(f"services={json.dumps(services)}\n")
+              fh.write(f"has_changes={has_changes}\n")
           PY
 
   build:
     name: Build and push ${{ matrix.service }}
     needs: changes
-    if: needs.changes.outputs.services != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         service: ${{ fromJSON(needs.changes.outputs.services) }}
     steps:
+      - name: No services changed
+        if: matrix.service == '__skip__'
+        run: echo "No buildable services changed. Skipping build steps."
+
       - name: Checkout
+        if: matrix.service != '__skip__'
         uses: actions/checkout@v4
 
       - name: Set up QEMU
+        if: matrix.service != '__skip__'
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
+        if: matrix.service != '__skip__'
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GHCR
+        if: matrix.service != '__skip__'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -134,6 +145,7 @@ jobs:
 
       - name: Resolve Dockerfile path
         id: dockerfile
+        if: matrix.service != '__skip__'
         shell: bash
         run: |
           if [[ "${{ matrix.service }}" == "booking" ]]; then
@@ -143,6 +155,7 @@ jobs:
           fi
 
       - name: Build and push image
+        if: matrix.service != '__skip__'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -158,7 +171,7 @@ jobs:
     needs:
       - changes
       - build
-    if: needs.changes.outputs.services != '[]' && github.ref == 'refs/heads/main'
+    if: needs.changes.outputs.has_changes == 'true' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
       SERVICES: ${{ needs.changes.outputs.services }}
