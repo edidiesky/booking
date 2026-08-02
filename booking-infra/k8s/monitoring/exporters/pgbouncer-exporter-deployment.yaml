@@ -27,13 +27,31 @@ spec:
     spec:
       containers:
         - name: pgbouncer-exporter
-          image: prometheuscommunity/pgbouncer-exporter:v0.2.0
+          image: spreaker/prometheus-pgbouncer-exporter:latest
           imagePullPolicy: IfNotPresent
+
           env:
-            - name: PGB_EXPORTER_CONNECTION_STRING
-              value: postgres://booking:booking-pass@pgbouncer:6432/booking?sslmode=disable
+            - name: PGBOUNCER_HOST
+              value: pgbouncer
+
+            - name: PGBOUNCER_PORT
+              value: "6432"
+
+            - name: PGBOUNCER_USER
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secret
+                  key: POSTGRES_USER
+
+            - name: PGBOUNCER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secret
+                  key: POSTGRES_PASSWORD
+
           ports:
             - containerPort: 9127
+
           resources:
             requests:
               cpu: 80m
