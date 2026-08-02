@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       services: ${{ steps.set.outputs.services }}
+      has_changes: ${{ steps.set.outputs.has_changes }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -77,51 +78,108 @@ jobs:
           python - <<'PY'
           import json
           import os
+          
+          ALL_SERVICES = [
+              ('booking', 'BOOKING'),
+              ('booking-expiry-worker', 'BOOKING_EXPIRY_WORKER'),
+              ('campaign-worker', 'CAMPAIGN_WORKER'),
+              ('audit-worker', 'AUDIT_WORKER'),
+              ('seller-notification-worker', 'SELLER_NOTIFICATION_WORKER'),
+              ('csv-room-import-worker', 'CSV_ROOM_IMPORT_WORKER'),
+              ('availability-worker', 'AVAILABILITY_WORKER'),
+              ('property-search-worker', 'PROPERTY_SEARCH_WORKER'),
+          ]
+          
           services = []
+          
           if os.environ['SHARED'] == 'true':
-              services = [
-                  'booking',
-                  'booking-expiry-worker',
-                  'campaign-worker',
-                  'audit-worker',
-                  'seller-notification-worker',
-                  'csv-room-import-worker',
-                  'availability-worker',
-                  'property-search-worker',
-              ]
+              services = [svc for svc, _ in ALL_SERVICES]
           else:
-              for svc, flag in [
-                  ('booking', os.environ['BOOKING']),
-                  ('booking-expiry-worker', os.environ['BOOKING_EXPIRY_WORKER']),
-                  ('campaign-worker', os.environ['CAMPAIGN_WORKER']),
-                  ('audit-worker', os.environ['AUDIT_WORKER']),
-                  ('seller-notification-worker', os.environ['SELLER_NOTIFICATION_WORKER']),
-                  ('csv-room-import-worker', os.environ['CSV_ROOM_IMPORT_WORKER']),
-                  ('availability-worker', os.environ['AVAILABILITY_WORKER']),
-                  ('property-search-worker', os.environ['PROPERTY_SEARCH_WORKER']),
-              ]:
-                  if flag == 'true':
+              for svc, env_name in ALL_SERVICES:
+                  if os.environ[env_name] == 'true':
                       services.append(svc)
+          
+          has_changes = 'true' if services else 'false'
+          
+          # Use an explicit impossible service name to prevent the empty matrix crash
+          if not services:
+              services = ['__skip__']
+              
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
-              fh.write(f"services={json.dumps(services)}\\n")
+              fh.write(f"services={json.dumps(services)}\n")
+              fh.write(f"has_changes={has_changes}\n")
           PY
 
   build:
-    name: Build and push ${{ matrix.service }}
+    name: Build ${{ matrix.service }} (${{ matrix.arch }})
     needs: changes
-    if: needs.changes.outputs.services != '[]'
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ${{ fromJSON(needs.changes.outputs.services) }}
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            platform: linux/amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    steps:
+      - name: No services changed
+        if: matrix.service == '__skip__'
+        run: echo "No buildable services changed. Skipping build steps."
+
+      - name: Checkout
+        if: matrix.service != '__skip__'
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        if: matrix.service != '__skip__'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: matrix.service != '__skip__'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve Dockerfile path
+        id: dockerfile
+        if: matrix.service != '__skip__'
+        shell: bash
+        run: |
+          if [[ "${{ matrix.service }}" == "booking" ]]; then
+            echo "path=backend/Dockerfile" >> "$GITHUB_OUTPUT"
+          else
+            echo "path=packages/${{ matrix.service }}/Dockerfile" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build and push arch-specific image
+        if: matrix.service != '__skip__'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ steps.dockerfile.outputs.path }}
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}:${{ github.sha }}-${{ matrix.arch }}
+            ${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}:latest-${{ matrix.arch }}
+
+  merge-manifests:
+    name: Create multi-arch manifest for ${{ matrix.service }}
+    needs: [changes, build]
+    if: needs.changes.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         service: ${{ fromJSON(needs.changes.outputs.services) }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -132,33 +190,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Resolve Dockerfile path
-        id: dockerfile
-        shell: bash
+      - name: Create and push multi-arch manifest
         run: |
-          if [[ "${{ matrix.service }}" == "booking" ]]; then
-            echo "path=backend/Dockerfile" >> "$GITHUB_OUTPUT"
-          else
-            echo "path=packages/${{ matrix.service }}/Dockerfile" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Build and push image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ${{ steps.dockerfile.outputs.path }}
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}:${{ github.sha }}
-            ${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}:latest
+          IMAGE="${{ env.IMAGE_NAMESPACE }}/itachi-${{ matrix.service }}"
+          docker buildx imagetools create \
+            -t $IMAGE:${{ github.sha }} \
+            -t $IMAGE:latest \
+            $IMAGE:${{ github.sha }}-amd64 \
+            $IMAGE:${{ github.sha }}-arm64
 
   update-kustomization:
     name: Open PR for kustomization updates
     needs:
       - changes
-      - build
-    if: needs.changes.outputs.services != '[]' && github.ref == 'refs/heads/main'
+      - merge-manifests
+    if: needs.changes.outputs.has_changes == 'true' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
       SERVICES: ${{ needs.changes.outputs.services }}
