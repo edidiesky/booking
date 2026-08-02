@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
         - name: pgbouncer
-          image: edoburu/pgbouncer:1.22.0-p1
+          image: edoburu/pgbouncer:1.24.1-p1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 6432
@@ -72,10 +72,10 @@ spec:
               mountPath: /config
           resources:
             requests:
-              cpu: 100m
+              cpu: 800m
               memory: 128Mi
             limits:
-              cpu: 500m
+              cpu: 300m
               memory: 256Mi
       volumes:
         - name: pgbouncer-config
