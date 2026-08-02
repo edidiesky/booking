@@ -6,18 +6,30 @@ metadata:
 data:
   pgbouncer.ini: |
     [databases]
-    booking = host=postgres port=5432 dbname=booking user=booking password=booking-pass
+    booking_platform = host=postgres port=5432 dbname=booking_platform
 
     [pgbouncer]
     listen_addr = 0.0.0.0
     listen_port = 6432
-    auth_type = md5
+    auth_type = scram-sha-256
     auth_file = /etc/pgbouncer/userlist.txt
-    pool_mode = session
-    max_client_conn = 100
-    default_pool_size = 20
+
+    pool_mode = transaction
+    max_client_conn = 500
+    default_pool_size = 25
+    min_pool_size = 5
+    reserve_pool_size = 5
+    reserve_pool_timeout = 3
+
+    server_idle_timeout = 60
+    server_lifetime = 3600
+    query_wait_timeout = 20
+
+    log_connections = 1
+    log_disconnections = 1
+
   userlist.txt: |
-    "booking" "md5a2d1c2d4e5f6a7b8c9d0e1f2a3b4c5d"
+    "postgres" "SCRAM-SHA-256$4096:F/F4cez/E3nG/RsrXVVtLA==$Z3ouA0oL51C5uDAm8SioWp8pAZTJ/AFwSzFg+AP8RJg=:Uewm81h0PRXyRlVKI20FNyxmtRDYXq3pJDybBtJWsMQ="
 ---
 apiVersion: v1
 kind: Service
@@ -48,28 +60,35 @@ spec:
     spec:
       containers:
         - name: pgbouncer
-          image: edoburu/pgbouncer:1.24.1-p1
+          image: edoburu/pgbouncer:latest
           imagePullPolicy: IfNotPresent
+
           ports:
             - containerPort: 6432
-          command: ["/bin/sh", "-c"]
-          args:
-            [
-              "cp /config/pgbouncer.ini /etc/pgbouncer/pgbouncer.ini && cp /config/userlist.txt /etc/pgbouncer/userlist.txt && pgbouncer /etc/pgbouncer/pgbouncer.ini",
-            ]
+
           readinessProbe:
             tcpSocket:
               port: 6432
             initialDelaySeconds: 10
             periodSeconds: 10
+
           livenessProbe:
             tcpSocket:
               port: 6432
             initialDelaySeconds: 20
             periodSeconds: 20
+
           volumeMounts:
             - name: pgbouncer-config
-              mountPath: /config
+              mountPath: /etc/pgbouncer/pgbouncer.ini
+              subPath: pgbouncer.ini
+              readOnly: true
+
+            - name: pgbouncer-config
+              mountPath: /etc/pgbouncer/userlist.txt
+              subPath: userlist.txt
+              readOnly: true
+
           resources:
             requests:
               cpu: 80m
@@ -77,6 +96,7 @@ spec:
             limits:
               cpu: 300m
               memory: 256Mi
+
       volumes:
         - name: pgbouncer-config
           configMap:
