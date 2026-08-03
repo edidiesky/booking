@@ -13,6 +13,8 @@ spec:
       labels:
         app: campaign-worker
     spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
       containers:
         - name: campaign-worker
           image: ghcr.io/sde-w/itachi-campaign-worker:latest

@@ -44,14 +44,18 @@ spec:
             httpGet:
               path: /_cluster/health
               port: 9200
-            initialDelaySeconds: 20
+            initialDelaySeconds: 90
+            timeoutSeconds: 5
             periodSeconds: 15
+            failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /_cluster/health
               port: 9200
-            initialDelaySeconds: 40
-            periodSeconds: 20
+            initialDelaySeconds: 120
+            timeoutSeconds: 5  
+            periodSeconds: 30
+            failureThreshold: 3
           volumeMounts:
             - name: elasticsearch-data
               mountPath: /usr/share/elasticsearch/data

@@ -13,6 +13,8 @@ spec:
       labels:
         app: property-search-worker
     spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
       containers:
         - name: property-search-worker
           image: ghcr.io/sde-w/itachi-property-search-worker:latest

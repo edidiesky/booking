@@ -13,12 +13,14 @@ spec:
       labels:
         app: booking
     spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
       containers:
         - name: booking
           image: ghcr.io/sde-w/itachi-booking:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 3000
+            - containerPort: 4000
           envFrom:
             - configMapRef:
                 name: shared-config
@@ -27,13 +29,13 @@ spec:
           readinessProbe:
             httpGet:
               path: /health
-              port: 3000
+              port: 4000
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /health
-              port: 3000
+              port: 4000
             initialDelaySeconds: 30
             periodSeconds: 20
           resources:

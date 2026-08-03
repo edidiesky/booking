@@ -13,6 +13,8 @@ spec:
       labels:
         app: csv-room-import-worker
     spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
       containers:
         - name: csv-room-import-worker
           image: ghcr.io/sde-w/itachi-csv-room-import-worker:latest

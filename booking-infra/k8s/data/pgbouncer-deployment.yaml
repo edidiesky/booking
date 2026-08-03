@@ -29,7 +29,7 @@ data:
     log_disconnections = 1
 
   userlist.txt: |
-    "postgres" "SCRAM-SHA-256$4096:F/F4cez/E3nG/RsrXVVtLA==$Z3ouA0oL51C5uDAm8SioWp8pAZTJ/AFwSzFg+AP8RJg=:Uewm81h0PRXyRlVKI20FNyxmtRDYXq3pJDybBtJWsMQ="
+    "postgres" "SCRAM-SHA-256$4096:Blcgssg3xcob7xfOa17+TQ==$ZyCf/tUkZoBaZH6Y54WKl1+wo4pmmpmrtC6Zowvn/hY=:aoh9pcPlZ8ZNylY0IxjgPZv4ZyuZM8pyyMtPJwb1Tzc="
 ---
 apiVersion: v1
 kind: Service

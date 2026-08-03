@@ -45,24 +45,24 @@ spec:
                 name: shared-secret
           readinessProbe:
             exec:
-              command:
-                - rabbitmqctl
-                - status
-            initialDelaySeconds: 15
-            periodSeconds: 10
+              command: ["rabbitmq-diagnostics", "-q", "check_port_connectivity"] 
+            initialDelaySeconds: 30
+            timeoutSeconds: 15  
+            periodSeconds: 15
+            failureThreshold: 3  
           livenessProbe:
             exec:
-              command:
-                - rabbitmqctl
-                - status
-            initialDelaySeconds: 30
-            periodSeconds: 20
+              command: ["rabbitmq-diagnostics", "-q", "check_running"]
+            initialDelaySeconds: 60
+            timeoutSeconds: 15
+            periodSeconds: 30
+            failureThreshold: 3  
           volumeMounts:
             - name: rabbitmq-data
               mountPath: /var/lib/rabbitmq
           resources:
             requests:
-              cpu: 100m
+              cpu: 200m
               memory: 256Mi
             limits:
               cpu: 300m
