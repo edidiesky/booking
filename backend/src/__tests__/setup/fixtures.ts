@@ -1,88 +1,118 @@
-import { v4 as uuid } from "uuid";
-import jwt from "jsonwebtoken";
-import { Booking } from "../../domains/booking/booking.repository";
-import { Payment } from "../../domains/payment/payment.repository";
+import { randomUUIDv7 } from "crypto";
+import { User } from "../../domains/auth/auth.repository";
+import { Property, RoomType } from "../../domains/property/property.repository";
+import { Tenant } from "../../domains/tenant/tenant.repository";
 
-export function makeJwt(overrides: Partial<{
-  userId:   string;
-  userType: string;
-  email:    string;
-  name:     string;
-  tenantId: string;
-}> = {}): string {
+
+import jwt from "jsonwebtoken";
+
+
+export const USER_ID = randomUUIDv7();
+export const PROPERTY_ID = randomUUIDv7();
+export const ROOM_TYPE_ID = randomUUIDv7();
+export const TENANT_ID = randomUUIDv7();
+
+export function makeJwt(overrides: Partial<{ userId: string; userType: string; tenantId: string | null; name: string }> = {}): string {
   const payload = {
-    userId:   overrides.userId   ?? uuid(),
+    userId: overrides.userId ?? randomUUIDv7(),
     userType: overrides.userType ?? "guest",
-    email:    overrides.email    ?? "guest@test.com",
-    name:     overrides.name     ?? "Test User",
-    tenantId: overrides.tenantId ?? undefined,
+    tenantId: overrides.tenantId ?? null,
+    name: overrides.name ?? "Test User",
   };
-  return jwt.sign(
-    { user: payload },
-    process.env["JWT_SECRET"] ?? "test-jwt-secret-at-least-32-chars-long",
-    { expiresIn: 900, issuer: "booking-platform", audience: "booking-client" }
-  );
+  return jwt.sign(payload, process.env.JWT_CODE ?? "test-secret", { expiresIn: "15m" });
 }
 
-export function makeGuestToken(userId = uuid()): string {
+export function makeGuestToken(userId = randomUUIDv7()): string {
   return makeJwt({ userId, userType: "guest" });
 }
 
-export function makeHostToken(userId = uuid(), tenantId = uuid()): string {
+export function makeHostToken(userId = randomUUIDv7(), tenantId = randomUUIDv7()): string {
   return makeJwt({ userId, userType: "host:admin", tenantId });
 }
 
-export function makePlatformAdminToken(userId = uuid()): string {
+export function makePlatformAdminToken(userId = randomUUIDv7()): string {
   return makeJwt({ userId, userType: "platform:admin" });
 }
 
-export const TENANT_ID  = uuid();
-export const GUEST_ID   = uuid();
-export const HOST_ID    = uuid();
-export const PROPERTY_ID = uuid();
-export const ROOM_TYPE_ID = uuid();
-export const BOOKING_ID  = uuid();
-export const PAYMENT_ID  = uuid();
-
-export function makeBooking(overrides: Partial<Booking> = {}): Booking {
+export function makeUser(overrides: Partial<User> = {}): User {
   return {
-    id:               overrides.id              ?? BOOKING_ID,
-    booking_ref:      overrides.booking_ref     ?? "BK-TEST-001",
-    tenant_id:        overrides.tenant_id       ?? TENANT_ID,
-    property_id:      overrides.property_id     ?? PROPERTY_ID,
-    room_type_id:     overrides.room_type_id    ?? ROOM_TYPE_ID,
-    guest_user_id:    overrides.guest_user_id   ?? GUEST_ID,
-    rooms_count:      overrides.rooms_count     ?? 1,
-    check_in:         overrides.check_in        ?? "2025-12-01",
-    check_out:        overrides.check_out       ?? "2025-12-03",
-    nights:           overrides.nights          ?? 2,
-    guest_count:      overrides.guest_count     ?? 2,
-    total_amount_ngn: overrides.total_amount_ngn ?? 100000,
-    platform_fee_ngn: overrides.platform_fee_ngn ?? 10000,
-    host_payout_ngn:  overrides.host_payout_ngn  ?? 90000,
-    status:           overrides.status           ?? "pending_payment",
-    metadata:         overrides.metadata         ?? { sessionId: uuid() },
-    special_requests: overrides.special_requests,
-    cancellation_reason: overrides.cancellation_reason,
-    cancelled_at:     overrides.cancelled_at,
-    created_at:       overrides.created_at      ?? new Date(),
-    updated_at:       overrides.updated_at      ?? new Date(),
+    id:                      overrides.id                      ?? USER_ID,
+    email:                   overrides.email                   ?? "guest@test.com",
+    phone:                   overrides.phone,
+    password_hash:           overrides.password_hash           ?? "$2b$10$fakehashfakehashfakehashfakehashfakehashfake",
+    first_name:              overrides.first_name               ?? "Test",
+    last_name:               overrides.last_name                ?? "User",
+    profile_image:           overrides.profile_image,
+    user_type:               overrides.user_type                ?? "guest",
+    tenant_id:                overrides.tenant_id,
+    status:                  overrides.status                   ?? "active",
+    is_email_verified:       overrides.is_email_verified        ?? true,
+    is_phone_verified:       overrides.is_phone_verified        ?? false,
+    two_factor_enabled:      overrides.two_factor_enabled       ?? false,
+    two_factor_secret:       overrides.two_factor_secret,
+    two_factor_backup_codes: overrides.two_factor_backup_codes,
+    google_id:               overrides.google_id,
+    login_with_pin_enabled:  overrides.login_with_pin_enabled   ?? false,
+    country_code:            overrides.country_code,
+    pin_hash:                overrides.pin_hash,
+    last_active_at:          overrides.last_active_at,
+    created_at:              overrides.created_at               ?? new Date(),
+    updated_at:              overrides.updated_at               ?? new Date(),
   };
 }
 
-export function makePayment(overrides: Partial<Payment> = {}): Payment {
+
+
+export function makeProperty(overrides: Partial<Property> = {}): Property {
   return {
-    id:              overrides.id              ?? PAYMENT_ID,
-    booking_id:      overrides.booking_id      ?? BOOKING_ID,
+    id:               overrides.id               ?? PROPERTY_ID,
+    tenant_id:        overrides.tenant_id         ?? TENANT_ID,
+    name:             overrides.name              ?? "Test Property",
+    description:      overrides.description,
+    property_type:    overrides.property_type     ?? "hotel",
+    address:          overrides.address           ?? { street: "1 Test St", city: "Lagos", state: "Lagos", country: "Nigeria" },
+    amenities:        overrides.amenities         ?? [],
+    images:           overrides.images            ?? [],
+    check_in_time:    overrides.check_in_time     ?? "14:00",
+    check_out_time:   overrides.check_out_time    ?? "11:00",
+    latitude:         overrides.latitude,
+    longitude:        overrides.longitude,
+    room_sort_mode:   overrides.room_sort_mode,
+    status:           overrides.status            ?? "active",
+    created_at:       overrides.created_at        ?? new Date(),
+    updated_at:       overrides.updated_at        ?? new Date(),
+  };
+}
+
+export function makeRoomType(overrides: Partial<RoomType> = {}): RoomType {
+  return {
+    id:              overrides.id              ?? ROOM_TYPE_ID,
+    property_id:     overrides.property_id     ?? PROPERTY_ID,
     tenant_id:       overrides.tenant_id       ?? TENANT_ID,
-    guest_user_id:   overrides.guest_user_id   ?? GUEST_ID,
-    gateway:         overrides.gateway         ?? "paystack",
-    transaction_id:  overrides.transaction_id  ?? `ref_${uuid()}`,
-    amount_ngn:      overrides.amount_ngn      ?? 100000,
-    status:          overrides.status          ?? "pending",
-    idempotency_key: overrides.idempotency_key ?? `pay:${BOOKING_ID}:paystack`,
-    metadata:        overrides.metadata        ?? {},
+    name:            overrides.name            ?? "Deluxe Room",
+    description:     overrides.description,
+    max_occupancy:   overrides.max_occupancy   ?? 2,
+    base_price_ngn:  overrides.base_price_ngn  ?? 50000,
+    quantity:        overrides.quantity        ?? 5,
+    images:          overrides.images          ?? [],
+    amenities:       overrides.amenities       ?? [],
+    status:          overrides.status          ?? "active",
     created_at:      overrides.created_at      ?? new Date(),
     updated_at:      overrides.updated_at      ?? new Date(),
+  };
+}
+
+export function makeTenant(overrides: Partial<Tenant> = {}): Tenant {
+  return {
+    id:                  overrides.id                  ?? TENANT_ID,
+    slug:                overrides.slug                ?? "grand-hotel",
+    name:                overrides.name                ?? "Grand Hotel",
+    owner_user_id:       overrides.owner_user_id        ?? "host-id",
+    platform_fee_pct:    overrides.platform_fee_pct     ?? 10,
+    cancellation_policy: overrides.cancellation_policy  ?? [],
+    status:              overrides.status               ?? "active",
+    settings:            overrides.settings             ?? { timezone: "Africa/Lagos", currency: "NGN", locale: "en-NG" },
+    created_at:          overrides.created_at           ?? new Date(),
+    updated_at:          overrides.updated_at           ?? new Date(),
   };
 }
