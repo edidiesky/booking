@@ -39,7 +39,8 @@ export const RefreshTokenHandler = asyncHandler(async (req: Request, res: Respon
 export const LogoutHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.user) throw AppError.unauthorized();
   const token = req.headers.authorization?.replace("Bearer ", "") ?? "";
-  await authService.logout(req.user.userId, token);
+  const { refreshToken } = req.body as { refreshToken?: string };
+  await authService.logout(req.user.userId, token, refreshToken);
   res.status(200).json({ success: true, message: "Logged out successfully." });
 });
 
@@ -93,5 +94,11 @@ export const DisableTwoFactorHandler = asyncHandler(async (req: Request, res: Re
 export const VerifyTwoFactorLoginHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { challengeToken, code } = req.body as { challengeToken: string; code: string };
   const result = await authService.verifyTwoFactorLogin(challengeToken, code);
+  res.status(200).json({ success: true, message: "Login successful.", data: result });
+});
+
+export const GoogleOAuthHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { code, codeVerifier } = req.body as { code: string; codeVerifier: string };
+  const result = await authService.loginWithGoogle(code, codeVerifier);
   res.status(200).json({ success: true, message: "Login successful.", data: result });
 });
