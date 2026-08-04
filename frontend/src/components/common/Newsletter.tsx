@@ -1,7 +1,4 @@
 import AnimateTextWord from "@/components/common/AnimateTextWord";
-
-import React from "react";
-
 const Newsletter = () => {
   return (
     <div className="flex w-full bg-[#151402]  py-20 items-center gap-8 justify-center">

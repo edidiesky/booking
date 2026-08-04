@@ -46,7 +46,7 @@ export default function PropertyGrid({ properties, isLoading, search, typeFilter
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8">
-      {properties.map((p) => <PropertyCard key={p.id} property={p} />)}
+      {properties.map((p, index) => <PropertyCard index={index} key={p.id} property={p} />)}
     </div>
   );
 }

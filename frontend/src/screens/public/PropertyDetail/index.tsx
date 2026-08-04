@@ -12,6 +12,7 @@ import ProductReview           from "./ProductReview";
 import BookingForm             from "./BookingForm";
 import { usePropertyDetail }   from "./hooks/usePropertyDetail";
 import SellerSection from "./SellerSection";
+import { RoomType } from "@/types/api";
 
 function Skeleton() {
   return (
@@ -69,7 +70,7 @@ export default function PropertyDetail() {
                 <PropertyGallery
                   images={[
                     ...(property.images ?? []),
-                    ...(roomTypes.flatMap((r) => r.images ?? [])),
+                    ...(roomTypes.flatMap((r: RoomType) => r.images ?? [])),
                   ]}
                   name={property.name}
                 />

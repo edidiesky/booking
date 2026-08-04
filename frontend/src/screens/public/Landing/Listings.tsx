@@ -42,14 +42,14 @@ const Listing = () => {
           {isLoading ? (
             <div className="flex gap-5">
               {properties.map((_, index) => (
-                <div key={index} className="w-[280px] shrink-0"><CardLoader /></div>
+                <div key={index} className="w-[280px] shrink-0"><CardLoader type="property_card" /></div>
               ))}
             </div>
           ) : (
             <InfiniteDragRow gap={14}>
               {(properties?.slice(0, 8) ?? []).map((p, index) => (
                 <div key={index} className="w-[280px] lg:w-[370px] space-x-8">
-                  <PropertyCard property={p} isFavorited={favoritedSet.has(p.id)} />
+                  <PropertyCard index={index} property={p} isFavorited={favoritedSet.has(p.id)} />
                 </div>
               ))}
             </InfiniteDragRow>

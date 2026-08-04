@@ -75,12 +75,12 @@ export default function StatsGrid({
                 {label}
               </p>
               <div className="w-full flex flex-col gap-3">
-                <h4
-                  className="text-xl mt-1 bold lg:text-3xl"
+                <h1
+                  className="text-xl mt-1 font-semibold lg:text-3xl"
                   style={{ color: "var(--color-ink)" }}
                 >
                   {value}
-                </h4>
+                </h1>
                 <p
                   className="text-xs medium"
                   style={{ color: "var(--color-muted-stone)" }}

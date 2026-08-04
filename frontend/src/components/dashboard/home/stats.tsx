@@ -1,5 +1,4 @@
 import { statBlocks } from "@/constants/mocks";
-import React from "react";
 
 export default function Stats() {
   return (

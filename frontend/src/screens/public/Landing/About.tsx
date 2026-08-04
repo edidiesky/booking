@@ -9,73 +9,58 @@ const cards = [
   {
     image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
     value: "12,000+",
-    label: "Bookings confirmed",
-    description:
-      "Real stays, real guests, across every property type on the platform.",
+    label: "Bookings confirmed to date",
+    description: "Across shortlets, hotels, and guesthouses, tracked in real time, not end-of-day batch counts.",
     bg: "#e8e6e3",
     color: "#111111",
   },
   {
     image: "https://2025.moniepoint.com/_next/static/media/Fruit.527795c5.svg",
     value: "850+",
-    label: "Properties listed",
-    description: "Shortlets, hotels, and guesthouses, all in one calendar.",
+    label: "Properties actively listed",
+    description: "Live inventory across three property types, one shared calendar per host.",
     bg: "#f8e600",
     color: "#111111",
   },
   {
     image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
-    value: "₦2B+",
-    label: "Host payouts released",
-    description:
-      "Held in escrow, released automatically at checkout, no chasing payments.",
+    value: "₦2.14B",
+    label: "Released to hosts via escrow",
+    description: "Held from booking to checkout, released automatically, zero manual payout requests.",
+   
     bg: "#00a86b",
     color: "#ffffff",
   },
   {
     image: "https://2025.moniepoint.com/_next/static/media/Fruit.527795c5.svg",
     value: "3hr",
-    label: "Turnover buffer, automatic",
-    description:
-      "The calendar blocks cleaning time between guests, so you never double-book by accident.",
+    label: "Turnover buffer, enforced automatically",
+    description: "Blocked between every checkout and next check-in, no host has to remember to set it.",
     bg: "#1a56ff",
     color: "#ffffff",
   },
   {
     image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
-    value: "99.9%",
-    label: "Uptime, every night",
-    description: "Your booking calendar doesn't go down during a busy weekend.",
+    value: "99.99%",
+    label: "Platform uptime, trailing 90 days",
+    description: "Measured against the booking and payment paths specifically, not marketing-page uptime.",
     bg: "#17191c",
     color: "#ffffff",
   },
   {
     image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
-    value: "24/7",
-    label: "Guest support",
-    description: "Someone's awake when a 2am check-in question comes in.",
+    value: "< 4min",
+    label: "Median first response time",
+    description: "Guest and host support, including overnight, not just business hours.",
     bg: "#dc2626",
     color: "#ffffff",
   },
 ];
 
-// Finite arc carousel: cards sit at fixed points along a shallow arc
-// (center highest and upright, edges dip down and tilt outward), and
-// scroll position drives a continuous "virtual index" that shifts
-// every card's position along that same arc. Hard-clamped between the
-// first and last card, no wraparound.
-//
-// The header is NOT part of the pinned section anymore, it's a plain,
-// normal-flow block above it that scrolls away like any other content.
-// Only the cards stage gets pinned. That's what makes a fixed 580px
-// card height comfortable again: the pinned section no longer has to
-// share its height with a header block, the full viewport is
-// available to the cards once the header has already scrolled past.
 const ANGLE_STEP_DEG = 40;
 const ARC_RADIUS = 900;
-const TOP_Y = 80; // small top padding now, not "room for the header", the header isn't in this section anymore
+const TOP_Y = 80; 
 const CARD_HEIGHT = 680;
-const MAX_DIP = 90
 
 export default function About() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -141,15 +126,23 @@ export default function About() {
 
   return (
     <div style={{ backgroundColor: "var(--color-canvas)" }}>
-      <div className="mx-auto px-6 lg:px-8 pt-32 pb-10 flex items-center justify-center flex-col" style={{ maxWidth: "1280px" }}>
-        <span className="text-xs lg:text-xl uppercase" style={{ color: "var(--color-light-steel)" }}>
+      <div
+        className="mx-auto px-6 lg:px-8 pt-32 pb-10 flex items-center justify-center flex-col"
+        style={{ maxWidth: "1280px" }}
+      >
+        <span
+          className="text-xs lg:text-xl uppercase"
+          style={{ color: "var(--color-light-steel)" }}
+        >
           Everything you need
         </span>
-        <h3 className=" text-4xl lg:text-6xl lg:text-center mx-auto max-w-[800px] bold text-[var(--dark-1)]">
-          {/* <AnimateTextWord type={"bigtext"}>
+        <h3
+          className="text-5xl lg:text-6xl mt-2 max-w-2xl text-center mx-auto leading-[1.1]"
+          style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
+        >
+          <AnimateTextWord type="bigtext_Center">
             Built for hosts who don't have time to babysit a calendar.
-          </AnimateTextWord> */}
-          Built for hosts who don't have time to babysit a calendar.
+          </AnimateTextWord>
         </h3>
       </div>
       <section ref={sectionRef} className="relative h-screen overflow-hidden">

@@ -3,6 +3,7 @@ import type { RouteObject } from "react-router-dom";
 import PageLoader from "@/components/common/PageLoader";
 import { ProtectRoute } from "./guards/ProtectRoute";
 const GuestProfile = lazy(() => import("@/screens/guest/Profile"));
+const GuestFavorites = lazy(() => import("@/screens/guest/MyFavorites"));
 const Landing = lazy(() => import("@/screens/public/Landing"));
 const Properties = lazy(() => import("@/screens/public/Properties"));
 const SearchPage = lazy(() => import("@/screens/public/Search"));
@@ -17,6 +18,7 @@ const s = (el: React.ReactNode) => (
 export const guestRoutes: RouteObject[] = [
   { path: "/", element: s(<Landing />) },
   { path: "/properties", element: s(<Properties />) },
+  { path: "/favorites", element: s(<GuestFavorites />) },
   { path: "/properties/:id", element: s(<PropertyDetail />) },
   { path: "/search", element: s(<SearchPage />) },
   {

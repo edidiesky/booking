@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MapPin } from "lucide-react";
 import LazyImage from "@/components/common/LazyImage";
+import PropertyGalleryLightbox from "./PropertyGalleryLightbox";
 
 interface Props {
   images: string[];
@@ -11,6 +12,7 @@ const GALLERY_HEIGHT = 420;
 
 export default function PropertyGallery({ images, name }: Props) {
   const [active, setActive] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   if (!images.length) {
     return (
@@ -31,48 +33,53 @@ export default function PropertyGallery({ images, name }: Props) {
       {/* desktop */}
       <div className="w-full hidden lg:block">
         {count === 1 && (
-          <div
-            className={`w-full h-[${GALLERY_HEIGHT}px] overflow-hidden rounded-xl`}
+          <button
+            onClick={() => setLightboxIndex(0)}
+            className={`w-full h-[${GALLERY_HEIGHT}px] overflow-hidden rounded-xl block`}
           >
             <LazyImage src={images[0]} alt={name} />
-          </div>
+          </button>
         )}
 
         {count >= 2 && (
           <div className="w-full grid grid-cols-2 gap-2">
-            <div
-              className={`w-full h-[${GALLERY_HEIGHT}px] overflow-hidden rounded-xl`}
+            <button
+              onClick={() => setLightboxIndex(0)}
+              className={`w-full h-[${GALLERY_HEIGHT}px] overflow-hidden rounded-xl block`}
             >
               <LazyImage src={images[0]} alt={name} />
-            </div>
+            </button>
 
             <div
               className="grid gap-2 h-[210px]"
               style={{ gridTemplateRows: `repeat(${rightRowCount}, 1fr)` }}
             >
               {rightSideImages.map((src, i) => (
-                <div
+                <button
                   key={i}
-                  className={`w-full h-[${210}px] overflow-hidden rounded-xl`}
+                  onClick={() => setLightboxIndex(i + 1)}
+                  className={`relative w-full h-[${210}px] overflow-hidden rounded-xl block`}
                 >
                   <LazyImage src={src} alt={`${name} ${i + 2}`} />
-                  {i === 3 && count > 5 && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-xs ">
-                      +{count - 5} more
+                  {i === 1 && count > 3 && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-xs">
+                      +{count - 3} more
                     </div>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           </div>
         )}
       </div>
 
-      {/* mobile: active image + thumbnail strip, unchanged */}
       <div className="flex flex-col gap-2 lg:hidden">
-        <div className="w-full h-[300px] overflow-hidden rounded-xl">
+        <button
+          onClick={() => setLightboxIndex(active)}
+          className="w-full h-[300px] overflow-hidden rounded-xl block"
+        >
           <LazyImage src={images[active]} alt={name} />
-        </div>
+        </button>
         {images.length > 1 && (
           <div className="flex gap-2 overflow-x-auto pb-1">
             {images.map((src, i) => (
@@ -89,6 +96,15 @@ export default function PropertyGallery({ images, name }: Props) {
           </div>
         )}
       </div>
+
+      {lightboxIndex !== null && (
+        <PropertyGalleryLightbox
+          images={images}
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onIndexChange={setLightboxIndex}
+        />
+      )}
     </>
   );
 }
