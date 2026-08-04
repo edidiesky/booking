@@ -1,18 +1,27 @@
-import { apiSlice }     from "./apiSlice";
-import { BOOKING_URL, PROPERTY_URL }  from "@/constants/api";
+import { apiSlice } from "./apiSlice";
+import { BOOKING_URL, PROPERTY_URL } from "@/constants/api";
 import type {
-  Booking, InitiateBookingPayload, InitiateBookingResponse,
-  CancelBookingPayload, BookingListResponse,
-  TenantBookingQueryParams, ApiSuccessResponse,
+  Booking,
+  InitiateBookingPayload,
+  InitiateBookingResponse,
+  CancelBookingPayload,
+  BookingListResponse,
+  TenantBookingQueryParams,
+  ApiSuccessResponse,
   BookingStatsResponse,
 } from "@/types/api";
 
-
-interface BookingResponse { success: boolean; data: Booking; }
+interface BookingResponse {
+  success: boolean;
+  data: Booking;
+}
 
 export const bookingApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    initiateBooking: builder.mutation<InitiateBookingResponse, InitiateBookingPayload>({
+    initiateBooking: builder.mutation<
+      InitiateBookingResponse,
+      InitiateBookingPayload
+    >({
       query: (body) => ({ url: BOOKING_URL, method: "POST", body }),
       invalidatesTags: ["Booking", "Availability"],
     }),
@@ -22,14 +31,25 @@ export const bookingApi = apiSlice.injectEndpoints({
       providesTags: (_r, _e, id) => [{ type: "Booking", id }],
     }),
 
-    getMyBookings: builder.query<BookingListResponse, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 20 } = {}) => ({ url: `${BOOKING_URL}/mine?page=${page}&limit=${limit}` }),
+    getMyBookings: builder.query<
+      BookingListResponse,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 20 } = {}) => ({
+        url: `${BOOKING_URL}/mine?page=${page}&limit=${limit}`,
+      }),
       providesTags: ["Booking"],
     }),
 
-    getTenantBookings: builder.query<BookingListResponse, TenantBookingQueryParams>({
+    getTenantBookings: builder.query<
+      BookingListResponse,
+      TenantBookingQueryParams
+    >({
       query: ({ status, page = 1, limit = 20 }) => {
-        const qs = new URLSearchParams({ page: String(page), limit: String(limit) });
+        const qs = new URLSearchParams({
+          page: String(page),
+          limit: String(limit),
+        });
         if (status) qs.set("status", status);
         return { url: `${BOOKING_URL}/tenant?${qs.toString()}` };
       },
@@ -41,8 +61,15 @@ export const bookingApi = apiSlice.injectEndpoints({
       providesTags: ["Booking"],
     }),
 
-    cancelBooking: builder.mutation<ApiSuccessResponse, { id: string; body: CancelBookingPayload }>({
-      query: ({ id, body }) => ({ url: `${BOOKING_URL}/${id}/cancel`, method: "PATCH", body }),
+    cancelBooking: builder.mutation<
+      ApiSuccessResponse,
+      { id: string; body: CancelBookingPayload }
+    >({
+      query: ({ id, body }) => ({
+        url: `${BOOKING_URL}/${id}/cancel`,
+        method: "PATCH",
+        body,
+      }),
       invalidatesTags: (_r, _e, { id }) => [{ type: "Booking", id }, "Booking"],
     }),
 
@@ -52,12 +79,35 @@ export const bookingApi = apiSlice.injectEndpoints({
     }),
 
     checkOut: builder.mutation<BookingResponse, string>({
-      query: (id) => ({ url: `${BOOKING_URL}/${id}/checkout`, method: "PATCH" }),
-      invalidatesTags: (_r, _e, id) => [{ type: "Booking", id }, "Booking", "Escrow"],
+      query: (id) => ({
+        url: `${BOOKING_URL}/${id}/checkout`,
+        method: "PATCH",
+      }),
+      invalidatesTags: (_r, _e, id) => [
+        { type: "Booking", id },
+        "Booking",
+        "Escrow",
+      ],
     }),
 
-    getBookingsInRange: builder.query<{ success: boolean; data: import("@/types/api").Booking[] }, { from: string; to: string }>({
-      query: ({ from, to }) => ({ url: `${PROPERTY_URL}/gantt/bookings-in-range?from=${from}&to=${to}` }),
+    getBookingsInRange: builder.query<
+      { success: boolean; data: import("@/types/api").Booking[] },
+      { from: string; to: string }
+    >({
+      query: ({ from, to }) => ({
+        url: `${PROPERTY_URL}/gantt/bookings-in-range?from=${from}&to=${to}`,
+      }),
+    }),
+    transitionBookingStatus: builder.mutation<
+      BookingResponse,
+      { id: string; status: string }
+    >({
+      query: ({ id, status }) => ({
+        url: `${BOOKING_URL}/${id}/status`,
+        method: "PATCH",
+        body: { status },
+      }),
+      invalidatesTags: (_r, _e, { id }) => [{ type: "Booking", id }, "Booking"],
     }),
   }),
 });
@@ -72,4 +122,5 @@ export const {
   useCheckInMutation,
   useCheckOutMutation,
   useLazyGetBookingsInRangeQuery,
+  useTransitionBookingStatusMutation
 } = bookingApi;
