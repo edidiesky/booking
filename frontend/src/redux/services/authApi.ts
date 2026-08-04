@@ -12,6 +12,7 @@ import type {
   RefreshPayload,
   AuthTokens,
   ApiSuccessResponse,
+  LoginResponse,
 } from "@/types/api";
 
 export const authApi = apiSlice.injectEndpoints({
@@ -61,8 +62,50 @@ export const authApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Auth"],
     }),
 
-    login: builder.mutation<AuthTokens, LoginPayload>({
+    login: builder.mutation<LoginResponse, LoginPayload>({
       query: (body) => ({ url: `${AUTH_URL}/login`, method: "POST", body }),
+    }),
+
+    verifyTwoFactorLogin: builder.mutation<
+      AuthTokens,
+      { challengeToken: string; code: string }
+    >({
+      query: (body) => ({
+        url: `${AUTH_URL}/2fa/verify-login`,
+        method: "POST",
+        body,
+      }),
+    }),
+
+    setupTwoFactor: builder.mutation<
+      { success: boolean; data: { secret: string; qrCodeDataUrl: string } },
+      void
+    >({
+      query: () => ({ url: `${AUTH_URL}/2fa/setup`, method: "POST" }),
+    }),
+
+    verifyEnableTwoFactor: builder.mutation<
+      { success: boolean; message: string; data: { backupCodes: string[] } },
+      { token: string }
+    >({
+      query: (body) => ({
+        url: `${AUTH_URL}/2fa/verify-enable`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
+    disableTwoFactor: builder.mutation<
+      ApiSuccessResponse,
+      { password: string }
+    >({
+      query: (body) => ({
+        url: `${AUTH_URL}/2fa/disable`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Auth"],
     }),
 
     getMe: builder.query<
@@ -115,6 +158,16 @@ export const authApi = apiSlice.injectEndpoints({
         body,
       }),
     }),
+    googleOAuthLogin: builder.mutation<
+      AuthTokens,
+      { code: string; codeVerifier: string }
+    >({
+      query: (body) => ({
+        url: `${AUTH_URL}/oauth/google`,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -131,4 +184,7 @@ export const {
   useRequestPasswordResetMutation,
   useConfirmPasswordResetMutation,
   useChangePasswordMutation,
+  useVerifyTwoFactorLoginMutation,
+  useGoogleOAuthLoginMutation,
+  useDisableTwoFactorMutation
 } = authApi;
