@@ -3,9 +3,10 @@ import AnimateTextWord from "@/components/common/AnimateTextWord";
 import { useProperties } from "../Properties/hooks/useProperties";
 import CardLoader from "@/components/common/loader/CardLoader";
 import PropertyCard from "@/components/common/PropertyCard";
-import InfiniteDragRow from "@/components/common/InfiniteDragRow";
+// import InfiniteDragRow from "@/components/common/InfiniteDragRow";
 import { useListFavoritedIdsQuery } from "@/redux/services/favoriteApi";
 import { selectAccessToken } from "@/redux/slices/authSlice";
+import { PropertyWithRoomTypes } from "@/types/api";
 
 const Listing = () => {
   const {
@@ -40,19 +41,19 @@ const Listing = () => {
         </div>
         <div className="w-full max-w-custom_1">
           {isLoading ? (
-            <div className="flex gap-5">
-              {properties.map((_, index) => (
-                <div key={index} className="w-[280px] shrink-0"><CardLoader type="property_card" /></div>
+            <div className="columns-2 lg:columns-3 gap-4 space-y-4">
+              {Array.from({ length: 9 }).map((_, index) => (
+                <div key={index} className="break-inside-avoid"><CardLoader type="property_card" /></div>
               ))}
             </div>
           ) : (
-            <InfiniteDragRow gap={14}>
-              {(properties?.slice(0, 8) ?? []).map((p, index) => (
-                <div key={index} className="w-[280px] lg:w-[370px] space-x-8">
+            <div className="columns-2 lg:columns-3 gap-4 space-y-4">
+              {(properties?.slice(0, 9) ?? []).map((p: PropertyWithRoomTypes, index: number) => (
+                <div key={p.id} className="break-inside-avoid">
                   <PropertyCard index={index} property={p} isFavorited={favoritedSet.has(p.id)} />
                 </div>
               ))}
-            </InfiniteDragRow>
+            </div>
           )}
         </div>
       </div>
