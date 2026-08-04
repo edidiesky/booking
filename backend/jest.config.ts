@@ -4,11 +4,11 @@ const config: Config = {
   preset:             "ts-jest",
   testEnvironment:    "node",
   rootDir:            ".",
-  testMatch:          ["**/__tests__/**/*.test.ts"],
   moduleNameMapper:   { "^@/(.*)$": "<rootDir>/src/$1" },
   globalSetup:        "./src/__tests__/setup/globalSetup.ts",
   globalTeardown:     "./src/__tests__/setup/globalTeardown.ts",
   setupFilesAfterEnv: ["./src/__tests__/setup/jest.setup.ts"],
+  testMatch: ["**/__tests__/unit/**/*.test.ts"],
   collectCoverageFrom: [
     "src/domains/**/*.ts",
     "!src/domains/**/*.validator.ts",
