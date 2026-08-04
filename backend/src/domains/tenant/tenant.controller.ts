@@ -72,3 +72,9 @@ export const GetPublicTenantProfileHandler = asyncHandler(async (req: Request, r
   const profile = await tenantService.getPublicProfile(req.params["tenantId"] as string);
   res.status(200).json({ success: true, data: profile });
 });
+
+export const GetAdminTenantDetailHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const tenantId = req.params["tenantId"] as string;
+  const data = await tenantService.getAdminDetail(tenantId);
+  res.status(200).json({ success: true, data });
+});

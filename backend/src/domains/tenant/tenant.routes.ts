@@ -15,6 +15,7 @@ import {
   SuspendTenantHandler,
   ActivateTenantHandler,
   GetPublicTenantProfileHandler,
+  GetAdminTenantDetailHandler,
 } from "./tenant.controller";
 
 const updateSettingsSchema = Joi.object({
@@ -84,5 +85,8 @@ router.patch(
   authorize("platform:admin"),
   ActivateTenantHandler,
 );
+
+
+router.get("/:tenantId/admin-detail", authenticate, authorize("platform:admin"), GetAdminTenantDetailHandler);
 
 export default router;
