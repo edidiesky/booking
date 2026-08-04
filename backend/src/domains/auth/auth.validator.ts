@@ -40,3 +40,23 @@ export const refreshSchema = Joi.object({
 export const resendOtpSchema = Joi.object({
   email: Joi.string().email().required(),
 });
+
+
+export const verifyEnableTwoFactorSchema = Joi.object({
+  token: Joi.string().length(6).pattern(/^\d+$/).required(),
+});
+
+export const disableTwoFactorSchema = Joi.object({
+  password: Joi.string().required(),
+});
+
+export const verifyTwoFactorLoginSchema = Joi.object({
+  challengeToken: Joi.string().required(),
+  code: Joi.string().required(),
+});
+
+export const oauthGoogleSchema = Joi.object({
+  code:         Joi.string().required(),
+  codeVerifier: Joi.string().required(),
+});
+

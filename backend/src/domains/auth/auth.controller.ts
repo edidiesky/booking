@@ -69,3 +69,29 @@ export const ResendOtpHandler = asyncHandler(async (req: Request, res: Response)
   const result = await authService.resendOtp(email);
   res.status(200).json({ success: true, message: result.message, ...(result.debug ? { debug: result.debug } : {}) });
 });
+
+export const SetupTwoFactorHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) throw AppError.unauthorized();
+  const result = await authService.setupTwoFactor(req.user.userId);
+  res.status(200).json({ success: true, data: result });
+});
+
+export const VerifyEnableTwoFactorHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) throw AppError.unauthorized();
+  const { token } = req.body as { token: string };
+  const result = await authService.verifyAndEnableTwoFactor(req.user.userId, token);
+  res.status(200).json({ success: true, message: result.message, data: { backupCodes: result.backupCodes } });
+});
+
+export const DisableTwoFactorHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) throw AppError.unauthorized();
+  const { password } = req.body as { password: string };
+  const result = await authService.disableTwoFactor(req.user.userId, password);
+  res.status(200).json({ success: true, message: result.message });
+});
+
+export const VerifyTwoFactorLoginHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { challengeToken, code } = req.body as { challengeToken: string; code: string };
+  const result = await authService.verifyTwoFactorLogin(challengeToken, code);
+  res.status(200).json({ success: true, message: "Login successful.", data: result });
+});

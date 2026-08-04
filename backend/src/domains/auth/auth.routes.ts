@@ -14,6 +14,10 @@ import {
   RequestPasswordResetHandler,
   ConfirmPasswordResetHandler,
   ResendOtpHandler,
+  SetupTwoFactorHandler,
+  VerifyEnableTwoFactorHandler,
+  DisableTwoFactorHandler,
+  VerifyTwoFactorLoginHandler,
 } from "./auth.controller";
 import {
   initiateSchema,
@@ -23,6 +27,9 @@ import {
   loginSchema,
   refreshSchema,
   resendOtpSchema,
+  verifyEnableTwoFactorSchema,
+  disableTwoFactorSchema,
+  verifyTwoFactorLoginSchema,
 } from "./auth.validator";
 
 const router = Router();
@@ -39,5 +46,9 @@ router.get("/me",                    authenticate,                   MeHandler);
 router.patch("/password",            authenticate,                   ChangePasswordHandler);
 router.post("/password-reset/request", RequestPasswordResetHandler);
 router.post("/password-reset/confirm", ConfirmPasswordResetHandler);
+router.post("/2fa/setup",         authenticate, SetupTwoFactorHandler);
+router.post("/2fa/verify-enable", authenticate, validate(verifyEnableTwoFactorSchema), VerifyEnableTwoFactorHandler);
+router.post("/2fa/disable",       authenticate, validate(disableTwoFactorSchema), DisableTwoFactorHandler);
+router.post("/2fa/verify-login",  validate(verifyTwoFactorLoginSchema), VerifyTwoFactorLoginHandler);
 
 export default router;

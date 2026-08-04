@@ -23,6 +23,9 @@ export interface User {
   last_active_at?:   Date;
   created_at:        Date;
   updated_at:        Date;
+  google_id?: string;
+  two_factor_secret?: string | null;
+  two_factor_backup_codes?: string[] | null;
 }
 
 export type UserWithoutHash = Omit<User, "password_hash" | "pin_hash">;
@@ -93,6 +96,7 @@ export const userRepository = {
       | "phone" | "profile_image" | "last_active_at" | "tenant_id"
       | "is_phone_verified" | "two_factor_enabled" | "pin_hash"
       | "login_with_pin_enabled" | "country_code"
+      | "two_factor_secret" | "two_factor_backup_codes" | "google_id"
     >>,
     client?: PoolClient
   ): Promise<UserWithoutHash | null> {
@@ -132,5 +136,8 @@ export const userRepository = {
       `SELECT COUNT(*) AS count FROM users WHERE email = lower(trim($1))`, [email]
     );
     return parseInt(row?.count ?? "0", 10) > 0;
+  },
+  async findByGoogleId(googleId: string): Promise<User | null> {
+    return queryOne<User>(`SELECT * FROM users WHERE google_id = $1`, [googleId]);
   },
 };
