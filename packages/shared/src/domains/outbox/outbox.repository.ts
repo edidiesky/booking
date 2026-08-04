@@ -19,6 +19,7 @@ export type OutboxEventType =
   | "payment.failed"
   | "payment.initiated"
   | "escrow.released" 
+  | "booking.status_changed"
   | "renter.upsert.requested"
   | "escrow.refunded";
 

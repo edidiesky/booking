@@ -58,9 +58,9 @@ export default function AuthLayout({ children, leftContent, stepLabels, currentS
               <div className="flex flex-col gap-1">
                 {leftContent ?? (
                   <>
-                    <h2 className="text-[22px] bold" style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
+                    <h3 className="text-[22px] bold" style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>
                       Create Account
-                    </h2>
+                    </h3>
                     {remaining != null && remaining > 0 && (
                       <p className="text-xs" style={{ color: "#6b7280" }}>
                         {remaining} step{remaining > 1 ? "s" : ""} remaining
@@ -74,9 +74,9 @@ export default function AuthLayout({ children, leftContent, stepLabels, currentS
           ) : (
             leftContent ?? (
               <div className="flex flex-col gap-4">
-                <h2 className="text-[28px] bold leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}>
+                <h3 className="text-[28px] bold leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}>
                   Book your next stay.
-                </h2>
+                </h3>
                 <p className="text-[15px] leading-relaxed" style={{ color: "#6b7280" }}>
                   Discover properties, make reservations, and manage your trips all in one place.
                 </p>

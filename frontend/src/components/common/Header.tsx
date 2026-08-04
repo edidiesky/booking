@@ -1,26 +1,43 @@
-import { Link }        from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
-  Calendar, User, CreditCard, Building2, Users,
-  Palette, Settings, Shield, Bell, LayoutDashboard,
+  Calendar,
+  User,
+  CreditCard,
+  Building2,
+  Users,
+  Palette,
+  Settings,
+  Shield,
+  Bell,
+  LayoutDashboard,
   Heart,
 } from "lucide-react";
-import { selectCurrentUser, selectIsAuthenticated } from "@/redux/slices/authSlice";
+import {
+  selectCurrentUser,
+  selectIsAuthenticated,
+} from "@/redux/slices/authSlice";
 import AccountDropdown from "@/components/common/AccountDropdown";
 
 export default function Header() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const currentUser     = useSelector(selectCurrentUser);
-  const isHost          = currentUser?.userType.startsWith("host:") ?? false;
+  const currentUser = useSelector(selectCurrentUser);
+  const isHost = currentUser?.userType.startsWith("host:") ?? false;
 
-  
   return (
     <nav
       className="w-full top-0 z-50"
-      style={{ backgroundColor: "var(--color-canvas)", boxShadow: "rgba(0,0,0,0.04) 0px 0px 0px 1px" }}
+      style={{
+        backgroundColor: "var(--color-canvas)",
+        boxShadow: "rgba(0,0,0,0.04) 0px 0px 0px 1px",
+      }}
     >
       <div className="mx-auto px-6 lg:px-0 h-16 flex items-center justify-between max-w-screen-xl">
-        <Link to="/" className="text-lg tracking-tight bold" style={{ color: "var(--color-ink)" }}>
+        <Link
+          to="/"
+          className="text-lg tracking-tight bold"
+          style={{ color: "var(--color-ink)" }}
+        >
           Booking
         </Link>
 
@@ -44,13 +61,48 @@ export default function Header() {
                 triggerLabel="My Account"
                 profilePath="/dashboard/account"
                 items={[
-                  { label: "Dashboard",  to: "/dashboard",            icon: LayoutDashboard, group: 0 },
-                  { label: "Bookings",   to: "/dashboard/bookings",   icon: Calendar,         group: 0 },
-                  { label: "Payments",   to: "/dashboard/payments",   icon: CreditCard,       group: 0 },
-                  { label: "Properties", to: "/dashboard/properties", icon: Building2,        group: 0 },
-                  { label: "Tenants",    to: "/dashboard/renters",    icon: Users,            group: 0 },
-                  { label: "Appearance", to: "/dashboard/account",    icon: Palette,          group: 0 },
-                  { label: "Settings",   to: "/dashboard/account",    icon: Settings,         group: 0 },
+                  {
+                    label: "Dashboard",
+                    to: "/dashboard",
+                    icon: LayoutDashboard,
+                    group: 0,
+                  },
+                  {
+                    label: "Bookings",
+                    to: "/dashboard/bookings",
+                    icon: Calendar,
+                    group: 0,
+                  },
+                  {
+                    label: "Payments",
+                    to: "/dashboard/payments",
+                    icon: CreditCard,
+                    group: 0,
+                  },
+                  {
+                    label: "Properties",
+                    to: "/dashboard/properties",
+                    icon: Building2,
+                    group: 0,
+                  },
+                  {
+                    label: "Tenants",
+                    to: "/dashboard/renters",
+                    icon: Users,
+                    group: 0,
+                  },
+                  {
+                    label: "Appearance",
+                    to: "/dashboard/account",
+                    icon: Palette,
+                    group: 0,
+                  },
+                  {
+                    label: "Settings",
+                    to: "/dashboard/account",
+                    icon: Settings,
+                    group: 0,
+                  },
                   {
                     label: "Security",
                     to: "/dashboard/account",
@@ -70,11 +122,36 @@ export default function Header() {
                 triggerLabel="My Account"
                 profilePath="/profile"
                 items={[
-                  { label: "My Trips",   to: "/profile?tab=trips",        icon: Calendar, group: 0 },
-                  { label: "My Favorites", to: "/favorites",              icon: Heart,    group: 0 },
-                  { label: "Profile",    to: "/profile?tab=account",      icon: User,     group: 0 },
-                  { label: "Appearance", to: "/profile?tab=account",      icon: Palette,  group: 0 },
-                  { label: "Settings",   to: "/profile?tab=account",      icon: Settings, group: 0 },
+                  {
+                    label: "My Trips",
+                    to: "/profile?tab=trips",
+                    icon: Calendar,
+                    group: 0,
+                  },
+                  {
+                    label: "My Favorites",
+                    to: "/favorites",
+                    icon: Heart,
+                    group: 0,
+                  },
+                  {
+                    label: "Profile",
+                    to: "/profile?tab=account",
+                    icon: User,
+                    group: 0,
+                  },
+                  {
+                    label: "Appearance",
+                    to: "/profile?tab=account",
+                    icon: Palette,
+                    group: 0,
+                  },
+                  {
+                    label: "Settings",
+                    to: "/profile?tab=account",
+                    icon: Settings,
+                    group: 0,
+                  },
                   {
                     label: "Security",
                     to: "/profile?tab=security",
@@ -102,7 +179,10 @@ export default function Header() {
               <Link
                 to="/onboarding"
                 className="h-10 px-5 text-xs lg:text-sm transition-opacity hover:opacity-80 flex items-center rounded-full"
-                style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+                style={{
+                  backgroundColor: "var(--color-ink)",
+                  color: "var(--color-canvas)",
+                }}
               >
                 Get started
               </Link>

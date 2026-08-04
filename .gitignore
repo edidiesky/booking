@@ -15,16 +15,12 @@ yarn-error.log*
 temp_key
 temp_key.pub
 docker-compose.prod.yml
-udemy-video.pem
 run_production.sh
 k8s
 vault.sh
-
+ssh-rsafile
 dist/
 node_modules/
 *.tsbuildinfo
-
-
-
-git add frontend/src/screens/guest/Profile/tabs/TripsTab.tsx
-git commit -m "fix(profile): read active tab from URL search param for deep-linkable tabs"
+eddykey.pem
+eddykey.pem.*

@@ -78,7 +78,7 @@ COPY backend/tsconfig.json ./
 
 RUN npx tsc
 RUN cp -r src/domains/notification/templates dist/domains/notification/templates
-
+RUN cp -r src/migrations/sql dist/migrations/sql
 
 # Production stage
 FROM node:20-alpine

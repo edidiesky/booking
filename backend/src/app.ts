@@ -61,7 +61,6 @@ app.use("/api/v1/auth",     authRoutes);
 app.use("/api/v1/webhooks", webhookRoutes);
 
 // Tenant-scoped routes
-
 app.use("/api/v1/renters", tenantMiddleware, rlsMiddleware, renterRoutes);
 app.use("/api/v1/sse",        tenantMiddleware, rlsMiddleware, sseRouter);
 app.use("/api/v1/tenants",    tenantMiddleware, rlsMiddleware, tenantRoutes);

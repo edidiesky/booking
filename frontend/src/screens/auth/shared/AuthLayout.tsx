@@ -18,12 +18,12 @@ interface Props {
 function DefaultLeftPanel() {
   return (
     <div className="flex flex-col gap-4">
-      <h2
+      <h3
         className="text-[28px] bold leading-[1.1] text-[#17191c]"
         style={{ letterSpacing: "-0.5px" }}
       >
         Start selling in minutes.
-      </h2>
+      </h3>
       <p className="text-[15px] leading-relaxed text-[#6b7280]">
         No code. No complexity. Just your store, live and accepting orders today.
       </p>
@@ -102,12 +102,12 @@ export default function AuthLayout({
               <div className="flex flex-col gap-1">
                 {leftContent ?? (
                   <>
-                    <h2
+                    <h3
                       className="text-[22px] bold"
                       style={{ color: "#17191c", letterSpacing: "-0.3px" }}
                     >
                       Create Account
-                    </h2>
+                    </h3>
                     {remainingCount != null && remainingCount > 0 && (
                       <p className="text-xs" style={{ color: "#6b7280" }}>
                         {remainingCount} step{remainingCount > 1 ? "s" : ""} remaining
