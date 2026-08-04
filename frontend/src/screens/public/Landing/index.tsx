@@ -7,6 +7,7 @@ import Expert from "./Expert";
 import FAQ from "./FAQ";
 import SmoothScroll from "@/constants/SmoothScroll";
 import Testimonials from "./Testimonials";
+// import PopularAndNewSections from "./PopularAndNewSections";
 
 export default function Landing() {
   return (
@@ -16,7 +17,7 @@ export default function Landing() {
         <Hero />
         <About />
         <Listing />
-
+{/* <PopularAndNewSections /> */}
         <Expert />
         <Testimonials/>
         <FAQ />
