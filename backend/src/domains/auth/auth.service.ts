@@ -434,30 +434,27 @@ export const authService = {
     return { accessToken, refreshToken: newRefreshToken };
   },
 
-  async logout(userId: string, accessToken: string): Promise<void> {
-    let ttl = JWT_EXPIRY_SEC;
-    try {
-      const decoded = jwt.decode(accessToken) as { exp?: number } | null;
-      if (decoded?.exp)
-        ttl = Math.max(0, decoded.exp - Math.floor(Date.now() / 1000));
-    } catch {
-      /**/
-    }
+async logout(userId: string, accessToken: string, refreshToken?: string): Promise<void> {
+  let ttl = JWT_EXPIRY_SEC;
+  try {
+    const decoded = jwt.decode(accessToken) as { exp?: number } | null;
+    if (decoded?.exp) ttl = Math.max(0, decoded.exp - Math.floor(Date.now() / 1000));
+  } catch { /**/ }
 
-    await redisClient.set(blocklistKey(userId), "1", "EX", ttl);
-    await auditRepository.log({
-      action: "logout",
-      resource: "user",
-      resourceId: userId,
-      userId,
-    });
+  await redisClient.set(blocklistKey(userId), "1", "EX", ttl);
 
-    logger.info("user_logged_out", {
-      event: "user_logged_out",
-      userId,
-      requestId: requestContext.get()?.requestId,
-    });
-  },
+  if (refreshToken) {
+    await redisClient.del(refreshKey(refreshToken));
+  }
+
+  await auditRepository.log({ action: "logout", resource: "user", resourceId: userId, userId });
+
+  logger.info("user_logged_out", {
+    event:     "user_logged_out",
+    userId,
+    requestId: requestContext.get()?.requestId,
+  });
+},
 
   async resendOtp(email: string): Promise<{ message: string; debug?: string }> {
     const normalised = email.toLowerCase().trim();
