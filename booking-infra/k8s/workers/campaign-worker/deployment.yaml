@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: campaign-worker
+  namespace: booking-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: campaign-worker
+  template:
+    metadata:
+      labels:
+        app: campaign-worker
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+      containers:
+        - name: campaign-worker
+          image: ghcr.io/sde-w/itachi-campaign-worker:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: shared-config
+            - secretRef:
+                name: shared-secret
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pgrep -af node >/dev/null 2>&1 || exit 1
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 100m
+              memory: 512Mi

@@ -17,7 +17,7 @@ temp_key.pub
 docker-compose.prod.yml
 udemy-video.pem
 run_production.sh
-k8s
+#k8s
 vault.sh
 
 dist/
@@ -27,4 +27,4 @@ node_modules/
 
 
 git add frontend/src/screens/guest/Profile/tabs/TripsTab.tsx
-git commit -m "fix(profile): read active tab from URL search param for deep-linkable tabs"
+git commit -m "fix(profile): read active tab from URL search param for deep-linkable tabs"booking-infra/k8s/secret-shared.yaml

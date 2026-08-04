@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shared-config
+  namespace: booking-platform
+data:
+  NODE_ENV: production
+  LOG_LEVEL: info
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: booking
+  POSTGRES_SSLMODE: disable
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  RABBITMQ_HOST: rabbitmq
+  RABBITMQ_PORT: "5672"
+  ELASTICSEARCH_HOST: elasticsearch
+  ELASTICSEARCH_PORT: "9200"
+  PGBOUNCER_HOST: pgbouncer
+  PGBOUNCER_PORT: "6432"
+  PROMETHEUS_URL: http://prometheus:9090
+  LOKI_URL: http://loki:3100

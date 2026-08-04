@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgbouncer-config
+  namespace: booking-platform
+data:
+  pgbouncer.ini: |
+    [databases]
+    booking_platform = host=postgres port=5432 dbname=booking_platform
+
+    [pgbouncer]
+    listen_addr = 0.0.0.0
+    listen_port = 6432
+    auth_type = scram-sha-256
+    auth_file = /etc/pgbouncer/userlist.txt
+
+    pool_mode = transaction
+    max_client_conn = 500
+    default_pool_size = 25
+    min_pool_size = 5
+    reserve_pool_size = 5
+    reserve_pool_timeout = 3
+
+    server_idle_timeout = 60
+    server_lifetime = 3600
+    query_wait_timeout = 20
+
+    log_connections = 1
+    log_disconnections = 1
+
+  userlist.txt: |
+    "postgres" "SCRAM-SHA-256$4096:Blcgssg3xcob7xfOa17+TQ==$ZyCf/tUkZoBaZH6Y54WKl1+wo4pmmpmrtC6Zowvn/hY=:aoh9pcPlZ8ZNylY0IxjgPZv4ZyuZM8pyyMtPJwb1Tzc="
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgbouncer
+  namespace: booking-platform
+spec:
+  selector:
+    app: pgbouncer
+  ports:
+    - port: 6432
+      targetPort: 6432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgbouncer
+  namespace: booking-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgbouncer
+  template:
+    metadata:
+      labels:
+        app: pgbouncer
+    spec:
+      containers:
+        - name: pgbouncer
+          image: edoburu/pgbouncer:latest
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 6432
+
+          readinessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          livenessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 20
+            periodSeconds: 20
+
+          volumeMounts:
+            - name: pgbouncer-config
+              mountPath: /etc/pgbouncer/pgbouncer.ini
+              subPath: pgbouncer.ini
+              readOnly: true
+
+            - name: pgbouncer-config
+              mountPath: /etc/pgbouncer/userlist.txt
+              subPath: userlist.txt
+              readOnly: true
+
+          resources:
+            requests:
+              cpu: 80m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
+
+      volumes:
+        - name: pgbouncer-config
+          configMap:
+            name: pgbouncer-config

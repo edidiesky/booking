@@ -17,5 +17,5 @@ temp_key.pub
 docker-compose.prod.yml
 udemy-video.pem
 run_production.sh
-k8s
+#k8s
 vault.sh
