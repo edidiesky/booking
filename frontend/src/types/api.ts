@@ -860,3 +860,39 @@ export interface FavoriteProperty {
   from_price:    number | null;
   favorited_at:  string;
 }
+
+
+export interface UpdateRoomTypePayload {
+  name?:         string;
+  description?:  string;
+  maxOccupancy?: number;
+  basePriceNgn?: number;
+  images?:       string[];
+  amenities?:    string[];
+  quantity?:     number;
+  status?:       RoomStatus;
+}
+
+export interface TwoFactorChallengeResponse {
+  success: boolean;
+  message: string;
+  data: {
+    twoFactorRequired: true;
+    challengeToken: string;
+  };
+}
+
+export type LoginResponse = AuthTokens | TwoFactorChallengeResponse;
+export interface AdminTenantDetailResponse {
+  success: boolean;
+  data: {
+    tenant: Tenant;
+    stats: {
+      escrow: { held: { count: number; amountNgn: number }; released: { count: number; amountNgn: number }; refunded: { count: number; amountNgn: number }; currentMonthVolumeNgn: number; previousMonthVolumeNgn: number; volumeGrowthPct: number };
+      properties: { count: number; [key: string]: unknown };
+      bookings: { count: number; [key: string]: unknown };
+    };
+    recentPurchases: Array<{ id: string; amount_ngn: number; host_payout_ngn: number; status: string; held_at: string; booking_ref: string }>;
+    recentActivity: Array<{ id: string; action: string; resource: string; created_at: string; actor_first_name: string | null; actor_last_name: string | null }>;
+  };
+}

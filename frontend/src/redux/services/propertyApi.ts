@@ -13,6 +13,7 @@ import type {
   PropertyWithRoomTypes,
   RoomTypeWithOccupancy,
   PropertyStatsResponse,
+  UpdateRoomTypePayload,
 } from "@/types/api";
 
 interface PropertiesResponse {
@@ -184,31 +185,61 @@ export const propertyApi = apiSlice.injectEndpoints({
       providesTags: (_result, _error, id) => [{ type: "Property", id }],
     }),
 
-    setRoomSortMode: builder.mutation<{ success: boolean }, { propertyId: string; mode: string }>({
+    setRoomSortMode: builder.mutation<
+      { success: boolean },
+      { propertyId: string; mode: string }
+    >({
       query: ({ propertyId, mode }) => ({
         url: `${PROPERTY_URL}/${propertyId}/room-sort-mode`,
         method: "PATCH",
         body: { mode },
       }),
-      invalidatesTags: (_r, _e, { propertyId }) => [{ type: "Property", id: propertyId }],
+      invalidatesTags: (_r, _e, { propertyId }) => [
+        { type: "Property", id: propertyId },
+      ],
     }),
 
-    reorderRoomTypes: builder.mutation<{ success: boolean }, { propertyId: string; roomTypeIds: string[] }>({
+    reorderRoomTypes: builder.mutation<
+      { success: boolean },
+      { propertyId: string; roomTypeIds: string[] }
+    >({
       query: ({ propertyId, roomTypeIds }) => ({
         url: `${PROPERTY_URL}/${propertyId}/room-types/reorder`,
         method: "PATCH",
         body: { roomTypeIds },
       }),
-      invalidatesTags: (_r, _e, { propertyId }) => [{ type: "Property", id: propertyId }],
+      invalidatesTags: (_r, _e, { propertyId }) => [
+        { type: "Property", id: propertyId },
+      ],
     }),
 
-    setGanttMaxVisibleRooms: builder.mutation<{ success: boolean }, { propertyId: string; max: number }>({
+    setGanttMaxVisibleRooms: builder.mutation<
+      { success: boolean },
+      { propertyId: string; max: number }
+    >({
       query: ({ propertyId, max }) => ({
         url: `${PROPERTY_URL}/${propertyId}/gantt-max-visible-rooms`,
         method: "PATCH",
         body: { max },
       }),
-      invalidatesTags: (_r, _e, { propertyId }) => [{ type: "Property", id: propertyId }],
+      invalidatesTags: (_r, _e, { propertyId }) => [
+        { type: "Property", id: propertyId },
+      ],
+    }),
+
+    updateRoomType: builder.mutation<
+      RoomTypeResponse,
+      { id: string; body: UpdateRoomTypePayload }
+    >({
+      query: ({ id, body }) => ({
+        url: `${PROPERTY_URL}/room-types/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (_r, _e, { id }) => [
+        { type: "RoomType", id },
+        "Property",
+      ],
     }),
   }),
 });
@@ -230,4 +261,5 @@ export const {
   useSetRoomSortModeMutation,
   useReorderRoomTypesMutation,
   useSetGanttMaxVisibleRoomsMutation,
+  useUpdateRoomTypeMutation
 } = propertyApi;

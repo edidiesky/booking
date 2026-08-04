@@ -3,7 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Upload, Trash2, ImagePlus, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { showToast } from "@/components/common/Toast";
-import { useCreateRoomTypeMutation } from "@/redux/services/propertyApi";
+import {
+  useCreateRoomTypeMutation,
+  useGetRoomTypeDetailQuery,
+  useUpdateRoomTypeMutation,
+} from "@/redux/services/propertyApi";
 import {
   Select,
   SelectContent,
@@ -261,17 +265,25 @@ interface Props {
   propertyId: string;
   isOpen: boolean;
   onClose: () => void;
+  roomTypeId?: string;
 }
 
 export default function CreateRoomTypeModal({
   propertyId,
+  roomTypeId,
   isOpen,
   onClose,
 }: Props) {
+  const isEdit = Boolean(roomTypeId);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [images, setImages] = useState<string[]>([]);
 
-  const [createRoomType, { isLoading }] = useCreateRoomTypeMutation();
+  const [createRoomType, { isLoading: isCreating }] =
+    useCreateRoomTypeMutation();
+  const [updateRoomType, { isLoading: isUpdating }] =
+    useUpdateRoomTypeMutation();
+  const { data: detailData, isLoading: loadingDetail } =
+    useGetRoomTypeDetailQuery(roomTypeId ?? "", { skip: !isEdit || !isOpen });
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -280,8 +292,22 @@ export default function CreateRoomTypeModal({
     if (!isOpen) {
       setForm(EMPTY);
       setImages([]);
+      return;
     }
-  }, [isOpen]);
+    if (isEdit && detailData?.data.roomType) {
+      const rt = detailData.data.roomType;
+      setForm({
+        name: rt.name,
+        description: rt.description,
+        maxOccupancy: rt.maxOccupancy,
+        basePriceNgn: rt.base_price_ngn,
+        quantity: rt.quantity,
+        amenities: rt.amenities,
+        status: rt.status,
+      });
+      setImages(rt.images ?? []);
+    }
+  }, [isOpen, isEdit, detailData]);
 
   const handleSave = async () => {
     if (!form.name || form.name.length < 2) {
@@ -302,27 +328,33 @@ export default function CreateRoomTypeModal({
     }
 
     try {
-      await createRoomType({
-        propertyId,
-        body: {
-          name: form.name,
-          description: form.description || undefined,
-          maxOccupancy: form.maxOccupancy,
-          basePriceNgn: form.basePriceNgn,
-          quantity: form.quantity,
-          amenities: form.amenities,
-          images,
-          status: form.status,
-        },
-      }).unwrap();
-      showToast("Room type added.", "success");
+      const body = {
+        name: form.name,
+        description: form.description || undefined,
+        maxOccupancy: form.maxOccupancy,
+        basePriceNgn: form.basePriceNgn,
+        quantity: form.quantity,
+        amenities: form.amenities,
+        images,
+        status: form.status,
+      };
+
+      if (isEdit && roomTypeId) {
+        await updateRoomType({ id: roomTypeId, body }).unwrap();
+        showToast("Room type updated.", "success");
+      } else {
+        await createRoomType({ propertyId, body }).unwrap();
+        showToast("Room type added.", "success");
+      }
       onClose();
     } catch {
       /* errorMiddleware */
     }
   };
 
-  const isBusy = isLoading;
+  const isBusy = isCreating || isUpdating;
+
+  console.log("loadingDetail:", loadingDetail)
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm p-4 flex items-center justify-end z-50">
@@ -336,10 +368,13 @@ export default function CreateRoomTypeModal({
         {/* header */}
         <div className="border-b border-[#e8e6e3] flex items-center justify-between px-8 h-[72px] shrink-0">
           <div>
-            <h4 className="text-xs bold text-[#17191c]">Add Room Type</h4>
+            <h4 className="text-xs bold text-[#17191c]">
+              {isEdit ? "Edit Room Type" : "Add Room Type"}
+            </h4>
             <p className="text-xs text-[#777b86] mt-0.5">
-              Define a room category, pricing, and availability for this
-              property.
+              {isEdit
+                ? "Update pricing, capacity, or availability for this room type."
+                : "Define a room category, pricing, and availability for this property."}
             </p>
           </div>
           <button
@@ -473,3 +508,4 @@ export default function CreateRoomTypeModal({
     </div>
   );
 }
+''
