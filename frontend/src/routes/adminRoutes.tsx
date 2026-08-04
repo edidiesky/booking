@@ -1,19 +1,25 @@
-import { lazy, Suspense }   from "react";
+import { lazy, Suspense } from "react";
 import type { RouteObject } from "react-router-dom";
-import { ProtectRoute }     from "./guards/ProtectRoute";
-import PageLoader           from "@/components/common/PageLoader";
+import { AdminOnlyRoute } from "./guards/AdminOnlyRoute";
+import PageLoader from "@/components/common/PageLoader";
 
-const AdminHome = lazy(() => import("@/screens/public/Landing"));
+const AdminLayout    = lazy(() => import("@/screens/admin/layout"));
+const AdminOverview  = lazy(() => import("@/screens/admin/Overview"));
+const AdminTenants   = lazy(() => import("@/screens/admin/Tenants"));
 
 export const adminRoutes: RouteObject[] = [
   {
-    path:    "/admin",
+    path: "/admin",
     element: (
-      <ProtectRoute>
+      <AdminOnlyRoute>
         <Suspense fallback={<PageLoader />}>
-          <AdminHome />
+          <AdminLayout />
         </Suspense>
-      </ProtectRoute>
+      </AdminOnlyRoute>
     ),
+    children: [
+      { index: true, element: <AdminOverview /> },
+      { path: "tenants", element: <AdminTenants /> },
+    ],
   },
 ];
