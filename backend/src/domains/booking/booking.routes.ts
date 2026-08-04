@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { authenticate, authorize, requireTenantMember } from "../../middleware/auth.middleware";
 import { validate }           from "../../middleware/validate.middleware";
-import { CancelBookingHandler, CheckInHandler, CheckOutHandler, GetBookingHandler, GetMyBookingsHandler, GetTenantBookingsHandler, GetTenantBookingStatsHandler, InitiateBookingHandler, InternalCancelBookingHandler, ExportTenantBookingsHandler } from "./booking.controller";
-import { cancelSchema, initiateSchema, listQuerySchema } from "./booking.validator";
+import { CancelBookingHandler, CheckInHandler, CheckOutHandler, GetBookingHandler, GetMyBookingsHandler, GetTenantBookingsHandler, GetTenantBookingStatsHandler, InitiateBookingHandler, InternalCancelBookingHandler, ExportTenantBookingsHandler, TransitionBookingStatusHandler } from "./booking.controller";
+import { cancelSchema, initiateSchema, listQuerySchema, transitionStatusSchema } from "./booking.validator";
 import { requireInternalSecret } from "../../middleware/internal.middleware";
 
 //  Router 
@@ -18,5 +18,5 @@ router.get("/:bookingId",            authenticate,                        GetBoo
 router.patch("/:bookingId/cancel",   authenticate, authorize("guest"),    validate(cancelSchema),      CancelBookingHandler);
 router.patch("/:bookingId/checkin",  authenticate, requireTenantMember,   CheckInHandler);
 router.patch("/:bookingId/checkout", authenticate, requireTenantMember,   CheckOutHandler);
-
+router.patch("/:bookingId/status", authenticate, requireTenantMember, validate(transitionStatusSchema), TransitionBookingStatusHandler);
 export default router;

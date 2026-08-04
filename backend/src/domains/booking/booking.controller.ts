@@ -130,3 +130,16 @@ export const ExportTenantBookingsHandler = asyncHandler(async (req: Request, res
     };
   }, `bookings_export_${tenantId}`);
 });
+
+export const TransitionBookingStatusHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) throw AppError.unauthorized();
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const { status } = req.body as { status: BookingStatus };
+  const result = await bookingService.transitionStatus(
+    req.tenantId,
+    req.params["bookingId"] as string,
+    status,
+    req.user.userId,
+  );
+  res.status(200).json({ success: true, message: "Booking status updated.", data: result });
+});

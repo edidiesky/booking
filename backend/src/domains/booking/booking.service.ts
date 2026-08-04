@@ -1,11 +1,10 @@
 import { v4 as uuid } from "uuid";
-import { availabilityBroadcaster, withTransaction } from "@booking/shared";
+import { availabilityBroadcaster, outboxRepository, withTransaction } from "@booking/shared";
 import { bookingRepository, Booking } from "./booking.repository";
 import { availabilityRepository } from "../availability/availability.repository";
 import { propertyRepository } from "../property/property.repository";
 import { tenantRepository } from "../tenant/tenant.repository";
 import { escrowRepository } from "../escrow/escrow.repository";
-import { outboxRepository } from "../outbox/outbox.repository";
 import { auditRepository } from "../audit/audit.repository";
 import { sseService } from "../sse/sse.service";
 import { redisClient } from "@booking/shared";
@@ -58,22 +57,24 @@ export interface BookingDto {
   createdAt: Date;
   receiptUrl?: string;
   room_type_images?: string[];
-  propertyName?:  string;
-  propertyCity?:  string;
-  roomTypeName?:  string;
+  propertyName?: string;
+  propertyCity?: string;
+  roomTypeName?: string;
   roomTypeQuantity?: number;
   roomTypeImage?: string;
   guestFirstName?: string;
-  guestLastName?:  string;
+  guestLastName?: string;
 }
 
 export function toDto(
   b: Booking,
   sessionId = "",
-  enrichment?: { propertyName?: string;
-  propertyCity?:  string;
-  roomTypeName?:  string;
-  roomTypeImage?: string; },
+  enrichment?: {
+    propertyName?: string;
+    propertyCity?: string;
+    roomTypeName?: string;
+    roomTypeImage?: string;
+  },
 ): BookingDto {
   return {
     bookingId: b.id,
@@ -108,7 +109,7 @@ export function toDto(
     roomTypeName: b.room_type_name ?? enrichment?.roomTypeName,
     roomTypeQuantity: b.room_type_quantity,
     guestFirstName: b.guest_first_name,
-    guestLastName:  b.guest_last_name,
+    guestLastName: b.guest_last_name,
   };
 }
 
@@ -154,6 +155,15 @@ async function resolveNotificationContext(booking: Booking): Promise<{
   };
 }
 
+// Single source of truth for legal booking status transitions.
+const BOOKING_STATUS_TRANSITIONS: Record<BookingStatus, BookingStatus[]> = {
+  pending_payment: ["confirmed", "cancelled"],
+  confirmed: ["checked_in", "cancelled"],
+  checked_in: ["checked_out"],
+  checked_out: [],
+  cancelled: [],
+  refunded: [],
+};
 
 export const bookingService = {
   async initiateBooking(input: InitiateBookingInput): Promise<BookingDto> {
@@ -270,7 +280,11 @@ export const bookingService = {
       );
     });
 
-    availabilityBroadcaster.publish(roomTypeId, { type: "locked", checkIn, checkOut });
+    availabilityBroadcaster.publish(roomTypeId, {
+      type: "locked",
+      checkIn,
+      checkOut,
+    });
 
     bookingCreatedCounter.inc({
       tenant_id: tenantId,
@@ -389,7 +403,11 @@ export const bookingService = {
       );
     });
 
-    availabilityBroadcaster.publish(booking.room_type_id, { type: "booked", checkIn: booking.check_in, checkOut: booking.check_out });
+    availabilityBroadcaster.publish(booking.room_type_id, {
+      type: "booked",
+      checkIn: booking.check_in,
+      checkOut: booking.check_out,
+    });
 
     const sessionId =
       (booking.metadata as Record<string, string>)["sessionId"] ?? "";
@@ -531,7 +549,11 @@ export const bookingService = {
       );
     });
     // broadcast cancel booking
-    availabilityBroadcaster.publish(booking.room_type_id, { type: "released", checkIn: booking.check_in, checkOut: booking.check_out });
+    availabilityBroadcaster.publish(booking.room_type_id, {
+      type: "released",
+      checkIn: booking.check_in,
+      checkOut: booking.check_out,
+    });
 
     if (booking.status === "pending_payment") {
       const sessionId =
@@ -781,8 +803,8 @@ export const bookingService = {
     return toDto(b, "", {
       propertyName: property?.name,
       roomTypeImage: roomType?.images?.[0],
-      propertyCity:  property?.address?.city,
-      roomTypeName:  roomType?.name,
+      propertyCity: property?.address?.city,
+      roomTypeName: roomType?.name,
     });
   },
 
@@ -807,5 +829,68 @@ export const bookingService = {
 
   async getTenantBookingStats(tenantId: string) {
     return bookingRepository.getStatsForTenant(tenantId);
+  },
+
+  async transitionStatus(
+    tenantId: string,
+    bookingId: string,
+    targetStatus: BookingStatus,
+    actorUserId: string,
+  ): Promise<BookingDto> {
+    const booking = await bookingRepository.findById(bookingId);
+    if (!booking) throw AppError.notFound("Booking not found.");
+    if (booking.tenant_id !== tenantId)
+      throw AppError.notFound("Booking not found.");
+
+    const allowed = BOOKING_STATUS_TRANSITIONS[booking.status] ?? [];
+    if (!allowed.includes(targetStatus)) {
+      throw AppError.conflict(
+        allowed.length
+          ? `Cannot move a booking from "${booking.status}" to "${targetStatus}". Valid next states: ${allowed.join(", ")}.`
+          : `"${booking.status}" is a terminal state, no further transitions are allowed.`,
+      );
+    }
+
+    const updated = await withTransaction(async (client) => {
+      const b = (await bookingRepository.updateStatus(
+        bookingId,
+        targetStatus,
+        undefined,
+        client,
+      ))!;
+
+      await auditRepository.log({
+        action: "status_changed",
+        resource: "booking",
+        resourceId: bookingId,
+        tenantId,
+        userId: actorUserId,
+        oldValue: { status: booking.status },
+        newValue: { status: targetStatus },
+      });
+
+      await outboxRepository.create(
+        "booking.status_changed",
+        {
+          bookingId,
+          bookingRef: booking.booking_ref,
+          tenantId,
+          fromStatus: booking.status,
+          toStatus: targetStatus,
+      },
+        client,
+      );
+
+      return b;
+    });
+
+    logger.info("booking_status_transitioned", {
+      event: "booking_status_transitioned",
+      bookingId,
+      from: booking.status,
+      to: targetStatus,
+    });
+
+    return toDto(updated);
   },
 };
