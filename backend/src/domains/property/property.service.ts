@@ -5,8 +5,14 @@ import {
 } from "./property.repository";
 import { availabilityRepository } from "../availability/availability.repository";
 import { AppError } from "../../utils/AppError";
-import { PropertyAddress, PropertyType } from "../../types";
+import {
+  PropertyAddress,
+  PropertyStatus,
+  PropertyType,
+  RoomStatus,
+} from "../../types";
 import { query, withTransaction } from "@booking/shared";
+import { auditRepository } from "../audit/audit.repository";
 const SEED_WINDOW_DAYS = 365;
 export const propertyService = {
   async listPublicProperties(page: number, limit: number) {
@@ -46,7 +52,8 @@ export const propertyService = {
       longitude?: number;
     },
   ) {
-    const { outboxRepository, requestContext } = await import("@booking/shared");
+    const { outboxRepository, requestContext } =
+      await import("@booking/shared");
 
     // Reuses the request's existing RLS-scoped transaction
     // (beginTenantScopedTransaction already opened one, for any
@@ -61,36 +68,57 @@ export const propertyService = {
     const existingClient = requestContext.get()?.dbClient;
 
     if (existingClient) {
-      const property = await propertyRepository.createProperty({ tenantId, ...body }, existingClient);
-      await outboxRepository.create("property.created", {
-        propertyId:   property.id,
-        tenantId,
-        name:         property.name,
-        description:  property.description,
-        city:         body.address?.city,
-        propertyType: property.property_type,
-        amenities:    property.amenities,
-        latitude:     property.latitude,
-        longitude:    property.longitude,
-        createdAt:    property.created_at,
-      }, existingClient);
+      const property = await propertyRepository.createProperty(
+        { tenantId, ...body },
+        existingClient,
+      );
+      await outboxRepository.create(
+        "property.created",
+        {
+          propertyId: property.id,
+          tenantId,
+          name: property.name,
+          description: property.description,
+          city: body.address?.city,
+          propertyType: property.property_type,
+          amenities: property.amenities,
+          latitude: property.latitude,
+          longitude: property.longitude,
+          createdAt: property.created_at,
+        },
+        existingClient,
+      );
       return property;
     }
 
     return withTransaction(async (client) => {
-      const property = await propertyRepository.createProperty({ tenantId, ...body }, client);
-      await outboxRepository.create("property.created", {
-        propertyId:   property.id,
+      const property = await propertyRepository.createProperty(
+        { tenantId, ...body },
+        client,
+      );
+      await outboxRepository.create(
+        "property.created",
+        {
+          propertyId: property.id,
+          tenantId,
+          name: property.name,
+          description: property.description,
+          city: body.address?.city,
+          propertyType: property.property_type,
+          amenities: property.amenities,
+          latitude: property.latitude,
+          longitude: property.longitude,
+          createdAt: property.created_at,
+        },
+        client,
+      );
+      await auditRepository.log({
+        action: "created",
+        resource: "property",
+        resourceId: property.id,
         tenantId,
-        name:         property.name,
-        description:  property.description,
-        city:         body.address?.city,
-        propertyType: property.property_type,
-        amenities:    property.amenities,
-        latitude:     property.latitude,
-        longitude:    property.longitude,
-        createdAt:    property.created_at,
-      }, client);
+        newValue: { name: property.name, status: property.status },
+      });
       return property;
     });
   },
@@ -226,21 +254,135 @@ export const propertyService = {
   },
   // property.service.ts, add this method to the exported object
 
-async getPropertyDetail(propertyId: string, tenantId: string) {
-  const property = await propertyRepository.findPropertyById(propertyId, tenantId);
-  if (!property) throw AppError.notFound("Property not found.");
+  async getPropertyDetail(propertyId: string, tenantId: string) {
+    const property = await propertyRepository.findPropertyById(
+      propertyId,
+      tenantId,
+    );
+    if (!property) throw AppError.notFound("Property not found.");
 
-  const roomTypes = await propertyRepository.listRoomTypesWithOccupancy(propertyId);
+    const roomTypes =
+      await propertyRepository.listRoomTypesWithOccupancy(propertyId);
 
-  const occupied    = roomTypes.filter((r) => r.occupancy_status === "occupied").length;
-  const vacant      = roomTypes.filter((r) => r.occupancy_status === "vacant").length;
-  const maintenance = roomTypes.filter((r) => r.occupancy_status === "maintenance").length;
-  const revenue     = roomTypes.reduce((sum, r) => sum + Number(r.base_price_ngn), 0);
+    const occupied = roomTypes.filter(
+      (r) => r.occupancy_status === "occupied",
+    ).length;
+    const vacant = roomTypes.filter(
+      (r) => r.occupancy_status === "vacant",
+    ).length;
+    const maintenance = roomTypes.filter(
+      (r) => r.occupancy_status === "maintenance",
+    ).length;
+    const revenue = roomTypes.reduce(
+      (sum, r) => sum + Number(r.base_price_ngn),
+      0,
+    );
 
-  return {
-    property,
-    roomTypes,
-    summary: { total: roomTypes.length, occupied, vacant, maintenance, revenue },
-  };
-},
+    return {
+      property,
+      roomTypes,
+      summary: {
+        total: roomTypes.length,
+        occupied,
+        vacant,
+        maintenance,
+        revenue,
+      },
+    };
+  },
+
+  async updateRoomType(
+    tenantId: string,
+    roomTypeId: string,
+    body: Partial<{
+      name: string;
+      description: string;
+      maxOccupancy: number;
+      basePriceNgn: number;
+      images: string[];
+      amenities: string[];
+      quantity: number;
+      status: RoomStatus;
+    }>,
+  ) {
+    const existing = await propertyRepository.findRoomTypeById(
+      roomTypeId,
+      tenantId,
+    );
+    if (!existing) throw AppError.notFound("Room type not found.");
+
+    const updated = await propertyRepository.updateRoomType(
+      roomTypeId,
+      tenantId,
+      body,
+    );
+    if (!updated) throw AppError.notFound("Room type not found.");
+
+    await auditRepository.log({
+      action: "updated",
+      resource: "room_type",
+      resourceId: roomTypeId,
+      tenantId,
+      oldValue: {
+        name: existing.name,
+        base_price_ngn: existing.base_price_ngn,
+        quantity: existing.quantity,
+        status: existing.status,
+      },
+      newValue: body,
+    });
+
+    return updated;
+  },
+  async updateProperty(
+    tenantId: string,
+    propertyId: string,
+    userId: string,
+    body: Partial<{
+      name: string;
+      description: string;
+      amenities: string[];
+      images: string[];
+      checkInTime: string;
+      checkOutTime: string;
+      status: PropertyStatus;
+    }>,
+  ) {
+    const existing = await propertyRepository.findPropertyById(
+      propertyId,
+      tenantId,
+    );
+    if (!existing) throw AppError.notFound("Property not found.");
+
+    const updated = await propertyRepository.updateProperty(
+      propertyId,
+      tenantId,
+      {
+        name: body.name,
+        description: body.description,
+        amenities: body.amenities,
+        images: body.images,
+        check_in_time: body.checkInTime,
+        check_out_time: body.checkOutTime,
+        status: body.status,
+      },
+    );
+    if (!updated) throw AppError.notFound("Property not found.");
+
+    await auditRepository.log({
+      action: "updated",
+      resource: "property",
+      resourceId: propertyId,
+      tenantId,
+      userId,
+      oldValue: {
+        name: existing.name,
+        status: existing.status,
+        amenities: existing.amenities,
+      },
+      newValue: body,
+    });
+
+    return updated;
+  },
 };

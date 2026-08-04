@@ -6,6 +6,7 @@ import { PropertyAddress, PropertyType } from "../../types";
 import { propertyRepository } from "./property.repository";
 import { availabilityBroadcaster, logger, jobRepository } from "@booking/shared";
 import { nanoid } from "nanoid";
+import { auditRepository } from "../audit/audit.repository";
 
 export const StreamRoomTypeAvailabilityHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const roomTypeId = req.params["roomTypeId"] as string;
@@ -106,19 +107,6 @@ export const GetAvailabilityHandler = asyncHandler(async (req: Request, res: Res
   res.status(200).json({ success: true, data });
 });
 
-export const DeletePropertyHandler = asyncHandler(async (req, res) => {
-  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
-  const propertyId = req.params["propertyId"] as string;
-  await propertyRepository.deleteProperty(propertyId, req.tenantId);
-
-  const { outboxRepository, requestContext } = await import("@booking/shared");
-  const client = requestContext.get()?.dbClient;
-  if (client) {
-    await outboxRepository.create("property.deleted", { propertyId }, client);
-  }
-
-  res.status(200).json({ success: true, message: "Property deleted." });
-});
 
 export const GetTenantPropertiesHandler = asyncHandler(async (req, res) => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
@@ -270,4 +258,41 @@ export const GetTenantBookingsInRangeHandler = asyncHandler(async (req: Request,
 
   const bookings = rows.map((r: any) => toDto(r));
   res.status(200).json({ success: true, data: bookings });
+});
+
+export const UpdateRoomTypeHandler = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const roomTypeId = req.params["roomTypeId"] as string;
+  const data = await propertyService.updateRoomType(req.tenantId, roomTypeId, req.body);
+  res.status(200).json({ success: true, message: "Room type updated.", data });
+});
+
+export const UpdatePropertyHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) throw AppError.unauthorized();
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const propertyId = req.params["propertyId"] as string;
+  const data = await propertyService.updateProperty(req.tenantId, propertyId, req.user.userId, req.body);
+  res.status(200).json({ success: true, message: "Property updated.", data });
+});
+
+export const DeletePropertyHandler = asyncHandler(async (req, res) => {
+  if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+  const propertyId = req.params["propertyId"] as string;
+  await propertyRepository.deleteProperty(propertyId, req.tenantId);
+
+  await auditRepository.log({
+    action: "deleted",
+    resource: "property",
+    resourceId: propertyId,
+    tenantId: req.tenantId,
+    userId: req.user?.userId,
+  });
+
+  const { outboxRepository, requestContext } = await import("@booking/shared");
+  const client = requestContext.get()?.dbClient;
+  if (client) {
+    await outboxRepository.create("property.deleted", { propertyId }, client);
+  }
+
+  res.status(200).json({ success: true, message: "Property deleted." });
 });

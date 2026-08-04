@@ -21,12 +21,16 @@ import {
   ExportTenantRoomsHandler,
   SetGanttMaxVisibleRoomsHandler,
   GetTenantBookingsInRangeHandler,
+  UpdateRoomTypeHandler,
+  UpdatePropertyHandler,
 } from "./property.controller";
 import {
   blockDatesSchema,
   createPropertySchema,
   createRoomTypeSchema,
   seedCalendarSchema,
+  updatePropertySchema,
+  updateRoomTypeSchema,
 } from "./property.validator";
 
 const propertyRouter = Router();
@@ -38,11 +42,12 @@ propertyRouter.get("/dashboard/:propertyId", authenticate, requireTenantMember, 
 
 propertyRouter.get("/", ListPublicPropertiesHandler);
 propertyRouter.get("/:propertyId", GetPropertyHandler);
-
+propertyRouter.patch("/:propertyId", authenticate, requireTenantMember, validate(updatePropertySchema), UpdatePropertyHandler);
 
 // Host mutations
 propertyRouter.post("/", authenticate, requireTenantMember, validate(createPropertySchema), CreatePropertyHandler);
 propertyRouter.delete("/:propertyId", authenticate, requireTenantMember, DeletePropertyHandler);
+propertyRouter.patch("/room-types/:roomTypeId", authenticate, requireTenantMember, validate(updateRoomTypeSchema), UpdateRoomTypeHandler);
 propertyRouter.get("/room-types/:roomTypeId", authenticate, requireTenantMember, GetRoomTypeDetailHandler);
 propertyRouter.post("/:propertyId/room-types", authenticate, requireTenantMember, validate(createRoomTypeSchema), CreateRoomTypeHandler);
 propertyRouter.post("/:propertyId/room-types/import", authenticate, requireTenantMember, ImportRoomTypesHandler);

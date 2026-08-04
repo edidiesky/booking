@@ -20,7 +20,13 @@ export interface Property {
   check_out_time: string;
   latitude?: number | null;
   longitude?: number | null;
-  room_sort_mode?: "alphabetical" | "price" | "rating" | "newest" | "oldest" | "custom";
+  room_sort_mode?:
+    | "alphabetical"
+    | "price"
+    | "rating"
+    | "newest"
+    | "oldest"
+    | "custom";
   gantt_max_visible_rooms?: number;
   status: PropertyStatus;
   created_at: Date;
@@ -40,11 +46,10 @@ export interface PropertySearchFilters {
   tenantId?: string; // set when the request came through a seller's subdomain
 }
 
-
 export interface RoomTypeWithOccupancy extends RoomType {
-  occupancy_status:         "occupied" | "vacant" | "maintenance";
+  occupancy_status: "occupied" | "vacant" | "maintenance";
   active_maintenance_count: number;
-  current_tenant_name:      string | null;
+  current_tenant_name: string | null;
 }
 
 export interface RoomType {
@@ -374,11 +379,11 @@ export const propertyRepository = {
 
     const ORDER_BY: Record<string, string> = {
       alphabetical: "rt.name ASC",
-      price:        "rt.base_price_ngn ASC",
-      newest:       "rt.created_at DESC",
-      oldest:       "rt.created_at ASC",
-      custom:       "rt.display_order ASC NULLS LAST, rt.base_price_ngn ASC",
-      rating:       "avg_rating DESC NULLS LAST, rt.base_price_ngn ASC",
+      price: "rt.base_price_ngn ASC",
+      newest: "rt.created_at DESC",
+      oldest: "rt.created_at ASC",
+      custom: "rt.display_order ASC NULLS LAST, rt.base_price_ngn ASC",
+      rating: "avg_rating DESC NULLS LAST, rt.base_price_ngn ASC",
     };
     const orderClause = ORDER_BY[sortMode] ?? ORDER_BY["price"];
 
@@ -392,14 +397,22 @@ export const propertyRepository = {
     );
   },
 
-  async setRoomSortMode(propertyId: string, tenantId: string, mode: string): Promise<void> {
+  async setRoomSortMode(
+    propertyId: string,
+    tenantId: string,
+    mode: string,
+  ): Promise<void> {
     await query(
       `UPDATE properties SET room_sort_mode = $1 WHERE id = $2 AND tenant_id = $3`,
       [mode, propertyId, tenantId],
     );
   },
 
-  async setGanttMaxVisibleRooms(propertyId: string, tenantId: string, max: number): Promise<void> {
+  async setGanttMaxVisibleRooms(
+    propertyId: string,
+    tenantId: string,
+    max: number,
+  ): Promise<void> {
     await query(
       `UPDATE properties SET gantt_max_visible_rooms = $1 WHERE id = $2 AND tenant_id = $3`,
       [max, propertyId, tenantId],
@@ -408,7 +421,11 @@ export const propertyRepository = {
 
   // Batched, not one UPDATE per room type: a host reordering 10 rooms via
   // drag-and-drop shouldn't fire 10 round trips.
-  async reorderRoomTypes(propertyId: string, tenantId: string, orderedIds: string[]): Promise<void> {
+  async reorderRoomTypes(
+    propertyId: string,
+    tenantId: string,
+    orderedIds: string[],
+  ): Promise<void> {
     await query(
       `UPDATE room_types rt SET display_order = data.ord
        FROM (SELECT * FROM UNNEST($1::uuid[], $2::int[]) AS t(id, ord)) data
@@ -417,9 +434,11 @@ export const propertyRepository = {
     );
   },
 
-  async listRoomTypesWithOccupancy(propertyId: string): Promise<RoomTypeWithOccupancy[]> {
-  return query<RoomTypeWithOccupancy>(
-    `SELECT
+  async listRoomTypesWithOccupancy(
+    propertyId: string,
+  ): Promise<RoomTypeWithOccupancy[]> {
+    return query<RoomTypeWithOccupancy>(
+      `SELECT
        rt.*,
        CASE
          WHEN m.open_count > 0 THEN 'maintenance'
@@ -440,21 +459,21 @@ export const propertyRepository = {
      ) m ON true
      WHERE rt.property_id = $1
      ORDER BY rt.name ASC`,
-    [propertyId],
-  );
-},
+      [propertyId],
+    );
+  },
 
-// Atomic: one query, all status counts + month-over-month new-listing growth.
-async getStatsForTenant(tenantId: string): Promise<PropertyStats> {
-  const row = await queryOne<{
-    active_count: string;
-    draft_count: string;
-    paused_count: string;
-    archived_count: string;
-    current_month_new: string;
-    previous_month_new: string;
-  }>(
-    `SELECT
+  // Atomic: one query, all status counts + month-over-month new-listing growth.
+  async getStatsForTenant(tenantId: string): Promise<PropertyStats> {
+    const row = await queryOne<{
+      active_count: string;
+      draft_count: string;
+      paused_count: string;
+      archived_count: string;
+      current_month_new: string;
+      previous_month_new: string;
+    }>(
+      `SELECT
        COUNT(*) FILTER (WHERE status = 'active')   AS active_count,
        COUNT(*) FILTER (WHERE status = 'draft')    AS draft_count,
        COUNT(*) FILTER (WHERE status = 'paused')   AS paused_count,
@@ -466,31 +485,93 @@ async getStatsForTenant(tenantId: string): Promise<PropertyStats> {
        ) AS previous_month_new
      FROM properties
      WHERE tenant_id = $1`,
-    [tenantId],
-  );
+      [tenantId],
+    );
 
-  const current  = Number(row?.current_month_new ?? 0);
-  const previous = Number(row?.previous_month_new ?? 0);
-  const growthPct = previous === 0 ? (current > 0 ? 100 : 0) : ((current - previous) / previous) * 100;
+    const current = Number(row?.current_month_new ?? 0);
+    const previous = Number(row?.previous_month_new ?? 0);
+    const growthPct =
+      previous === 0
+        ? current > 0
+          ? 100
+          : 0
+        : ((current - previous) / previous) * 100;
 
-  return {
-    activeCount:   Number(row?.active_count ?? 0),
-    draftCount:    Number(row?.draft_count ?? 0),
-    pausedCount:   Number(row?.paused_count ?? 0),
-    archivedCount: Number(row?.archived_count ?? 0),
-    currentMonthNewListings:  current,
-    previousMonthNewListings: previous,
-    newListingsGrowthPct: Math.round(growthPct * 10) / 10,
-  };
-},
+    return {
+      activeCount: Number(row?.active_count ?? 0),
+      draftCount: Number(row?.draft_count ?? 0),
+      pausedCount: Number(row?.paused_count ?? 0),
+      archivedCount: Number(row?.archived_count ?? 0),
+      currentMonthNewListings: current,
+      previousMonthNewListings: previous,
+      newListingsGrowthPct: Math.round(growthPct * 10) / 10,
+    };
+  },
+
+  async updateRoomType(
+    id: string,
+    tenantId: string,
+    data: Partial<{
+      name: string;
+      description: string;
+      maxOccupancy: number;
+      basePriceNgn: number;
+      images: string[];
+      amenities: string[];
+      quantity: number;
+      status: RoomStatus;
+    }>,
+    client?: PoolClient,
+  ): Promise<RoomType | null> {
+    const fields: string[] = [];
+    const params: unknown[] = [];
+    let i = 1;
+
+    const columnMap: Record<string, string> = {
+      name: "name",
+      description: "description",
+      maxOccupancy: "max_occupancy",
+      basePriceNgn: "base_price_ngn",
+      images: "images",
+      amenities: "amenities",
+      quantity: "quantity",
+      status: "status",
+    };
+
+    for (const [key, column] of Object.entries(columnMap)) {
+      const value = (data as Record<string, unknown>)[key];
+      if (value !== undefined) {
+        fields.push(`${column} = $${i}`);
+        params.push(value);
+        i++;
+      }
+    }
+
+    if (fields.length === 0) return this.findRoomTypeById(id, tenantId);
+
+    params.push(id, tenantId);
+    const sql = `
+    UPDATE room_types
+    SET ${fields.join(", ")}, updated_at = now()
+    WHERE id = $${i} AND tenant_id = $${i + 1}
+    RETURNING *`;
+
+    // const exec = client
+    //   ? client.query.bind(client)
+    //   : (query as unknown as typeof client extends undefined ? never : never);
+   const row = client
+     ? ((await client.query(sql, params)).rows[0] as RoomType | undefined)
+     : await queryOne<RoomType>(sql, params);
+   return row ?? null;
+  },
 };
 
 export interface PropertyStats {
-  activeCount:   number;
-  draftCount:    number;
-  pausedCount:   number;
+  activeCount: number;
+  draftCount: number;
+  pausedCount: number;
   archivedCount: number;
-  currentMonthNewListings:  number;
+  currentMonthNewListings: number;
   previousMonthNewListings: number;
   newListingsGrowthPct: number;
 }
