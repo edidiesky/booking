@@ -28,7 +28,7 @@ export default function PropertySearchBar({ initialValue, onSearch, className = 
 
   return (
     <div
-      className={`w-full bg-white z-10 p-4 rounded-full lg:rounded-full flex flex-col gap-2 lg:flex-row items-stretch lg:items-center border shadow-lg ${className}`}
+      className={`w-full bg-white z-10 p-4 rounded-lg lg:rounded-full flex flex-col gap-2 lg:flex-row items-stretch lg:items-center border shadow-lg ${className}`}
       style={{ borderColor: "#e8e6e3" }}
     >
       <div className="flex items-center gap-2 bg-[#f2f0edb7] px-4 py-3 min-w-20 rounded-full">

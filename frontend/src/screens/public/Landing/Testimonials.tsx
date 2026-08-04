@@ -77,7 +77,7 @@ export default function Testimonials() {
             What hosts say
           </p>
           <h2
-            className="text-3xl lg:text-5xl mx-auto leading-[1.1]"
+            className="text-3xl lg:text-5xl mx-auto "
             style={{
               color: "var(--color-ink)",
               letterSpacing: "-0.4px",

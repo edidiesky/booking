@@ -8,7 +8,7 @@ interface Props {
   name: string;
 }
 
-const GALLERY_HEIGHT = 420;
+const GALLERY_HEIGHT = 520;
 
 export default function PropertyGallery({ images, name }: Props) {
   const [active, setActive] = useState(0);
@@ -58,11 +58,11 @@ export default function PropertyGallery({ images, name }: Props) {
                 <button
                   key={i}
                   onClick={() => setLightboxIndex(i + 1)}
-                  className={`relative w-full h-[${210}px] overflow-hidden rounded-xl block`}
+                  className={`relative w-full h-[${260}px] overflow-hidden rounded-xl block`}
                 >
                   <LazyImage src={src} alt={`${name} ${i + 2}`} />
                   {i === 1 && count > 3 && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-xs">
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm lg:text-base">
                       +{count - 3} more
                     </div>
                   )}

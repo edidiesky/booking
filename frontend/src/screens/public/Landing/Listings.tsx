@@ -21,7 +21,7 @@ const Listing = () => {
   // console.log("room payload:", { isLoading, rooms });
   return (
     <div data-scroll-section className="w-full flex py-32 flex-col">
-      <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
+      <div className="max-w-screen-xl px-6 lg:px-4 mx-auto flex flex-col gap-20">
         <div className="grid lg:grid-cols-2 gap-4 items-start lg:items-center w-full">
           <div className="flex flex-col gap-4">
             <h4 className="text-xs md:text-lg text-[var(--primary)]">
@@ -47,8 +47,8 @@ const Listing = () => {
               ))}
             </div>
           ) : (
-            <div className="columns-2 lg:columns-3 gap-4 space-y-4">
-              {(properties?.slice(0, 9) ?? []).map((p: PropertyWithRoomTypes, index: number) => (
+            <div className="columns-1 lg:columns-3 gap-4 space-y-4">
+              {(properties?.slice(0, 6) ?? []).map((p: PropertyWithRoomTypes, index: number) => (
                 <div key={p.id} className="break-inside-avoid">
                   <PropertyCard index={index} property={p} isFavorited={favoritedSet.has(p.id)} />
                 </div>

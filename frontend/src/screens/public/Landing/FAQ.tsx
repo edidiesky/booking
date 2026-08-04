@@ -64,7 +64,7 @@ export default function FAQ() {
 
         <div className="flex flex-col gap-4 lg:gap-8">
           <h2
-            className="text-5xl lg:text-6xl mt-2 max-w-xl text-start leading-[1.1]"
+            className="text-4xl lg:text-6xl mt-2 max-w-xl text-start "
             style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
           >
             <AnimateTextWord type="bigtext_Center">

@@ -30,12 +30,12 @@ export default function StepSelectUserType({ onSelect }: Props) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-1">
-        <h1
-          className="text-[28px] leading-[1.1]"
+        <h3
+          className="text-[28px] "
           style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}
         >
           How will you use the platform?
-        </h1>
+        </h3>
         <p className="text-[15px]" style={{ color: "var(--color-muted-stone)" }}>
           Choose your account type to get started.
         </p>
@@ -57,7 +57,7 @@ export default function StepSelectUserType({ onSelect }: Props) {
               <Icon size={18} style={{ color: "var(--color-ink)" }} />
             </div>
             <div className="flex flex-col gap-0.5">
-              <p className="text-xs bold">
+              <p className="text-sm lg:text-base bold">
                 {label}
               </p>
               <h4 className="text-xs" style={{ color: "var(--color-muted-stone)" }}>

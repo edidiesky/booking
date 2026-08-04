@@ -27,7 +27,7 @@ export default function Hero() {
   };
 
   return (
-    <div className="w-full min-h-[720px] relative">
+    <div className="w-full min-h-screen flex items-center relative">
       <img
         src="/hero.jpg"
         alt=""
@@ -56,16 +56,16 @@ export default function Hero() {
             </span>
           </div>
 
-          <div className="flex flex-col gap-3 max-w-[820px] text-start">
+          <div className="flex flex-col gap-3 max-w-[520px] lg:max-w-[820px] text-start">
             <h1
-              className="text-white family1 leading-7 text-3xl md:text-5xl lg:text-7xl bold"
+              className="text-white family1 text-5xl lg:text-7xl bold"
             >
               Shortlets, hotels &amp; guesthouses, booked  <br /> in seconds.
             </h1>
             <MaskRevealText
               as="p"
               delay={0.3}
-              className="text-xs md:text-lg text-gray-300 max-w-[560px]"
+              className="text-base md:text-lg text-gray-300 max-w-[560px]"
             >
               Pay securely into escrow, check in smoothly, check out
               stress-free. Every booking on this platform is protected until

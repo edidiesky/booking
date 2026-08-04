@@ -40,10 +40,10 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
             </span>
           </h1>
           {lowestPrice !== null && (
-            <p className="text-xl lg:text-3xl bold text-[#17191c]">
+            <h1 className="text-xl lg:text-3xl bold text-[#17191c]">
               ₦{Number(lowestPrice).toLocaleString()}
               <span className="text-xs font-normal text-[#777b86]"> /night</span>
-            </p>
+            </h1>
           )}
         </div>
 

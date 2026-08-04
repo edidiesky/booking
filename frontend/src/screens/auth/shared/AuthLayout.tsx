@@ -19,7 +19,7 @@ function DefaultLeftPanel() {
   return (
     <div className="flex flex-col gap-4">
       <h3
-        className="text-[28px] bold leading-[1.1] text-[#17191c]"
+        className="text-[28px] bold  text-[#17191c]"
         style={{ letterSpacing: "-0.5px" }}
       >
         Start selling in minutes.

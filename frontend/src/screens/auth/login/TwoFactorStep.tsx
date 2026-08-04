@@ -28,7 +28,7 @@ export default function TwoFactorStep({ challengeToken, onVerified }: Props) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <h1 className="text-[32px] leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
+        <h1 className="text-[32px] " style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
           Enter your code
         </h1>
         <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>

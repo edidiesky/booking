@@ -16,12 +16,12 @@ export default function StepHostDetails({ onSubmit, isLoading }: Props) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1
-          className="text-[28px] leading-[1.1]"
+        <h3
+          className="text-[28px] "
           style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}
         >
           Your details
-        </h1>
+        </h3>
         <p className="text-[15px]" style={{ color: "var(--color-muted-stone)" }}>
           We'll use this for your host profile.
         </p>

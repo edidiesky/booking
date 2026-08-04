@@ -89,6 +89,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
         status: target,
       }).unwrap();
       showToast(`Booking moved to ${STATUS_CFG[target].label}.`, "success");
+    onClose();
     } catch {
       /* errorMiddleware surfaces the server's rejection message */
     }
@@ -124,13 +125,16 @@ export default function BookingDrawer({ booking, onClose }: Props) {
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#f2f0ed] shrink-0">
                 {(booking.roomTypeImage?.[0] ?? booking.roomTypeImage) ? (
                   <LazyImage
-                    src={booking.roomTypeImage[0] ?? booking.roomTypeImage}
+                    src={booking.roomTypeImage}
                     alt={booking.roomTypeName}
                   />
                 ) : null}
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs lg:text-xs bold text-[#17191c] truncate">
+              <div className="flex-1 min-w-0 flex-col flex gap-1">
+                <p className="text-sm lg:text-sm bold text-[#17191c] truncate">
+                  {booking.propertyName}
+                </p>
+                <p className="text-xs lg:text-xs text-[#777b86] truncate">
                   {booking.roomTypeName}
                 </p>
                 <p className="text-xs text-[#777b86]">
@@ -166,6 +170,25 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="w-full px-6 py-5 border-b flex flex-col gap-4">
+            <p className="w-full text-xs text-[#a3a6af] uppercase">
+              Customer breakdown
+            </p>
+            {[
+              ["Customer First Name", booking?.guestFirstName],
+              ["Customer Last Name", booking?.guestLastName],
+              ["Customer Id", booking?.guestUserId],
+            ].map(([label, value]) => (
+              <div
+                key={label}
+                className={`w-full flex items-center gap-8 lg:gap-10`}
+              >
+                <p className="text-xs medium text-[#777b86]">{label}</p>
+                <p className="text-xs text-[#17191c] bold">{value}</p>
+              </div>
+            ))}
           </div>
 
           <div className="px-6 py-5 border-b flex flex-col gap-4">
@@ -223,7 +246,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
           >
             Cancel
           </button>
-          <div className="flex items-center lg:justify-end">
+          <div className="flex items-center lg:justify-end gap-2">
             {booking.receiptUrl && (
               <button
                 onClick={() =>
@@ -245,7 +268,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                     key={target}
                     onClick={() => handleTransition(target)}
                     disabled={isTransitioning}
-                    className="text-xs bold text-white bg-[#17191c] rounded-full px-4 h-8 hover:opacity-90 disabled:opacity-50 transition-opacity"
+                    className="text-xs bold text-dark border-[#17191c] border rounded-full px-4 h-8 hover:opacity-90 disabled:opacity-50 transition-opacity"
                   >
                     {isTransitioning
                       ? "Moving..."

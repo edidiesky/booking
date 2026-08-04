@@ -74,7 +74,7 @@ export default function AuthLayout({ children, leftContent, stepLabels, currentS
           ) : (
             leftContent ?? (
               <div className="flex flex-col gap-4">
-                <h3 className="text-[28px] bold leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}>
+                <h3 className="text-[28px] bold " style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}>
                   Book your next stay.
                 </h3>
                 <p className="text-[15px] leading-relaxed" style={{ color: "#6b7280" }}>

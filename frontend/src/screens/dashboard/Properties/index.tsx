@@ -51,6 +51,11 @@ export default function DashboardProperties() {
     setEditPropertyId(null);
   };
 
+  const handleOpenEdit = (id: string) => {
+  setEditPropertyId(id);
+  setModalOpen(true);
+};
+
   return (
     <>
       <AnimatePresence>
@@ -217,9 +222,8 @@ export default function DashboardProperties() {
                     key={property.id}
                     property={property}
                     onAddRoomType={(id) => setRoomTypeId(id)}
-                    onOpenProperty={(id) =>
-                      navigate(`/dashboard/properties/${id}`)
-                    }
+                    onOpenProperty={(id) => navigate(`/dashboard/properties/${id}`)}
+                    onEditProperty={handleOpenEdit}
                     onDeleteProperty={(property) =>
                       setDeleteTarget({ id: property.id, name: property.name })
                     }

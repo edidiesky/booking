@@ -1,5 +1,5 @@
 import StatusBadge     from "@/components/common/StatusBadge";
-import { formatDate }  from "@/utils/formatDate";
+import { formatDateTime }  from "@/utils/formatDate";
 import { formatCurrency } from "@/utils/formatCurrency";
 import type { Booking } from "@/types/api";
 import RowActionsMenu  from "@/components/common/RowActionsMenu";
@@ -41,10 +41,10 @@ export default function BookingTableRow({
         {booking.bookingRef}
       </td>
       <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
-        {formatDate(booking.checkIn)}
+        {(booking.propertyName)}
       </td>
       <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
-        {formatDate(booking.checkOut)}
+        {formatDateTime(booking.checkOut)}
       </td>
       <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: "var(--color-ink)" }}>
         {formatCurrency(booking.totalAmountNgn)}

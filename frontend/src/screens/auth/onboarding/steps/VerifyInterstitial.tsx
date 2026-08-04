@@ -17,7 +17,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
 
         <div className="flex flex-col gap-2">
           <h1
-            className="text-[28px] leading-[1.1]"
+            className="text-[28px] "
             style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}
           >
             Check your email

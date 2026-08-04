@@ -848,6 +848,7 @@ export interface SellerNotificationListResponse {
   data: {
     notifications: SellerNotification[];
     unreadCount:   number;
+    totalPages:number
   };
 }
 

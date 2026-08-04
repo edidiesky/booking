@@ -58,7 +58,7 @@ export default function PropertyAmenities({ property }: Props) {
         {property.amenities.map((amenity, i) => (
           <div
             key={i}
-            className="flex items-center gap-3 text-xs bold text-[#4c4c4c]"
+            className="flex items-center gap-3 text-xs lg:text-sm bold text-[#4c4c4c]"
           >
             <span className="text-[#17191c]">{getIcon(amenity)}</span>
             <span>{amenity}</span>

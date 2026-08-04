@@ -70,12 +70,12 @@ export default function StepConfirmOtp({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1
-          className="text-[32px] leading-[1.1]"
+        <h3
+          className="text-[32px] "
           style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
         >
           Enter your code
-        </h1>
+        </h3>
         <p
           className="text-[15px]"
           style={{ color: "var(--color-muted-stone)" }}

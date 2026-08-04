@@ -1,7 +1,7 @@
-import moment           from "moment";
-import { Eye, Plus, Trash2 } from "lucide-react";
+import { Eye, Plus, Trash2, Pencil } from "lucide-react";
 import RowActionsMenu   from "@/components/common/RowActionsMenu";
 import type { Property } from "@/types/api";
+import { formatDateTime } from "@/utils/formatDate";
 
 const STATUS_CFG: Record<string, { label: string; className: string }> = {
   active:   { label: "Active",   className: "bg-green-50 text-green-700"   },
@@ -14,12 +14,14 @@ interface Props {
   property:         Property;
   onAddRoomType:    (id: string) => void;
   onOpenProperty:   (id: string) => void;
+  onEditProperty:   (id: string) => void;
   onDeleteProperty: (property: Property) => void;
 }
 export default function PropertyTableRow({
   property,
   onAddRoomType,
   onOpenProperty,
+  onEditProperty,
   onDeleteProperty,
 }: Props) {
   const cfg       = STATUS_CFG[property.status] ?? { label: property.status, className: "bg-[#f2f0ed] text-[#4c4c4c]" };
@@ -43,12 +45,13 @@ export default function PropertyTableRow({
       <td className="px-5 py-3">
         <span className={`text-xs medium px-3 py-1 rounded-full ${cfg.className}`}>{cfg.label}</span>
       </td>
-      <td className="px-5 py-3 text-xs text-[#777b86]">{moment(property.createdAt).format("DD MMM YYYY")}</td>
+      <td className="px-5 py-3 text-xs text-[#777b86]">{formatDateTime(property.createdAt)}</td>
       <td className="px-5 py-3 text-right">
         <RowActionsMenu
           actions={[
             { label: "Add room type", icon: Plus, onClick: () => onAddRoomType(property.id) },
             { label: "View details",  icon: Eye,  onClick: () => onOpenProperty(property.id) },
+            { label: "Edit property", icon: Pencil, onClick: () => onEditProperty(property.id) },
             { label: "Delete property", icon: Trash2, onClick: () => onDeleteProperty(property), variant: "danger", separator: true },
           ]}
         />

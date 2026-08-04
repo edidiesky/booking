@@ -143,7 +143,7 @@ export default function Expert() {
           Everything you need
         </span>
         <h2
-          className="text-5xl lg:text-6xl mt-2 max-w-2xl mx-auto text-center leading-[1.1]"
+          className="text-4xl lg:text-6xl mt-2 max-w-2xl mx-auto text-center "
           style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
         >
           <AnimateTextWord type="bigtext_Center">

@@ -47,7 +47,7 @@ export default function ResetPassword() {
               <Mail size={20} style={{ color: "var(--color-terracotta)" }} />
             </div>
             <h1
-              className="text-[32px]  leading-[1.1]"
+              className="text-[32px]  "
               style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
             >
               Check your inbox
@@ -98,7 +98,7 @@ export default function ResetPassword() {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 w-[80%]">
         <div className="flex flex-col gap-3">
           <h1
-            className="text-[32px]  leading-[1.1]"
+            className="text-[32px]  "
             style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
           >
             Reset your password

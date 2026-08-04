@@ -9,7 +9,7 @@ export default function NotFound() {
           <p className=" leading-none" style={{ fontSize: "64px", color: "var(--color-ink)", letterSpacing: "-2px" }}>404</p>
         </div>
         <div className="flex flex-col gap-2">
-          <h1 className="text-[28px]  leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}>
+          <h1 className="text-[28px]  " style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}>
             Page not found
           </h1>
           <p className="text-xs leading-relaxed" style={{ color: "var(--color-muted-stone)" }}>
