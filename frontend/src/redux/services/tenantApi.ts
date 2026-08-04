@@ -4,6 +4,7 @@ import type {
   Tenant,
   UpdateTenantSettingsPayload,
   UpdateCancellationPolicyPayload,
+  AdminTenantDetailResponse,
 } from "@/types/api";
 
 interface TenantResponse {
@@ -19,24 +20,45 @@ interface HostProfileResponse {
   success: boolean;
   data: {
     tenant: {
-      id: string; name: string; slug: string; createdAt: string;
+      id: string;
+      name: string;
+      slug: string;
+      createdAt: string;
       settings: { timezone: string; currency: string; locale: string };
-      bio: string | null; avatarUrl: string | null;
-      city: string | null; state: string | null; country: string | null;
+      bio: string | null;
+      avatarUrl: string | null;
+      city: string | null;
+      state: string | null;
+      country: string | null;
     };
     properties: {
-      id: string; name: string; images: string[]; city: string; property_type: string;
-      roomTypes: { id: string; property_id: string; name: string; base_price_ngn: number; max_occupancy: number; images: string[] }[];
+      id: string;
+      name: string;
+      images: string[];
+      city: string;
+      property_type: string;
+      roomTypes: {
+        id: string;
+        property_id: string;
+        name: string;
+        base_price_ngn: number;
+        max_occupancy: number;
+        images: string[];
+      }[];
     }[];
     recentReviews: {
-      id: string; rating: number; title: string; comment: string;
-      guest_first_name?: string; guest_last_name?: string; guest_profile_image?: string | null;
+      id: string;
+      rating: number;
+      title: string;
+      comment: string;
+      guest_first_name?: string;
+      guest_last_name?: string;
+      guest_profile_image?: string | null;
       created_at: string;
     }[];
     stats: { avgRating: number; totalReviews: number; totalBookings: number };
   };
 }
-
 
 export const tenantApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -68,7 +90,13 @@ export const tenantApi = apiSlice.injectEndpoints({
     // tenants, not part of the settings JSONB blob.
     updateProfile: builder.mutation<
       TenantResponse,
-      { bio?: string; avatarUrl?: string; city?: string; state?: string; country?: string }
+      {
+        bio?: string;
+        avatarUrl?: string;
+        city?: string;
+        state?: string;
+        country?: string;
+      }
     >({
       query: (body) => ({
         url: `${TENANT_URL}/me/profile`,
@@ -119,6 +147,10 @@ export const tenantApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Tenant"],
     }),
+    getAdminTenantDetail: builder.query<AdminTenantDetailResponse, string>({
+      query: (tenantId) => ({ url: `${TENANT_URL}/${tenantId}/admin-detail` }),
+      providesTags: (_r, _e, tenantId) => [{ type: "Tenant", id: tenantId }],
+    }),
   }),
 });
 
@@ -131,5 +163,5 @@ export const {
   useListTenantsQuery,
   useSuspendTenantMutation,
   useActivateTenantMutation,
-  
+  useGetAdminTenantDetailQuery
 } = tenantApi;
