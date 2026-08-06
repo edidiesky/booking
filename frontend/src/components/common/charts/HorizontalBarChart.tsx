@@ -45,7 +45,7 @@ function CustomTooltip({ active, payload, series, isCurrency }: TooltipProps) {
             <div key={entry.dataKey} className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 shrink-0" style={{ backgroundColor: s?.color }} />
-                <span className="text-xs lg:text-smtext-[#4c4c4c]">{s?.seriesLabel}</span>
+                <span className="text-xs lg:text-sm text-[#4c4c4c]">{s?.seriesLabel}</span>
               </div>
               <span className="text-xs lg:text-sm text-[#17191c]">{isCurrency ? `₦${entry.value.toLocaleString("en-NG")}` : entry.value.toLocaleString("en-NG")}</span>
             </div>
@@ -62,7 +62,7 @@ function ChartLegendRow({ series }: { series: HorizontalBarSeries[] }) {
       {series.map((s) => (
         <div key={s.datakey} className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
-          <span className="text-xs lg:text-smtext-[#4c4c4c]">{s.seriesLabel}</span>
+          <span className="text-xs lg:text-sm text-[#4c4c4c]">{s.seriesLabel}</span>
         </div>
       ))}
     </div>

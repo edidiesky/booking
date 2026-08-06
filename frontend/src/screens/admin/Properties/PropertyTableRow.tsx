@@ -40,7 +40,7 @@ export default function PropertyTableRow({
           )}
         </div>
       </td>
-      <td className="px-5 py-3 capitalize text-xs lg:text-smtext-[#4c4c4c]">{property.property_type}</td>
+      <td className="px-5 py-3 capitalize text-xs lg:text-sm text-[#4c4c4c]">{property.property_type}</td>
       <td className="px-5 py-3 text-xs lg:text-sm text-[#777b86] whitespace-nowrap">{property.address.city}, {property.address.state}</td>
       <td className="px-5 py-3">
         <span className={`text-xs lg:text-sm medium px-3 py-1 rounded-full ${cfg.className}`}>{cfg.label}</span>

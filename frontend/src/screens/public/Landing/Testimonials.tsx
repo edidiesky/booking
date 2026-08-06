@@ -170,22 +170,22 @@ function StandardCard({ t }: { t: Testimonial }) {
           src={t.avatar}
           email={"hello@gmail.com"}
           name={t.name[0]}
-          size={32}
+          size={42}
         />
         <div className="flex flex-col">
-          <span className="text-sm bold" style={{ color: "var(--color-ink)" }}>
+          <span className="text-base lg:text-lg bold" style={{ color: "var(--color-ink)" }}>
             {t.name}
           </span>
           {t.handle ? (
             <span
-              className="text-xs"
+              className="text-sm lg:text-sm bold"
               style={{ color: "var(--color-hint-of-grey)" }}
             >
               {t.handle}
             </span>
           ) : t.date ? (
             <span
-              className="text-xs"
+              className="text-sm lg:text-sm bold"
               style={{ color: "var(--color-hint-of-grey)" }}
             >
               {t.date}
@@ -195,7 +195,7 @@ function StandardCard({ t }: { t: Testimonial }) {
       </div>
 
       {t.title && (
-        <h3 className="text-base bold" style={{ color: "var(--color-ink)" }}>
+        <h3 className="text-base lg:text-lg  bold" style={{ color: "var(--color-ink)" }}>
           {t.title}
         </h3>
       )}
@@ -214,7 +214,7 @@ function StandardCard({ t }: { t: Testimonial }) {
       )}
 
       <p
-        className="text-sm leading-relaxed"
+        className="text-base lg:text-lg bold leading-relaxed"
         style={{ color: "var(--color-muted-stone)" }}
       >
         {t.body}

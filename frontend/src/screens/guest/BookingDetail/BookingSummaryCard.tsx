@@ -48,11 +48,11 @@ export default function BookingSummaryCard({ booking, isLoading }: Props) {
           <div className="py-3 flex items-center justify-between w-full">
             <div className="flex flex-col gap-2">
               <span className="text-xs lg:text-sm text-[#17191c]">Dates</span>
-              <span className="text-xs lg:text-smtext-[#4c4c4c]">{checkInLabel} - {checkOutLabel}</span>
+              <span className="text-xs lg:text-sm text-[#4c4c4c]">{checkInLabel} - {checkOutLabel}</span>
             </div>
             <div className="flex flex-col gap-2">
               <span className="text-xs lg:text-sm text-[#17191c]">Guests</span>
-              <span className="text-xs lg:text-smtext-[#4c4c4c]">{booking.guestCount} guest{booking.guestCount !== 1 ? "s" : ""}</span>
+              <span className="text-xs lg:text-sm text-[#4c4c4c]">{booking.guestCount} guest{booking.guestCount !== 1 ? "s" : ""}</span>
             </div>
           </div>
         </div>

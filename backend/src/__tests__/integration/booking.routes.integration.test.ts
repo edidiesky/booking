@@ -2,15 +2,19 @@ import { describe, it, expect, beforeEach } from "@jest/globals";
 import request from "supertest";
 import { seedTenant, seedProperty, seedRoomType } from "./helpers/seeders";
 import buildApp from "./helpers/buildApp";
+import { makeGuestToken } from "../setup/fixtures";
 
 const app = buildApp();
 
 describe("POST /api/v1/bookings", () => {
   it("creates a real row in the database and returns pending_payment", async () => {
-    const tenant   = await seedTenant();
+    const tenant = await seedTenant();
     const property = await seedProperty({ tenantId: tenant.id });
-    const roomType = await seedRoomType({ propertyId: property.id, tenantId: tenant.id });
-    const token    = makeGuestToken();
+    const roomType = await seedRoomType({
+      propertyId: property.id,
+      tenantId: tenant.id,
+    });
+    const token = makeGuestToken();
 
     const res = await request(app)
       .post("/api/v1/bookings")
@@ -18,8 +22,8 @@ describe("POST /api/v1/bookings", () => {
       .send({
         propertyId: property.id,
         roomTypeId: roomType.id,
-        checkIn:    "2099-01-15",
-        checkOut:   "2099-01-17",
+        checkIn: "2099-01-15",
+        checkOut: "2099-01-17",
         roomsCount: 1,
         guestCount: 2,
       });
@@ -34,7 +38,14 @@ describe("POST /api/v1/bookings", () => {
     const res = await request(app)
       .post("/api/v1/bookings")
       .set("Authorization", `Bearer ${token}`)
-      .send({ propertyId: "x", roomTypeId: "y", checkIn: "2099-01-17", checkOut: "2099-01-15", roomsCount: 1, guestCount: 1 });
+      .send({
+        propertyId: "x",
+        roomTypeId: "y",
+        checkIn: "2099-01-17",
+        checkOut: "2099-01-15",
+        roomsCount: 1,
+        guestCount: 1,
+      });
 
     expect(res.status).toBe(400);
   });

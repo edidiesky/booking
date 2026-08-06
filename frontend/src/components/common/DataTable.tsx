@@ -63,7 +63,7 @@ export function DataTable({
           <thead>
             <tr className="border-b" style={{ borderColor: "#e8e6e3" }}>
               {headers.map((h) => (
-                <th key={h} className="px-5 py-3 text-left text-xs lg:text-smuppercase whitespace-nowrap"
+                <th key={h} className="px-5 py-3 text-left text-xs lg:text-xsuppercase whitespace-nowrap"
                     style={{ color: "var(--color-hint-of-grey)" }}>
                   {h}
                 </th>

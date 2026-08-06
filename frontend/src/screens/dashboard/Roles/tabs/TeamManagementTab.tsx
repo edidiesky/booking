@@ -52,7 +52,7 @@ export default function TeamManagementTab() {
           <thead>
             <tr className="border-b" style={{ borderColor: "var(--color-fog)" }}>
               {HEADERS.map((h) => (
-                <th key={h} className="px-5 py-3 text-left text-xs lg:text-smuppercase whitespace-nowrap"
+                <th key={h} className="px-5 py-3 text-left text-xs lg:text-xsuppercase whitespace-nowrap"
                     style={{ color: "var(--color-muted-stone)" }}>
                   {h}
                 </th>

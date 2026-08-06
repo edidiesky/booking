@@ -93,7 +93,7 @@ export default function DashboardPayments() {
             <thead>
               <tr className="border-b border-[#e8e6e3]">
                 {["Payment ID", "Booking ID", "Amount", "Gateway", "Status", "Date"].map((h) => (
-                  <th key={h} className="px-5 py-3 text-left text-xs lg:text-sm text-[#a3a6af] uppercase whitespace-nowrap">
+                  <th key={h} className="px-5 py-3 text-left text-xs lg:text-xs text-[#a3a6af] uppercase whitespace-nowrap">
                     {h}
                   </th>
                 ))}

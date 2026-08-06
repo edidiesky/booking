@@ -73,7 +73,7 @@ export default function DashboardEscrow() {
               {HEADERS.map((h) => (
                 <th
                   key={h}
-                  className="px-5 py-3 text-left text-xs lg:text-smuppercase whitespace-nowrap"
+                  className="px-5 py-3 text-left text-xs lg:text-xsuppercase whitespace-nowrap"
                   style={{ color: "var(--color-hint-of-grey)" }}
                 >
                   {h}

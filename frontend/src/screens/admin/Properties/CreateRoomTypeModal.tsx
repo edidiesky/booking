@@ -492,7 +492,7 @@ export default function CreateRoomTypeModal({
         <div className="border-t border-[#e8e6e3] bg-white h-[68px] flex items-center justify-between px-8 shrink-0">
           <button
             onClick={onClose}
-            className="text-xs lg:text-smtext-[#4c4c4c] hover:text-[#17191c] transition-colors"
+            className="text-xs lg:text-sm text-[#4c4c4c] hover:text-[#17191c] transition-colors"
           >
             Cancel
           </button>

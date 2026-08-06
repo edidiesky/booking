@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticate, authorize, requireTenantMember } from "../../middleware/auth.middleware";
 import { validate }           from "../../middleware/validate.middleware";
-import { CancelBookingHandler, CheckInHandler, CheckOutHandler, GetBookingHandler, GetMyBookingsHandler, GetTenantBookingsHandler, GetTenantBookingStatsHandler, InitiateBookingHandler, InternalCancelBookingHandler, ExportTenantBookingsHandler, TransitionBookingStatusHandler } from "./booking.controller";
+import { CancelBookingHandler, CheckInHandler, CheckOutHandler, GetBookingHandler, GetMyBookingsHandler, GetTenantBookingsHandler, GetTenantBookingStatsHandler, InitiateBookingHandler, InternalCancelBookingHandler, ExportTenantBookingsHandler, TransitionBookingStatusHandler, GetRevenueTrendHandler } from "./booking.controller";
 import { cancelSchema, initiateSchema, listQuerySchema, transitionStatusSchema } from "./booking.validator";
 import { requireInternalSecret } from "../../middleware/internal.middleware";
 
@@ -15,6 +15,7 @@ router.post("/tenant/export",         authenticate, requireTenantMember,   Expor
 router.get("/tenant/stats",          authenticate, requireTenantMember,   GetTenantBookingStatsHandler);
 router.post("/internal/:bookingId/cancel", requireInternalSecret,         InternalCancelBookingHandler);
 router.get("/:bookingId",            authenticate,                        GetBookingHandler);
+router.get("/tenant/revenue-trend", authenticate, requireTenantMember, GetRevenueTrendHandler);
 router.patch("/:bookingId/cancel",   authenticate, authorize("guest"),    validate(cancelSchema),      CancelBookingHandler);
 router.patch("/:bookingId/checkin",  authenticate, requireTenantMember,   CheckInHandler);
 router.patch("/:bookingId/checkout", authenticate, requireTenantMember,   CheckOutHandler);

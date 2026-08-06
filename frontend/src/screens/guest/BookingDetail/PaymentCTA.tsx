@@ -25,7 +25,7 @@ export default function PaymentCTA({ onPay, isPaying, disabled }: Props) {
         ))}
       </div>
 
-      <span className="text-xs lg:text-smtext-[#4c4c4c]">
+      <span className="text-xs lg:text-sm text-[#4c4c4c]">
         All fees and charges are inclusive of taxes. Payment is processed securely by {gateway}.
       </span>
 

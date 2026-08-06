@@ -91,7 +91,7 @@ function ChartLegendRow({ dataKeys, chartConfig }: { dataKeys: DataKey[]; chartC
         return (
           <div key={key.datakey} className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: key.color }} />
-            <span className="text-xs lg:text-smtext-[#4c4c4c]">{label}</span>
+            <span className="text-xs lg:text-sm text-[#4c4c4c]">{label}</span>
           </div>
         );
       })}

@@ -71,7 +71,7 @@ export default function DashboardRenters() {
                 {["Tenant", "Contact", "Emergency", "Added", ""].map((h) => (
                   <th
                     key={h}
-                    className="px-5 py-3 text-left text-xs lg:text-sm text-[#a3a6af] uppercase"
+                    className="px-5 py-3 text-left text-xs lg:text-xs text-[#a3a6af] uppercase"
                   >
                     {h}
                   </th>

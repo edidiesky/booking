@@ -71,7 +71,7 @@ function ChartLegendRow({ series }: { series: LineSeries[] }) {
       {series.map((s) => (
         <div key={s.datakey} className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
-          <span className="text-xs lg:text-smtext-[#4c4c4c]">{s.label}</span>
+          <span className="text-xs lg:text-sm text-[#4c4c4c]">{s.label}</span>
         </div>
       ))}
     </div>

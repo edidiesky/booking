@@ -240,7 +240,7 @@ export default function DashboardBookings() {
                 {HEADERS.map((h) => (
                   <th
                     key={h}
-                    className="px-5 py-3 text-left text-xs lg:text-sm text-[#a3a6af] uppercase whitespace-nowrap"
+                    className="px-5 py-3 text-left text-xs lg:text-xs text-[#a3a6af] uppercase whitespace-nowrap"
                   >
                     {h}
                   </th>

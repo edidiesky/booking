@@ -11,7 +11,9 @@ describe("GET /api/v1/tenants (admin list)", () => {
     await seedTenant();
     const token = makePlatformAdminToken();
 
-    const res = await request(app).get("/api/v1/tenants").set("Authorization", `Bearer ${token}`);
+    const res = await request(app)
+      .get("/api/v1/tenants")
+      .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.data)).toBe(true);
@@ -20,7 +22,9 @@ describe("GET /api/v1/tenants (admin list)", () => {
   it("403s for a host, real authorize() middleware, not mocked", async () => {
     const token = makeHostToken();
 
-    const res = await request(app).get("/api/v1/tenants").set("Authorization", `Bearer ${token}`);
+    const res = await request(app)
+      .get("/api/v1/tenants")
+      .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(403);
   });
@@ -29,7 +33,7 @@ describe("GET /api/v1/tenants (admin list)", () => {
 describe("PATCH /api/v1/tenants/:id/suspend then /activate", () => {
   it("actually flips the row in the real database", async () => {
     const tenant = await seedTenant();
-    const token  = makePlatformAdminToken();
+    const token = makePlatformAdminToken();
 
     const suspendRes = await request(app)
       .patch(`/api/v1/tenants/${tenant.id}/suspend`)

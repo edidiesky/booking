@@ -90,6 +90,18 @@ export const bookingApi = apiSlice.injectEndpoints({
       ],
     }),
 
+    getRevenueTrend: builder.query<
+      {
+        success: boolean;
+        data: { day: string; hostPayout: number; platformFee: number }[];
+      },
+      { range: string }
+    >({
+      query: ({ range }) => ({
+        url: `${BOOKING_URL}/tenant/revenue-trend?range=${range}`,
+      }),
+    }),
+
     getBookingsInRange: builder.query<
       { success: boolean; data: import("@/types/api").Booking[] },
       { from: string; to: string }
@@ -122,5 +134,6 @@ export const {
   useCheckInMutation,
   useCheckOutMutation,
   useLazyGetBookingsInRangeQuery,
-  useTransitionBookingStatusMutation
+  useTransitionBookingStatusMutation,
+  useGetRevenueTrendQuery
 } = bookingApi;
