@@ -1,0 +1,106 @@
+import { formatDateTime } from "@/utils/formatDate";
+import { formatCurrency } from "@/utils/formatCurrency";
+import type { PaymentSummary, PaymentStatus } from "@/types/api";
+import Drawer from "@/components/common/Drawer";
+import DrawerField from "@/components/common/DrawerField";
+import DrawerSection from "@/components/common/DrawerSection";
+import LazyImage from "@/components/common/LazyImage";
+
+const STATUS_CFG: Record<PaymentStatus, { label: string; className: string }> = {
+  pending:  { label: "Pending",  className: "bg-yellow-50 text-yellow-800" },
+  success:  { label: "Success",  className: "bg-green-50 text-green-700" },
+  failed:   { label: "Failed",   className: "bg-red-50 text-red-700" },
+  refunded: { label: "Refunded", className: "bg-purple-50 text-purple-700" },
+};
+
+const TIMELINE_STEPS = [
+  { key: "placed",    label: "Order Placed",     description: "Booking was successfully placed by the guest" },
+  { key: "confirmed", label: "Payment Confirmed", description: "Payment has been successfully processed and verified" },
+];
+
+function stepIndex(status: PaymentStatus): number {
+  if (status === "success" || status === "refunded") return 1;
+  return 0;
+}
+
+interface Props {
+  payment: PaymentSummary & { tenant_name: string };
+  onClose: () => void;
+}
+
+export default function AdminPaymentDrawer({ payment, onClose }: Props) {
+  const cfg = STATUS_CFG[payment.status];
+  const idx = stepIndex(payment.status);
+  const nights = Math.round(
+    (new Date(payment.check_out).getTime() - new Date(payment.check_in).getTime()) / 86_400_000,
+  );
+
+  return (
+    <Drawer title="Payment details" subtitle={payment?.id} onClose={onClose}>
+      <DrawerSection label="Room">
+        <div className="flex items-center gap-3">
+          <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#f2f0ed] shrink-0">
+            {payment.room_type_images?.[0] ? (
+              <LazyImage src={payment.room_type_images[0]} alt={payment.room_type_name} />
+            ) : null}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs lg:text-xs bold text-[#17191c] truncate">{payment.room_type_name}</p>
+            <p className="text-xs text-[#777b86]">{nights} night{nights !== 1 ? "s" : ""}</p>
+          </div>
+          <p className="text-xs bold text-[#17191c] whitespace-nowrap">
+            {formatCurrency(Number(payment.amount_ngn))}
+          </p>
+        </div>
+      </DrawerSection>
+
+      <DrawerSection label="Payment breakdown">
+        <DrawerField label="Seller"         value={payment.tenant_name} />
+        <DrawerField label="Booking ID"     value={payment?.booking_id} />
+        <DrawerField label="Gateway"        value={payment?.gateway} />
+        <DrawerField label="Status"         value={cfg.label} />
+        <DrawerField label="Transaction ID" value={payment?.transaction_id ?? "—"} />
+        <DrawerField label="Channel"        value={payment?.gateway ?? "—"} />
+        <DrawerField label="Initiated"      value={formatDateTime(payment?.created_at)} />
+        <DrawerField label="Paid at"        value={payment?.paid_at ? formatDateTime(payment?.paid_at) : "—"} />
+      </DrawerSection>
+
+      <DrawerSection label="Customer breakdown">
+        <DrawerField label="Customer First Name" value={payment?.guest_first_name} />
+        <DrawerField label="Customer Last Name"  value={payment?.guest_last_name} />
+        <DrawerField label="Customer Email"      value={payment?.guest_email} />
+        <DrawerField label="Customer Type"       value={payment?.guest_user_type} />
+      </DrawerSection>
+
+      <DrawerSection label="Timeline">
+        <div className="flex flex-col gap-4">
+          {TIMELINE_STEPS.map((step, i) => (
+            <div key={step.key} className="flex items-start gap-3">
+              <div className={`w-2.5 h-2.5 rounded-full mt-1 shrink-0 border-2 ${
+                i <= idx ? "bg-[#17191c] border-[#17191c]" : "bg-white border-[#e8e6e3]"
+              }`} />
+              <div>
+                <p className={`text-xs bold ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}>{step.label}</p>
+                <p className="text-xs medium text-[#a3a6af]">{step.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </DrawerSection>
+
+      <div className="border-t sticky bottom-0 left-0 bg-white border-[#e8e6e3] px-6 py-4 flex items-center justify-between">
+        <button onClick={onClose} className="text-xs text-[#777b86] bold hover:text-[#17191c]">
+          Close
+        </button>
+        {payment.receipt_url && (
+          <button
+            onClick={() => window.open(payment.receipt_url!, "_blank", "noopener,noreferrer")}
+            className="text-xs bold text-[#fff] bg-black rounded-full px-4 py-2"
+          >
+            View receipt
+          </button>
+        )}
+      </div>
+    </Drawer>
+  );
+}
