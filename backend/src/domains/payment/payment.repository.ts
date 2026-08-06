@@ -44,6 +44,7 @@ export interface PaymentSummary {
   guest_profile_image: string | null;
   room_type_name: string;
   room_type_images: string[];
+  tenant_name:string;
 }
 
 function ctx() {
@@ -276,28 +277,52 @@ export const paymentRepository = {
       [tenantId],
     );
 
-    const current  = Number(row?.current_month_volume ?? 0);
+    const current = Number(row?.current_month_volume ?? 0);
     const previous = Number(row?.previous_month_volume ?? 0);
-    const growthPct = previous === 0 ? (current > 0 ? 100 : 0) : ((current - previous) / previous) * 100;
+    const growthPct =
+      previous === 0
+        ? current > 0
+          ? 100
+          : 0
+        : ((current - previous) / previous) * 100;
 
     return {
-      successCount:  Number(row?.success_count ?? 0),
-      failedCount:   Number(row?.failed_count ?? 0),
-      pendingCount:  Number(row?.pending_count ?? 0),
+      successCount: Number(row?.success_count ?? 0),
+      failedCount: Number(row?.failed_count ?? 0),
+      pendingCount: Number(row?.pending_count ?? 0),
       refundedCount: Number(row?.refunded_count ?? 0),
-      currentMonthVolumeNgn:  current,
+      currentMonthVolumeNgn: current,
       previousMonthVolumeNgn: previous,
       volumeGrowthPct: Math.round(growthPct * 10) / 10,
     };
   },
+
+  async listAllForAdmin(page = 1, limit = 20): Promise<PaymentSummary[]> {
+    const offset = (page - 1) * limit;
+    return query<PaymentSummary>(
+      `SELECT
+       p.id, p.booking_id, p.gateway, p.transaction_id, p.amount_ngn, p.status, p.channel, p.paid_at, p.created_at,
+       t.name AS tenant_name,
+       b.booking_ref, b.check_in, b.check_out, b.receipt_url,
+       u.first_name AS guest_first_name, u.last_name AS guest_last_name, u.email AS guest_email,
+       rt.name AS room_type_name
+     FROM payments p
+     JOIN tenants    t  ON t.id  = p.tenant_id
+     JOIN bookings   b  ON b.id  = p.booking_id
+     JOIN users      u  ON u.id  = b.guest_user_id
+     JOIN room_types rt ON rt.id = b.room_type_id
+     ORDER BY p.created_at DESC LIMIT $1 OFFSET $2`,
+      [limit, offset],
+    );
+  },
 };
 
 export interface PaymentStats {
-  successCount:  number;
-  failedCount:   number;
-  pendingCount:  number;
+  successCount: number;
+  failedCount: number;
+  pendingCount: number;
   refundedCount: number;
-  currentMonthVolumeNgn:  number;
+  currentMonthVolumeNgn: number;
   previousMonthVolumeNgn: number;
   volumeGrowthPct: number;
 }
