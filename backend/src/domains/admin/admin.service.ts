@@ -163,6 +163,10 @@ export class AdminService {
   async getCalendar(startDate: string, endDate: string) {
     return bookingRepository.listForDateRange(startDate, endDate);
   }
+  async getTenantActivity(tenantId: string, page: number, limit: number) {
+    const logs = await auditRepository.listByTenant(tenantId, page, limit);
+    return { logs, page, limit };
+  }
 }
 
 export const adminService = new AdminService();
