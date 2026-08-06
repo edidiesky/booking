@@ -27,7 +27,7 @@ export default function DonutDistributionCard({ title, totalLabel = "Total", tot
     <div className="border rounded-xl p-4" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center gap-2 mb-4">
         {icon}
-        <p className="text-xs bold" style={{ color: "#17191c" }}>{title}</p>
+        <p className="text-xs lg:text-sm" style={{ color: "#17191c" }}>{title}</p>
       </div>
 
       <div className="relative h-40">

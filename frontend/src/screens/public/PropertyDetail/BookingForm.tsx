@@ -58,8 +58,8 @@ export default function BookingForm({
         className="grid rounded-t-xl border border-[rgba(0,0,0,0.15)] min-h-[80px] w-full grid-cols-2 cursor-pointer"
       >
         <div className="flex items-start py-3 px-3 border-r border-[rgba(0,0,0,0.15)] flex-col gap-1">
-          <span className="text-xs bold text-[#777b86] uppercase">Check-in</span>
-          <span className="text-xs border-lime-950  text-[#17191c]">
+          <span className="text-xs lg:text-sm text-[#777b86] uppercase">Check-in</span>
+          <span className="text-xs lg:text-smborder-lime-950  text-[#17191c]">
             {dateRange.from.toLocaleDateString("en-NG", {
               day: "numeric",
               month: "short",
@@ -68,8 +68,8 @@ export default function BookingForm({
           </span>
         </div>
         <div className="flex items-start py-3 px-3 flex-col gap-1">
-          <span className="text-xs bold text-[#777b86] uppercase">Check-out</span>
-          <span className="text-xs border-lime-950  text-[#17191c]">
+          <span className="text-xs lg:text-sm text-[#777b86] uppercase">Check-out</span>
+          <span className="text-xs lg:text-smborder-lime-950  text-[#17191c]">
             {dateRange.to.toLocaleDateString("en-NG", {
               day: "numeric",
               month: "short",
@@ -111,7 +111,7 @@ export default function BookingForm({
 
           {roomTypes.length > 0 && (
             <div className="flex flex-col gap-2 px-2">
-              <p className="text-xs  border-lime-950 bold uppercase text-[#a3a6af]">
+              <p className="text-xs lg:text-sm border-lime-950 bold uppercase text-[#a3a6af]">
                 Room Type
               </p>
               {roomTypes.map((rt) => (

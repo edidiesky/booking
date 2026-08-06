@@ -61,7 +61,7 @@ export default function DashboardNotifications() {
           unreadCount > 0 ? (
             <button
               onClick={() => markAllRead()}
-              className="flex items-center gap-1.5 h-9 px-4 rounded-full text-xs border transition-colors hover:bg-[#f2f0ed]"
+              className="flex items-center gap-1.5 h-9 px-4 rounded-full text-xs lg:text-smborder transition-colors hover:bg-[#f2f0ed]"
               style={{ borderColor: "#e8e6e3", color: "#17191c" }}
             >
               <CheckCheck size={13} />

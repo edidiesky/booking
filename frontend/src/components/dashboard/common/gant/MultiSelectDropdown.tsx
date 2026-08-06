@@ -44,7 +44,7 @@ export default function MultiSelectDropdown({ label, options, selected, onToggle
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="h-9 px-3 rounded-lg text-xs flex items-center gap-1.5 border transition-colors hover:bg-[#fafaf9]"
+        className="h-9 px-3 rounded-lg text-xs lg:text-smflex items-center gap-1.5 border transition-colors hover:bg-[#fafaf9]"
         style={{ borderColor: "#e8e6e3", color: "#17191c" }}
       >
         {icon}
@@ -71,7 +71,7 @@ export default function MultiSelectDropdown({ label, options, selected, onToggle
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search room types..."
-                  className="w-full h-8 pl-7 pr-2 text-xs rounded-lg border outline-none"
+                  className="w-full h-8 pl-7 pr-2 text-xs lg:text-smrounded-lg border outline-none"
                   style={{ borderColor: "#e8e6e3" }}
                 />
               </div>
@@ -80,7 +80,7 @@ export default function MultiSelectDropdown({ label, options, selected, onToggle
           {visibleOptions.map((opt) => (
             <label
               key={opt.value}
-              className="flex items-center gap-2 text-xs px-3 py-2 hover:bg-[#f2f0ed] cursor-pointer"
+              className="flex items-center gap-2 text-xs lg:text-smpx-3 py-2 hover:bg-[#f2f0ed] cursor-pointer"
               style={{ color: "#17191c" }}
             >
               <input type="checkbox" checked={selected.has(opt.value)} onChange={() => onToggle(opt.value)} />
@@ -89,7 +89,7 @@ export default function MultiSelectDropdown({ label, options, selected, onToggle
             </label>
           ))}
           {visibleOptions.length === 0 && (
-            <p className="text-xs px-3 py-2" style={{ color: "#a3a6af" }}>
+            <p className="text-xs lg:text-smpx-3 py-2" style={{ color: "#a3a6af" }}>
               {options.length === 0 ? "Nothing to filter yet." : "No matches."}
             </p>
           )}
@@ -98,7 +98,7 @@ export default function MultiSelectDropdown({ label, options, selected, onToggle
               <div className="border-t my-1" style={{ borderColor: "#f2f0ed" }} />
               <button
                 onClick={onSelectAll}
-                className="text-xs text-left px-3 py-1.5 hover:bg-[#f2f0ed]"
+                className="text-xs lg:text-smtext-left px-3 py-1.5 hover:bg-[#f2f0ed]"
                 style={{ color: "#777b86" }}
               >
                 {allSelected ? "Clear all" : "Check all"}

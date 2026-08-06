@@ -32,7 +32,7 @@ export default function PaymentSection({ booking, payment, onPay, isPaying }: Pr
   return (
     <div className="flex flex-col gap-4 p-6 border rounded-2xl"
          style={{ borderColor: "#e8e6e3" }}>
-      <p className="text-xs bold" style={{ color: "var(--color-ink)" }}>
+      <p className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>
         Payment
       </p>
 
@@ -60,7 +60,7 @@ export default function PaymentSection({ booking, payment, onPay, isPaying }: Pr
             <button
               onClick={handleDownloadInvoice}
               disabled={isGeneratingInvoice}
-              className="flex items-center justify-center gap-1.5 h-9 mt-1 rounded-full text-xs border transition-colors hover:bg-[#f2f0ed] disabled:opacity-50"
+              className="flex items-center justify-center gap-1.5 h-9 mt-1 rounded-full text-xs lg:text-smborder transition-colors hover:bg-[#f2f0ed] disabled:opacity-50"
               style={{ borderColor: "#e8e6e3", color: "var(--color-ink)" }}
             >
               {isGeneratingInvoice ? (
@@ -90,7 +90,7 @@ export default function PaymentSection({ booking, payment, onPay, isPaying }: Pr
                 key={gateway}
                 onClick={() => onPay(gateway)}
                 disabled={isPaying}
-                className="flex-1 h-11 rounded-full text-xs capitalize transition-opacity hover:opacity-80 disabled:opacity-50"
+                className="flex-1 h-11 rounded-full text-xs lg:text-smcapitalize transition-opacity hover:opacity-80 disabled:opacity-50"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 {isPaying ? "Redirecting..." : `Pay with ${gateway}`}

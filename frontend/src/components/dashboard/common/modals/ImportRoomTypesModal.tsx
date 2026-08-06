@@ -92,7 +92,7 @@ export default function ImportRoomTypesModal({ propertyId, onClose }: Props) {
         <div className="w-full flex px-8 items-start justify-between gap-1">
           <div>
             <h3 className="text-lg text-[#17191c]">Import room types</h3>
-            <p className="text-xs text-[#777b86] mt-1 max-w-[380px]">
+            <p className="text-xs lg:text-sm text-[#777b86] mt-1 max-w-[380px]">
               Upload a CSV to bulk-create room types for this property. Rows
               with errors are skipped and reported individually, valid rows are
               still imported.
@@ -118,7 +118,7 @@ export default function ImportRoomTypesModal({ propertyId, onClose }: Props) {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full h-28 border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-2 text-xs hover:bg-[#fafaf9] transition-colors"
+                className="w-full h-28 border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-2 text-xs lg:text-smhover:bg-[#fafaf9] transition-colors"
                 style={{ borderColor: "#e8e6e3", color: "#777b86" }}
               >
                 <Upload size={18} />
@@ -142,7 +142,7 @@ export default function ImportRoomTypesModal({ propertyId, onClose }: Props) {
           {isDone && (
             <div className="flex flex-col gap-2">
               <div
-                className="flex items-center gap-2 text-xs bold"
+                className="flex items-center gap-2 text-xs lg:text-sm"
                 style={{ color: "#166534" }}
               >
                 <CheckCircle2 size={14} />
@@ -182,7 +182,7 @@ export default function ImportRoomTypesModal({ propertyId, onClose }: Props) {
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-5 text-xs bold rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors"
+            className="h-9 px-5 text-xs lg:text-sm rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors"
           >
             {isDone || isFailed ? "Close" : "Cancel"}
           </button>
@@ -191,7 +191,7 @@ export default function ImportRoomTypesModal({ propertyId, onClose }: Props) {
               type="button"
               onClick={handleUpload}
               disabled={!file || uploading}
-              className="h-9 px-5 text-xs bold rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+              className="h-9 px-5 text-xs lg:text-sm rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
             >
               {uploading ? (
                 <>

@@ -44,7 +44,7 @@ export default function StatsOverview({
             className="flex h-36 lg:h-36 items-start flex-col justify-between gap-3 px-5 py-4"
           >
             <p
-              className="text-xs uppercase medium"
+              className="text-xs lg:text-smuppercase medium"
               style={{ color: "var(--color-muted-stone)" }}
             >
               {label}
@@ -57,7 +57,7 @@ export default function StatsOverview({
                 {value}
               </h4>
               <p
-                className="text-xs medium"
+                className="text-xs lg:text-sm medium"
                 style={{ color: "var(--color-muted-stone)" }}
               >
                 {sub}

@@ -15,16 +15,16 @@ export default function SidebarFooter({ currentUser, onSignOut }: Props) {
         className="flex items-center gap-2.5 px-2 py-2 rounded-[8px] hover:bg-[#f5f5f3] transition-colors mb-1 w-full"
       >
         <div
-          className="w-7 h-7 rounded-full flex items-center justify-center text-xs text-white shrink-0"
+          className="w-7 h-7 rounded-full flex items-center justify-center text-xs lg:text-smtext-white shrink-0"
           style={{ backgroundColor: "var(--color-ink)" }}
         >
           {currentUser?.firstName?.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs bold truncate" style={{ color: "var(--color-ink)" }}>
+          <p className="text-xs lg:text-sm truncate" style={{ color: "var(--color-ink)" }}>
             {currentUser?.firstName} {currentUser?.lastName}
           </p>
-          <p className="text-xs truncate" style={{ color: "var(--color-hint-of-grey)" }}>
+          <p className="text-xs lg:text-smtruncate" style={{ color: "var(--color-hint-of-grey)" }}>
             {currentUser?.email}
           </p>
         </div>

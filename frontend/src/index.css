@@ -36,6 +36,8 @@
     --color-muted-stone: #4c4c4c;
     --color-light-steel: #777b86;
     --color-hint-of-grey: #a3a6af;
+    --color-vivid: #1a56ff;
+    --color-vivid-foreground: #ffffff;
     --shadow-steep:
       rgba(4, 23, 43, 0.05) 0px 0px 0px 1px,
       rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,

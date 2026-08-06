@@ -38,7 +38,7 @@ export default function SearchSelectDropdown({ placeholder, options, value, onCh
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="h-9 px-3 rounded-lg text-xs flex items-center gap-1.5 border transition-colors hover:bg-[#fafaf9]"
+        className="h-9 px-3 rounded-lg text-xs lg:text-smflex items-center gap-1.5 border transition-colors hover:bg-[#fafaf9]"
         style={{ borderColor: "#e8e6e3", color: selectedLabel ? "#17191c" : "#777b86" }}
       >
         <Search size={12} style={{ color: "#a3a6af" }} />
@@ -57,14 +57,14 @@ export default function SearchSelectDropdown({ placeholder, options, value, onCh
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
-              className="w-full h-8 px-2 text-xs border rounded-md outline-none"
+              className="w-full h-8 px-2 text-xs lg:text-smborder rounded-md outline-none"
               style={{ borderColor: "#e8e6e3" }}
             />
           </div>
           <div className="max-h-64 overflow-y-auto py-1">
             <button
               onClick={() => { onChange(null); setOpen(false); setQuery(""); }}
-              className="w-full text-left text-xs px-3 py-2 hover:bg-[#f2f0ed]"
+              className="w-full text-left text-xs lg:text-smpx-3 py-2 hover:bg-[#f2f0ed]"
               style={{ color: value === null ? "#17191c" : "#777b86", fontWeight: value === null ? 700 : 400 }}
             >
               {allLabel}
@@ -73,14 +73,14 @@ export default function SearchSelectDropdown({ placeholder, options, value, onCh
               <button
                 key={opt.value}
                 onClick={() => { onChange(opt.value); setOpen(false); setQuery(""); }}
-                className="w-full text-left text-xs px-3 py-2 hover:bg-[#f2f0ed] truncate"
+                className="w-full text-left text-xs lg:text-smpx-3 py-2 hover:bg-[#f2f0ed] truncate"
                 style={{ color: value === opt.value ? "#17191c" : "#4c4c4c", fontWeight: value === opt.value ? 700 : 400 }}
               >
                 {opt.label}
               </button>
             ))}
             {filtered.length === 0 && (
-              <p className="text-xs px-3 py-2" style={{ color: "#a3a6af" }}>No matches.</p>
+              <p className="text-xs lg:text-smpx-3 py-2" style={{ color: "#a3a6af" }}>No matches.</p>
             )}
           </div>
         </div>

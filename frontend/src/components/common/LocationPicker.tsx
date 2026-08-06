@@ -44,7 +44,7 @@ export default function LocationPicker({ latitude, longitude, onChange }: Props)
         <Marker position={position} icon={markerIcon} />
         <ClickHandler onChange={handleClick} />
       </MapContainer>
-      <p className="text-xs px-3 py-2" style={{ color: "#777b86" }}>
+      <p className="text-xs lg:text-smpx-3 py-2" style={{ color: "#777b86" }}>
         Click anywhere on the map to set this property's exact location.
       </p>
     </div>

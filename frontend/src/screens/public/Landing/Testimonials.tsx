@@ -71,7 +71,7 @@ export default function Testimonials() {
       <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
         <div className="flex flex-col gap-3 mb-14 text-center">
           <p
-            className="text-xs uppercase bold"
+            className="text-xs lg:text-smuppercase bold"
             style={{ color: "var(--color-hint-of-grey)" }}
           >
             What hosts say
@@ -235,7 +235,7 @@ function StandardCard({ t }: { t: Testimonial }) {
 //           <span className="text-sm bold text-white">{t.name}</span>
 //           <CheckCircle2 size={14} color="var(--color-terracotta)" fill="var(--color-terracotta)" />
 //         </div>
-//         <span className="text-xs ml-auto" style={{ color: "#9a9a9a" }}>{t.date}</span>
+//         <span className="text-xs lg:text-smml-auto" style={{ color: "#9a9a9a" }}>{t.date}</span>
 //       </div>
 //       <p className="text-sm text-white">{t.body}</p>
 //       <div className="w-full rounded-lg overflow-hidden" style={{ height: "160px", backgroundColor: "#2a2a2a" }} />

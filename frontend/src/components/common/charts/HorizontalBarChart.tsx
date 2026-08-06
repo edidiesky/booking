@@ -33,11 +33,11 @@ function CustomTooltip({ active, payload, series, isCurrency }: TooltipProps) {
   const total = payload.reduce((sum, p) => sum + (p.value ?? 0), 0);
   return (
     <div className="border border-[#e8e6e3] bg-white rounded-lg p-3 flex flex-col gap-1.5 min-w-[180px]">
-      <p className="text-xs text-[#17191c] truncate max-w-[180px]">{label}</p>
+      <p className="text-xs lg:text-smtext-[#17191c] truncate max-w-[180px]">{label}</p>
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between gap-4">
-          <span className="text-xs text-[#777b86]">Total</span>
-          <span className="text-xs text-[#17191c]">{isCurrency ? `₦${total.toLocaleString("en-NG")}` : total.toLocaleString("en-NG")}</span>
+          <span className="text-xs lg:text-sm text-[#777b86]">Total</span>
+          <span className="text-xs lg:text-smtext-[#17191c]">{isCurrency ? `₦${total.toLocaleString("en-NG")}` : total.toLocaleString("en-NG")}</span>
         </div>
         {payload.map((entry) => {
           const s = series.find((x) => x.datakey === entry.dataKey);
@@ -45,9 +45,9 @@ function CustomTooltip({ active, payload, series, isCurrency }: TooltipProps) {
             <div key={entry.dataKey} className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 shrink-0" style={{ backgroundColor: s?.color }} />
-                <span className="text-xs text-[#4c4c4c]">{s?.seriesLabel}</span>
+                <span className="text-xs lg:text-smtext-[#4c4c4c]">{s?.seriesLabel}</span>
               </div>
-              <span className="text-xs text-[#17191c]">{isCurrency ? `₦${entry.value.toLocaleString("en-NG")}` : entry.value.toLocaleString("en-NG")}</span>
+              <span className="text-xs lg:text-smtext-[#17191c]">{isCurrency ? `₦${entry.value.toLocaleString("en-NG")}` : entry.value.toLocaleString("en-NG")}</span>
             </div>
           );
         })}
@@ -62,7 +62,7 @@ function ChartLegendRow({ series }: { series: HorizontalBarSeries[] }) {
       {series.map((s) => (
         <div key={s.datakey} className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
-          <span className="text-xs text-[#4c4c4c]">{s.seriesLabel}</span>
+          <span className="text-xs lg:text-smtext-[#4c4c4c]">{s.seriesLabel}</span>
         </div>
       ))}
     </div>
@@ -83,7 +83,7 @@ function ChartBody({ data, series, yAxisWidth, isCurrency, emptyMessage }: {
     return (
       <div className="flex flex-col items-center justify-center py-8 gap-3">
         <img src="/assets/icons/card.png" className="w-50 h-50" alt="" />
-        <p className="text-xs text-[#a3a6af]">{emptyMessage}</p>
+        <p className="text-xs lg:text-smtext-[#a3a6af]">{emptyMessage}</p>
       </div>
     );
   }
@@ -133,8 +133,8 @@ export function HorizontalBarChart({
     <div className="border w-full border-[#e8e6e3] flex flex-col rounded-2xl">
       <div className="px-5 py-4 border-b border-[#e8e6e3] flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs bold text-[#17191c]">{title}</p>
-          <p className="text-xs text-[#777b86] mt-0.5">{description}</p>
+          <p className="text-xs lg:text-sm text-[#17191c]">{title}</p>
+          <p className="text-xs lg:text-sm text-[#777b86] mt-0.5">{description}</p>
         </div>
         {headerRight && <div className="shrink-0">{headerRight}</div>}
       </div>

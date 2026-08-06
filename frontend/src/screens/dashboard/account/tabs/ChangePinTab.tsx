@@ -43,7 +43,7 @@ export default function ChangePinTab() {
     <div className="flex flex-col gap-4" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center gap-3">
         <KeyRound size={16} style={{ color: "#4c4c4c" }} />
-        <p className="text-xs bold" style={{ color: "var(--color-ink)" }}>
+        <p className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>
           {hasPin ? "Change your PIN" : "Set a transaction PIN"}
         </p>
       </div>
@@ -65,7 +65,7 @@ export default function ChangePinTab() {
       <button
         onClick={handleSubmit}
         disabled={settingPin || changingPin || newPin.length < 4 || (hasPin && currentPin.length < 4)}
-        className="h-10 rounded-lg text-xs bold disabled:opacity-50 w-fit px-5"
+        className="h-10 rounded-lg text-xs lg:text-sm disabled:opacity-50 w-fit px-5"
         style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
       >
         {hasPin ? "Change PIN" : "Set PIN"}

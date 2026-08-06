@@ -105,8 +105,8 @@ export default function BookingDrawer({ booking, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           <div>
-            <p className="text-xs bold text-[#17191c]">Booking details</p>
-            <p className="text-xs text-[#777b86] mt-0.5">
+            <p className="text-xs lg:text-sm text-[#17191c]">Booking details</p>
+            <p className="text-xs lg:text-sm text-[#777b86] mt-0.5">
               {booking.bookingRef}
             </p>
           </div>
@@ -120,7 +120,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
 
         <div className="flex-1 flex overflow-y-auto flex-col gap-2">
           <div className="w-full px-6 py-5 border-b flex flex-col gap-4">
-            <p className="text-xs uppercase text-[#a3a6af] bold">Room</p>
+            <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold">Room</p>
             <div className="flex items-center gap-3">
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#f2f0ed] shrink-0">
                 {(booking.roomTypeImage?.[0] ?? booking.roomTypeImage) ? (
@@ -134,14 +134,14 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                 <p className="text-sm lg:text-sm bold text-[#17191c] truncate">
                   {booking.propertyName}
                 </p>
-                <p className="text-xs lg:text-xs text-[#777b86] truncate">
+                <p className="text-xs lg:text-sm lg:text-sm text-[#777b86] truncate">
                   {booking.roomTypeName}
                 </p>
-                <p className="text-xs text-[#777b86]">
+                <p className="text-xs lg:text-sm text-[#777b86]">
                   {nights} night{nights !== 1 ? "s" : ""}
                 </p>
               </div>
-              <p className="text-xs bold text-[#17191c] whitespace-nowrap">
+              <p className="text-xs lg:text-sm text-[#17191c] whitespace-nowrap">
                 {formatCurrency(Number(booking.totalAmountNgn))}
               </p>
             </div>
@@ -161,10 +161,10 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                   key={label}
                   className="flex w-full items-center gap-8 lg:gap-10"
                 >
-                  <span className="text-xs bold flex-1 text-[#777b86]">
+                  <span className="text-xs lg:text-sm flex-1 text-[#777b86]">
                     {label}
                   </span>
-                  <span className="text-xs text-end flex-1 text-[#17191c] bold">
+                  <span className="text-xs lg:text-smtext-end flex-1 text-[#17191c] bold">
                     {value}
                   </span>
                 </div>
@@ -173,7 +173,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
           </div>
 
           <div className="w-full px-6 py-5 border-b flex flex-col gap-4">
-            <p className="w-full text-xs text-[#a3a6af] uppercase">
+            <p className="w-full text-xs lg:text-smtext-[#a3a6af] uppercase">
               Customer breakdown
             </p>
             {[
@@ -185,14 +185,14 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                 key={label}
                 className={`w-full flex items-center gap-8 lg:gap-10`}
               >
-                <p className="text-xs medium text-[#777b86]">{label}</p>
-                <p className="text-xs text-[#17191c] bold">{value}</p>
+                <p className="text-xs lg:text-sm medium text-[#777b86]">{label}</p>
+                <p className="text-xs lg:text-smtext-[#17191c] bold">{value}</p>
               </div>
             ))}
           </div>
 
           <div className="px-6 py-5 border-b flex flex-col gap-4">
-            <p className="w-full text-xs text-[#a3a6af] uppercase">
+            <p className="w-full text-xs lg:text-smtext-[#a3a6af] uppercase">
               Payment breakdown
             </p>
             {[
@@ -204,15 +204,15 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                 key={label}
                 className={`w-full flex items-center gap-8 lg:gap-10`}
               >
-                <p className="text-xs bold text-[#777b86]">{label}</p>
-                <p className="text-xs text-[#17191c] bold">{value}</p>
+                <p className="text-xs lg:text-sm text-[#777b86]">{label}</p>
+                <p className="text-xs lg:text-smtext-[#17191c] bold">{value}</p>
               </div>
             ))}
           </div>
           <div className="px-6 py-5 border-b flex flex-col gap-4">
             {!isTerminal && (
               <div className="flex flex-col gap-4">
-                <p className="text-xs text-[#a3a6af] uppercase bold">
+                <p className="text-xs lg:text-smtext-[#a3a6af] uppercase bold">
                   Timeline
                 </p>
                 <div className="flex flex-col gap-4">
@@ -223,11 +223,11 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                       />
                       <div>
                         <p
-                          className={`text-xs bold ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}
+                          className={`text-xs lg:text-sm ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}
                         >
                           {step.label}
                         </p>
-                        <p className="text-xs text-[#a3a6af]">
+                        <p className="text-xs lg:text-smtext-[#a3a6af]">
                           {step.description}
                         </p>
                       </div>
@@ -242,7 +242,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
         <div className="border-t border-[#e8e6e3] px-6 py-4 flex items-center justify-between">
           <button
             onClick={onClose}
-            className="text-xs  text-[#777b86] bold hover:text-[#17191c]"
+            className="text-xs lg:text-sm text-[#777b86] bold hover:text-[#17191c]"
           >
             Cancel
           </button>
@@ -256,7 +256,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                     "noopener,noreferrer",
                   )
                 }
-                className="text-xs bold text-[#fff] bg-black rounded-full px-4 py-2"
+                className="text-xs lg:text-sm text-[#fff] bg-black rounded-full px-4 py-2"
               >
                 View receipt
               </button>
@@ -268,7 +268,7 @@ export default function BookingDrawer({ booking, onClose }: Props) {
                     key={target}
                     onClick={() => handleTransition(target)}
                     disabled={isTransitioning}
-                    className="text-xs bold text-dark border-[#17191c] border rounded-full px-4 h-8 hover:opacity-90 disabled:opacity-50 transition-opacity"
+                    className="text-xs lg:text-sm text-dark border-[#17191c] border rounded-full px-4 h-8 hover:opacity-90 disabled:opacity-50 transition-opacity"
                   >
                     {isTransitioning
                       ? "Moving..."

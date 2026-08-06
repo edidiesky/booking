@@ -131,7 +131,7 @@ export default function About() {
         style={{ maxWidth: "1280px" }}
       >
         <span
-          className="text-xs lg:text-xl uppercase"
+          className="text-xs lg:text-smlg:text-xl uppercase"
           style={{ color: "var(--color-light-steel)" }}
         >
           Everything you need
@@ -179,7 +179,7 @@ export default function About() {
                 {card.label}
               </p>
               <p
-                className="text-xs lg:text-xl leading-relaxed mt-auto"
+                className="text-base lg:text-xl leading-relaxed mt-auto"
                 style={{ color: `${card.color}99` }}
               >
                 {card.description}

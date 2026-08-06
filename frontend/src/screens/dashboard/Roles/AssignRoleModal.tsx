@@ -21,7 +21,7 @@ interface Props {
   isSaving: boolean;
 }
 
-const field      = "w-full h-10 px-3 text-xs border rounded-lg outline-none";
+const field      = "w-full h-10 px-3 text-xs lg:text-smborder rounded-lg outline-none";
 const fieldStyle = { borderColor: "#e8e6e3", color: "#17191c" };
 
 export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: Props) {
@@ -47,7 +47,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
         <div className="w-full flex px-8 items-start justify-between gap-1">
           <div>
             <h3 className="text-lg text-[#17191c]">Assign Role</h3>
-            <p className="text-xs text-[#777b86] mt-1 max-w-[380px]">
+            <p className="text-xs lg:text-sm text-[#777b86] mt-1 max-w-[380px]">
               Grant a team member one of your tenant's roles.
             </p>
           </div>
@@ -58,7 +58,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
             <label className="text-xs" style={{ color: "#777b86" }}>User ID</label>
             <input {...register("userId")} className={field} style={fieldStyle}
               placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
-            {errors.userId && <p className="text-xs text-red-500">{errors.userId.message}</p>}
+            {errors.userId && <p className="text-xs lg:text-smtext-red-500">{errors.userId.message}</p>}
             <p className="text-xs" style={{ color: "#777b86" }}>
               Find user IDs from your backend audit logs or database.
             </p>
@@ -71,7 +71,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
                 <option key={r.id} value={r.slug}>{r.name}</option>
               ))}
             </select>
-            {errors.roleSlug && <p className="text-xs text-red-500">{errors.roleSlug.message}</p>}
+            {errors.roleSlug && <p className="text-xs lg:text-smtext-red-500">{errors.roleSlug.message}</p>}
           </div>
 
           <div className="flex flex-col gap-1">
@@ -88,7 +88,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
             type="button"
             onClick={onClose}
             disabled={isSaving}
-            className="h-9 px-5 text-xs bold rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
+            className="h-9 px-5 text-xs lg:text-sm rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -96,7 +96,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
             type="button"
             onClick={handleSubmit(submit)}
             disabled={isSaving}
-            className="h-9 px-5 text-xs bold rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+            className="h-9 px-5 text-xs lg:text-sm rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
           >
             {isSaving ? (
               <>

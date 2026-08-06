@@ -68,7 +68,7 @@ export default function StepSelectUserType({ onSelect }: Props) {
         ))}
       </div>
 
-      <p className="text-xs text-center" style={{ color: "var(--color-muted-stone)" }}>
+      <p className="text-xs lg:text-sm text-center" style={{ color: "var(--color-muted-stone)" }}>
         Already have an account?{" "}
         <Link
           to="/login"

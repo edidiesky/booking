@@ -23,7 +23,7 @@ export default function PropertyFilters({ search, onSearch, typeFilter, onTypeFi
           <button
             key={label}
             onClick={() => onTypeFilter(value)}
-            className="px-4 py-1.5 text-xs rounded-full border transition-colors"
+            className="px-4 py-1.5 text-xs lg:text-smrounded-full border transition-colors"
             style={{
               backgroundColor: typeFilter === value ? "var(--color-ink)"    : "transparent",
               color:           typeFilter === value ? "var(--color-canvas)"  : "var(--color-muted-stone)",
@@ -45,7 +45,7 @@ export default function PropertyFilters({ search, onSearch, typeFilter, onTypeFi
           placeholder="Search by name or city..."
           value={search}
           onChange={(e) => onSearch(e.target.value)}
-          className="flex-1 text-xs outline-none bg-transparent"
+          className="flex-1 text-xs lg:text-smoutline-none bg-transparent"
           style={{ color: "var(--color-ink)" }}
         />
       </div>

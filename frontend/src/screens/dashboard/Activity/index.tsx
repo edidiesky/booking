@@ -83,7 +83,7 @@ export default function DashboardActivity() {
         />
         <DateRangeDropdown value={dateRange} onApply={setDateRange} placeholder="Date range" />
         {hasActiveFilters && (
-          <button onClick={resetFilters} className="text-xs bold underline" style={{ color: "#777b86" }}>
+          <button onClick={resetFilters} className="text-xs lg:text-sm underline" style={{ color: "#777b86" }}>
             Reset
           </button>
         )}
@@ -93,12 +93,12 @@ export default function DashboardActivity() {
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b" style={{ borderColor: "#e8e6e3", backgroundColor: "#fafaf9" }}>
-              <th className="text-left px-4 py-3 text-xs bold" style={{ color: "#777b86" }}>id</th>
-              <th className="text-left px-4 py-3 text-xs bold" style={{ color: "#777b86" }}>Resource</th>
-              <th className="text-left px-4 py-3 text-xs bold" style={{ color: "#777b86" }}>By</th>
-              <th className="text-left px-4 py-3 text-xs bold" style={{ color: "#777b86" }}>Action</th>
-              <th className="text-left px-4 py-3 text-xs bold" style={{ color: "#777b86" }}>IP address</th>
-              <th className="text-left px-4 py-3 text-xs bold" style={{ color: "#777b86" }}>When</th>
+              <th className="text-left px-4 py-3 text-xs lg:text-sm" style={{ color: "#777b86" }}>id</th>
+              <th className="text-left px-4 py-3 text-xs lg:text-sm" style={{ color: "#777b86" }}>Resource</th>
+              <th className="text-left px-4 py-3 text-xs lg:text-sm" style={{ color: "#777b86" }}>By</th>
+              <th className="text-left px-4 py-3 text-xs lg:text-sm" style={{ color: "#777b86" }}>Action</th>
+              <th className="text-left px-4 py-3 text-xs lg:text-sm" style={{ color: "#777b86" }}>IP address</th>
+              <th className="text-left px-4 py-3 text-xs lg:text-sm" style={{ color: "#777b86" }}>When</th>
             </tr>
           </thead>
           <tbody>
@@ -126,7 +126,7 @@ export default function DashboardActivity() {
                     <td className="px-4 py-3 text-xs" style={{ color: "#17191c" }}>{resourceLabel(entry.resource)}</td>
                     <td className="px-4 py-3 text-xs" style={{ color: "#17191c" }}>{actorName(entry)}</td>
                     <td className="px-4 py-3">
-                      <span className="inline-flex items-center gap-1.5 text-xs bold px-2 py-1 rounded-full" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
+                      <span className="inline-flex items-center gap-1.5 text-xs lg:text-sm px-2 py-1 rounded-full" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
                         <Icon size={11} />
                         {cfg.label}
                       </span>

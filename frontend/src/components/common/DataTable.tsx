@@ -50,7 +50,7 @@ export function DataTable({
           value={search}
           onChange={(e) => { onSearch(e.target.value); if (currentPage !== 1) onPageChange(1); }}
           placeholder={searchPlaceholder}
-          className="w-48 lg:w-64 h-9 px-3 text-xs border outline-none transition-colors"
+          className="w-48 lg:w-64 h-9 px-3 text-xs lg:text-smborder outline-none transition-colors"
           style={{ borderColor: "#e8e6e3", color: "var(--color-ink)", backgroundColor: "var(--color-canvas)" }}
         />
         <span className="text-xs" style={{ color: "var(--color-hint-of-grey)" }}>
@@ -63,7 +63,7 @@ export function DataTable({
           <thead>
             <tr className="border-b" style={{ borderColor: "#e8e6e3" }}>
               {headers.map((h) => (
-                <th key={h} className="px-5 py-3 text-left text-xs uppercase whitespace-nowrap"
+                <th key={h} className="px-5 py-3 text-left text-xs lg:text-smuppercase whitespace-nowrap"
                     style={{ color: "var(--color-hint-of-grey)" }}>
                   {h}
                 </th>
@@ -90,13 +90,13 @@ export function DataTable({
         </span>
         <div className="flex items-center gap-1">
           <button onClick={() => onPageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1}
-            className="h-8 px-3 text-xs border disabled:opacity-40 hover:bg-[#f2f0ed] transition-colors"
+            className="h-8 px-3 text-xs lg:text-smborder disabled:opacity-40 hover:bg-[#f2f0ed] transition-colors"
             style={{ borderColor: "#e8e6e3", color: "var(--color-muted-stone)" }}>
             Prev
           </button>
           {pages.map((p) => (
             <button key={p} onClick={() => onPageChange(p)}
-              className="h-8 w-8 text-xs border transition-colors"
+              className="h-8 w-8 text-xs lg:text-smborder transition-colors"
               style={{
                 backgroundColor: currentPage === p ? "var(--color-ink)" : "transparent",
                 color:           currentPage === p ? "var(--color-canvas)" : "var(--color-muted-stone)",
@@ -106,7 +106,7 @@ export function DataTable({
             </button>
           ))}
           <button onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}
-            className="h-8 px-3 text-xs border disabled:opacity-40 hover:bg-[#f2f0ed] transition-colors"
+            className="h-8 px-3 text-xs lg:text-smborder disabled:opacity-40 hover:bg-[#f2f0ed] transition-colors"
             style={{ borderColor: "#e8e6e3", color: "var(--color-muted-stone)" }}>
             Next
           </button>

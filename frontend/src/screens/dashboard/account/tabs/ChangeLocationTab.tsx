@@ -45,7 +45,7 @@ export default function ChangeLocationTab() {
     <div className=" flex flex-col gap-4 max-w-sm" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center gap-3">
         <Flag size={16} style={{ color: "#4c4c4c" }} />
-        <p className="text-xs bold" style={{ color: "var(--color-ink)" }}>Change Location</p>
+        <p className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>Change Location</p>
       </div>
 
       <Select value={current} onValueChange={setSelected}>
@@ -64,7 +64,7 @@ export default function ChangeLocationTab() {
       <button
         onClick={handleSave}
         disabled={saving || !selected || selected === data.data.countryCode}
-        className="h-10 rounded-lg text-xs bold disabled:opacity-50 w-fit px-5"
+        className="h-10 rounded-lg text-xs lg:text-sm disabled:opacity-50 w-fit px-5"
         style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
       >
         {saving ? "Saving..." : "Change Location"}

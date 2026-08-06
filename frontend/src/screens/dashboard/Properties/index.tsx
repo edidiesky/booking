@@ -79,7 +79,7 @@ export default function DashboardProperties() {
             <h4 className="text-lg bold lg:text-xl text-[#17191c]">
               Properties
             </h4>
-            <p className="text-xs text-[#64645f] mt-1 max-w-[420px] bold">
+            <p className="text-xs lg:text-smtext-[#64645f] mt-1 max-w-[420px] bold">
               Manage your listings, room types, and availability calendars.
             </p>
           </div>
@@ -87,7 +87,7 @@ export default function DashboardProperties() {
             <div className="relative">
               <button
                 onClick={() => setShowImportPicker((v) => !v)}
-                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-xs p-2 bold px-6"
+                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-sm lg:text-smp-2 bold px-6"
               >
                 Bulk Import
               </button>
@@ -100,7 +100,7 @@ export default function DashboardProperties() {
                     Choose which property this CSV is for:
                   </p>
                   {properties.length === 0 ? (
-                    <p className="text-xs px-2 py-2" style={{ color: "#a3a6af" }}>
+                    <p className="text-xs lg:text-smpx-2 py-2" style={{ color: "#a3a6af" }}>
                       Add a property first.
                     </p>
                   ) : (
@@ -111,7 +111,7 @@ export default function DashboardProperties() {
                           setImportPropertyId(p.id);
                           setShowImportPicker(false);
                         }}
-                        className="w-full text-left text-xs px-2 py-2 rounded-lg hover:bg-[#f2f0ed] transition-colors truncate"
+                        className="w-full text-left text-xs lg:text-smpx-2 py-2 rounded-lg hover:bg-[#f2f0ed] transition-colors truncate"
                         style={{ color: "#17191c" }}
                       >
                         {p.name}
@@ -123,7 +123,7 @@ export default function DashboardProperties() {
             </div>
             <button
               onClick={handleOpenCreate}
-              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-xs p-2 bold px-6"
+              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-sm lg:text-smp-2 bold px-6"
             >
               Add Property
             </button>
@@ -169,7 +169,7 @@ export default function DashboardProperties() {
               onValueChange={(v) => setStatusFilter(v as PropertyStatus | "")}
               options={STATUS_OPTIONS}
             />
-            <span className="text-xs text-[#a3a6af]">
+            <span className="text-xs lg:text-smtext-[#a3a6af]">
               {filtered.length} propert{filtered.length === 1 ? "y" : "ies"}
             </span>
           </div>
@@ -188,7 +188,7 @@ export default function DashboardProperties() {
                 {HEADERS.map((h) => (
                   <th
                     key={h}
-                    className="px-5 py-3 text-left text-xs text-[#a3a6af] uppercase whitespace-nowrap"
+                    className="px-5 py-3 text-left text-xs lg:text-smtext-[#a3a6af] uppercase whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -210,7 +210,7 @@ export default function DashboardProperties() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-5 py-10 text-center text-xs text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-smtext-[#a3a6af]"
                   >
                     No properties found. Click "Add Property" to create your
                     first listing.

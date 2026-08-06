@@ -45,7 +45,7 @@ export default function GoogleCallback() {
 
   return (
     <AuthLayout>
-      <p className="text-xs text-center" style={{ color: "var(--color-muted-stone)" }}>
+      <p className="text-xs lg:text-sm text-center" style={{ color: "var(--color-muted-stone)" }}>
         Signing you in...
       </p>
     </AuthLayout>

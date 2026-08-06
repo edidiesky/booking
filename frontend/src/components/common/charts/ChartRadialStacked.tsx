@@ -125,7 +125,7 @@ export function RadialBarChartCard({
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center py-8 gap-3">
             <img src="/assets/icons/card.png" className="w-50 h-50" alt="" />
-            <p className="text-xs text-[#a3a6af]">{emptyMessage}</p>
+            <p className="text-xs lg:text-smtext-[#a3a6af]">{emptyMessage}</p>
           </div>
         ) : (
           <div className="flex flex-col items-center px-5 py-4 gap-4">
@@ -195,7 +195,7 @@ export function RadialBarChartCard({
                     className="w-3 h-3 rounded-full shrink-0"
                     style={{ backgroundColor: s.color }}
                   />
-                  <span className="text-xs text-[#4c4c4c]">
+                  <span className="text-xs lg:text-smtext-[#4c4c4c]">
                     {s.label}{" "}
                     <span className="text-[#777b86]">({pct}%)</span>
                   </span>
@@ -210,10 +210,10 @@ export function RadialBarChartCard({
                 ? <TrendingUp size={13} className="text-green-600" />
                 : <TrendingDown size={13} className="text-red-500" />
               }
-              <span className={`text-xs semibold ${trend.positive ? "text-green-600" : "text-red-500"}`}>
+              <span className={`text-xs lg:text-smsemibold ${trend.positive ? "text-green-600" : "text-red-500"}`}>
                 {trend.value}
               </span>
-              <span className="text-xs text-[#777b86]">{trend.note}</span>
+              <span className="text-xs lg:text-sm text-[#777b86]">{trend.note}</span>
             </div>
           )}
         </div>
@@ -226,13 +226,13 @@ export function RadialBarChartCard({
   return (
     <div className="border border-[#e8e6e3] flex flex-col rounded-2xl">
       <div className="px-5 py-4 border-b border-[#e8e6e3]">
-        <p className="text-xs bold text-[#17191c]">{title}</p>
-        <p className="text-xs text-[#777b86] mt-0.5">{description}</p>
+        <p className="text-xs lg:text-sm text-[#17191c]">{title}</p>
+        <p className="text-xs lg:text-sm text-[#777b86] mt-0.5">{description}</p>
       </div>
       {isEmpty ? (
         <div className="flex flex-col items-center justify-center py-8 gap-3">
           <img src="/assets/icons/card.png" className="w-50 h-50" alt="" />
-          <p className="text-xs text-[#a3a6af]">{emptyMessage}</p>
+          <p className="text-xs lg:text-smtext-[#a3a6af]">{emptyMessage}</p>
         </div>
       ) : (
         <div className="flex flex-col items-center px-5 py-4 gap-4">
@@ -290,7 +290,7 @@ export function RadialBarChartCard({
               return (
                 <div key={s.datakey} className="flex items-center gap-1.5">
                   <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
-                  <span className="text-xs text-[#4c4c4c]">
+                  <span className="text-xs lg:text-smtext-[#4c4c4c]">
                     {s.label}{" "}<span className="text-[#777b86]">({pct}%)</span>
                   </span>
                 </div>
@@ -303,10 +303,10 @@ export function RadialBarChartCard({
                 ? <TrendingUp size={13} className="text-green-600" />
                 : <TrendingDown size={13} className="text-red-500" />
               }
-              <span className={`text-xs semibold ${trend.positive ? "text-green-600" : "text-red-500"}`}>
+              <span className={`text-xs lg:text-smsemibold ${trend.positive ? "text-green-600" : "text-red-500"}`}>
                 {trend.value}
               </span>
-              <span className="text-xs text-[#777b86]">{trend.note}</span>
+              <span className="text-xs lg:text-sm text-[#777b86]">{trend.note}</span>
             </div>
           )}
         </div>

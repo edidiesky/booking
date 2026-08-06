@@ -90,11 +90,10 @@ export default function AuthLayout({
   return (
     <div
       className="min-h-screen grid lg:grid-cols-[400px_1fr]"
-      style={{ backgroundColor: "var(--color-canvas)" }}
     >
       {/* left panel */}
       <div
-        className="hidden lg:flex flex-col justify-between p-10 bg-[#FAF8F5]" 
+        className="hidden lg:flex flex-col justify-between p-10 " 
       >
         <div className="flex flex-col gap-6">
           {resolvedSteps ? (
@@ -130,7 +129,7 @@ export default function AuthLayout({
 
       {/* right panel */}
       <div
-        className="flex items-center justify-center p-6 lg:p-12 bg-[#FAF8F5]"
+        className="flex items-center justify-center p-6 lg:p-12 "
       >
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -140,7 +139,7 @@ export default function AuthLayout({
         >
           <Link
             to="/"
-            className="text-xs bold mb-8 block lg:hidden"
+            className="text-xs lg:text-sm mb-8 block lg:hidden"
             style={{ color: "#17191c" }}
           >
             Selleasi

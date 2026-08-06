@@ -72,7 +72,7 @@ export default function Onboarding() {
     <AuthLayout stepLabels={stepLabels} currentStep={step}>
       {/* Step 1 email + password */}
       {step === 1 && (
-        <StepInitiate onSubmit={handleInitiate} isLoading={initiating} />
+        <StepInitiate userChoice={userChoice} onSubmit={handleInitiate} isLoading={initiating} />
       )}
 
       {/* Step 2 OTP confirmation */}
@@ -105,7 +105,7 @@ export default function Onboarding() {
       {step > 1 ? (
         <button
           onClick={() => dispatch(setOnboardingStep(step - 1))}
-          className="mt-6 text-xs transition-opacity hover:opacity-60 flex items-center gap-1"
+          className="mt-6 text-xs lg:text-smtransition-opacity hover:opacity-60 flex items-center gap-1"
           style={{ color: "var(--color-muted-stone)" }}
         >
           ← Back
@@ -113,7 +113,7 @@ export default function Onboarding() {
       ) : (
         <button
           onClick={() => setUserChoice(null)}
-          className="mt-6 text-xs transition-opacity hover:opacity-60 flex items-center gap-1"
+          className="mt-6 text-xs lg:text-smtransition-opacity hover:opacity-60 flex items-center gap-1"
           style={{ color: "var(--color-muted-stone)" }}
         >
           ← Change account type

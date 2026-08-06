@@ -23,7 +23,7 @@ export function FilterSearchInput({ value, onChange, placeholder = "Search..." }
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="h-9 pl-8 pr-3 text-xs border rounded-lg outline-none w-48"
+        className="h-9 pl-8 pr-3 text-xs lg:text-smborder rounded-lg outline-none w-48"
         style={{ borderColor: "#e8e6e3", color: "#17191c" }}
       />
     </div>

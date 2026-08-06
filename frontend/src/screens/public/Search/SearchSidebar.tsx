@@ -92,7 +92,7 @@ export default function SearchSidebar({
         {(propertyType || minPrice || maxPrice || guests) && (
           <button
             onClick={() => { setPropertyType(""); setMinPrice(undefined); setMaxPrice(undefined); setGuests(undefined); }}
-            className="text-xs bold underline text-left"
+            className="text-xs lg:text-sm underline text-left"
             style={{ color: "#777b86" }}
           >
             Clear all filters

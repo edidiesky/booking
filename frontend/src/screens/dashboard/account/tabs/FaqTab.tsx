@@ -22,7 +22,7 @@ export default function FaqTab() {
               onClick={() => setOpenIndex(open ? null : i)}
               className="w-full flex items-center justify-between px-4 py-3 text-left"
             >
-              <span className="text-xs bold" style={{ color: "var(--color-ink)" }}>{item.q}</span>
+              <span className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>{item.q}</span>
               <ChevronDown
                 size={14}
                 style={{ color: "#a3a6af", transform: open ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}

@@ -92,7 +92,7 @@ export default function NotificationBell() {
           style={{ borderColor: "#e8e6e3", width: 380, maxHeight: 520 }}
         >
           <div className="flex items-center justify-between px-5 pt-5 pb-3">
-            <p className="text-xs bold" style={{ color: "#17191c" }}>Notifications</p>
+            <p className="text-xs lg:text-sm" style={{ color: "#17191c" }}>Notifications</p>
             <button
               onClick={handleMarkAllRead}
               disabled={unreadCount === 0}
@@ -109,7 +109,7 @@ export default function NotificationBell() {
               <button
                 key={t.key}
                 onClick={() => setActiveTab(t.key)}
-                className="shrink-0 h-7 px-3 rounded-full text-xs bold transition-colors"
+                className="shrink-0 h-7 px-3 rounded-full text-xs lg:text-sm transition-colors"
                 style={{
                   backgroundColor: activeTab === t.key ? "#f2f0ed" : "transparent",
                   color: activeTab === t.key ? "#17191c" : "#a3a6af",
@@ -149,9 +149,9 @@ export default function NotificationBell() {
                       )}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs bold" style={{ color: "#17191c" }}>{n.title}</p>
-                      <p className="text-xs mt-0.5 line-clamp-2" style={{ color: "#666" }}>{n.body}</p>
-                      <p className="text-xs mt-1" style={{ color: "#a3a6af" }}>{moment(n.created_at).format("DD MMM YYYY")}</p>
+                      <p className="text-xs lg:text-sm" style={{ color: "#17191c" }}>{n.title}</p>
+                      <p className="text-xs lg:text-smmt-0.5 line-clamp-2" style={{ color: "#666" }}>{n.body}</p>
+                      <p className="text-xs lg:text-smmt-1" style={{ color: "#a3a6af" }}>{moment(n.created_at).format("DD MMM YYYY")}</p>
                     </div>
                   </button>
                 );
@@ -163,7 +163,7 @@ export default function NotificationBell() {
             <Link
               to="/dashboard/notifications"
               onClick={() => setOpen(false)}
-              className="text-xs bold"
+              className="text-xs lg:text-sm"
               style={{ color: "#3b82f6" }}
             >
               View all notifications

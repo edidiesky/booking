@@ -16,15 +16,15 @@ export default function TodaysFocusCard({ confirmedCount, checkedInCount, cancel
   return (
     <div className="rounded-2xl border border-[var(--color-fog)] bg-[var(--color-canvas)] flex flex-col">
       <div className="px-5 py-4 border-b border-[var(--color-fog)]">
-        <p className="text-xs uppercase bold lg:text-xs" style={{ color: "var(--color-muted-stone)" }}>Today's Focus</p>
+        <p className="text-xs lg:text-smuppercase bold lg:text-xs" style={{ color: "var(--color-muted-stone)" }}>Today's Focus</p>
       </div>
       <div className="flex flex-col divide-y divide-[var(--color-fog)]">
         {items.map(({ id, label, note, color }) => (
           <button key={id} className="flex items-center gap-3 px-5 py-3.5 text-left hover:bg-[#f2f0ed5f] transition-colors">
             <Circle size={10} fill={color} style={{ color }} className="shrink-0" />
             <div className="flex-1">
-              <p className="text-xs lg:text-xs bold" style={{ color: "var(--color-ink)" }}>{label}</p>
-              <p className="text-xs lg:text-xs medium mt-0.5" style={{ color: "var(--color-muted-stone)" }}>{note}</p>
+              <p className="text-xs lg:text-sm lg:text-sm" style={{ color: "var(--color-ink)" }}>{label}</p>
+              <p className="text-xs lg:text-sm lg:text-sm medium mt-0.5" style={{ color: "var(--color-muted-stone)" }}>{note}</p>
             </div>
             <ChevronRight size={16} style={{ color: "var(--color-muted-stone)" }} />
           </button>

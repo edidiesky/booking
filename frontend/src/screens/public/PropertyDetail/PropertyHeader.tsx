@@ -29,7 +29,7 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
         <div className="flex flex-col gap-2 flex-1">
           <h1 className="text-3xl md:text-3xl bold text-[#17191c]">
             {property.name}
-            <span className="text-xs pt-2 text-[#777b86] font-normal flex items-center gap-3 mt-1">
+            <span className="text-xs lg:text-smpt-2 text-[#777b86] font-normal flex items-center gap-3 mt-1">
               <span className="flex items-center gap-1">
                 <MapPin size={13} />
                 {property.address.city}, {property.address.country}
@@ -42,12 +42,12 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
           {lowestPrice !== null && (
             <h1 className="text-xl lg:text-3xl bold text-[#17191c]">
               ₦{Number(lowestPrice).toLocaleString()}
-              <span className="text-xs font-normal text-[#777b86]"> /night</span>
+              <span className="text-xs lg:text-smfont-normal text-[#777b86]"> /night</span>
             </h1>
           )}
         </div>
 
-        <span className="text-xs px-3 py-1 bold rounded-full capitalize self-start"
+        <span className="text-xs lg:text-smpx-3 py-1 bold rounded-full capitalize self-start"
           style={{ backgroundColor: "var(--color-fog)"}}>
           {TYPE_LABEL[property.property_type ?? property.propertyType ?? "shortlet"]}
         </span>
@@ -69,7 +69,7 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
             </div>
             <div className="flex items-center gap-1">
               <span className="text-xs">{value}</span>
-<h4 className="text-xs bold text-[#17191c]">{label}</h4>
+<h4 className="text-xs lg:text-sm text-[#17191c]">{label}</h4>
             </div>
                         
           </div>

@@ -12,7 +12,7 @@ export default function FilterPanel({ open, onClose, children }: Props) {
       className="fixed top-0 left-0 h-full w-[320px] bg-white border-r border-[#e8e6e3] z-50 overflow-y-auto"
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-[#e8e6e3]">
-        <p className="text-xs font-semibold text-[#17191c]">Filters</p>
+        <p className="text-xs lg:text-smfont-semibold text-[#17191c]">Filters</p>
         <button onClick={onClose}><X size={16} /></button>
       </div>
       <div className="p-5">{children}</div>

@@ -21,7 +21,7 @@ export default function StatCard({ label, value, trend, data, chartType = "spark
         <p className="text-xs" style={{ color: "#777b86" }}>{label}</p>
         <p className="text-xl bold mt-1 truncate" style={{ color: "#17191c" }}>{value}</p>
         {trend && (
-          <p className="text-xs mt-1">
+          <p className="text-xs lg:text-smmt-1">
             <span className="bold" style={{ color: trend.positive !== false ? "#16a34a" : "#dc2626" }}>
               {trend.positive !== false ? "+" : ""}{trend.value}%
             </span>{" "}

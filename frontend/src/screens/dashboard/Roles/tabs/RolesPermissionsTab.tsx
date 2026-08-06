@@ -45,7 +45,7 @@ export default function RolesPermissionsTab() {
         action={
           <button
             onClick={() => setShowCreateRole(true)}
-            className="flex items-center gap-2 h-9 px-4 rounded-full text-xs transition-opacity hover:opacity-80 shrink-0"
+            className="flex items-center gap-2 h-9 px-4 rounded-full text-xs lg:text-smtransition-opacity hover:opacity-80 shrink-0"
             style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
           >
             <Plus size={14} />
@@ -59,7 +59,7 @@ export default function RolesPermissionsTab() {
           <button
             key={t.key}
             onClick={() => setScope(t.key)}
-            className="h-8 px-4 rounded-full text-xs bold transition-colors"
+            className="h-8 px-4 rounded-full text-xs lg:text-sm transition-colors"
             style={{
               backgroundColor: scope === t.key ? "var(--color-ink)" : "transparent",
               color: scope === t.key ? "var(--color-canvas)" : "var(--color-muted-stone)",

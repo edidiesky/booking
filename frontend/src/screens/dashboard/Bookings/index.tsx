@@ -146,12 +146,12 @@ export default function DashboardBookings() {
             <h4 className="text-lg lg:text-xl bold  text-[#17191c]">
               Bookings
             </h4>
-            <p className="text-xs text-[#64645f] mt-1 max-w-[420px] bold">
+            <p className="text-xs lg:text-smtext-[#64645f] mt-1 max-w-[420px] bold">
               Manage guest reservations. Click a row to view details and take
               actions.
             </p>
           </div>
-          <span className="text-xs text-[#a3a6af] mt-2">
+          <span className="text-xs lg:text-smtext-[#a3a6af] mt-2">
             {bookings.length} total
           </span>
         </div>
@@ -194,7 +194,7 @@ export default function DashboardBookings() {
             onApply={setDateRange}
             placeholder="Check-in date range"
           />
-          <button onClick={resetFilters} className="text-xs underline" style={{ color: "#777b86" }}>
+          <button onClick={resetFilters} className="text-xs lg:text-smunderline" style={{ color: "#777b86" }}>
             Reset
           </button>
         </FilterBar>
@@ -211,7 +211,7 @@ export default function DashboardBookings() {
                 {HEADERS.map((h) => (
                   <th
                     key={h}
-                    className="px-5 py-3 text-left text-xs text-[#a3a6af] uppercase whitespace-nowrap"
+                    className="px-5 py-3 text-left text-xs lg:text-smtext-[#a3a6af] uppercase whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -233,7 +233,7 @@ export default function DashboardBookings() {
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-5 py-10 text-center text-xs text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-smtext-[#a3a6af]"
                   >
                     No bookings found{search ? ` for "${search}"` : ""}
                   </td>

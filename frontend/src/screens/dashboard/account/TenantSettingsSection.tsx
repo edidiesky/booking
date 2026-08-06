@@ -24,7 +24,7 @@ export default function TenantSettingsSection({ tenant, onSave, isSaving }: Prop
         <Input label="Locale"   placeholder="en-NG"        {...register("locale")}   />
       </div>
       <button type="submit" disabled={isSaving}
-              className="h-10 px-6 rounded-full text-xs self-start transition-opacity hover:opacity-80 disabled:opacity-50"
+              className="h-10 px-6 rounded-full text-xs lg:text-smself-start transition-opacity hover:opacity-80 disabled:opacity-50"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
         {isSaving ? "Saving..." : "Save settings"}
       </button>

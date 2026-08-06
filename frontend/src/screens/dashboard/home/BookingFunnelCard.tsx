@@ -45,7 +45,7 @@ export default function RecentTransactionsCard({ recentTransactions }: Props) {
   return (
     <div className="rounded-2xl border border-[var(--color-fog)] bg-[var(--color-canvas)] flex flex-col">
       <div className="px-5 py-4 border-b border-[var(--color-fog)]">
-        <p className="text-xs uppercase bold" style={{ color: "var(--color-muted-stone)" }}>Recent Transactions</p>
+        <p className="text-xs lg:text-smuppercase bold" style={{ color: "var(--color-muted-stone)" }}>Recent Transactions</p>
       </div>
 
       {recent.length === 0 ? (
@@ -61,20 +61,20 @@ export default function RecentTransactionsCard({ recentTransactions }: Props) {
               // TODO: wrap with your router's Link to the payment/booking detail view
               <div key={id} className="flex cursor-pointer hover:bg-[#f2f0ed58] transition-all items-center gap-3 px-5 py-3.5">
                 <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 text-xs bold"
+                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 text-xs lg:text-sm"
                   style={{ backgroundColor: "var(--color-fog)", color: "var(--color-ink)" }}
                 >
                   {initialsFromName(guest_first_name, guest_last_name, booking_ref)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs bold truncate" style={{ color: "var(--color-ink)" }}>
+                  <p className="text-xs lg:text-sm truncate" style={{ color: "var(--color-ink)" }}>
                     {name} &middot; {fmtNaira(amount_ngn)} via <span className="capitalize">{gateway}</span>
                   </p>
-                  <p className="text-xs medium mt-0.5 truncate" style={{ color: "var(--color-muted-stone)" }}>
+                  <p className="text-xs lg:text-sm medium mt-0.5 truncate" style={{ color: "var(--color-muted-stone)" }}>
                     {transaction_id ?? booking_ref}
                   </p>
                 </div>
-                <span className="text-xs medium shrink-0" style={{ color: statusMeta.color }}>
+                <span className="text-xs lg:text-sm medium shrink-0" style={{ color: statusMeta.color }}>
                   {statusMeta.label}
                 </span>
               </div>

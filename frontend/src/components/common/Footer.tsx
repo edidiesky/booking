@@ -119,21 +119,21 @@ function FooterSection1() {
           <div className="flex items-center gap-6 flex-wrap">
             <Link
               to="/contact"
-              className="text-xs lg:text-xs bold"
+              className="text-xs lg:text-sm lg:text-sm"
               style={{ color: "var(--color-primary-foreground)" }}
             >
               Contact us
             </Link>
             <Link
               to="/help"
-              className="text-xs lg:text-xs bold"
+              className="text-xs lg:text-sm lg:text-sm"
               style={{ color: "var(--color-primary-foreground)" }}
             >
               Help center
             </Link>
             <Link
               to="/status"
-              className="text-xs lg:text-xs bold"
+              className="text-xs lg:text-sm lg:text-sm"
               style={{ color: "var(--color-primary-foreground)" }}
             >
               Status
@@ -164,7 +164,7 @@ function FooterSection1() {
             <FaApple size={16} style={{ color: "var(--color-primary)" }} />
             <FaGooglePlay size={14} style={{ color: "var(--color-primary)" }} />
             <span
-              className="text-xs bold ml-1"
+              className="text-xs lg:text-sm ml-1"
               style={{ color: "var(--color-primary)" }}
             >
               Get the app
@@ -176,7 +176,7 @@ function FooterSection1() {
           {COLUMNS.map((col) => (
             <div key={col.title} className="flex flex-col gap-3">
               <p
-                className="text-xs uppercase tracking-wide"
+                className="text-xs lg:text-smuppercase tracking-wide"
                 style={{ color: "rgba(0,0,0,0.5)" }}
               >
                 {col.title}
@@ -185,7 +185,7 @@ function FooterSection1() {
                 <Link
                   key={link.label}
                   to={link.to}
-                  className="text-xs lg:text-xs bold hover:underline"
+                  className="text-xs lg:text-sm lg:text-sm hover:underline"
                   style={{ color: "var(--color-primary-foreground)" }}
                 >
                   {link.label}
@@ -224,7 +224,7 @@ function FooterSection2() {
               pEERK
             </span>
             <p
-              className="text-xs lg:text-xs"
+              className="text-xs lg:text-sm"
               style={{ color: "var(--color-light-steel)" }}
             >
               © {new Date().getFullYear()} pEERK

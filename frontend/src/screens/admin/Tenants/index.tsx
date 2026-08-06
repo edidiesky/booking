@@ -66,7 +66,7 @@ export default function AdminTenants() {
                 <td className="py-3 text-right">
                   <button
                     onClick={() => handleToggleStatus(tenant)}
-                    className="text-xs underline"
+                    className="text-xs lg:text-smunderline"
                     style={{ color: tenant.status === "suspended" ? "#00a86b" : "#dc2626" }}
                   >
                     {tenant.status === "suspended" ? "Reactivate" : "Suspend"}
@@ -79,7 +79,7 @@ export default function AdminTenants() {
       )}
 
       <div className="flex items-center gap-3 mt-6">
-        <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="text-xs disabled:opacity-40">Previous</button>
+        <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="text-xs lg:text-smdisabled:opacity-40">Previous</button>
         <span className="text-xs" style={{ color: "var(--color-muted-stone)" }}>Page {page}</span>
         <button onClick={() => setPage((p) => p + 1)} className="text-xs">Next</button>
       </div>

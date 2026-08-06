@@ -51,14 +51,14 @@ export default function Hero() {
                 </div>
               ))}
             </div>
-            <span className="text-xs lg:text-xs text-[#eee] capitalize">
+            <span className="text-xs lg:text-sm lg:text-smtext-[#eee] capitalize">
               5K+ guests booked with confidence
             </span>
           </div>
 
           <div className="flex flex-col gap-3 max-w-[520px] lg:max-w-[820px] text-start">
             <h1
-              className="text-white family1 text-5xl lg:text-7xl bold"
+              className="text-white family1 text-5xl max-w-[320px] md:max-w-[620px] lg:max-w-[820px] lg:text-7xl bold"
             >
               Shortlets, hotels &amp; guesthouses, booked  <br /> in seconds.
             </h1>
@@ -73,14 +73,14 @@ export default function Hero() {
             </MaskRevealText>
           </div>
 
-          <div className="w-full max-w-5xl">
+          <div className="w-full lg:block hidden max-w-5xl">
             <PropertySearchBar onSearch={handleSearch} />
           </div>
 
           {/* {!isAuthenticated && (
             <button
               onClick={() => navigate("/select-user-type")}
-              className="text-xs text-white underline"
+              className="text-xs lg:text-smtext-white underline"
             >
               List your property instead &rarr;
             </button>

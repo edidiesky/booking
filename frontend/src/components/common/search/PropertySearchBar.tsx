@@ -31,25 +31,25 @@ export default function PropertySearchBar({ initialValue, onSearch, className = 
       className={`w-full bg-white z-10 p-4 rounded-lg lg:rounded-full flex flex-col gap-2 lg:flex-row items-stretch lg:items-center border shadow-lg ${className}`}
       style={{ borderColor: "#e8e6e3" }}
     >
-      <div className="flex items-center gap-2 bg-[#f2f0edb7] px-4 py-3 min-w-20 rounded-full">
+      <div className="flex items-center gap-2 bg-[#f2f0edb7] px-4 py-1 lg:py-3 min-w-20 rounded-full">
         <SearchIcon size={15} style={{ color: "#a3a6af" }} />
         <input
           value={value.query}
           onChange={(e) => setValue((v) => ({ ...v, query: e.target.value }))}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Homes, Shortlets,..."
-          className="w-full text-xs lg:text-xs bg-transparent h-14 outline-none placeholder:text-[#a3a6af]"
+          className="w-full text-xs lg:text-sm lg:text-smbg-transparent h-11 lg:h-14 outline-none placeholder:text-[#a3a6af]"
         />
       </div>
 
-      <div className="flex items-center gap-2 bg-[#f2f0edb7] px-4 py-3 min-w-20 rounded-full">
+      <div className="flex items-center gap-2 bg-[#f2f0edb7] px-4 py-1 lg:py-3 min-w-20 rounded-full">
         <MapPin size={18} style={{ color: "#a3a6af" }} />
         <input
           value={value.location}
           onChange={(e) => setValue((v) => ({ ...v, location: e.target.value }))}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="e.g., Ikeja"
-          className="w-full text-xs lg:text-xs bg-transparent h-14 outline-none placeholder:text-[#a3a6af]"
+          className="w-full text-xs lg:text-sm lg:text-smbg-transparent h-11 lg:h-14 outline-none placeholder:text-[#a3a6af]"
         />
       </div>
 
@@ -78,11 +78,11 @@ export default function PropertySearchBar({ initialValue, onSearch, className = 
 
       <button
         onClick={handleSearch}
-        className="flex min-w-32 items-center justify-center gap-2 h-14 lg:h-11 lg:rounded-full text-xs bold text-white shrink-0"
+        className="flex min-w-32 items-center justify-center gap-2 h-11 lg:h-14 lg:h-11 rounded-full text-xs lg:text-sm text-white shrink-0"
         style={{ backgroundColor: "var(--color-ink, #17191c)" }}
       >
         <SearchIcon size={15} />
-        <span className="text-xs lg:text-xs">Search</span>
+        <span className="text-xs lg:text-sm">Search</span>
       </button>
     </div>
   );

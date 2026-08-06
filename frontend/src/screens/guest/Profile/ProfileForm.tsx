@@ -55,11 +55,11 @@ export default function ProfileForm({ profile, onSubmit, isSaving }: Props) {
       <Input label="Display name" error={errors.displayName?.message} {...register("displayName")} />
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium" style={{ color: "var(--color-ink)" }}>Bio</label>
+        <label className="text-xs lg:text-smfont-medium" style={{ color: "var(--color-ink)" }}>Bio</label>
         <textarea
           rows={3}
           placeholder="Tell us a bit about yourself..."
-          className="w-full border rounded-xl px-3 py-2.5 text-xs resize-none outline-none"
+          className="w-full border rounded-xl px-3 py-2.5 text-xs lg:text-smresize-none outline-none"
           style={{ borderColor: "#e8e6e3", color: "var(--color-ink)" }}
           {...register("bio")}
         />
@@ -73,7 +73,7 @@ export default function ProfileForm({ profile, onSubmit, isSaving }: Props) {
 
       <button
         type="submit" disabled={isSaving}
-        className="w-full h-11 rounded-full text-xs transition-opacity hover:opacity-80 disabled:opacity-50"
+        className="w-full h-11 rounded-full text-xs lg:text-smtransition-opacity hover:opacity-80 disabled:opacity-50"
         style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
       >
         {isSaving ? "Saving..." : "Save changes"}

@@ -39,7 +39,7 @@ export default function GanttToolbar({
   return (
     <div className="border-b" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <p className="text-xs bold whitespace-nowrap" style={{ color: "#17191c" }}>
+        <p className="text-xs lg:text-sm whitespace-nowrap" style={{ color: "#17191c" }}>
           {format(windowStart, "MMM d")} – {format(addDays(windowStart, visibleDays - 1), "MMM d, yyyy")}
         </p>
 
@@ -49,7 +49,7 @@ export default function GanttToolbar({
               <button
                 key={v.key}
                 onClick={() => onViewChange(v.key)}
-                className="h-7 px-3 rounded-full text-xs bold transition-colors"
+                className="h-7 px-3 rounded-full text-xs lg:text-sm transition-colors"
                 style={{
                   backgroundColor: view === v.key ? "#17191c" : "transparent",
                   color: view === v.key ? "#fff" : "#777b86",
@@ -74,7 +74,7 @@ export default function GanttToolbar({
             onToggle={onToggleStatus}
           />
 
-          <button onClick={onReset} className="text-xs underline" style={{ color: "#777b86" }}>
+          <button onClick={onReset} className="text-xs lg:text-smunderline" style={{ color: "#777b86" }}>
             Reset
           </button>
         </div>
@@ -88,7 +88,7 @@ export default function GanttToolbar({
         <button onClick={() => onWindowChange(subDays(windowStart, visibleDays))} className="p-1 rounded-full hover:bg-[#f2f0ed] shrink-0">
           <ChevronLeft size={14} />
         </button>
-        <button onClick={() => onWindowChange(new Date())} className="h-7 flex-1 rounded-full text-xs bold border" style={{ borderColor: "#e8e6e3" }}>
+        <button onClick={() => onWindowChange(new Date())} className="h-7 flex-1 rounded-full text-xs lg:text-sm border" style={{ borderColor: "#e8e6e3" }}>
           Today
         </button>
         <button onClick={() => onWindowChange(addDays(windowStart, visibleDays))} className="p-1 rounded-full hover:bg-[#f2f0ed] shrink-0">

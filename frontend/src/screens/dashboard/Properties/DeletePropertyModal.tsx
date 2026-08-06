@@ -34,7 +34,7 @@ export default function DeletePropertyModal({ propertyId, propertyName, isOpen, 
         <div className="w-full flex px-8 items-start justify-between gap-1">
           <div>
             <h3 className="text-lg text-[#17191c]">Delete Property</h3>
-            <p className="text-xs text-[#777b86] mt-1 max-w-[380px]">
+            <p className="text-xs lg:text-sm text-[#777b86] mt-1 max-w-[380px]">
               Are you sure you want to delete{" "}
               <span className="text-[#17191c]">{propertyName}</span>?
               All room types and availability data will be permanently removed.
@@ -48,7 +48,7 @@ export default function DeletePropertyModal({ propertyId, propertyName, isOpen, 
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="h-9 px-5 text-xs bold rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
+            className="h-9 px-5 text-xs lg:text-sm rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -56,7 +56,7 @@ export default function DeletePropertyModal({ propertyId, propertyName, isOpen, 
             type="button"
             onClick={handleDelete}
             disabled={isLoading}
-            className="h-9 px-5 text-xs bold rounded-full bg-red-600 text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+            className="h-9 px-5 text-xs lg:text-sm rounded-full bg-red-600 text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
           >
             {isLoading ? (
               <>

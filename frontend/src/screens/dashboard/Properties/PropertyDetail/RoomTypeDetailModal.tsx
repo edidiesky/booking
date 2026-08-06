@@ -30,7 +30,7 @@ export default function RoomTypeDetailModal({ roomTypeId, onClose }: Props) {
         className="bg-white w-full rounded-2xl overflow-hidden relative flex flex-col lg:w-[750px] h-[95vh]"
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
-          <p className="text-xs bold text-[#17191c]">{roomType?.name ?? "Room type"}</p>
+          <p className="text-xs lg:text-sm text-[#17191c]">{roomType?.name ?? "Room type"}</p>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center hover:bg-[#f2f0ed] transition-colors">
             <X size={15} />
           </button>
@@ -58,20 +58,20 @@ export default function RoomTypeDetailModal({ roomTypeId, onClose }: Props) {
 
                 <div>
                   <div className="flex items-center justify-between">
-                    <p className="text-xs bold text-[#17191c]">{roomType.name}</p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full bold ${(STATUS_CFG[roomType.status] ?? STATUS_CFG.inactive).className}`}>
+                    <p className="text-xs lg:text-sm text-[#17191c]">{roomType.name}</p>
+                    <span className={`text-xs lg:text-smpx-2 py-0.5 rounded-full bold ${(STATUS_CFG[roomType.status] ?? STATUS_CFG.inactive).className}`}>
                       {(STATUS_CFG[roomType.status] ?? STATUS_CFG.inactive).label}
                     </span>
                   </div>
-                  <p className="text-xs text-[#777b86] mt-2 leading-relaxed">{roomType.description ?? "No description provided."}</p>
+                  <p className="text-xs lg:text-sm text-[#777b86] mt-2 leading-relaxed">{roomType.description ?? "No description provided."}</p>
                 </div>
 
                 {roomType.amenities?.length > 0 && (
                   <div>
-                    <p className="text-xs uppercase text-[#a3a6af] bold mb-2">Amenities</p>
+                    <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold mb-2">Amenities</p>
                     <div className="flex flex-wrap gap-2">
                       {roomType.amenities.map((a) => (
-                        <span key={a} className="text-xs px-3 py-1 rounded-full bg-[#f2f0ed] text-[#4c4c4c]">{a}</span>
+                        <span key={a} className="text-xs lg:text-smpx-3 py-1 rounded-full bg-[#f2f0ed] text-[#4c4c4c]">{a}</span>
                       ))}
                     </div>
                   </div>
@@ -80,7 +80,7 @@ export default function RoomTypeDetailModal({ roomTypeId, onClose }: Props) {
 
               <div className="flex flex-col gap-4">
                 <div className="border border-[#e8e6e3] rounded-xl p-4 flex flex-col gap-3">
-                  <p className="text-xs uppercase text-[#a3a6af] bold">Pricing & capacity</p>
+                  <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold">Pricing & capacity</p>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[#777b86] flex items-center gap-1.5"><BedDouble size={13} /> Rent</span>
                     <span className="text-[#17191c] bold">{formatCurrency(Number(roomType.base_price_ngn))}/mo</span>
@@ -96,7 +96,7 @@ export default function RoomTypeDetailModal({ roomTypeId, onClose }: Props) {
                 </div>
 
                 <div className="border border-[#e8e6e3] rounded-xl p-4 flex flex-col gap-3">
-                  <p className="text-xs uppercase text-[#a3a6af] bold">Current occupant</p>
+                  <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold">Current occupant</p>
                   {occupant ? (
                     <>
                       <div className="flex items-center justify-between text-xs">
@@ -110,7 +110,7 @@ export default function RoomTypeDetailModal({ roomTypeId, onClose }: Props) {
                       <StatusBadge status={occupant.status as BookingStatus} />
                     </>
                   ) : (
-                    <p className="text-xs text-[#a3a6af]">Vacant, no active booking.</p>
+                    <p className="text-xs lg:text-smtext-[#a3a6af]">Vacant, no active booking.</p>
                   )}
                 </div>
               </div>

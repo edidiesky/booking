@@ -26,7 +26,7 @@ export default function AuthProgress({
         ))}
       </div>
       <p
-        className="text-xs "
+        className="text-xs lg:text-sm"
         style={{ color: "var(--color-light-steel)" }}
       >
         Step {currentStep} of {totalSteps} — {labels[currentStep - 1]}

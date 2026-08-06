@@ -37,7 +37,7 @@ export function ChartSelect({ value, onValueChange, options, placeholder }: Char
           <SelectItem
             key={toInternal(opt.value)}
             value={toInternal(opt.value)}
-            className="text-xs text-gray-500 bold cursor-pointer hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700"
+            className="text-xs lg:text-smtext-gray-500 bold cursor-pointer hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700"
           >
             <div className="flex items-center bold gap-2 my-1">{opt.label}</div>
           </SelectItem>

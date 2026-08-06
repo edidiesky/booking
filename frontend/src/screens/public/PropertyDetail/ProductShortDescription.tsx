@@ -34,7 +34,7 @@ export default function ProductShortDescription({
       <div className="w-full flex flex-col gap-1">
         <div className="w-full flex flex-col gap-2  border-b py-4 border-dotted">
           <h3 className="text-3xl">{data?.name}</h3>
-          <h5 className="text-xs space-y-2 ">
+          <h5 className="text-xs lg:text-smspace-y-2 ">
             <span className="block">SKU 028 
               {/* {data?.brand} */}
             </span>
@@ -46,21 +46,21 @@ export default function ProductShortDescription({
         <div className="w-full flex flex-col gap-6  border-b py-4 border-dotted">
           {/* timer */}
           <div className="w-full bg-[#FFCE78] p-6 flex flex-col items-center gap-3">
-            <span className="text-xs ">
+            <span className="text-xs lg:text-sm">
               Flash Sale
             </span>
             <div className="flex items-center gap-4">
               {/* Days */}
-              <span className="text-xs ">0 0 Days</span>
-              <span className="text-xs ">0 0 HRS</span>
-              <span className="text-xs ">0 0 Min</span>
-              <span className="text-xs ">0 0 Sec</span>
+              <span className="text-xs lg:text-sm">0 0 Days</span>
+              <span className="text-xs lg:text-sm">0 0 HRS</span>
+              <span className="text-xs lg:text-sm">0 0 Min</span>
+              <span className="text-xs lg:text-sm">0 0 Sec</span>
             </div>
           </div>
 
           {/* color */}
           <div className="w-full flex items-center gap-8">
-            <h3 className="text-xs ">Color</h3>
+            <h3 className="text-xs lg:text-sm">Color</h3>
             <div className="flex items-center  gap-4">
               {data?.colors?.map((data, index) => {
                 return (
@@ -79,13 +79,13 @@ export default function ProductShortDescription({
 
           {/* size */}
           <div className="w-full flex items-center gap-8">
-            <h3 className="text-xs ">Size</h3>
+            <h3 className="text-xs lg:text-sm">Size</h3>
             <div className="flex items-center  gap-4">
               {data?.size?.map((data, index) => {
                 return (
                   <div
                     key={index}
-                    className="w-16 cursor-pointer hover:bg-[#eee] flex items-center justify-center h-12 rounded-md text-xs p-1 border"
+                    className="w-16 cursor-pointer hover:bg-[#eee] flex items-center justify-center h-12 rounded-md text-xs lg:text-smp-1 border"
                   >
                     {data?.value}
                   </div>
@@ -107,14 +107,14 @@ export default function ProductShortDescription({
                 <LuMinus />
               </div>
             </div>
-            <div className="btn btn_small flex-1 text-xs text-white">
+            <div className="btn btn_small flex-1 text-xs lg:text-smtext-white">
               <span className="p-1">Add to Cart</span>
             </div>
           </div>
         </div>
         {/* description */}
         <div className="w-full flex flex-col gap-2  border-b py-4 border-dotted">
-          <p className="text-xs ">
+          <p className="text-xs lg:text-sm">
            {ReactHtmlParser(sanitizedValue)}
           </p>
           <div className="flex items-center justify-end">
@@ -126,19 +126,19 @@ export default function ProductShortDescription({
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-xs  hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-xs lg:text-sm hover:bg-[#FAF8F5]"
             >
               <FaXTwitter />
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-xs  hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-xs lg:text-sm hover:bg-[#FAF8F5]"
             >
               <FaInstagram />
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-xs  hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-xs lg:text-sm hover:bg-[#FAF8F5]"
             >
               <FaYoutube />
             </Link>
