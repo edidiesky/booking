@@ -59,3 +59,9 @@ export const GetCalendarAdminHandler = asyncHandler(async (req: Request, res: Re
   const data = await adminService.getCalendar(startDate, endDate);
   res.status(200).json({ success: true, data });
 });
+
+export const GetTenantActivityHandler = asyncHandler(async (req, res) => {
+  const { page, limit } = pageParams(req);
+  const data = await adminService.getTenantActivity(req.params["tenantId"] as string, page, limit);
+  res.status(200).json({ success: true, data });
+});

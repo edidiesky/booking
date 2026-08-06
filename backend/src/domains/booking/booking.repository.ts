@@ -39,7 +39,7 @@ export interface Booking {
   room_types_image?: string[];
   guest_first_name?: string;
   guest_last_name?: string;
-  tenant_name?:string;
+  tenant_name?: string;
 }
 
 function generateBookingRef(): string {
@@ -339,16 +339,18 @@ export const bookingRepository = {
     };
   },
 
-async listAllForAdmin(
-  opts: { status?: BookingStatus; page?: number; limit?: number } = {},
-): Promise<Booking[]> {
-  const { status, page = 1, limit = 20 } = opts;
-  const offset = (page - 1) * limit;
-  const params: unknown[] = [limit, offset];
-  const whereClause = status ? `WHERE b.status = $${params.push(status)}` : "";
+  async listAllForAdmin(
+    opts: { status?: BookingStatus; page?: number; limit?: number } = {},
+  ): Promise<Booking[]> {
+    const { status, page = 1, limit = 20 } = opts;
+    const offset = (page - 1) * limit;
+    const params: unknown[] = [limit, offset];
+    const whereClause = status
+      ? `WHERE b.status = $${params.push(status)}`
+      : "";
 
-  return query<Booking>(
-    `SELECT b.*, t.name AS tenant_name,
+    return query<Booking>(
+      `SELECT b.*, t.name AS tenant_name,
             u.first_name AS guest_first_name, u.last_name AS guest_last_name, u.email AS guest_email,
             p.name AS property_name, rt.name AS room_type_name
      FROM bookings b
@@ -358,9 +360,9 @@ async listAllForAdmin(
      JOIN room_types rt ON rt.id = b.room_type_id
      ${whereClause}
      ORDER BY b.created_at DESC LIMIT $1 OFFSET $2`,
-    params,
-  );
-},
+      params,
+    );
+  },
 
   async listForDateRange(
     startDate: string,
@@ -380,5 +382,41 @@ async listAllForAdmin(
      ORDER BY b.check_in ASC`,
       [startDate, endDate],
     );
+  },
+  
+
+  async getRevenueTrend(
+    tenantId: string,
+    days: number,
+  ): Promise<{ day: string; hostPayout: number; platformFee: number }[]> {
+    const rows = await query<{
+      day: string;
+      host_payout: string;
+      platform_fee: string;
+    }>(
+      `WITH days AS (
+       SELECT generate_series(
+         date_trunc('day', now() - ($2 || ' days')::interval),
+         date_trunc('day', now()),
+         '1 day'::interval
+       ) AS day
+     )
+     SELECT days.day,
+            COALESCE(SUM(b.host_payout_ngn), 0) AS host_payout,
+            COALESCE(SUM(b.platform_fee_ngn), 0) AS platform_fee
+     FROM days
+     LEFT JOIN bookings b
+       ON date_trunc('day', b.created_at) = days.day
+       AND b.tenant_id = $1
+       AND b.status IN ('confirmed', 'checked_in', 'checked_out')
+     GROUP BY days.day
+     ORDER BY days.day ASC`,
+      [tenantId, days],
+    );
+    return rows.map((r) => ({
+      day: r.day,
+      hostPayout: Number(r.host_payout),
+      platformFee: Number(r.platform_fee),
+    }));
   },
 };
