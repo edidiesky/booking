@@ -20,25 +20,6 @@ import { FilterBar, FilterSearchInput } from "@/components/common/filters/Filter
 import { STATUS_MAP } from "@/components/common/StatusBadge";
 import MultiSelectDropdown from "@/components/dashboard/common/gant/MultiSelectDropdown";
 import DateRangeDropdown from "@/components/common/filters/DateRangeDropdown";
-
-// const STATUS_CONFIG: Record<
-//   BookingStatus,
-//   { label: string; className: string }
-// > = {
-//   pending_payment: {
-//     label: "Pending Payment",
-//     className: "bg-yellow-50 text-yellow-800",
-//   },
-//   confirmed: { label: "Confirmed", className: "bg-blue-50 text-blue-700" },
-//   checked_in: { label: "Checked In", className: "bg-green-50 text-green-700" },
-//   checked_out: {
-//     label: "Checked Out",
-//     className: "bg-[#f2f0ed] text-[#4c4c4c]",
-//   },
-//   cancelled: { label: "Cancelled", className: "bg-red-50 text-red-700" },
-//   refunded: { label: "Refunded", className: "bg-purple-50 text-purple-700" },
-// };
-
 const STATUS_OPTIONS: { label: string; value: BookingStatus | "" }[] = [
   { label: "All statuses", value: "" },
   { label: "Pending Payment", value: "pending_payment" },
@@ -146,12 +127,12 @@ export default function DashboardBookings() {
             <h4 className="text-lg lg:text-xl bold  text-[#17191c]">
               Bookings
             </h4>
-            <p className="text-xs lg:text-smtext-[#64645f] mt-1 max-w-[420px] bold">
+            <p className="text-xs lg:text-sm text-[#64645f] mt-1 max-w-[420px] bold">
               Manage guest reservations. Click a row to view details and take
               actions.
             </p>
           </div>
-          <span className="text-xs lg:text-smtext-[#a3a6af] mt-2">
+          <span className="text-xs lg:text-sm text-[#a3a6af] mt-2">
             {bookings.length} total
           </span>
         </div>
@@ -194,7 +175,7 @@ export default function DashboardBookings() {
             onApply={setDateRange}
             placeholder="Check-in date range"
           />
-          <button onClick={resetFilters} className="text-xs lg:text-smunderline" style={{ color: "#777b86" }}>
+          <button onClick={resetFilters} className="text-xs lg:text-sm underline" style={{ color: "#777b86" }}>
             Reset
           </button>
         </FilterBar>
@@ -211,7 +192,7 @@ export default function DashboardBookings() {
                 {HEADERS.map((h) => (
                   <th
                     key={h}
-                    className="px-5 py-3 text-left text-xs lg:text-smtext-[#a3a6af] uppercase whitespace-nowrap"
+                    className="px-5 py-3 text-left text-xs lg:text-sm text-[#a3a6af] uppercase whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -233,7 +214,7 @@ export default function DashboardBookings() {
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-5 py-10 text-center text-xs lg:text-smtext-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-sm text-[#a3a6af]"
                   >
                     No bookings found{search ? ` for "${search}"` : ""}
                   </td>
