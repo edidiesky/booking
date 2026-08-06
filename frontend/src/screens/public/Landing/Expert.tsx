@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import AnimateTextWord from "@/components/common/AnimateTextWord";
 
 gsap.registerPlugin(ScrollTrigger);
-
+ScrollTrigger.config({ ignoreMobileResize: true });
 const features = [
   {
     tag: "AVAILABILITY CALENDAR",
@@ -123,8 +123,30 @@ export default function Expert() {
         }
       });
     }, containerRef);
+    const refresh = () => ScrollTrigger.refresh();
 
-    return () => ctx.revert();
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(refresh);
+    }
+
+    const imgs = containerRef.current?.querySelectorAll("img") ?? [];
+    const imgPromises = Array.from(imgs).map((img) =>
+      img.complete
+        ? Promise.resolve()
+        : new Promise((res) => {
+            img.addEventListener("load", res, { once: true });
+            img.addEventListener("error", res, { once: true });
+          }),
+    );
+    Promise.all(imgPromises).then(refresh);
+
+    // 3. Fallback: after full window load, in case anything else shifted layout
+    window.addEventListener("load", refresh);
+
+    return () => {
+      window.removeEventListener("load", refresh);
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -202,7 +224,6 @@ export default function Expert() {
                   <AnimateTextWord type="bigtext_Center">
                     {feature.title}
                   </AnimateTextWord>
-                  
                 </h3>
 
                 <ul className="flex flex-col gap-3">
