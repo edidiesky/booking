@@ -163,5 +163,5 @@ export const {
   useListTenantsQuery,
   useSuspendTenantMutation,
   useActivateTenantMutation,
-  useGetAdminTenantDetailQuery
+  useGetAdminTenantDetailQuery,
 } = tenantApi;
