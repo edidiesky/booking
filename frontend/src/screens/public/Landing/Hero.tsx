@@ -51,7 +51,7 @@ export default function Hero() {
                 </div>
               ))}
             </div>
-            <span className="text-xs lg:text-sm lg:text-smtext-[#eee] capitalize">
+            <span className="text-xs lg:text-smtext-[#eee] capitalize">
               5K+ guests booked with confidence
             </span>
           </div>

@@ -39,7 +39,7 @@ export default function BookingPayment() {
               </motion.h2>
 
               <ul className="flex flex-col gap-4 pb-4 border-b border-[#e8e6e3]">
-                <li className="text-xs lg:text-sm lg:text-smtext-[#4c4c4c]">
+                <li className="text-xs lg:text-smtext-[#4c4c4c]">
                   One more step to complete your booking. Our payment platform ensures your payment details are safe and secured.
                 </li>
               </ul>

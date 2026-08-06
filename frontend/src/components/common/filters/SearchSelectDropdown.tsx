@@ -57,7 +57,7 @@ export default function SearchSelectDropdown({ placeholder, options, value, onCh
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
-              className="w-full h-8 px-2 text-xs lg:text-smborder rounded-md outline-none"
+              className="w-full h-8 px-2 text-xs lg:text-sm border rounded-md outline-none"
               style={{ borderColor: "#e8e6e3" }}
             />
           </div>

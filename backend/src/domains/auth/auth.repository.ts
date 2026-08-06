@@ -52,9 +52,6 @@ export const userRepository = {
     );
   },
 
-  // Includes password_hash/pin_hash/otp_code_hash, only for internal
-  // verification logic (PIN check, OTP check, password confirm). Never
-  // return this shape directly in an API response.
   async findByIdWithSecrets(id: string): Promise<User | null> {
     return queryOne<User>(`SELECT * FROM users WHERE id = $1`, [id]);
   },
@@ -140,4 +137,27 @@ export const userRepository = {
   async findByGoogleId(googleId: string): Promise<User | null> {
     return queryOne<User>(`SELECT * FROM users WHERE google_id = $1`, [googleId]);
   },
+
+  async listByType(userType: UserType, page = 1, limit = 20): Promise<User[]> {
+  const offset = (page - 1) * limit;
+  return query<User>(
+    `SELECT * FROM users WHERE user_type = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
+    [userType, limit, offset],
+  );
+},
+
+async countByType(userType: UserType): Promise<number> {
+  const row = await queryOne<{ count: string }>(
+    `SELECT COUNT(*) AS count FROM users WHERE user_type = $1`,
+    [userType],
+  );
+  return parseInt(row?.count ?? "0", 10);
+},
+
+async updateUserType(userId: string, userType: UserType): Promise<User | null> {
+  return queryOne<User>(
+    `UPDATE users SET user_type = $1, updated_at = now() WHERE id = $2 RETURNING *`,
+    [userType, userId],
+  );
+},
 };

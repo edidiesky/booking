@@ -35,7 +35,7 @@ export default function PropertyGrid({ properties, isLoading, search, typeFilter
           {search || typeFilter ? "No properties match your filter." : "No properties available yet."}
         </p>
         {(search || typeFilter) && (
-          <button onClick={onClear} className="text-xs lg:text-smunderline underline-offset-4"
+          <button onClick={onClear} className="text-xs lg:text-sm underline underline-offset-4"
                   style={{ color: "var(--color-muted-stone)" }}>
             Clear filters
           </button>

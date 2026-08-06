@@ -168,7 +168,7 @@
 //             )}
 //           </div>
 //         </div>
-//         <div className="flex items-center gap-1 text-xs lg:text-sm lg:text-smtext-[#2F5D4F] shrink-0">
+//         <div className="flex items-center gap-1 text-xs lg:text-smtext-[#2F5D4F] shrink-0">
 //           <ShieldCheck size={14} />
 //           Recommends
 //         </div>
@@ -177,7 +177,7 @@
 //       <p className="text-xs lg:text-smlg:text-lg text-[#171717] mt-3 leading-relaxed">{review.comment}</p>
 
 //       <div className="flex items-center justify-between mt-3">
-//         <span className="text-xs lg:text-sm lg:text-smtext-[#666]">{date}</span>
+//         <span className="text-xs lg:text-smtext-[#666]">{date}</span>
 //         {review.helpfulCount > 0 && (
 //           <button className="flex items-center gap-1 text-xs lg:text-smtext-[#666] hover:text-[#171717] transition-colors">
 //             <ThumbsUp size={12} />
@@ -206,7 +206,7 @@
 //       <div className="flex items-center gap-2 flex-wrap ">
 //         <button
 //           onClick={() => setActiveTag("Suggested")}
-//           className={`shrink-0 rounded-full border px-4 py-1.5 text-xs lg:text-sm lg:text-sm transition-colors ${
+//           className={`shrink-0 rounded-full border px-4 py-1.5 text-xs lg:text-sm transition-colors ${
 //             activeTag === "Suggested"
 //               ? "border-[#171717] bg-[#171717] text-white"
 //               : "border-[#EDEAE3] text-[#171717] hover:border-[#171717]"
@@ -282,11 +282,11 @@ function ReviewCard({ review }: { review: Review }) {
               <Stars rating={review.rating} />
               <span className="text-xs lg:text-smlg:text-lg bold">{displayName}</span>
             </div>
-            <p className="text-xs lg:text-sm lg:text-sm text-[#171717] mt-0.5">{review.title}</p>
+            <p className="text-xs lg:text-sm text-[#171717] mt-0.5">{review.title}</p>
           </div>
         </div>
         {review.is_verified_purchase && (
-          <div className="flex items-center gap-1 text-xs lg:text-sm lg:text-smtext-[#2F5D4F] shrink-0">
+          <div className="flex items-center gap-1 text-xs lg:text-smtext-[#2F5D4F] shrink-0">
             <ShieldCheck size={14} />
             Verified stay
           </div>
@@ -303,7 +303,7 @@ function ReviewCard({ review }: { review: Review }) {
       )}
 
       <div className="flex items-center justify-between mt-3">
-        <span className="text-xs lg:text-sm lg:text-smtext-[#666]">{date}</span>
+        <span className="text-xs lg:text-smtext-[#666]">{date}</span>
         {review.helpful_count > 0 && (
           <span className="flex items-center gap-1 text-xs lg:text-smtext-[#666]">
             <ThumbsUp size={12} />

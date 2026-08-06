@@ -4,6 +4,7 @@ export interface RadialTickSegment {
   label: string;
   value: number;
   trend?: number;
+  color?: string;
 }
 
 interface Props {
@@ -14,6 +15,10 @@ interface Props {
   icon?:      React.ReactNode;
 }
 
+// Fallback palette, used only when a segment doesn't specify its own
+// color. Distinct hues, not a grayscale ramp, matching the actual ask.
+const DEFAULT_COLORS = ["#1e40af", "#166534", "#991b1b", "#92400e", "#5b21b6"];
+
 export default function RadialTickCard({ title, totalValue, totalLabel = "Total", segments, icon }: Props) {
   const [hovered, setHovered] = useState<RadialTickSegment | null>(null);
   const TICK_COUNT = 48;
@@ -22,6 +27,12 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
   const CENTER = 80;
 
   const total = segments.reduce((sum, s) => sum + s.value, 0) || 1;
+
+  // Resolved once, per segment, and reused for both the ticks and the
+  // legend below, single source of truth instead of two separate color
+  // arrays that can silently drift apart.
+  const colorFor = (segment: RadialTickSegment, index: number) =>
+    segment.color ?? DEFAULT_COLORS[index % DEFAULT_COLORS.length];
 
   const ticks = Array.from({ length: TICK_COUNT }, (_, i) => {
     const angle = (i / TICK_COUNT) * 2 * Math.PI - Math.PI / 2;
@@ -33,15 +44,14 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
     const cumulativeAtTick = (i + 0.5) / TICK_COUNT;
     let running = 0;
     let segment = segments[segments.length - 1];
-    for (const s of segments) {
-      running += s.value / total;
-      if (cumulativeAtTick <= running) { segment = s; break; }
+    let segmentIndex = segments.length - 1;
+    for (let s = 0; s < segments.length; s++) {
+      running += segments[s].value / total;
+      if (cumulativeAtTick <= running) { segment = segments[s]; segmentIndex = s; break; }
     }
 
-    return { x1, y1, x2, y2, segment };
+    return { x1, y1, x2, y2, segment, color: colorFor(segment, segmentIndex) };
   });
-
-  const LEGEND_COLORS = ["#17191c", "#777b86", "#c8c6c1"];
 
   return (
     <div className="border rounded-xl p-4" style={{ borderColor: "#e8e6e3" }}>
@@ -57,7 +67,7 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
             style={{ borderColor: "#e8e6e3" }}
           >
             <p className="text-xs lg:text-sm flex items-center gap-1.5" style={{ color: "#17191c" }}>
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#17191c" }} />
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colorFor(hovered, segments.indexOf(hovered)) }} />
               {hovered.label}
             </p>
             <p className="text-xs lg:text-smmt-0.5">
@@ -71,27 +81,20 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
           </div>
         )}
 
-        <svg width={200} height={180} viewBox="0 0 160 160">
+        <svg width={240} height={200} viewBox="0 0 160 160">
           {ticks.map((t, i) => (
             <line
               key={i}
               x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
-              stroke="#1a1a1a"
+              stroke={t.color}
               strokeWidth={2}
               strokeLinecap="round"
-              // Wider invisible hit area than the visible 2px stroke,
-              // a 2px line is hard to actually land a hover on,
-              // strokeWidth alone would make the hover region as thin
-              // as the tick itself.
               style={{ cursor: "default" }}
               onMouseEnter={() => setHovered(t.segment)}
               onMouseLeave={() => setHovered(null)}
               pointerEvents="stroke"
             />
           ))}
-          {/* Wider, invisible hover targets layered under the visible
-              ticks, same segment mapping, purely to make the hover area
-              forgiving instead of needing to land exactly on a 2px line. */}
           {ticks.map((t, i) => (
             <line
               key={`hit-${i}`}
@@ -105,7 +108,7 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
           ))}
         </svg>
         <div className="absolute flex flex-col items-center pointer-events-none">
-          <p className="text-[10px] uppercase tracking-widest" style={{ color: "#a3a6af" }}>{totalLabel}</p>
+          <p className="text-[11px] uppercase tracking-widest" style={{ color: "#a3a6af" }}>{totalLabel}</p>
           <p className="text-xl bold" style={{ color: "#17191c" }}>
             {typeof totalValue === "number" ? totalValue.toLocaleString() : totalValue}
           </p>
@@ -118,10 +121,10 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
             key={i}
             onMouseEnter={() => setHovered(s)}
             onMouseLeave={() => setHovered(null)}
-            className="flex items-center justify-between text-xs lg:text-smpy-1 cursor-default"
+            className="flex items-center justify-between text-xs lg:text-sm py-1 cursor-default"
           >
             <span className="flex items-center gap-2" style={{ color: "#4c4c4c" }}>
-              <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: LEGEND_COLORS[i % LEGEND_COLORS.length] }} />
+              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: colorFor(s, i) }} />
               {s.label}
             </span>
             <span className="flex items-center gap-2">

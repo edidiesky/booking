@@ -68,7 +68,7 @@ export default function BookingCalendarMonth({
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#e8e6e3]">
           <div>
             <h4 className="text-xl font-semibold text-[#17191c]">Calendar</h4>
-            <p className="text-xs lg:text-smtext-[#a3a6af] mt-0.5">
+            <p className="text-xs lg:text-sm text-[#a3a6af] mt-0.5">
               {format(startOfMonth(monthCursor), "MMM d")} –{" "}
               {format(endOfMonth(monthCursor), "MMM d, yyyy")}
             </p>
@@ -118,7 +118,7 @@ export default function BookingCalendarMonth({
           </div>
           <button
             onClick={() => setMonthCursor(new Date())}
-            className="h-8 px-4 border border-[#e8e6e3] rounded-full text-xs lg:text-smtext-[#17191c] hover:bg-[#f2f0ed] transition-colors"
+            className="h-8 px-4 border border-[#e8e6e3] rounded-full text-xs lg:text-sm text-[#17191c] hover:bg-[#f2f0ed] transition-colors"
           >
             Today
           </button>
@@ -128,7 +128,7 @@ export default function BookingCalendarMonth({
           {WEEKDAYS.map((d) => (
             <div
               key={d}
-              className="text-center text-xs lg:text-smtext-[#a3a6af] uppercase py-2 border-r border-[#f2f0ed] last:border-r-0"
+              className="text-center text-xs lg:text-sm text-[#a3a6af] uppercase py-2 border-r border-[#f2f0ed] last:border-r-0"
             >
               {d}
             </div>
@@ -206,7 +206,7 @@ export default function BookingCalendarMonth({
           })}
         </div>
 
-        <div className="flex flex-wrap gap-4 px-5 py-3 border-t border-[#e8e6e3]">
+        <div className="flex flex-wrap gap-4 px-5 py-3 border-t border-[#e8e6e3] bg-white">
           {Object.entries(STATUS_MAP).map(([status, style]) => (
             <div key={status} className="flex items-center gap-1.5">
               <div

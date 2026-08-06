@@ -38,7 +38,7 @@ export default function PropertySearchBar({ initialValue, onSearch, className = 
           onChange={(e) => setValue((v) => ({ ...v, query: e.target.value }))}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Homes, Shortlets,..."
-          className="w-full text-xs lg:text-sm lg:text-smbg-transparent h-11 lg:h-14 outline-none placeholder:text-[#a3a6af]"
+          className="w-full text-xs lg:text-smbg-transparent h-11 lg:h-14 outline-none placeholder:text-[#a3a6af]"
         />
       </div>
 
@@ -49,7 +49,7 @@ export default function PropertySearchBar({ initialValue, onSearch, className = 
           onChange={(e) => setValue((v) => ({ ...v, location: e.target.value }))}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="e.g., Ikeja"
-          className="w-full text-xs lg:text-sm lg:text-smbg-transparent h-11 lg:h-14 outline-none placeholder:text-[#a3a6af]"
+          className="w-full text-xs lg:text-smbg-transparent h-11 lg:h-14 outline-none placeholder:text-[#a3a6af]"
         />
       </div>
 

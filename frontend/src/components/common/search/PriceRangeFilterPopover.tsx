@@ -41,10 +41,10 @@ export default function PriceRangeFilterPopover({ min, max, onApply, ceiling = 5
         onClick={() => setOpen((v) => !v)}
         className="flex flex-col items-start text-left gap-2 px-4 py-2.5 rounded-full lg:rounded-none w-full lg:w-auto"
       >
-        <span className="text-xs lg:text-sm lg:text-smflex items-center gap-1.5" style={{ color: "#a3a6af" }}>
+        <span className="text-xs lg:text-smflex items-center gap-1.5" style={{ color: "#a3a6af" }}>
           <Wallet size={18} /> {label}
         </span>
-        <span className="text-xs lg:text-sm lg:text-sm" style={{ color: "#17191c" }}>{displayValue}</span>
+        <span className="text-xs lg:text-sm" style={{ color: "#17191c" }}>{displayValue}</span>
       </button>
 
       {open && (

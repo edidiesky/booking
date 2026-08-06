@@ -87,7 +87,7 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
                     <StatusBadge status={occupancy.status as BookingStatus} />
                   </div>
                 ) : (
-                  <p className="text-xs lg:text-smtext-[#a3a6af]">No active booking, not currently staying at any property.</p>
+                  <p className="text-xs lg:text-sm text-[#a3a6af]">No active booking, not currently staying at any property.</p>
                 )}
               </div>
             </div>

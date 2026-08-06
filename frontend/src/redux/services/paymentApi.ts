@@ -5,8 +5,8 @@ import type {
   Payment, PaymentSummary, PaymentStatsResponse,
 } from "@/types/api";
 
-interface PaymentResponse { success: boolean; data: Payment; }
-interface PaymentSummaryListResponse { success: boolean; data: PaymentSummary[]; }
+export interface PaymentResponse { success: boolean; data: Payment; }
+export interface PaymentSummaryListResponse { success: boolean; data: PaymentSummary[]; }
 
 interface RawPayment {
   id: string; booking_id: string; tenant_id: string; guest_user_id: string;

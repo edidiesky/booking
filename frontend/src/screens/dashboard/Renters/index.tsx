@@ -22,11 +22,11 @@ export default function DashboardRenters() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h4 className="text-xl bold text-[#17191c]">Tenants</h4>
-            <p className="text-xs lg:text-sm lg:text-smtext-[#64645f] mt-1">
+            <p className="text-xs lg:text-smtext-[#64645f] mt-1">
               Manage tenant records across your properties.
             </p>
           </div>
-          <button className="bg-[#17191c] flex bold rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-smp-2 px-4">
+          <button className="bg-[#17191c] flex bold rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-sm p-2 px-4">
             Add Tenant
           </button>
         </div>
@@ -61,7 +61,7 @@ export default function DashboardRenters() {
           placeholder="Search tenants..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-xs h-9 px-3 text-xs lg:text-smborder border-[#e8e6e3] rounded-lg outline-none"
+          className="w-full max-w-xs h-9 px-3 text-xs lg:text-sm border border-[#e8e6e3] rounded-lg outline-none"
         />
 
         <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
@@ -71,7 +71,7 @@ export default function DashboardRenters() {
                 {["Tenant", "Contact", "Emergency", "Added", ""].map((h) => (
                   <th
                     key={h}
-                    className="px-5 py-3 text-left text-xs lg:text-smtext-[#a3a6af] uppercase"
+                    className="px-5 py-3 text-left text-xs lg:text-sm text-[#a3a6af] uppercase"
                   >
                     {h}
                   </th>
@@ -91,7 +91,7 @@ export default function DashboardRenters() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-5 py-10 text-center text-xs lg:text-smtext-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-sm text-[#a3a6af]"
                   >
                     No tenants found.
                   </td>

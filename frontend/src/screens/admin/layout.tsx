@@ -1,45 +1,148 @@
-import { Outlet, NavLink } from "react-router-dom";
-import { LayoutGrid, Building2, Users, ShieldCheck, ScrollText } from "lucide-react";
+import { Outlet } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { selectCurrentUser, clearCredentials } from "@/redux/slices/authSlice";
+import { useLogoutMutation } from "@/redux/services/authApi";
+import { selectRefreshToken } from "@/redux/slices/authSlice";
+import { apiSlice } from "@/redux/services/apiSlice";
+import toast from "react-hot-toast";
+import NavGroup from "@/components/dashboard/common/NavGroup";
+import SidebarFooter from "@/components/dashboard/common/SidebarFooter";
+import Header from "@/components/dashboard/common/Header";
+import {
+  LuLayoutDashboard,
+  LuBuilding2,
+  LuUsers,
+  LuShieldCheck,
+  LuScrollText,
+  LuClipboardList,
+  LuCreditCard,
+  LuCalendar,
+} from "react-icons/lu";
 
-const NAV = [
-  { to: "/admin",          label: "Overview", icon: LayoutGrid, end: true },
-  { to: "/admin/tenants",  label: "Sellers / Tenants", icon: Building2 },
-  { to: "#",               label: "Customers / Guests", icon: Users, disabled: true },
-  { to: "#",               label: "Administrators", icon: ShieldCheck, disabled: true },
-  { to: "#",               label: "Audit Logs", icon: ScrollText, disabled: true },
+const ADMIN_NAV_GROUPS = [
+  {
+    label: "Overview",
+    items: [
+      {
+        icon: LuLayoutDashboard,
+        text: "Overview",
+        path: "",
+        tour: "admin-overview",
+      },
+    ],
+  },
+  {
+    label: "Platform",
+    items: [
+      {
+        icon: LuBuilding2,
+        text: "Sellers / Tenants",
+        path: "tenants",
+        tour: "admin-tenants",
+      },
+      {
+        icon: LuUsers,
+        text: "Customers / Guests",
+        path: "customers",
+        tour: "admin-customers",
+      },
+      {
+        icon: LuShieldCheck,
+        text: "Administrators",
+        path: "administrators",
+        tour: "admin-administrators",
+      },
+    ],
+  },
+  {
+    label: "Marketplace",
+    items: [
+      {
+        icon: LuBuilding2,
+        text: "Properties",
+        path: "properties",
+        tour: "admin-properties",
+      },
+      {
+        icon: LuClipboardList,
+        text: "Bookings",
+        path: "bookings",
+        tour: "admin-bookings",
+      },
+      {
+        icon: LuCreditCard,
+        text: "Payments",
+        path: "payments",
+        tour: "admin-payments",
+      },
+      {
+        icon: LuCalendar,
+        text: "Calendar",
+        path: "calendar",
+        tour: "admin-calendar",
+      },
+    ],
+  },
+  {
+    label: "Compliance",
+    items: [
+      {
+        icon: LuScrollText,
+        text: "Audit Logs",
+        path: "audit-logs",
+        tour: "admin-audit-logs",
+      },
+    ],
+  },
 ];
 
 export default function AdminLayout() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const currentUser = useSelector(selectCurrentUser);
+  const refreshToken = useSelector(selectRefreshToken);
+  const [logout] = useLogoutMutation();
+
+  const handleSignOut = async () => {
+    try {
+      if (refreshToken) await logout({ refreshToken }).unwrap();
+    } catch {
+      /*  */
+    } finally {
+      dispatch(apiSlice.util.resetApiState());
+      dispatch(clearCredentials());
+      navigate("/");
+      toast.success("Signed out successfully.");
+    }
+  };
+
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: "var(--color-canvas)" }}>
-      <aside className="w-[240px] shrink-0 border-r h-screen sticky top-0 flex flex-col py-6 px-4 gap-1" style={{ borderColor: "#e8e6e3" }}>
-        <p className="text-xs lg:text-sm px-2 mb-4" style={{ color: "var(--color-ink)" }}>Platform Admin</p>
-        {NAV.map((item) => (
-          item.disabled ? (
-            <div key={item.label} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs lg:text-smcursor-not-allowed opacity-40" style={{ color: "var(--color-muted-stone)" }}>
-              <item.icon size={16} />
-              {item.label}
-              <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "#f2f0ed" }}>Soon</span>
-            </div>
-          ) : (
-            <NavLink
-              key={item.label}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs lg:text-smtransition-colors ${isActive ? "bg-[#17191c] text-white" : "hover:bg-[#f2f0ed]"}`
-              }
-            >
-              <item.icon size={16} />
-              {item.label}
-            </NavLink>
-          )
-        ))}
+    <div
+      className="flex min-h-screen"
+      style={{ backgroundColor: "var(--color-canvas)" }}
+    >
+      <aside
+        className="hidden lg:flex flex-col w-[220px] h-screen shrink-0 border-r"
+        style={{
+          backgroundColor: "var(--color-canvas)",
+          borderColor: "#ebebeb",
+        }}
+      >
+        <nav className="flex-1 overflow-y-auto py-4 px-3">
+          {ADMIN_NAV_GROUPS.map((group) => (
+            <NavGroup key={group.label} group={group} />
+          ))}
+        </nav>
+        <SidebarFooter currentUser={currentUser} onSignOut={handleSignOut} />
       </aside>
 
-      <main className="flex-1 p-8">
-        <Outlet />
-      </main>
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <main className="flex-1 p-8">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

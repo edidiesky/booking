@@ -25,6 +25,7 @@ export const apiSlice = createApi({
     "Invoice",
     "SellerNotification",
     "Favorite",
+    "Admin"
   ],
   endpoints: () => ({}),
 });

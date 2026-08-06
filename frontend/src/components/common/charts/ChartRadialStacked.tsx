@@ -125,7 +125,7 @@ export function RadialBarChartCard({
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center py-8 gap-3">
             <img src="/assets/icons/card.png" className="w-50 h-50" alt="" />
-            <p className="text-xs lg:text-smtext-[#a3a6af]">{emptyMessage}</p>
+            <p className="text-xs lg:text-sm text-[#a3a6af]">{emptyMessage}</p>
           </div>
         ) : (
           <div className="flex flex-col items-center px-5 py-4 gap-4">
@@ -232,7 +232,7 @@ export function RadialBarChartCard({
       {isEmpty ? (
         <div className="flex flex-col items-center justify-center py-8 gap-3">
           <img src="/assets/icons/card.png" className="w-50 h-50" alt="" />
-          <p className="text-xs lg:text-smtext-[#a3a6af]">{emptyMessage}</p>
+          <p className="text-xs lg:text-sm text-[#a3a6af]">{emptyMessage}</p>
         </div>
       ) : (
         <div className="flex flex-col items-center px-5 py-4 gap-4">

@@ -60,7 +60,7 @@ export default function PaymentSection({ booking, payment, onPay, isPaying }: Pr
             <button
               onClick={handleDownloadInvoice}
               disabled={isGeneratingInvoice}
-              className="flex items-center justify-center gap-1.5 h-9 mt-1 rounded-full text-xs lg:text-smborder transition-colors hover:bg-[#f2f0ed] disabled:opacity-50"
+              className="flex items-center justify-center gap-1.5 h-9 mt-1 rounded-full text-xs lg:text-sm border transition-colors hover:bg-[#f2f0ed] disabled:opacity-50"
               style={{ borderColor: "#e8e6e3", color: "var(--color-ink)" }}
             >
               {isGeneratingInvoice ? (

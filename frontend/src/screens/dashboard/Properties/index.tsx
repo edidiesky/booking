@@ -12,6 +12,7 @@ import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import ExportPdfButton from "@/components/common/ExportPdfButton";
 import { PROPERTY_URL } from "@/constants/api";
 import ImportRoomTypesModal from "./ImportRoomTypesModal";
+import Title from "@/components/dashboard/common/Title";
 
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
@@ -52,9 +53,9 @@ export default function DashboardProperties() {
   };
 
   const handleOpenEdit = (id: string) => {
-  setEditPropertyId(id);
-  setModalOpen(true);
-};
+    setEditPropertyId(id);
+    setModalOpen(true);
+  };
 
   return (
     <>
@@ -75,19 +76,15 @@ export default function DashboardProperties() {
         className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
       >
         <div className="flex items-start justify-between lg:flex-row flex-col gap-4">
-          <div>
-            <h4 className="text-lg bold lg:text-xl text-[#17191c]">
-              Properties
-            </h4>
-            <p className="text-xs lg:text-smtext-[#64645f] mt-1 max-w-[420px] bold">
-              Manage your listings, room types, and availability calendars.
-            </p>
-          </div>
+          <Title
+            title={`Properties`}
+            description="Manage your listings, room types, and availability calendars."
+          />
           <div className="flex items-center gap-2 lg:justify-end">
             <div className="relative">
               <button
                 onClick={() => setShowImportPicker((v) => !v)}
-                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-sm lg:text-smp-2 bold px-6"
+                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-sm p-2 bold px-6"
               >
                 Bulk Import
               </button>
@@ -96,11 +93,17 @@ export default function DashboardProperties() {
                   className="absolute right-0 mt-1.5 w-64 bg-white border rounded-xl shadow-lg z-30 p-2"
                   style={{ borderColor: "#e8e6e3" }}
                 >
-                  <p className="text-[11px] px-2 py-1" style={{ color: "#a3a6af" }}>
+                  <p
+                    className="text-[11px] px-2 py-1"
+                    style={{ color: "#a3a6af" }}
+                  >
                     Choose which property this CSV is for:
                   </p>
                   {properties.length === 0 ? (
-                    <p className="text-xs lg:text-smpx-2 py-2" style={{ color: "#a3a6af" }}>
+                    <p
+                      className="text-xs lg:text-smpx-2 py-2"
+                      style={{ color: "#a3a6af" }}
+                    >
                       Add a property first.
                     </p>
                   ) : (
@@ -123,7 +126,7 @@ export default function DashboardProperties() {
             </div>
             <button
               onClick={handleOpenCreate}
-              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-sm lg:text-smp-2 bold px-6"
+              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-sm p-2 bold px-6"
             >
               Add Property
             </button>
@@ -169,7 +172,7 @@ export default function DashboardProperties() {
               onValueChange={(v) => setStatusFilter(v as PropertyStatus | "")}
               options={STATUS_OPTIONS}
             />
-            <span className="text-xs lg:text-smtext-[#a3a6af]">
+            <span className="text-xs lg:text-sm text-[#a3a6af]">
               {filtered.length} propert{filtered.length === 1 ? "y" : "ies"}
             </span>
           </div>
@@ -188,7 +191,7 @@ export default function DashboardProperties() {
                 {HEADERS.map((h) => (
                   <th
                     key={h}
-                    className="px-5 py-3 text-left text-xs lg:text-smtext-[#a3a6af] uppercase whitespace-nowrap"
+                    className="px-5 py-3 text-left text-xs lg:text-sm text-[#a3a6af] uppercase whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -210,7 +213,7 @@ export default function DashboardProperties() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-5 py-10 text-center text-xs lg:text-smtext-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-sm text-[#a3a6af]"
                   >
                     No properties found. Click "Add Property" to create your
                     first listing.
@@ -222,7 +225,9 @@ export default function DashboardProperties() {
                     key={property.id}
                     property={property}
                     onAddRoomType={(id) => setRoomTypeId(id)}
-                    onOpenProperty={(id) => navigate(`/dashboard/properties/${id}`)}
+                    onOpenProperty={(id) =>
+                      navigate(`/dashboard/properties/${id}`)
+                    }
                     onEditProperty={handleOpenEdit}
                     onDeleteProperty={(property) =>
                       setDeleteTarget({ id: property.id, name: property.name })

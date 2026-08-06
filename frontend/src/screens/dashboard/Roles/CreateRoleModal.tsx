@@ -75,7 +75,7 @@ export default function CreateRoleModal({ onClose, onCreated }: Props) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Name your role"
-              className="h-10 px-3 text-xs lg:text-smborder rounded-lg outline-none"
+              className="h-10 px-3 text-xs lg:text-sm border rounded-lg outline-none"
               style={{ borderColor: "#e8e6e3", color: "#17191c" }}
             />
           </div>
@@ -85,7 +85,7 @@ export default function CreateRoleModal({ onClose, onCreated }: Props) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe your role"
-              className="h-10 px-3 text-xs lg:text-smborder rounded-lg outline-none"
+              className="h-10 px-3 text-xs lg:text-sm border rounded-lg outline-none"
               style={{ borderColor: "#e8e6e3", color: "#17191c" }}
             />
           </div>
@@ -109,7 +109,7 @@ export default function CreateRoleModal({ onClose, onCreated }: Props) {
           ))}
         </div>
 
-        <div className="w-full flex px-8 py-4 border-t border-[#e8e6e3] items-center justify-end gap-3">
+        <div className="w-full flex px-8 py-4 border-t border-[#e8e6e3] bg-white items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}

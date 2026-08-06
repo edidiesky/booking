@@ -48,7 +48,7 @@ export default function SettingsLayout({
               {headerName.charAt(0).toUpperCase()}
             </span>
             <div className="min-w-0">
-              <p className="text-xs lg:text-sm lg:text-sm truncate" style={{ color: "var(--color-ink)" }}>{headerName}</p>
+              <p className="text-xs lg:text-sm truncate" style={{ color: "var(--color-ink)" }}>{headerName}</p>
               {headerSubtitle && (
                 <p className="text-xs lg:text-smtruncate" style={{ color: "#777b86" }}>{headerSubtitle}</p>
               )}

@@ -508,6 +508,28 @@ export const propertyRepository = {
     };
   },
 
+  async listAllForAdmin(
+    page = 1,
+    limit = 20,
+  ): Promise<(Property & { tenant_name: string, tenant_id:string, tenant_email:string })[]> {
+    const offset = (page - 1) * limit;
+    return query<Property & { tenant_name: string, tenant_id:string, tenant_email:string }>(
+      `SELECT p.*, t.name AS tenant_name, t.id AS tenant_id, t.email AS tenant_email
+     FROM properties p
+     JOIN tenants t ON t.id = p.tenant_id
+     WHERE p.status != 'archived'
+     ORDER BY p.created_at DESC LIMIT $1 OFFSET $2`,
+      [limit, offset],
+    );
+  },
+
+  async countAllForAdmin(): Promise<number> {
+    const row = await queryOne<{ count: string }>(
+      `SELECT COUNT(*) AS count FROM properties WHERE status != 'archived'`,
+    );
+    return parseInt(row?.count ?? "0", 10);
+  },
+
   async updateRoomType(
     id: string,
     tenantId: string,
@@ -559,10 +581,10 @@ export const propertyRepository = {
     // const exec = client
     //   ? client.query.bind(client)
     //   : (query as unknown as typeof client extends undefined ? never : never);
-   const row = client
-     ? ((await client.query(sql, params)).rows[0] as RoomType | undefined)
-     : await queryOne<RoomType>(sql, params);
-   return row ?? null;
+    const row = client
+      ? ((await client.query(sql, params)).rows[0] as RoomType | undefined)
+      : await queryOne<RoomType>(sql, params);
+    return row ?? null;
   },
 };
 

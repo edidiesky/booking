@@ -87,7 +87,7 @@ export function DataTable({
               {headers.map((h) => (
                 <th
                   key={h}
-                  className="px-5 py-3 text-left text-xs lg:text-smtext-[#a3a6af] uppercase  whitespace-nowrap "
+                  className="px-5 py-3 text-left text-xs lg:text-sm text-[#a3a6af] uppercase  whitespace-nowrap "
                 >
                   {h}
                 </th>
@@ -101,7 +101,7 @@ export function DataTable({
               <tr>
                 <td
                   colSpan={colSpan}
-                  className="px-5 py-12 text-center text-xs lg:text-smtext-[#a3a6af] "
+                  className="px-5 py-12 text-center text-xs lg:text-sm text-[#a3a6af] "
                 >
                   {search
                     ? `${emptyMessage} for "${search}"`
@@ -117,7 +117,7 @@ export function DataTable({
 
       {/* pagination */}
       <div className="flex items-center justify-between">
-        <span className="text-xs lg:text-smtext-[#a3a6af] ">
+        <span className="text-xs lg:text-sm text-[#a3a6af] ">
           Page {currentPage} of {totalPages} — {total} records
         </span>
         <div className="flex items-center gap-1">

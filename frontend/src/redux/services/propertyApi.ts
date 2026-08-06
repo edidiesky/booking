@@ -16,7 +16,7 @@ import type {
   UpdateRoomTypePayload,
 } from "@/types/api";
 
-interface PropertiesResponse {
+export interface PropertiesResponse {
   success: boolean;
   data: Property[];
 }

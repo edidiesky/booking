@@ -86,7 +86,7 @@ export default function LinearTickBarCard({ title, totalValue, trend, distributi
 
       <div className="flex flex-col mt-4">
         {segments.map((s, i) => (
-          <div key={i} className="flex items-center justify-between text-xs lg:text-smpy-2 border-b last:border-0" style={{ borderColor: "#f2f0ed" }}>
+          <div key={i} className="flex items-center justify-between text-xs lg:text-sm py-3 border-b last:border-0" style={{ borderColor: "#f2f0ed" }}>
             <span className="flex items-center gap-2" style={{ color: "#4c4c4c" }}>
               <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
               {s.label}

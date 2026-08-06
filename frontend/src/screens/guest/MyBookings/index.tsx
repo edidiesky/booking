@@ -57,7 +57,7 @@ export default function MyBookings() {
                 placeholder="Search by reference..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="max-w-[400px] h-9 px-3 text-xs lg:text-smborder border-[#e8e6e3] outline-none rounded-lg"
+                className="max-w-[400px] h-9 px-3 text-xs lg:text-sm border border-[#e8e6e3] outline-none rounded-lg"
               />
               </div>
             </div>

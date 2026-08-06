@@ -119,21 +119,21 @@ function FooterSection1() {
           <div className="flex items-center gap-6 flex-wrap">
             <Link
               to="/contact"
-              className="text-xs lg:text-sm lg:text-sm"
+              className="text-xs lg:text-sm"
               style={{ color: "var(--color-primary-foreground)" }}
             >
               Contact us
             </Link>
             <Link
               to="/help"
-              className="text-xs lg:text-sm lg:text-sm"
+              className="text-xs lg:text-sm"
               style={{ color: "var(--color-primary-foreground)" }}
             >
               Help center
             </Link>
             <Link
               to="/status"
-              className="text-xs lg:text-sm lg:text-sm"
+              className="text-xs lg:text-sm"
               style={{ color: "var(--color-primary-foreground)" }}
             >
               Status
@@ -185,7 +185,7 @@ function FooterSection1() {
                 <Link
                   key={link.label}
                   to={link.to}
-                  className="text-xs lg:text-sm lg:text-sm hover:underline"
+                  className="text-xs lg:text-sm hover:underline"
                   style={{ color: "var(--color-primary-foreground)" }}
                 >
                   {link.label}

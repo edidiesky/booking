@@ -43,7 +43,7 @@
 // //               strokeWidth={0}
 // //             />
 // //           </div>
-// //           <span className="text-xs lg:text-smunderline underline-offset-4 text-[#171717]">
+// //           <span className="text-xs lg:text-sm underline underline-offset-4 text-[#171717]">
 // //             Item average ({stats.totalReviews} reviews)
 // //           </span>
 // //         </div>
@@ -155,7 +155,7 @@
 //           {mockAiSummary.map((chip) => (
 //             <span
 //               key={chip.label}
-//               className="inline-flex items-center gap-1 rounded-full border border-[#EDEAE3] px-3 py-1 text-xs lg:text-sm lg:text-smtext-[#171717]"
+//               className="inline-flex items-center gap-1 rounded-full border border-[#EDEAE3] px-3 py-1 text-xs lg:text-smtext-[#171717]"
 //             >
 //               <Check size={12} className="text-[#2F5D4F]" />
 //               {chip.label}

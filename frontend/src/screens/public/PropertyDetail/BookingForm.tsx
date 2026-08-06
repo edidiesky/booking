@@ -173,7 +173,7 @@ export default function BookingForm({
           </div>
 
           {selectedRoomType && nights > 0 && (
-            <div className="w-[90%] mx-auto flex flex-col gap-2 pt-2 border-t border-[#e8e6e3]">
+            <div className="w-[90%] mx-auto flex flex-col gap-2 pt-2 border-t border-[#e8e6e3] bg-white">
               <div className="flex items-center bold justify-between text-xs lg:text-sm">
                 <span className="text-[#4c4c4c] bold">
                   {formatCurrency(Number(selectedRoomType.base_price_ngn))} ×{" "}

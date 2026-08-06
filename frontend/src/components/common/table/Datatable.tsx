@@ -79,7 +79,7 @@ export function DataTable({
           placeholder={searchPlaceholder}
           className="w-48 lg:w-64 h-[38px] bg-white border border-[#e8e6e3] text-xs lg:text-smoutline-none focus:border-[#17191c] transition-colors"
         />
-        <span className="text-xs lg:text-smtext-[#a3a6af] ">
+        <span className="text-xs lg:text-sm text-[#a3a6af] ">
           {total} {total === 1 ? "record" : "records"}
         </span>
       </div>
@@ -106,7 +106,7 @@ export function DataTable({
               <tr>
                 <td
                   colSpan={colSpan}
-                  className="px-5 py-12 text-center text-xs lg:text-smtext-[#a3a6af] "
+                  className="px-5 py-12 text-center text-xs lg:text-sm text-[#a3a6af] "
                 >
                   {search
                     ? `${emptyMessage} for "${search}"`
@@ -122,7 +122,7 @@ export function DataTable({
 
       {/* pagination */}
       <div className="flex items-center justify-between">
-        <span className="text-xs lg:text-smtext-[#a3a6af] ">
+        <span className="text-xs lg:text-sm text-[#a3a6af] ">
           Page {currentPage} of {totalPages} — {total} records
         </span>
         <div className="flex items-center gap-1">

@@ -43,7 +43,7 @@ export default function BookingCard({ booking, onCancel }: Props) {
           {booking?.propertyName ?? booking?.bookingRef}
         </h3>
 
-        <p className="text-xs lg:text-sm lg:text-sm text-[#777b86]">
+        <p className="text-xs lg:text-sm text-[#777b86]">
           {checkInLabel} - {checkOutLabel} · {booking?.nights} night{booking?.nights !== 1 ? "s" : ""}
         </p>
 

@@ -1,6 +1,7 @@
 const BASE = import.meta.env.VITE_API_BASE_URL as string;
 
 export const AUTH_URL         = `${BASE}/api/v1/auth`;
+export const ADMIN_URL         = `${BASE}/api/v1/admin`;
 export const PROFILE_URL      = `${BASE}/api/v1/profile`;
 export const TENANT_URL       = `${BASE}/api/v1/tenants`;
 export const PROPERTY_URL     = `${BASE}/api/v1/properties`;

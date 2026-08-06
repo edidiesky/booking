@@ -74,7 +74,7 @@ export default function GanttToolbar({
             onToggle={onToggleStatus}
           />
 
-          <button onClick={onReset} className="text-xs lg:text-smunderline" style={{ color: "#777b86" }}>
+          <button onClick={onReset} className="text-xs lg:text-sm underline" style={{ color: "#777b86" }}>
             Reset
           </button>
         </div>

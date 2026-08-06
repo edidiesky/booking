@@ -19,6 +19,7 @@ import webhookRoutes  from "./domains/webhook/webhook.routes";
 import escrowRoutes   from "./domains/escrow/escrow.routes";
 import profileRoutes  from "./domains/profile/profile.routes";
 import auditRoutes    from "./domains/audit/audit.routes";
+import adminRoutes    from "./domains/admin/admin.routes";
 import sseRouter      from "./domains/sse/sse.routes";
 import roleRoutes       from "./domains/role/role.routes";
 import permissionRoutes from "./domains/permission/permission.routes";
@@ -83,6 +84,8 @@ app.use("/api/v1/user-notifications", userNotificationRoutes);
 app.use("/api/v1/favorites", favoriteRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/invitations", invitationRoutes);
+app.use("/api/v1/admin", adminRoutes);
+// adminRoutes
 
 app.use(NotFound);
 app.use(errorHandler);

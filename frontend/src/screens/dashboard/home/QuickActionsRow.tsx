@@ -14,14 +14,14 @@ export default function QuickActionsRow() {
         <a
           key={id}
           href={href}
-          className="flex items-center hover:bg-[#f2f0ed5f] h-24 lg:h-32 gap-3 rounded-2xl border border-[var(--color-fog)] bg-[var(--color-canvas)] px-4 py-3.5 hover:border-[var(--color-ink)]/20 transition-colors"
+          className="flex items-center hover:bg-[#f2f0ed5f] h-24 lg:h-24 gap-3 rounded-2xl border border-[var(--color-fog)] bg-[var(--color-canvas)] px-4 py-2 hover:border-[var(--color-ink)]/20 transition-colors"
         >
           <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[var(--color-fog)]">
             <Icon size={14} style={{ color: "var(--color-ink)" }} />
           </div>
           <div className="flex-1 min-w-0 flex flex-col gap-1">
             <p className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>{title}</p>
-            <p className="text-xs lg:text-sm lg:text-sm medium truncate" style={{ color: "var(--color-muted-stone)" }}>{subtitle}</p>
+            <p className="text-xs lg:text-sm medium truncate" style={{ color: "var(--color-muted-stone)" }}>{subtitle}</p>
           </div>
         </a>
       ))}

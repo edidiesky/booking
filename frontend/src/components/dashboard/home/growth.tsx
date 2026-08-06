@@ -31,7 +31,7 @@ export default function Growth() {
         <div className="border rounded-xl border-[#e8e6e3] p-5 flex flex-col gap-3">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs lg:text-sm lg:text-sm text-[#17191c] ">
+              <p className="text-xs lg:text-sm text-[#17191c] ">
                 Order Breakdown
               </p>
               <p className="text-sn text-[#777b86]  mt-0.5">
@@ -71,7 +71,7 @@ export default function Growth() {
         <div className="border rounded-xl border-[#e8e6e3] p-5 flex flex-col gap-3">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs lg:text-sm lg:text-sm text-[#17191c] ">
+              <p className="text-xs lg:text-sm text-[#17191c] ">
                 Revenue vs Orders
               </p>
               <p className="text-xs lg:text-sm text-[#777b86]  mt-0.5">

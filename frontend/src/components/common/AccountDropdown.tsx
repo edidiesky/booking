@@ -111,7 +111,7 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
                 <DropdownMenuItem key={item.to} asChild>
                   <Link
                     to={item.to}
-                    className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-sm lg:text-smfont-semibold text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
+                    className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-smfont-semibold text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
                   >
                     <Icon size={24} className="text-[#4c4c4c] shrink-0" />
                     {item.label}
@@ -128,7 +128,7 @@ export default function AccountDropdown({ items, profilePath, triggerLabel }: Pr
 
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-sm lg:text-sm text-red-600 cursor-pointer hover:bg-red-50 rounded-lg outline-none"
+          className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-sm text-red-600 cursor-pointer hover:bg-red-50 rounded-lg outline-none"
         >
           <LogOut size={16} className="shrink-0" />
           Sign out

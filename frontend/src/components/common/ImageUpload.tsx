@@ -107,7 +107,7 @@ export default function ImageUpload({ images, onChange, label = "Images", max = 
               className="aspect-square border-2 border-dashed border-[#e8e6e3] flex flex-col items-center justify-center gap-1 hover:border-[#17191c] hover:bg-[#fafaf9] transition-colors"
             >
               <ImagePlus size={18} className="text-[#a3a6af]" />
-              <span className="text-xs lg:text-smtext-[#a3a6af]">Add</span>
+              <span className="text-xs lg:text-sm text-[#a3a6af]">Add</span>
             </button>
           )}
         </div>
@@ -122,7 +122,7 @@ export default function ImageUpload({ images, onChange, label = "Images", max = 
           <p className="text-xs lg:text-sm text-[#777b86]">
             Drag & drop or <span className="text-[#17191c]">browse</span>
           </p>
-          <p className="text-xs lg:text-smtext-[#a3a6af]">PNG, JPG, WebP — max {max} images</p>
+          <p className="text-xs lg:text-sm text-[#a3a6af]">PNG, JPG, WebP — max {max} images</p>
         </div>
       )}
 

@@ -21,7 +21,7 @@ interface Props {
   isSaving: boolean;
 }
 
-const field      = "w-full h-10 px-3 text-xs lg:text-smborder rounded-lg outline-none";
+const field      = "w-full h-10 px-3 text-xs lg:text-sm border rounded-lg outline-none";
 const fieldStyle = { borderColor: "#e8e6e3", color: "#17191c" };
 
 export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: Props) {
@@ -83,7 +83,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
           </div>
         </form>
 
-        <div className="w-full flex px-8 py-4 border-t border-[#e8e6e3] items-center justify-end gap-3">
+        <div className="w-full flex px-8 py-4 border-t border-[#e8e6e3] bg-white items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}

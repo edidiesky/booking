@@ -43,7 +43,7 @@ export default function TeamManagementTab() {
         placeholder="Search by user ID or role..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="h-9 px-3 text-xs lg:text-smborder rounded-lg outline-none w-64"
+        className="h-9 px-3 text-xs lg:text-sm border rounded-lg outline-none w-64"
         style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
       />
 

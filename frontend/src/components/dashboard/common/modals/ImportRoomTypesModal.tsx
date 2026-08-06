@@ -178,7 +178,7 @@ export default function ImportRoomTypesModal({ propertyId, onClose }: Props) {
           )}
         </div>
 
-        <div className="w-full flex px-8 py-4 border-t border-[#e8e6e3] items-center justify-end gap-3">
+        <div className="w-full flex px-8 py-4 border-t border-[#e8e6e3] bg-white items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}

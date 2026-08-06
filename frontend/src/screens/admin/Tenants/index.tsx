@@ -66,7 +66,7 @@ export default function AdminTenants() {
                 <td className="py-3 text-right">
                   <button
                     onClick={() => handleToggleStatus(tenant)}
-                    className="text-xs lg:text-smunderline"
+                    className="text-xs lg:text-sm underline"
                     style={{ color: tenant.status === "suspended" ? "#00a86b" : "#dc2626" }}
                   >
                     {tenant.status === "suspended" ? "Reactivate" : "Suspend"}

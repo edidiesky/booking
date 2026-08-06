@@ -16,7 +16,7 @@ function ChartCard({
         <p className="text-xs lg:text-sm text-[#777b86] mt-0.5">{description}</p>
       </div>
       <div className={`${height} flex items-center justify-center`}>
-        <p className="text-xs lg:text-smtext-[#a3a6af] ">Chart renders here</p>
+        <p className="text-xs lg:text-sm text-[#a3a6af] ">Chart renders here</p>
       </div>
     </div>
   );
