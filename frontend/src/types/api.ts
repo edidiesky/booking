@@ -338,6 +338,7 @@ export interface Booking {
   roomTypeImage?: string;
   guestFirstName?: string;
   guestLastName?:  string;
+  tenant_name?:string
 }
 
 
@@ -896,4 +897,18 @@ export interface AdminTenantDetailResponse {
     recentPurchases: Array<{ id: string; amount_ngn: number; host_payout_ngn: number; status: string; held_at: string; booking_ref: string }>;
     recentActivity: Array<{ id: string; action: string; resource: string; created_at: string; actor_first_name: string | null; actor_last_name: string | null }>;
   };
+}
+
+export interface AuditLogEntry {
+  id: string;
+  action: string;
+  resource: string;
+  resourceId?: string;
+  oldValue?: Record<string, unknown> | null;
+  newValue?: Record<string, unknown> | null;
+  ipAddress?: string;
+  actorFirstName: string | null;
+  actorLastName: string | null;
+  tenantName: string | null;
+  createdAt: string;
 }
