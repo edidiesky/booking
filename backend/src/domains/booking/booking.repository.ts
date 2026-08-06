@@ -32,13 +32,14 @@ export interface Booking {
   // Joined columns from listByTenant/listByGuest (property_name, etc. via
   // `AS` aliases in the SQL), declared here with their real names, not the
   // camelCase versions that were silently always undefined before.
-  property_name?:    string;
-  property_city?:    string;
-  room_type_name?:   string;
+  property_name?: string;
+  property_city?: string;
+  room_type_name?: string;
   room_type_quantity?: number;
   room_types_image?: string[];
   guest_first_name?: string;
-  guest_last_name?:  string;
+  guest_last_name?: string;
+  tenant_name?:string;
 }
 
 function generateBookingRef(): string {
@@ -52,12 +53,12 @@ function ctx() {
 }
 
 export interface BookingStats {
-  confirmedCount:  number;
-  checkedInCount:  number;
+  confirmedCount: number;
+  checkedInCount: number;
   checkedOutCount: number;
-  cancelledCount:  number;
-  pendingCount:    number;
-  currentMonthRevenueNgn:  number;
+  cancelledCount: number;
+  pendingCount: number;
+  currentMonthRevenueNgn: number;
   previousMonthRevenueNgn: number;
   revenueGrowthPct: number;
 }
@@ -317,19 +318,67 @@ export const bookingRepository = {
       [tenantId],
     );
 
-    const current  = Number(row?.current_month_revenue ?? 0);
+    const current = Number(row?.current_month_revenue ?? 0);
     const previous = Number(row?.previous_month_revenue ?? 0);
-    const growthPct = previous === 0 ? (current > 0 ? 100 : 0) : ((current - previous) / previous) * 100;
+    const growthPct =
+      previous === 0
+        ? current > 0
+          ? 100
+          : 0
+        : ((current - previous) / previous) * 100;
 
     return {
-      confirmedCount:  Number(row?.confirmed_count ?? 0),
-      checkedInCount:  Number(row?.checked_in_count ?? 0),
+      confirmedCount: Number(row?.confirmed_count ?? 0),
+      checkedInCount: Number(row?.checked_in_count ?? 0),
       checkedOutCount: Number(row?.checked_out_count ?? 0),
-      cancelledCount:  Number(row?.cancelled_count ?? 0),
-      pendingCount:    Number(row?.pending_count ?? 0),
-      currentMonthRevenueNgn:  current,
+      cancelledCount: Number(row?.cancelled_count ?? 0),
+      pendingCount: Number(row?.pending_count ?? 0),
+      currentMonthRevenueNgn: current,
       previousMonthRevenueNgn: previous,
       revenueGrowthPct: Math.round(growthPct * 10) / 10,
     };
+  },
+
+async listAllForAdmin(
+  opts: { status?: BookingStatus; page?: number; limit?: number } = {},
+): Promise<Booking[]> {
+  const { status, page = 1, limit = 20 } = opts;
+  const offset = (page - 1) * limit;
+  const params: unknown[] = [limit, offset];
+  const whereClause = status ? `WHERE b.status = $${params.push(status)}` : "";
+
+  return query<Booking>(
+    `SELECT b.*, t.name AS tenant_name,
+            u.first_name AS guest_first_name, u.last_name AS guest_last_name, u.email AS guest_email,
+            p.name AS property_name, rt.name AS room_type_name
+     FROM bookings b
+     JOIN tenants    t  ON t.id  = b.tenant_id
+     JOIN users      u  ON u.id  = b.guest_user_id
+     JOIN properties p  ON p.id  = b.property_id
+     JOIN room_types rt ON rt.id = b.room_type_id
+     ${whereClause}
+     ORDER BY b.created_at DESC LIMIT $1 OFFSET $2`,
+    params,
+  );
+},
+
+  async listForDateRange(
+    startDate: string,
+    endDate: string,
+  ): Promise<Booking[]> {
+    return query<Booking>(
+      `SELECT b.*, t.name AS tenant_name,
+            u.first_name AS guest_first_name, u.last_name AS guest_last_name,
+            p.name AS property_name, rt.name AS room_type_name
+     FROM bookings b
+     JOIN tenants    t  ON t.id  = b.tenant_id
+     JOIN users      u  ON u.id  = b.guest_user_id
+     JOIN properties p  ON p.id  = b.property_id
+     JOIN room_types rt ON rt.id = b.room_type_id
+     WHERE b.check_in <= $2 AND b.check_out >= $1
+       AND b.status NOT IN ('cancelled')
+     ORDER BY b.check_in ASC`,
+      [startDate, endDate],
+    );
   },
 };
