@@ -25,11 +25,11 @@ const MAX_BACKOFF_MS     = 30_000;
  * whenever an event actually arrives, proof the connection is healthy,
  * not just open.
  */
-export function useSellerNotificationStream(onNotification: (n: SellerNotification) => void) {
+export function useSellerNotificationStream(onNotification?: (n: SellerNotification) => void) {
   const token = useSelector(selectAccessToken);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || !onNotification) return;
 
     const controller = new AbortController();
     let stopped = false;
