@@ -17,11 +17,20 @@ const CACHE_TTL    = 300; // 5 minutes
  *  4. Explicit denials WIN over role-level; explicit grants ADD to role-level
  */
 class PermissionResolverService {
-  private cacheKey(userId: string, tenantId: string): string {
-    return `${CACHE_PREFIX}${userId}:${tenantId}`;
+   private cacheKey(userId: string, tenantId: string | null): string {
+    return `${CACHE_PREFIX}${userId}:${tenantId ?? "platform"}`;
   }
 
-  async resolve(userId: string, tenantId: string): Promise<Set<string>> {
+  async resolve(userId: string, tenantId: string | null): Promise<Set<string>> {
+    /**
+     * 1. check for the user permission in the cache
+     * 2. for cache miss, find te permission in the db
+     * 3. find the yser roles by fecting all his role ids
+     * 4. find the user permissions ids fro the role_permission
+     * 5. Get the permissions from the permissions ids
+     * 6. get the explicit permissions fromm the user_permissions
+     * 7. 
+     */
     const key = this.cacheKey(userId, tenantId);
     const ctx = requestContext.get() ?? {};
 
@@ -64,7 +73,7 @@ class PermissionResolverService {
     logger.debug("role_level_grants_resolved", {
       event:      "role_level_grants_resolved",
       userId,
-      tenantId,
+      tenantId, 
       roleCount:  roleIds.length,
       grantCount: roleLevelGrants.size,
     });
@@ -125,7 +134,7 @@ class PermissionResolverService {
     return finalGranted;
   }
 
-  async has(userId: string, tenantId: string, resource: string, action: string): Promise<boolean> {
+  async has(userId: string, tenantId: string | null, resource: string, action: string): Promise<boolean> {
     const granted = await this.resolve(userId, tenantId);
     return granted.has(`${resource}:${action}`);
   }
