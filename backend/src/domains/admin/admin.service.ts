@@ -7,6 +7,7 @@ import { propertyRepository } from "../property/property.repository";
 import { bookingRepository } from "../booking/booking.repository";
 import { tenantRepository } from "../tenant/tenant.repository";
 import { sellerNotificationRepository } from "../seller-notification/seller.notification.repository";
+import { escrowRepository } from "../escrow/escrow.repository";
 
 export class AdminService {
   async listGuests(page: number, limit: number) {
@@ -148,6 +149,10 @@ export class AdminService {
       guestUserId: b.guest_user_id,
       propertyName: b.property_name,
       roomTypeName: b.room_type_name,
+      tenantId: b.tenant_id,
+      tenantEmail: b.tenant_email,
+      guestEmail: b.guest_email,
+      roomTypeImages: b.room_type_images,
     }));
     return { bookings, page, limit };
   }
@@ -173,6 +178,9 @@ export class AdminService {
       guestLastName: p.guest_last_name,
       guestEmail: p.guest_email,
       roomTypeName: p.room_type_name,
+      roomTypeImages: p.room_type_images,
+      tenantId: p.tenant_id,
+      tenantEmail: p.tenant_email,
     }));
     return { payments, page, limit };
   }
@@ -209,7 +217,7 @@ export class AdminService {
       revenueSplit,
       paymentsCount,
       guestBreakdown,
-      propertyBreakdown
+      propertyBreakdown,
     ] = await Promise.all([
       tenantRepository.countAllByStatus(),
       userRepository.countByType("guest"),
@@ -220,7 +228,7 @@ export class AdminService {
       bookingRepository.getRevenueSplitPlatformWide(),
       paymentRepository.countAllForAdmin(),
       userRepository.getGuestBreakdown(),
-       propertyRepository.getStatsAllForAdmin(),
+      propertyRepository.getStatsAllForAdmin(),
     ]);
     return {
       tenants,
@@ -232,7 +240,7 @@ export class AdminService {
       revenueSplit,
       paymentsCount,
       guestBreakdown,
-      propertyBreakdown 
+      propertyBreakdown,
     };
   }
 
@@ -256,6 +264,31 @@ export class AdminService {
       roomTypeName: b.room_type_name,
       tenantName: b.tenant_name,
     }));
+  }
+
+  async listEscrow(page: number, limit: number, tenantId?: string) {
+    const rows = await escrowRepository.listAllForAdmin(page, limit, tenantId);
+    const escrows = rows.map((e) => ({
+      id: e.id,
+      bookingId: e.booking_id,
+      status: e.status,
+      amountNgn: e.amount_ngn,
+      platformFeeNgn: e.platform_fee_ngn,
+      hostPayoutNgn: e.host_payout_ngn,
+      heldAt: e.held_at,
+      releasedAt: e.released_at,
+      refundedAt: e.refunded_at,
+      bookingRef: e.booking_ref,
+      checkIn: e.check_in,
+      checkOut: e.check_out,
+      tenantName: e.tenant_name,
+      tenantEmail: e.tenant_email,
+    }));
+    return { escrows, page, limit };
+  }
+
+  async getEscrowStats() {
+    return escrowRepository.getStatsAllForAdmin();
   }
 }
 

@@ -1,6 +1,6 @@
 import { formatDate, formatDateTime } from "@/utils/formatDate";
 import { formatCurrency } from "@/utils/formatCurrency";
-import type { Booking, BookingStatus } from "@/types/api";
+import type { AdminBookingSummary, BookingStatus } from "@/types/api";
 import Drawer from "@/components/common/Drawer";
 import DrawerField from "@/components/common/DrawerField";
 import DrawerSection from "@/components/common/DrawerSection";
@@ -30,7 +30,7 @@ function stepIndex(status: BookingStatus): number {
 }
 
 interface Props {
-  booking: Booking & { tenantName: string };
+  booking: AdminBookingSummary;
   onClose: () => void;
 }
 
@@ -64,22 +64,28 @@ export default function AdminBookingDrawer({ booking, onClose }: Props) {
         </div>
       </DrawerSection>
 
-      <DrawerSection label="Details">
-        <DrawerField label="Seller"     value={booking.tenantName} />
-        <DrawerField label="Created at" value={formatDateTime(booking.createdAt)} />
-        <DrawerField label="Check-in"   value={formatDate(booking.checkIn)} />
-        <DrawerField label="Status"     value={cfg.label} />
-        <DrawerField label="Check-out"  value={formatDate(booking.checkOut)} />
-        <DrawerField label="Nights"     value={String(booking.nights)} />
-        <DrawerField label="Rooms"      value={String(booking.roomsCount)} />
-        <DrawerField label="Guests"     value={String(booking.guestCount)} />
-      </DrawerSection>
+<DrawerSection label="Details">
+  <DrawerField label="Created at" value={formatDateTime(booking.createdAt)} />
+  <DrawerField label="Check-in"   value={formatDate(booking.checkIn)} />
+  <DrawerField label="Status"     value={cfg.label} />
+  <DrawerField label="Check-out"  value={formatDate(booking.checkOut)} />
+  <DrawerField label="Nights"     value={String(booking.nights)} />
+  <DrawerField label="Rooms"      value={String(booking.roomsCount)} />
+  <DrawerField label="Guests"     value={String(booking.guestCount)} />
+</DrawerSection>
 
-      <DrawerSection label="Customer breakdown">
-        <DrawerField label="Customer First Name" value={booking.guestFirstName} />
-        <DrawerField label="Customer Last Name"  value={booking.guestLastName} />
-        <DrawerField label="Customer Id"         value={booking.guestUserId} />
-      </DrawerSection>
+<DrawerSection label="Seller / Tenant">
+  <DrawerField label="Name"          value={booking.tenantName} />
+  <DrawerField label="Tenant ID"     value={booking.tenantId} />
+  <DrawerField label="Contact Email" value={booking.tenantEmail} />
+</DrawerSection>
+
+<DrawerSection label="Customer breakdown">
+  <DrawerField label="Customer First Name" value={booking.guestFirstName} />
+  <DrawerField label="Customer Last Name"  value={booking.guestLastName} />
+  <DrawerField label="Customer Email"      value={booking.guestEmail} />
+  <DrawerField label="Customer Id"         value={booking.guestUserId} />
+</DrawerSection>
 
       <DrawerSection label="Payment breakdown">
         <DrawerField label="Total amount"  value={formatCurrency(booking.totalAmountNgn)} />

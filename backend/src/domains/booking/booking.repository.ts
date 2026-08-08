@@ -40,6 +40,9 @@ export interface Booking {
   guest_first_name?: string;
   guest_last_name?: string;
   tenant_name?: string;
+  tenant_email: string;
+  guest_email: string;
+  guestEmail: string;
 }
 
 function generateBookingRef(): string {
@@ -251,13 +254,15 @@ export const bookingRepository = {
 
     try {
       return await query<Booking>(
-        `SELECT b.*, u.first_name AS guest_first_name, u.last_name AS guest_last_name,
+        `SELECT b.*, t.id AS tenant_id, t.name AS tenant_name, t.email AS tenant_email,
+                u.first_name AS guest_first_name, u.last_name AS guest_last_name,
                 u.email AS guest_email, rt.images AS room_types_image, p.name AS property_name,
                 rt.name AS room_type_name, rt.quantity AS room_type_quantity
          FROM bookings b
          JOIN users      u  ON u.id  = b.guest_user_id
          JOIN properties p  ON p.id  = b.property_id
          JOIN room_types rt ON rt.id = b.room_type_id
+         JOIN tenants    t  ON t.id  = b.tenant_id
          WHERE b.tenant_id = $1 ${where}
          ORDER BY b.created_at DESC LIMIT $2 OFFSET $3`,
         params,
@@ -339,30 +344,29 @@ export const bookingRepository = {
     };
   },
 
-  async listAllForAdmin(
-    opts: { status?: BookingStatus; page?: number; limit?: number } = {},
-  ): Promise<Booking[]> {
-    const { status, page = 1, limit = 20 } = opts;
-    const offset = (page - 1) * limit;
-    const params: unknown[] = [limit, offset];
-    const whereClause = status
-      ? `WHERE b.status = $${params.push(status)}`
-      : "";
+async listAllForAdmin(
+  opts: { status?: BookingStatus; page?: number; limit?: number } = {},
+): Promise<Booking[]> {
+  const { status, page = 1, limit = 20 } = opts;
+  const offset = (page - 1) * limit;
+  const params: unknown[] = [limit, offset];
+  const whereClause = status ? `WHERE b.status = $${params.push(status)}` : "";
 
-    return query<Booking>(
-      `SELECT b.*, t.name AS tenant_name,
+  return query<Booking>(
+    `SELECT b.*, t.id AS tenant_id, t.name AS tenant_name, owner.email AS tenant_email,
             u.first_name AS guest_first_name, u.last_name AS guest_last_name, u.email AS guest_email,
-            p.name AS property_name, rt.name AS room_type_name
-     FROM bookings b
-     JOIN tenants    t  ON t.id  = b.tenant_id
-     JOIN users      u  ON u.id  = b.guest_user_id
-     JOIN properties p  ON p.id  = b.property_id
-     JOIN room_types rt ON rt.id = b.room_type_id
-     ${whereClause}
-     ORDER BY b.created_at DESC LIMIT $1 OFFSET $2`,
-      params,
-    );
-  },
+            p.name AS property_name, rt.name AS room_type_name, rt.images AS room_type_images
+    FROM bookings b
+    JOIN tenants    t     ON t.id     = b.tenant_id
+    JOIN users      owner ON owner.id = t.owner_user_id
+    JOIN users      u     ON u.id     = b.guest_user_id
+    JOIN properties p     ON p.id     = b.property_id
+    JOIN room_types rt    ON rt.id    = b.room_type_id
+    ${whereClause}
+    ORDER BY b.created_at DESC LIMIT $1 OFFSET $2`,
+    params,
+  );
+},
 
   async listForDateRange(
     startDate: string,
