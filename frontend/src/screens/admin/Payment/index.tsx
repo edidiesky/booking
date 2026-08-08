@@ -1,33 +1,54 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useListAdminPaymentsQuery } from "@/redux/services/adminApi";
+import {
+  useGetPlatformStatsQuery,
+  useListAdminPaymentsQuery,
+} from "@/redux/services/adminApi";
 import { ChartSelect } from "@/components/common/charts/Chartselect";
-import type { PaymentStatus, PaymentGateway, PaymentSummary } from "@/types/api";
+import type {
+  PaymentStatus,
+  PaymentGateway,
+  AdminPaymentSummary,
+} from "@/types/api";
 import Title from "@/components/dashboard/common/Title";
 import PaymentTableRow from "./PaymentTableRow";
 import AdminPaymentDrawer from "./AdminPaymentDrawer";
+import StatsOverview from "@/components/dashboard/common/StatsOverview";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 const ROWS_PER_PAGE = 10;
 
-const STATUS_CONFIG: Record<PaymentStatus, { label: string; className: string }> = {
-  pending:  { label: "Pending",  className: "bg-yellow-50 text-yellow-800" },
-  success:  { label: "Success",  className: "bg-green-50 text-green-700" },
-  failed:   { label: "Failed",   className: "bg-red-50 text-red-700" },
+const STATUS_CONFIG: Record<
+  PaymentStatus,
+  { label: string; className: string }
+> = {
+  pending: { label: "Pending", className: "bg-yellow-50 text-yellow-800" },
+  success: { label: "Success", className: "bg-green-50 text-green-700" },
+  failed: { label: "Failed", className: "bg-red-50 text-red-700" },
   refunded: { label: "Refunded", className: "bg-[#f2f0ed] text-[#4c4c4c]" },
 };
 
-const GATEWAY_CONFIG: Record<PaymentGateway, { label: string; className: string }> = {
-  paystack:    { label: "Paystack",    className: "bg-blue-50 text-blue-700" },
-  flutterwave: { label: "Flutterwave", className: "bg-orange-50 text-orange-700" },
+const GATEWAY_CONFIG: Record<
+  PaymentGateway,
+  { label: string; className: string }
+> = {
+  paystack: { label: "Paystack", className: "bg-blue-50 text-blue-700" },
+  flutterwave: {
+    label: "Flutterwave",
+    className: "bg-orange-50 text-orange-700",
+  },
 };
 
-const STATUS_OPTIONS: PaymentStatus[] = ["pending", "success", "failed", "refunded"];
+const STATUS_OPTIONS: PaymentStatus[] = [
+  "pending",
+  "success",
+  "failed",
+  "refunded",
+];
 const GATEWAY_OPTIONS: PaymentGateway[] = ["paystack", "flutterwave"];
 
 export default function DashboardPayments() {
-  const [selectedPayment, setSelectedPayment] = useState<
-    (PaymentSummary & { tenant_name: string }) | null
-  >(null);
+const [selectedPayment, setSelectedPayment] = useState<AdminPaymentSummary | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<PaymentStatus | "">("");
   const [gatewayFilter, setGatewayFilter] = useState<PaymentGateway | "">("");
@@ -37,6 +58,10 @@ export default function DashboardPayments() {
     limit: ROWS_PER_PAGE,
   });
 
+  const { data: statsData, isLoading: isStatsLoading } =
+    useGetPlatformStatsQuery();
+  const stats = statsData?.data;
+
   const allPayments = data?.data.payments ?? [];
 
   const payments = allPayments.filter((p) => {
@@ -45,7 +70,6 @@ export default function DashboardPayments() {
     return matchStatus && matchGateway;
   });
 
-  
   const totalPages = Math.max(1, Math.ceil(payments.length / ROWS_PER_PAGE));
 
   return (
@@ -61,8 +85,42 @@ export default function DashboardPayments() {
             title="Payments"
             description="View all payment transactions across every seller on the platform."
           />
-          <span className="text-xs lg:text-[13px] text-[#a3a6af] mt-2">{allPayments.length} total</span>
+          <span className="text-xs lg:text-[13px] text-[#a3a6af] mt-2">
+            {allPayments.length} total
+          </span>
         </div>
+
+        <StatsOverview
+          isLoading={isStatsLoading}
+          growthPct={stats?.volume.growthPct}
+          growthTooltip="Successful payment volume this calendar month vs. last calendar month"
+          cards={[
+            {
+              label: "Total transactions",
+              value: String(stats?.paymentsCount ?? 0),
+              color: "#166534",
+              bg: "#dcfce7",
+            },
+            {
+              label: "Volume (month)",
+              value: formatCurrency(stats?.volume.currentMonthNgn ?? 0),
+              color: "#5b21b6",
+              bg: "#ede9fe",
+            },
+            {
+              label: "Host payouts",
+              value: formatCurrency(stats?.revenueSplit.hostPayoutNgn ?? 0),
+              color: "#17191c",
+              bg: "#f2f0ed",
+            },
+            {
+              label: "Platform fees",
+              value: formatCurrency(stats?.revenueSplit.platformFeeNgn ?? 0),
+              color: "#374151",
+              bg: "#f3f4f6",
+            },
+          ]}
+        />
 
         <div className="flex items-center gap-3 flex-wrap">
           <ChartSelect
@@ -73,7 +131,10 @@ export default function DashboardPayments() {
             }}
             options={[
               { label: "All statuses", value: "" },
-              ...STATUS_OPTIONS.map((s) => ({ label: STATUS_CONFIG[s].label, value: s })),
+              ...STATUS_OPTIONS.map((s) => ({
+                label: STATUS_CONFIG[s].label,
+                value: s,
+              })),
             ]}
           />
           <ChartSelect
@@ -84,7 +145,10 @@ export default function DashboardPayments() {
             }}
             options={[
               { label: "All gateways", value: "" },
-              ...GATEWAY_OPTIONS.map((g) => ({ label: GATEWAY_CONFIG[g].label, value: g })),
+              ...GATEWAY_OPTIONS.map((g) => ({
+                label: GATEWAY_CONFIG[g].label,
+                value: g,
+              })),
             ]}
           />
         </div>
@@ -93,8 +157,18 @@ export default function DashboardPayments() {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-[#e8e6e3]">
-                {["Payment ID", "Booking ID", "Amount", "Gateway", "Status", "Date"].map((h) => (
-                  <th key={h} className="px-5 py-3 text-left text-xs lg:text-xs text-[#a3a6af] uppercase whitespace-nowrap">
+                {[
+                  "Payment ID",
+                  "Booking ID",
+                  "Amount",
+                  "Gateway",
+                  "Status",
+                  "Date",
+                ].map((h) => (
+                  <th
+                    key={h}
+                    className="px-5 py-3 text-left text-xs lg:text-xs text-[#a3a6af] uppercase whitespace-nowrap"
+                  >
                     {h}
                   </th>
                 ))}
@@ -103,17 +177,27 @@ export default function DashboardPayments() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]">
+                  <td
+                    colSpan={6}
+                    className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]"
+                  >
                     Loading payments...
                   </td>
                 </tr>
               ) : payments.length > 0 ? (
                 payments.map((payment) => (
-                  <PaymentTableRow key={payment.id} payment={payment} onViewDetails={setSelectedPayment} />
+                  <PaymentTableRow
+                    key={payment.id}
+                    payment={payment}
+                    onViewDetails={setSelectedPayment}
+                  />
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]">
+                  <td
+                    colSpan={6}
+                    className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]"
+                  >
                     No payments found
                   </td>
                 </tr>
@@ -134,7 +218,10 @@ export default function DashboardPayments() {
             >
               Prev
             </button>
-            {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => i + 1).map((page) => (
+            {Array.from(
+              { length: Math.min(totalPages, 7) },
+              (_, i) => i + 1,
+            ).map((page) => (
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
@@ -156,7 +243,10 @@ export default function DashboardPayments() {
 
       <AnimatePresence>
         {selectedPayment && (
-          <AdminPaymentDrawer payment={selectedPayment} onClose={() => setSelectedPayment(null)} />
+          <AdminPaymentDrawer
+            payment={selectedPayment}
+            onClose={() => setSelectedPayment(null)}
+          />
         )}
       </AnimatePresence>
     </>
