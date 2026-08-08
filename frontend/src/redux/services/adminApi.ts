@@ -5,6 +5,7 @@ import type {
   Booking,
   Property,
   AdminPaymentSummary,
+  PlatformStatsResponse,
 } from "@/types/api";
 import { ADMIN_URL } from "@/constants/api";
 interface AdminGuestSummary {
@@ -175,34 +176,7 @@ export const adminApi = apiSlice.injectEndpoints({
       }),
     }),
 
-    getPlatformStats: builder.query<
-      {
-        success: boolean;
-        data: {
-          tenants: { active: number; suspended: number; draft: number };
-          guests: number;
-          administrators: number;
-          properties: number;
-          guestBreakdown:number;
-          bookings: {
-            confirmedCount: number;
-            checkedInCount: number;
-            checkedOutCount: number;
-            cancelledCount: number;
-            pendingCount: number;
-          };
-          volume: {
-            currentMonthNgn: number;
-            previousMonthNgn: number;
-            growthPct: number;
-          };
-          revenueSplit: {
-            hostPayoutNgn: number;
-            platformFeeNgn: number;
-          };
-          paymentsCount: number;
-        };
-      },
+    getPlatformStats: builder.query<PlatformStatsResponse,
       void
     >({
       query: () => ({ url: `${ADMIN_URL}/stats` }),
