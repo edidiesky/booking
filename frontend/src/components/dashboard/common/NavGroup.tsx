@@ -5,6 +5,7 @@ import type { NavGroup } from "@/types/ui";
 
 interface Props {
   group: NavGroup;
+  base?: string; 
 }
 
 function PulseIcon({
@@ -28,14 +29,13 @@ function PulseIcon({
   );
 }
 
-export default function NavGroupComponent({ group }: Props) {
-  const base = "/dashboard";
+export default function NavGroupComponent({ group, base = "/dashboard"  }: Props) {
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
 
   return (
     <div className="mb-5">
       <p
-        className="text-xs lg:text-smuppercase px-2 mb-1.5 font-semibold"
+        className="text-xs lg:text-sm uppercase px-2 mb-1.5 font-semibold"
         style={{ color: "var(--color-hint-of-grey)" }}
       >
         {group.label}
