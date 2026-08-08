@@ -454,6 +454,17 @@ export interface AdminPaymentSummary {
   guestLastName:   string;
   roomTypeName:    string;
   tenantName:      string;
+  roomTypeImages: string[];
+  guestEmail: string;
+   tenantId: string;
+  tenantEmail: string;
+}
+
+export interface AdminBookingSummary extends Omit<Booking, "tenant_name"> {
+  tenantId: string;
+  tenantName: string;
+  tenantEmail: string;
+  guestEmail: string;
 }
 export interface Payment {
   id:             string;
@@ -972,5 +983,50 @@ export interface AdminAdministratorSummary {
   firstName: string;
   lastName: string;
   email: string;
+  createdAt: string;
+}
+
+export interface AdminEscrowRecord {
+  id: string;
+  bookingId: string;
+  status: EscrowStatus;
+  amountNgn: number;
+  platformFeeNgn: number;
+  hostPayoutNgn: number;
+  heldAt: string;
+  releasedAt: string | null;
+  refundedAt: string | null;
+  bookingRef: string;
+  checkIn: string;
+  checkOut: string;
+  createdAt: string;
+  tenantName: string;
+  tenantEmail: string;
+}
+
+export interface TenantInfo {
+  tenantId: string;
+  tenantName: string;
+  tenantEmail: string;
+}
+
+export interface AdminBookingListResponse {
+  success: boolean;
+  data: { bookings: AdminBookingSummary[]; page: number; limit: number };
+}
+
+export interface AdminGuestSummary {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+  profileImage: string | null;
+  status: "draft" | "active" | "inactive" | "suspended";
+  isEmailVerified: boolean;
+  isPhoneVerified: boolean;
+  twoFactorEnabled: boolean;
+  googleId: string | null;
+  lastActiveAt: string | null;
   createdAt: string;
 }
