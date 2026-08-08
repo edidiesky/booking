@@ -45,6 +45,8 @@ export interface PaymentSummary {
   room_type_name: string;
   room_type_images: string[];
   tenant_name: string;
+  tenant_id: string,
+tenant_email: string,
 }
 
 function ctx() {
@@ -301,17 +303,18 @@ export const paymentRepository = {
     const offset = (page - 1) * limit;
     return query<PaymentSummary>(
       `SELECT
-       p.id, p.booking_id, p.gateway, p.transaction_id, p.amount_ngn, p.status, p.channel, p.paid_at, p.created_at,
-       t.name AS tenant_name,
-       b.booking_ref, b.check_in, b.check_out, b.receipt_url,
-       u.first_name AS guest_first_name, u.last_name AS guest_last_name, u.email AS guest_email,
-       rt.name AS room_type_name
-     FROM payments p
-     JOIN tenants    t  ON t.id  = p.tenant_id
-     JOIN bookings   b  ON b.id  = p.booking_id
-     JOIN users      u  ON u.id  = b.guest_user_id
-     JOIN room_types rt ON rt.id = b.room_type_id
-     ORDER BY p.created_at DESC LIMIT $1 OFFSET $2`,
+        p.id, p.booking_id, p.gateway, p.transaction_id, p.amount_ngn, p.status, p.channel, p.paid_at, p.created_at,
+        t.id AS tenant_id, t.name AS tenant_name, owner.email AS tenant_email,
+        b.booking_ref, b.check_in, b.check_out, b.receipt_url,
+        u.first_name AS guest_first_name, u.last_name AS guest_last_name, u.email AS guest_email,
+        rt.name AS room_type_name, rt.images AS room_type_images
+      FROM payments p
+      JOIN tenants    t     ON t.id     = p.tenant_id
+      JOIN users      owner ON owner.id = t.owner_user_id
+      JOIN bookings   b     ON b.id     = p.booking_id
+      JOIN users      u     ON u.id     = b.guest_user_id
+      JOIN room_types rt    ON rt.id    = b.room_type_id
+      ORDER BY p.created_at DESC LIMIT $1 OFFSET $2`,
       [limit, offset],
     );
   },
