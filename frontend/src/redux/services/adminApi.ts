@@ -7,7 +7,21 @@ import type {
   AdminPaymentSummary,
 } from "@/types/api";
 import { ADMIN_URL } from "@/constants/api";
-
+interface AdminGuestSummary {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+  profileImage: string | null;
+  status: string;
+  isEmailVerified: boolean;
+  isPhoneVerified: boolean;
+  twoFactorEnabled: boolean;
+  googleId: string | null;
+  lastActiveAt: string | null;
+  createdAt: string;
+}
 interface PaginatedResponse<T, K extends string> {
   success: boolean;
   data: { [key in K]: T[] } & {
@@ -54,7 +68,7 @@ interface AdminPaymentListResponse {
 export const adminApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     listGuests: builder.query<
-      PaginatedResponse<User, "guests">,
+      PaginatedResponse<AdminGuestSummary, "guests">,
       { page: number; limit?: number }
     >({
       query: ({ page, limit = 20 }) => ({
