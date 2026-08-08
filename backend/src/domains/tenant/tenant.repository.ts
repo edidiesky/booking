@@ -1,64 +1,90 @@
 import { PoolClient } from "pg";
 import { query, queryOne } from "@booking/shared";
-import { TenantStatus, CancellationPolicyTier, TenantSettings } from "../../types";
+import {
+  TenantStatus,
+  CancellationPolicyTier,
+  TenantSettings,
+} from "../../types";
 
 export interface Tenant {
-  id:                  string;
-  slug:                string;
-  name:                string;
-  owner_user_id:       string;
-  platform_fee_pct:    number;
+  id: string;
+  slug: string;
+  name: string;
+  owner_user_id: string;
+  platform_fee_pct: number;
   cancellation_policy: CancellationPolicyTier[];
-  status:              TenantStatus;
-  settings:            TenantSettings;
-  bio?:                string;
-  avatar_url?:         string;
-  city?:               string;
-  state?:              string;
-  country?:            string;
-  created_at:          Date;
-  updated_at:          Date;
+  status: TenantStatus;
+  settings: TenantSettings;
+  bio?: string;
+  avatar_url?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export const tenantRepository = {
   async findBySlug(slug: string): Promise<Tenant | null> {
-    return queryOne<Tenant>(`SELECT * FROM tenants WHERE slug = $1 LIMIT 1`, [slug]);
+    return queryOne<Tenant>(`SELECT * FROM tenants WHERE slug = $1 LIMIT 1`, [
+      slug,
+    ]);
   },
 
   async findById(id: string): Promise<Tenant | null> {
     return queryOne<Tenant>(`SELECT * FROM tenants WHERE id = $1`, [id]);
   },
 
-async create(data: {
-  slug:           string;
-  name:           string;
-  ownerUserId:    string;
-  platformFeePct?: number;
-}, client?: PoolClient): Promise<Tenant> {
-  const sql = `INSERT INTO tenants (slug, name, owner_user_id, platform_fee_pct, status)
+  async create(
+    data: {
+      slug: string;
+      name: string;
+      ownerUserId: string;
+      platformFeePct?: number;
+    },
+    client?: PoolClient,
+  ): Promise<Tenant> {
+    const sql = `INSERT INTO tenants (slug, name, owner_user_id, platform_fee_pct, status)
                VALUES ($1, $2, $3, $4, 'active') RETURNING *`;
-  const params = [data.slug, data.name, data.ownerUserId, data.platformFeePct ?? 10.00];
-  const row = client
-    ? (await client.query(sql, params)).rows[0] as Tenant
-    : await queryOne<Tenant>(sql, params);
-  return row!;
-},
+    const params = [
+      data.slug,
+      data.name,
+      data.ownerUserId,
+      data.platformFeePct ?? 10.0,
+    ];
+    const row = client
+      ? ((await client.query(sql, params)).rows[0] as Tenant)
+      : await queryOne<Tenant>(sql, params);
+    return row!;
+  },
 
   async updateStatus(id: string, status: TenantStatus): Promise<Tenant | null> {
     return queryOne<Tenant>(
       `UPDATE tenants SET status = $1, updated_at = now() WHERE id = $2 RETURNING *`,
-      [status, id]
+      [status, id],
     );
   },
 
-  async updateSettings(id: string, settings: Partial<TenantSettings>): Promise<Tenant | null> {
+  async updateSettings(
+    id: string,
+    settings: Partial<TenantSettings>,
+  ): Promise<Tenant | null> {
     return queryOne<Tenant>(
       `UPDATE tenants SET settings = settings || $1::jsonb, updated_at = now() WHERE id = $2 RETURNING *`,
-      [JSON.stringify(settings), id]
+      [JSON.stringify(settings), id],
     );
   },
 
-  async updateProfile(id: string, data: { bio?: string; avatarUrl?: string; city?: string; state?: string; country?: string }): Promise<Tenant | null> {
+  async updateProfile(
+    id: string,
+    data: {
+      bio?: string;
+      avatarUrl?: string;
+      city?: string;
+      state?: string;
+      country?: string;
+    },
+  ): Promise<Tenant | null> {
     return queryOne<Tenant>(
       `UPDATE tenants SET
          bio        = COALESCE($1, bio),
@@ -69,20 +95,31 @@ async create(data: {
          updated_at = now()
        WHERE id = $6
        RETURNING *`,
-      [data.bio ?? null, data.avatarUrl ?? null, data.city ?? null, data.state ?? null, data.country ?? null, id],
+      [
+        data.bio ?? null,
+        data.avatarUrl ?? null,
+        data.city ?? null,
+        data.state ?? null,
+        data.country ?? null,
+        id,
+      ],
     );
   },
 
-  async updateCancellationPolicy(id: string, policy: CancellationPolicyTier[]): Promise<Tenant | null> {
+  async updateCancellationPolicy(
+    id: string,
+    policy: CancellationPolicyTier[],
+  ): Promise<Tenant | null> {
     return queryOne<Tenant>(
       `UPDATE tenants SET cancellation_policy = $1::jsonb, updated_at = now() WHERE id = $2 RETURNING *`,
-      [JSON.stringify(policy), id]
+      [JSON.stringify(policy), id],
     );
   },
 
   async slugExists(slug: string): Promise<boolean> {
     const row = await queryOne<{ count: string }>(
-      `SELECT COUNT(*) AS count FROM tenants WHERE slug = $1`, [slug]
+      `SELECT COUNT(*) AS count FROM tenants WHERE slug = $1`,
+      [slug],
     );
     return parseInt(row?.count ?? "0", 10) > 0;
   },
@@ -91,7 +128,29 @@ async create(data: {
     const offset = (page - 1) * limit;
     return query<Tenant>(
       `SELECT * FROM tenants ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
-      [limit, offset]
+      [limit, offset],
     );
+  },
+  async countAllByStatus(): Promise<{
+    active: number;
+    suspended: number;
+    draft: number;
+  }> {
+    const row = await queryOne<{
+      active: string;
+      suspended: string;
+      draft: string;
+    }>(
+      `SELECT
+       COUNT(*) FILTER (WHERE status = 'active')    AS active,
+       COUNT(*) FILTER (WHERE status = 'suspended')  AS suspended,
+       COUNT(*) FILTER (WHERE status = 'draft')      AS draft
+     FROM tenants`,
+    );
+    return {
+      active: Number(row?.active ?? 0),
+      suspended: Number(row?.suspended ?? 0),
+      draft: Number(row?.draft ?? 0),
+    };
   },
 };

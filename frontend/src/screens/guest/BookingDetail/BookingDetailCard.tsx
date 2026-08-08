@@ -12,7 +12,7 @@ export default function BookingDetailCard({ booking }: Props) {
          style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <p className="text-xs lg:text-smuppercase bold"
+          <p className="text-xs lg:text-sm uppercase bold"
              style={{ color: "var(--color-hint-of-grey)" }}>Booking Reference</p>
           <p className="text-xl bold"
              style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>

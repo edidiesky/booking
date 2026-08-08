@@ -62,7 +62,7 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
 
         <div className="flex-1 flex w-full overflow-y-auto flex-col gap-2">
           <div className="w-full px-6 py-5 border-b flex flex-col gap-4">
-            <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold">Room</p>
+            <p className="text-xs lg:text-sm uppercase text-[#a3a6af] bold">Room</p>
             <div className="flex items-center gap-3">
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#f2f0ed] shrink-0">
                 {payment.room_type_images?.[0] ? (

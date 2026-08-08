@@ -24,9 +24,7 @@ const TYPE_CONFIG: Record<SellerNotificationType, { icon: typeof CreditCard; col
   booking_checked_out: { icon: LogOut,     color: "#5b21b6", bg: "#ede9fe", label: "Check-out" },
 };
 
-// Windowed page numbers, current page +/- 1, plus first and last, matches
-// the shadcn Pagination example's own convention rather than rendering
-// every page number when totalPages is large.
+
 function getPageWindow(current: number, total: number): (number | "ellipsis")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
   const pages: (number | "ellipsis")[] = [1];

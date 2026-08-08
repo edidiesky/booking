@@ -21,11 +21,11 @@ export default function SidebarFooter({ currentUser, onSignOut }: Props) {
           {currentUser?.firstName?.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs lg:text-sm truncate" style={{ color: "var(--color-ink)" }}>
+          <p className="text-xs lg:text-[13px] truncate" style={{ color: "var(--color-ink)" }}>
             {currentUser?.firstName} {currentUser?.lastName}
           </p>
           <p className="text-xs lg:text-smtruncate" style={{ color: "var(--color-hint-of-grey)" }}>
-            {currentUser?.email}
+            {currentUser?.userType}
           </p>
         </div>
         <LuSettings size={13} style={{ color: "var(--color-hint-of-grey)" }} className="shrink-0" />

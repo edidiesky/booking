@@ -45,6 +45,7 @@ export default function DashboardPayments() {
     return matchStatus && matchGateway;
   });
 
+  
   const totalPages = Math.max(1, Math.ceil(payments.length / ROWS_PER_PAGE));
 
   return (

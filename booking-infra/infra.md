@@ -213,3 +213,21 @@ the root README for the exact script definitions.
   a history operation, unconfirmed as of this writing, run
   `git log --all --full-history -- infra/k8s` to check before assuming
   either way. Not documented until this is resolved.
+
+
+## CREATING AN ADMIN
+DO $$
+DECLARE
+  v_user_id UUID;
+  v_role_id UUID;
+BEGIN
+  INSERT INTO users (email, password_hash, first_name, last_name, user_type, tenant_id, status, is_email_verified)
+  VALUES ('mock.admin@gmail.com', '$2b$10$vrB5ZawCnyucTdf3Dtsg1.2qTKCGoQBopDL4nYLuSlRBB.W3Edw1G',
+          'Mock', 'Admin', 'platform:admin', NULL, 'active', true)
+  RETURNING id INTO v_user_id;
+
+  SELECT id INTO v_role_id FROM roles WHERE slug = 'platform:admin' AND tenant_id IS NULL;
+
+  INSERT INTO user_roles (user_id, tenant_id, role_id, assigned_by)
+  VALUES (v_user_id, NULL, v_role_id, 'manual-testing');
+END $$;

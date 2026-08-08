@@ -23,7 +23,7 @@ export default function TwoFactorSection({ enabled }: Props) {
 
   return (
     <section>
-      <p className="text-xs lg:text-smuppercase mb-3" style={{ color: "#a3a6af" }}>Two-Factor Authentication</p>
+      <p className="text-xs lg:text-sm uppercase mb-3" style={{ color: "#a3a6af" }}>Two-Factor Authentication</p>
       <div className="rounded-xl border p-4 flex items-center justify-between" style={{ borderColor: "#e8e6e3" }}>
         <div className="flex items-center gap-3">
           <ShieldCheck size={16} style={{ color: "#4c4c4c" }} />

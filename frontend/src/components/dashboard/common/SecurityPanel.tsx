@@ -121,7 +121,7 @@ export default function SecurityPanel({ hasPhone }: { hasPhone: boolean }) {
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <p className="text-xs lg:text-smuppercase mb-3" style={{ color: "#a3a6af" }}>Verification</p>
+        <p className="text-xs lg:text-sm uppercase mb-3" style={{ color: "#a3a6af" }}>Verification</p>
         <div className="rounded-xl border px-4" style={{ borderColor: "#e8e6e3" }}>
           <VerificationRow
             icon={Mail} label="Email Verification"
@@ -144,7 +144,7 @@ export default function SecurityPanel({ hasPhone }: { hasPhone: boolean }) {
       </section>
 
       <section>
-        <p className="text-xs lg:text-smuppercase mb-3" style={{ color: "#a3a6af" }}>Two-Factor Authentication</p>
+        <p className="text-xs lg:text-sm uppercase mb-3" style={{ color: "#a3a6af" }}>Two-Factor Authentication</p>
         <div className="rounded-xl border p-4 flex items-center justify-between" style={{ borderColor: "#e8e6e3" }}>
           <div className="flex items-center gap-3">
             <ShieldCheck size={16} style={{ color: "#4c4c4c" }} />
@@ -174,7 +174,7 @@ export default function SecurityPanel({ hasPhone }: { hasPhone: boolean }) {
       </section>
 
       <section>
-        <p className="text-xs lg:text-smuppercase mb-3" style={{ color: "#a3a6af" }}>Transaction PIN</p>
+        <p className="text-xs lg:text-sm uppercase mb-3" style={{ color: "#a3a6af" }}>Transaction PIN</p>
         <div className="rounded-xl border p-4" style={{ borderColor: "#e8e6e3" }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

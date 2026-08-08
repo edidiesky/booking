@@ -55,7 +55,7 @@ export default function VerificationSection({ isEmailVerified, isPhoneVerified, 
 
   return (
     <section>
-      <p className="text-xs lg:text-smuppercase mb-3" style={{ color: "#a3a6af" }}>Verification</p>
+      <p className="text-xs lg:text-sm uppercase mb-3" style={{ color: "#a3a6af" }}>Verification</p>
       <div className="rounded-xl border px-4" style={{ borderColor: "#e8e6e3" }}>
         <Row icon={Mail} label="Email Verification" verified={isEmailVerified}
              onVerify={() => start("email_verify")} verifying={pending === "email_verify"} />

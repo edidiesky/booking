@@ -68,7 +68,7 @@ export default function RoomTypeDetailModal({ roomTypeId, onClose }: Props) {
 
                 {roomType.amenities?.length > 0 && (
                   <div>
-                    <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold mb-2">Amenities</p>
+                    <p className="text-xs lg:text-sm uppercase text-[#a3a6af] bold mb-2">Amenities</p>
                     <div className="flex flex-wrap gap-2">
                       {roomType.amenities.map((a) => (
                         <span key={a} className="text-xs lg:text-smpx-3 py-1 rounded-full bg-[#f2f0ed] text-[#4c4c4c]">{a}</span>
@@ -80,7 +80,7 @@ export default function RoomTypeDetailModal({ roomTypeId, onClose }: Props) {
 
               <div className="flex flex-col gap-4">
                 <div className="border border-[#e8e6e3] rounded-xl p-4 flex flex-col gap-3">
-                  <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold">Pricing & capacity</p>
+                  <p className="text-xs lg:text-sm uppercase text-[#a3a6af] bold">Pricing & capacity</p>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[#777b86] flex items-center gap-1.5"><BedDouble size={13} /> Rent</span>
                     <span className="text-[#17191c] bold">{formatCurrency(Number(roomType.base_price_ngn))}/mo</span>
@@ -96,7 +96,7 @@ export default function RoomTypeDetailModal({ roomTypeId, onClose }: Props) {
                 </div>
 
                 <div className="border border-[#e8e6e3] rounded-xl p-4 flex flex-col gap-3">
-                  <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold">Current occupant</p>
+                  <p className="text-xs lg:text-sm uppercase text-[#a3a6af] bold">Current occupant</p>
                   {occupant ? (
                     <>
                       <div className="flex items-center justify-between text-xs">

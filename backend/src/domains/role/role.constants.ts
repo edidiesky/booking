@@ -155,9 +155,3 @@ export const ROLE_PERMISSION_SEED: SeedRolePermission[] = [
   { role_slug: "guest", resource: RESOURCE.PAYMENT,  action: ACTION.READ   },
   { role_slug: "guest", resource: RESOURCE.PROPERTY, action: ACTION.READ   },
 ];
-
-// Note: role assignment is no longer gated by a hardcoded slug list here.
-// role.service#assignRole validates against the actual roles visible to
-// the tenant (system roles + that tenant's own custom roles) via the DB,
-// so a newly created custom role is assignable immediately without a
-// code change or redeploy.

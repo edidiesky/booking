@@ -2,16 +2,29 @@ import { AnimatePresence, motion } from "framer-motion";
 import Title from "@/components/dashboard/common/Title";
 import { Input } from "@/components/ui/input";
 import { formatDate } from "@/utils/formatDate";
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+} from "@/components/ui/pagination";
 import { useAdminCustomers } from "./hooks/useAdminCustomers";
 import CustomerDrawer from "./CustomerDrawer";
 
 export default function AdminCustomers() {
   const {
-    guests, isLoading, isFetching,
-    page, setPage, totalPages,
-    search, setSearch,
-    selectedGuest, setSelectedGuest,
+    guests,
+    isLoading,
+    isFetching,
+    page,
+    setPage,
+    totalPages,
+    search,
+    setSearch,
+    selectedGuest,
+    setSelectedGuest,
     stats,
   } = useAdminCustomers();
 
@@ -21,7 +34,7 @@ export default function AdminCustomers() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full flex flex-col gap-8"
+        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
       >
         <Title
           title="Customers / Guests"
@@ -31,11 +44,24 @@ export default function AdminCustomers() {
         <div className="grid grid-cols-3 gap-4">
           {[
             ["Total", stats?.total ?? 0, "Registered guest accounts"],
-            ["Email verified", stats?.verified ?? 0, "Confirmed their email address"],
-            ["Via Google", stats?.viaGoogle ?? 0, "Signed up with Google OAuth"],
+            [
+              "Email verified",
+              stats?.verified ?? 0,
+              "Confirmed their email address",
+            ],
+            [
+              "Via Google",
+              stats?.viaGoogle ?? 0,
+              "Signed up with Google OAuth",
+            ],
           ].map(([label, value, sub]) => (
-            <div key={label as string} className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-5">
-              <p className="text-xs lg:text-sm uppercase text-[#a3a6af]">{label}</p>
+            <div
+              key={label as string}
+              className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-5"
+            >
+              <p className="text-xs lg:text-sm uppercase text-[#a3a6af]">
+                {label}
+              </p>
               <p className="text-xl lg:text-4xl bold text-[#17191c]">{value}</p>
               <p className="text-xs lg:text-sm medium text-[#a3a6af]">{sub}</p>
             </div>
@@ -51,11 +77,16 @@ export default function AdminCustomers() {
         />
 
         <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
-          <table className="w-full text-xs">
+          <table className="w-full text-xs lg:text-[13px]">
             <thead>
               <tr className="border-b border-[#e8e6e3]">
                 {["Name", "Email", "Status", "Joined"].map((h) => (
-                  <th key={h} className="px-5 py-3 text-left text-xs lg:text-xs text-[#a3a6af] uppercase">{h}</th>
+                  <th
+                    key={h}
+                    className="px-5 py-3 text-left text-xs lg:text-xs text-[#a3a6af] uppercase"
+                  >
+                    {h}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -70,7 +101,10 @@ export default function AdminCustomers() {
                 ))
               ) : guests.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-5 py-10 text-center text-xs lg:text-sm text-[#a3a6af]">
+                  <td
+                    colSpan={4}
+                    className="px-5 py-10 text-center text-xs lg:text-sm text-[#a3a6af]"
+                  >
                     No guests found{search ? ` for "${search}"` : ""}.
                   </td>
                 </tr>
@@ -81,10 +115,16 @@ export default function AdminCustomers() {
                     onClick={() => setSelectedGuest(g)}
                     className="border-b border-[#f2f0ed] last:border-0 hover:bg-[#fafaf9] transition-colors cursor-pointer"
                   >
-                    <td className="px-5 py-3 bold" style={{ color: "#17191c" }}>{g.firstName} {g.lastName}</td>
-                    <td className="px-5 py-3" style={{ color: "#777b86" }}>{g.email}</td>
+                    <td className="px-5 py-3 bold" style={{ color: "#17191c" }}>
+                      {g.firstName} {g.lastName}
+                    </td>
+                    <td className="px-5 py-3" style={{ color: "#777b86" }}>
+                      {g.email}
+                    </td>
                     <td className="px-5 py-3 capitalize">{g.status}</td>
-                    <td className="px-5 py-3" style={{ color: "#a3a6af" }}>{formatDate(g.createdAt)}</td>
+                    <td className="px-5 py-3" style={{ color: "#a3a6af" }}>
+                      {formatDate(g.createdAt)}
+                    </td>
                   </tr>
                 ))
               )}
@@ -95,11 +135,44 @@ export default function AdminCustomers() {
         {totalPages > 1 && (
           <Pagination>
             <PaginationContent>
-              <PaginationItem><PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); if (page > 1) setPage(page - 1); }} className={page === 1 ? "pointer-events-none opacity-40" : ""} /></PaginationItem>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (page > 1) setPage(page - 1);
+                  }}
+                  className={page === 1 ? "pointer-events-none opacity-40" : ""}
+                />
+              </PaginationItem>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <PaginationItem key={p}><PaginationLink href="#" isActive={p === page} onClick={(e) => { e.preventDefault(); setPage(p); }}>{p}</PaginationLink></PaginationItem>
+                <PaginationItem key={p}>
+                  <PaginationLink
+                    href="#"
+                    isActive={p === page}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage(p);
+                    }}
+                  >
+                    {p}
+                  </PaginationLink>
+                </PaginationItem>
               ))}
-              <PaginationItem><PaginationNext href="#" onClick={(e) => { e.preventDefault(); if (page < totalPages) setPage(page + 1); }} className={page === totalPages || isFetching ? "pointer-events-none opacity-40" : ""} /></PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (page < totalPages) setPage(page + 1);
+                  }}
+                  className={
+                    page === totalPages || isFetching
+                      ? "pointer-events-none opacity-40"
+                      : ""
+                  }
+                />
+              </PaginationItem>
             </PaginationContent>
           </Pagination>
         )}
@@ -107,7 +180,10 @@ export default function AdminCustomers() {
 
       <AnimatePresence>
         {selectedGuest && (
-          <CustomerDrawer guest={selectedGuest} onClose={() => setSelectedGuest(null)} />
+          <CustomerDrawer
+            guest={selectedGuest}
+            onClose={() => setSelectedGuest(null)}
+          />
         )}
       </AnimatePresence>
     </>

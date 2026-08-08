@@ -1,11 +1,11 @@
 import { apiSlice } from "./apiSlice";
 import type {
-  User,
   AuditLogEntry,
   Booking,
   Property,
   AdminPaymentSummary,
   PlatformStatsResponse,
+  AdminAdministratorSummary,
 } from "@/types/api";
 import { ADMIN_URL } from "@/constants/api";
 interface AdminGuestSummary {
@@ -77,7 +77,7 @@ export const adminApi = apiSlice.injectEndpoints({
       }),
     }),
     listAdministrators: builder.query<
-      PaginatedResponse<User, "administrators">,
+      PaginatedResponse<AdminAdministratorSummary, "administrators">,
       { page: number; limit?: number }
     >({
       query: ({ page, limit = 20 }) => ({

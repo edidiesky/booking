@@ -57,6 +57,7 @@ export interface User {
   isEmailVerified:  boolean;
   lastActiveAt?:    string;
   createdAt:        string;
+  googleId: string;
 }
 
 export interface InitiateOnboardingPayload {
@@ -930,5 +931,45 @@ export interface AuditLogEntry {
   actorFirstName: string | null;
   actorLastName: string | null;
   tenantName: string | null;
+  createdAt: string;
+}
+
+export interface PlatformStatsResponse {
+  success: boolean;
+  data: {
+    tenants: { active: number; suspended: number; draft: number };
+    guests: number;
+    administrators: number;
+    properties: number;
+    bookings: {
+      confirmedCount: number;
+      checkedInCount: number;
+      checkedOutCount: number;
+      cancelledCount: number;
+      pendingCount: number;
+    };
+    volume: {
+      currentMonthNgn: number;
+      previousMonthNgn: number;
+      growthPct: number;
+    };
+    revenueSplit: {
+      hostPayoutNgn: number;
+      platformFeeNgn: number;
+    };
+    paymentsCount: number;
+    guestBreakdown: {
+      total: number;
+      verified: number;
+      viaGoogle: number;
+    };
+  };
+}
+
+export interface AdminAdministratorSummary {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
   createdAt: string;
 }

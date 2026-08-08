@@ -46,7 +46,7 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub?: s
   return (
     <div className="flex flex-col gap-1 p-5 rounded-xl border"
          style={{ borderColor: "var(--color-fog)" }}>
-      <p className="text-xs lg:text-smuppercase tracking-wide" style={{ color: "var(--color-muted-stone)" }}>{label}</p>
+      <p className="text-xs lg:text-sm uppercase tracking-wide" style={{ color: "var(--color-muted-stone)" }}>{label}</p>
       <p className="text-xl " style={{ color: "var(--color-ink)" }}>{value}</p>
       {sub && <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>{sub}</p>}
     </div>

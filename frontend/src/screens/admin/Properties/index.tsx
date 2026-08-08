@@ -12,6 +12,7 @@ import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import ExportPdfButton from "@/components/common/ExportPdfButton";
 import { PROPERTY_URL } from "@/constants/api";
 import ImportRoomTypesModal from "./ImportRoomTypesModal";
+import Title from "@/components/dashboard/common/Title";
 
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
@@ -76,14 +77,10 @@ export default function DashboardProperties() {
         className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
       >
         <div className="flex items-start justify-between lg:flex-row flex-col gap-4">
-          <div>
-            <h4 className="text-lg bold lg:text-xl text-[#17191c]">
-              Properties
-            </h4>
-            <p className="text-xs lg:text-smtext-[#64645f] mt-1 max-w-[420px] bold">
-              Manage your listings, room types, and availability calendars.
-            </p>
-          </div>
+          <Title
+            title={`Properties`}
+            description="Manage your listings, room types, and availability calendars."
+          />
           <div className="flex items-center gap-2 lg:justify-end">
             <div className="relative">
               <button

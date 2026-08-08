@@ -134,7 +134,7 @@ export default function PropertyDetail() {
           {/* Details + occupancy sidebar, matches image 2 exactly */}
           <div className="flex flex-col gap-4">
             <div className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-3">
-              <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold">
+              <p className="text-xs lg:text-sm uppercase text-[#a3a6af] bold">
                 Details
               </p>
               {[
@@ -153,7 +153,7 @@ export default function PropertyDetail() {
             </div>
 
             <div className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-3">
-              <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold">
+              <p className="text-xs lg:text-sm uppercase text-[#a3a6af] bold">
                 Occupancy
               </p>
               {[

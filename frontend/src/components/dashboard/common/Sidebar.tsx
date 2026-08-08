@@ -57,7 +57,7 @@ const handleSignOut = async () => {
   try {
     if (refreshToken) await logout({ refreshToken }).unwrap();
   } catch {
-    /* proceed with local cleanup regardless of API outcome */
+    /* */
   } finally {
     dispatch(apiSlice.util.resetApiState());
     dispatch(clearCredentials());

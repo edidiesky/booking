@@ -35,7 +35,7 @@ export default function AdminTenants() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+      className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
       >
         <div className="flex items-start justify-between gap-4">
           <Title
@@ -76,11 +76,11 @@ export default function AdminTenants() {
           placeholder="Search sellers by name or slug..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-xs h-9 px-3 text-xs lg:text-sm border border-[#e8e6e3] rounded-lg outline-none"
+          className="w-full max-w-xs h-9 px-3 text-xs lg:text-[13px] border border-[#e8e6e3] rounded-lg outline-none"
         />
 
         <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
-          <table className="w-full text-xs">
+        <table className="w-full text-xs lg:text-[13px]">
             <thead>
               <tr className="border-b border-[#e8e6e3]">
                 {["Name", "Slug", "Status", "Platform fee", ""].map((h) => (

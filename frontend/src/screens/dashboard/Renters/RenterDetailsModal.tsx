@@ -47,7 +47,7 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
           ) : (
             <div className="flex flex-col gap-6">
               <div>
-                <p className="text-xs lg:text-smuppercase text-[#a3a6af]  mb-3">Contact</p>
+                <p className="text-xs lg:text-sm uppercase text-[#a3a6af]  mb-3">Contact</p>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[#777b86] flex items-center gap-1.5"><Mail size={13} /> Email</span>
@@ -69,7 +69,7 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
               </div>
 
               <div>
-                <p className="text-xs lg:text-smuppercase text-[#a3a6af]  mb-3">Current stay</p>
+                <p className="text-xs lg:text-sm uppercase text-[#a3a6af]  mb-3">Current stay</p>
                 {occupancy ? (
                   <div className="border border-[#e8e6e3] rounded-xl p-4 flex flex-col gap-2">
                     <div className="flex items-center justify-between text-xs">

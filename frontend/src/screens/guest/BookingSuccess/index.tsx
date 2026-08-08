@@ -78,7 +78,7 @@ export default function BookingSuccess() {
             {/* order details card */}
             <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-[#e8e6e3]">
-                <p className="text-xs lg:text-smuppercase medium text-[#777b86]">Booking details</p>
+                <p className="text-xs lg:text-sm uppercase medium text-[#777b86]">Booking details</p>
                 <p className="text-xs lg:text-sm mt-0.5">Confirmation: {booking.bookingRef}</p>
               </div>
 
@@ -95,11 +95,11 @@ export default function BookingSuccess() {
 
               <div className="px-4 py-4 grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold mb-1">Check-in</p>
+                  <p className="text-xs lg:text-sm uppercase text-[#a3a6af] bold mb-1">Check-in</p>
                   <p className="text-xs lg:text-sm text-[#17191c]">{formatDate(booking.checkIn)}</p>
                 </div>
                 <div>
-                  <p className="text-xs lg:text-smuppercase text-[#a3a6af] bold mb-1">Check-out</p>
+                  <p className="text-xs lg:text-sm uppercase text-[#a3a6af] bold mb-1">Check-out</p>
                   <p className="text-xs lg:text-sm text-[#17191c]">{formatDate(booking.checkOut)}</p>
                 </div>
               </div>

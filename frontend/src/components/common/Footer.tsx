@@ -176,7 +176,7 @@ function FooterSection1() {
           {COLUMNS.map((col) => (
             <div key={col.title} className="flex flex-col gap-3">
               <p
-                className="text-xs lg:text-smuppercase tracking-wide"
+                className="text-xs lg:text-sm uppercase tracking-wide"
                 style={{ color: "rgba(0,0,0,0.5)" }}
               >
                 {col.title}
