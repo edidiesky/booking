@@ -10,10 +10,25 @@ import { sellerNotificationRepository } from "../seller-notification/seller.noti
 
 export class AdminService {
   async listGuests(page: number, limit: number) {
-    const [guests, totalCount] = await Promise.all([
+    const [rows, totalCount] = await Promise.all([
       userRepository.listByType("guest", page, limit),
       userRepository.countByType("guest"),
     ]);
+    const guests = rows.map((g) => ({
+      id: g.id,
+      firstName: g.first_name,
+      lastName: g.last_name,
+      email: g.email,
+      phone: g.phone,
+      profileImage: g.profile_image,
+      status: g.status,
+      isEmailVerified: g.is_email_verified,
+      isPhoneVerified: g.is_phone_verified,
+      twoFactorEnabled: g.two_factor_enabled,
+      googleId: g.google_id,
+      lastActiveAt: g.last_active_at,
+      createdAt: g.created_at,
+    }));
     return {
       guests,
       page,
@@ -193,7 +208,7 @@ export class AdminService {
       volume,
       revenueSplit,
       paymentsCount,
-      guestBreakdown
+      guestBreakdown,
     ] = await Promise.all([
       tenantRepository.countAllByStatus(),
       userRepository.countByType("guest"),
@@ -214,7 +229,7 @@ export class AdminService {
       volume,
       revenueSplit,
       paymentsCount,
-      guestBreakdown
+      guestBreakdown,
     };
   }
 
