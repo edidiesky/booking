@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
 import { useAdminBookings } from "./hooks/useAdminBookings";
-import type { Booking, BookingStatus } from "@/types/api";
+import type { AdminBookingSummary, Booking, BookingStatus } from "@/types/api";
 import BookingDrawer from "./AdminBookingDrawer";
 import {
   useCheckInMutation,
@@ -75,11 +75,11 @@ export default function DashboardBookings() {
     setDateRange,
     resetFilters,
     stats,
+    volume,
     isStatsLoading,
   } = useAdminBookings();
-  const [selectedBooking, setSelectedBooking] = useState<
-    (Booking & { tenantName: string }) | null
-  >(null);
+  const [selectedBooking, setSelectedBooking] =
+    useState<AdminBookingSummary | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
 
   const [checkIn] = useCheckInMutation();
@@ -164,7 +164,7 @@ export default function DashboardBookings() {
 
         <StatsOverview
           isLoading={isStatsLoading}
-          growthPct={stats?.revenueGrowthPct}
+          growthPct={volume?.growthPct}
           growthTooltip="Confirmed booking revenue this calendar month vs. last calendar month"
           cards={[
             {
@@ -187,7 +187,7 @@ export default function DashboardBookings() {
             },
             {
               label: "Revenue (Month)",
-              value: formatCurrency(stats?.currentMonthRevenueNgn ?? 0),
+              value: formatCurrency(volume?.currentMonthNgn ?? 0),
               color: "#5b21b6",
               bg: "#ede9fe",
             },
