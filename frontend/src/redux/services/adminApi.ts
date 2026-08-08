@@ -169,6 +169,7 @@ export const adminApi = apiSlice.injectEndpoints({
           guests: number;
           administrators: number;
           properties: number;
+          guestBreakdown:number;
           bookings: {
             confirmedCount: number;
             checkedInCount: number;
