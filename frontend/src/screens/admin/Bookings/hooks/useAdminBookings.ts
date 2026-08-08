@@ -74,6 +74,7 @@ export function useAdminBookings() {
     handleCheckIn,  checkingIn,
     handleCheckOut, checkingOut,
     stats: statsData?.data.bookings,
+    volume: statsData?.data.volume,
     isStatsLoading,
   };
 }
