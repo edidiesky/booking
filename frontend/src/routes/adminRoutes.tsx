@@ -16,7 +16,9 @@ const AdminProperties = lazy(() => import("@/screens/admin/Properties"));
 const AdminPayments = lazy(() => import("@/screens/admin/Payment"));
 const AdminCalendar = lazy(() => import("@/screens/admin/Calendar"));
 const AdminNotifications = lazy(() => import("@/screens/admin/Notifications"));
-const AdminRoles = lazy(() => import("@/screens/admin/Roles"));
+// const AdminRoles = lazy(() => import("@/screens/admin/Roles"));
+const AdminEscrow = lazy(() => import("@/screens/admin/Escrow"));
+
 
 const wrap = (el: React.ReactNode) => (
   <Suspense fallback={<PageLoader />}>
@@ -45,7 +47,8 @@ export const adminRoutes: RouteObject[] = [
       { path: "payments", element: wrap(<AdminPayments />) },
       { path: "calendar", element: wrap(<AdminCalendar />) },
       { path: "notifications", element: wrap(<AdminNotifications />) },
-      { path: "roles", element: wrap(<AdminRoles />) },
+      // { path: "roles", element: wrap(<AdminRoles />) },
+      { path: "escrow", element: wrap(<AdminEscrow />) },
     ],
   },
 ];
