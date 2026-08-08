@@ -77,7 +77,9 @@ export default function DashboardBookings() {
     stats,
     isStatsLoading,
   } = useAdminBookings();
-  const [selectedBooking, setSelectedBooking] = useState<(Booking & { tenantName: string }) | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<
+    (Booking & { tenantName: string }) | null
+  >(null);
   const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
 
   const [checkIn] = useCheckInMutation();
@@ -150,12 +152,12 @@ export default function DashboardBookings() {
             <h4 className="text-lg lg:text-xl bold  text-[#17191c]">
               Bookings
             </h4>
-            <p className="text-xs lg:text-smtext-[#64645f] mt-1 max-w-[420px] bold">
+            <p className="text-xs lg:text-[13px]text-[#64645f] mt-1 max-w-[420px] bold">
               Manage guest reservations. Click a row to view details and take
               actions.
             </p>
           </div>
-          <span className="text-xs lg:text-sm text-[#a3a6af] mt-2">
+          <span className="text-xs lg:text-[13px] text-[#a3a6af] mt-2">
             {bookings.length} total
           </span>
         </div>
@@ -218,7 +220,7 @@ export default function DashboardBookings() {
             />
             <button
               onClick={resetFilters}
-              className="text-xs lg:text-sm underline"
+              className="text-xs lg:text-[13px] underline"
               style={{ color: "#777b86" }}
             >
               Reset
@@ -232,58 +234,59 @@ export default function DashboardBookings() {
             />
           </div>
         </div>
-
-        <div className="border border-[#e8e6e3] overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-[#e8e6e3]">
-                {HEADERS.map((h) => (
-                  <th
-                    key={h}
-                    className="px-5 py-3 text-left text-xs lg:text-xs text-[#a3a6af] uppercase whitespace-nowrap"
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} className="border-b border-[#f2f0ed]">
-                    {HEADERS.map((h) => (
-                      <td key={h} className="px-5 py-4">
-                        <div className="h-4 rounded animate-pulse bg-[#f2f0ed] w-3/4" />
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : bookings.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-5 py-10 text-center text-xs lg:text-sm text-[#a3a6af]"
-                  >
-                    No bookings found{search ? ` for "${search}"` : ""}
-                  </td>
+        <div className="w-full flex flex-col gap-4">
+          <div className="border border-[#e8e6e3] overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-[#e8e6e3]">
+                  {HEADERS.map((h) => (
+                    <th
+                      key={h}
+                      className="px-5 py-3 text-left text-xs lg:text-xs text-[#a3a6af] uppercase whitespace-nowrap"
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ) : (
-                bookings.map((b) => {
-                  return (
-                    <BookingTableRow
-                      booking={b}
-                      onViewDetails={setSelectedBooking}
-                      onCancel={setCancelTarget}
-                      onCheckIn={handleCheckIn}
-                      onCheckOut={handleCheckOut}
-                      setSelectedOrder={() => setSelectedBooking(b)}
-                    />
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-          <div className="flex items-center gap-3 mt-6">
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="border-b border-[#f2f0ed]">
+                      {HEADERS.map((h) => (
+                        <td key={h} className="px-5 py-4">
+                          <div className="h-4 rounded animate-pulse bg-[#f2f0ed] w-3/4" />
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : bookings.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]"
+                    >
+                      No bookings found{search ? ` for "${search}"` : ""}
+                    </td>
+                  </tr>
+                ) : (
+                  bookings.map((b) => {
+                    return (
+                      <BookingTableRow
+                        booking={b}
+                        onViewDetails={setSelectedBooking}
+                        onCancel={setCancelTarget}
+                        onCheckIn={handleCheckIn}
+                        onCheckOut={handleCheckOut}
+                        setSelectedOrder={() => setSelectedBooking(b)}
+                      />
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex items-center gap-3">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}

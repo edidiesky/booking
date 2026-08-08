@@ -95,14 +95,14 @@ export default function SearchPage() {
                   placeholder="Search by property name or city..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="flex-1 min-w-[200px] h-10 px-4 border rounded-full text-xs lg:text-smoutline-none"
+                  className="flex-1 min-w-[200px] h-10 px-4 border rounded-full text-xs lg:text-[13px]outline-none"
                   style={{ borderColor: "#e8e6e3" }}
                 />
 
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value)}
-                  className="h-10 px-3 border rounded-full text-xs lg:text-smoutline-none"
+                  className="h-10 px-3 border rounded-full text-xs lg:text-[13px]outline-none"
                   style={{ borderColor: "#e8e6e3" }}
                 >
                   {SORTS.map((s) => (
@@ -119,7 +119,7 @@ export default function SearchPage() {
                 ))}
               </div>
             ) : properties.length === 0 ? (
-              <p className="text-xs lg:text-sm text-center py-20" style={{ color: "#a3a6af" }}>
+              <p className="text-xs lg:text-[13px] text-center py-20" style={{ color: "#a3a6af" }}>
                 No properties match your filters.
               </p>
             ) : (

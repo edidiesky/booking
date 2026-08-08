@@ -105,7 +105,7 @@ export default function Onboarding() {
       {step > 1 ? (
         <button
           onClick={() => dispatch(setOnboardingStep(step - 1))}
-          className="mt-6 text-xs lg:text-smtransition-opacity hover:opacity-60 flex items-center gap-1"
+          className="mt-6 text-xs lg:text-[13px]transition-opacity hover:opacity-60 flex items-center gap-1"
           style={{ color: "var(--color-muted-stone)" }}
         >
           ← Back
@@ -113,7 +113,7 @@ export default function Onboarding() {
       ) : (
         <button
           onClick={() => setUserChoice(null)}
-          className="mt-6 text-xs lg:text-smtransition-opacity hover:opacity-60 flex items-center gap-1"
+          className="mt-6 text-xs lg:text-[13px]transition-opacity hover:opacity-60 flex items-center gap-1"
           style={{ color: "var(--color-muted-stone)" }}
         >
           ← Change account type

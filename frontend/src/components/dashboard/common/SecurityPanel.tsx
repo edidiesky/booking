@@ -21,17 +21,17 @@ function VerificationRow({
     <div className="flex items-center justify-between py-3 border-b last:border-0" style={{ borderColor: "#f2f0ed" }}>
       <div className="flex items-center gap-3">
         <Icon size={16} style={{ color: "#4c4c4c" }} />
-        <span className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>{label}</span>
+        <span className="text-xs lg:text-[13px]" style={{ color: "var(--color-ink)" }}>{label}</span>
       </div>
       {verified ? (
-        <span className="text-xs lg:text-sm px-2.5 py-1 rounded-full" style={{ backgroundColor: "#dcfce7", color: "#166534" }}>
+        <span className="text-xs lg:text-[13px] px-2.5 py-1 rounded-full" style={{ backgroundColor: "#dcfce7", color: "#166534" }}>
           Verified
         </span>
       ) : (
         <button
           onClick={onVerify}
           disabled={verifying}
-          className="text-xs lg:text-sm px-3 py-1.5 rounded-full disabled:opacity-50"
+          className="text-xs lg:text-[13px] px-3 py-1.5 rounded-full disabled:opacity-50"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
           Verify
@@ -67,7 +67,7 @@ function OtpEntry({ purpose, onDone, onCancel }: { purpose: OtpPurpose; onDone: 
         <button
           onClick={handleVerify}
           disabled={code.length !== 6 || isLoading}
-          className="h-10 px-4 rounded-lg text-xs lg:text-sm disabled:opacity-50"
+          className="h-10 px-4 rounded-lg text-xs lg:text-[13px] disabled:opacity-50"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
           Confirm
@@ -121,7 +121,7 @@ export default function SecurityPanel({ hasPhone }: { hasPhone: boolean }) {
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <p className="text-xs lg:text-sm uppercase mb-3" style={{ color: "#a3a6af" }}>Verification</p>
+        <p className="text-xs lg:text-[13px] uppercase mb-3" style={{ color: "#a3a6af" }}>Verification</p>
         <div className="rounded-xl border px-4" style={{ borderColor: "#e8e6e3" }}>
           <VerificationRow
             icon={Mail} label="Email Verification"
@@ -144,22 +144,22 @@ export default function SecurityPanel({ hasPhone }: { hasPhone: boolean }) {
       </section>
 
       <section>
-        <p className="text-xs lg:text-sm uppercase mb-3" style={{ color: "#a3a6af" }}>Two-Factor Authentication</p>
+        <p className="text-xs lg:text-[13px] uppercase mb-3" style={{ color: "#a3a6af" }}>Two-Factor Authentication</p>
         <div className="rounded-xl border p-4 flex items-center justify-between" style={{ borderColor: "#e8e6e3" }}>
           <div className="flex items-center gap-3">
             <ShieldCheck size={16} style={{ color: "#4c4c4c" }} />
             <div>
-              <p className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>
+              <p className="text-xs lg:text-[13px]" style={{ color: "var(--color-ink)" }}>
                 {status?.twoFactorEnabled ? "2FA is on" : "2FA is off"}
               </p>
-              <p className="text-xs lg:text-smmt-0.5" style={{ color: "#777b86" }}>
+              <p className="text-xs lg:text-[13px]mt-0.5" style={{ color: "#777b86" }}>
                 Each time you perform a sensitive action, you'll need to authenticate with a code.
               </p>
             </div>
           </div>
           <button
             onClick={() => startVerification(status?.twoFactorEnabled ? "two_factor_disable" : "two_factor_enable")}
-            className="text-xs lg:text-sm px-3 py-1.5 rounded-full shrink-0"
+            className="text-xs lg:text-[13px] px-3 py-1.5 rounded-full shrink-0"
             style={{
               backgroundColor: status?.twoFactorEnabled ? "#fee2e2" : "var(--color-ink)",
               color: status?.twoFactorEnabled ? "#991b1b" : "var(--color-canvas)",
@@ -174,18 +174,18 @@ export default function SecurityPanel({ hasPhone }: { hasPhone: boolean }) {
       </section>
 
       <section>
-        <p className="text-xs lg:text-sm uppercase mb-3" style={{ color: "#a3a6af" }}>Transaction PIN</p>
+        <p className="text-xs lg:text-[13px] uppercase mb-3" style={{ color: "#a3a6af" }}>Transaction PIN</p>
         <div className="rounded-xl border p-4" style={{ borderColor: "#e8e6e3" }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <KeyRound size={16} style={{ color: "#4c4c4c" }} />
-              <p className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>
+              <p className="text-xs lg:text-[13px]" style={{ color: "var(--color-ink)" }}>
                 {status?.hasPin ? "PIN is set" : "No PIN set"}
               </p>
             </div>
             <button
               onClick={() => setShowPinForm((v) => !v)}
-              className="text-xs lg:text-sm px-3 py-1.5 rounded-full"
+              className="text-xs lg:text-[13px] px-3 py-1.5 rounded-full"
               style={{ backgroundColor: "#f2f0ed", color: "var(--color-ink)" }}
             >
               {status?.hasPin ? "Change PIN" : "Set PIN"}
@@ -210,7 +210,7 @@ export default function SecurityPanel({ hasPhone }: { hasPhone: boolean }) {
               <button
                 onClick={handlePinSubmit}
                 disabled={settingPin || changingPin || pinForm.newPin.length < 4}
-                className="h-10 rounded-lg text-xs lg:text-sm disabled:opacity-50 w-fit px-5"
+                className="h-10 rounded-lg text-xs lg:text-[13px] disabled:opacity-50 w-fit px-5"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 Save PIN

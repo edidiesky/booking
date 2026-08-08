@@ -8,7 +8,7 @@ export default function GoogleAuthButton({ label = "Continue with Google" }: { l
     <button
       type="button"
       onClick={startGoogleLogin}
-      className="w-full h-12 flex items-center justify-center gap-3 text-xs lg:text-sm rounded-full border transition-colors hover:bg-[#f7f7f7]"
+      className="w-full h-12 flex items-center justify-center gap-3 text-xs lg:text-[13px] rounded-full border transition-colors hover:bg-[#f7f7f7]"
       style={{ borderColor: "#e2e2e2", color: "var(--color-ink)" }}
     >
       <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">

@@ -57,7 +57,7 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
     <div className="border rounded-xl p-4 flex flex-col gap-4" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center gap-2 mb-2">
         {icon}
-        <p className="text-xs lg:text-sm" style={{ color: "#17191c" }}>{title}</p>
+        <p className="text-xs lg:text-[13px]" style={{ color: "#17191c" }}>{title}</p>
       </div>
 
       <div className="relative flex items-center justify-center py-4" style={{ height: 180 }}>
@@ -66,11 +66,11 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
             className="absolute top-2 left-1/2 -translate-x-1/2 bg-white border rounded-xl shadow-lg px-3 py-2 z-10 whitespace-nowrap pointer-events-none"
             style={{ borderColor: "#e8e6e3" }}
           >
-            <p className="text-xs lg:text-sm flex items-center gap-1.5" style={{ color: "#17191c" }}>
+            <p className="text-xs lg:text-[13px] flex items-center gap-1.5" style={{ color: "#17191c" }}>
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colorFor(hovered, segments.indexOf(hovered)) }} />
               {hovered.label}
             </p>
-            <p className="text-xs lg:text-smmt-0.5">
+            <p className="text-xs lg:text-[13px]mt-0.5">
               <span style={{ color: "#4c4c4c" }}>{hovered.value.toLocaleString()}</span>{" "}
               {hovered.trend !== undefined && (
                 <span style={{ color: hovered.trend >= 0 ? "#16a34a" : "#dc2626" }}>
@@ -121,7 +121,7 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
             key={i}
             onMouseEnter={() => setHovered(s)}
             onMouseLeave={() => setHovered(null)}
-            className="flex items-center justify-between text-xs lg:text-sm py-1 cursor-default"
+            className="flex items-center justify-between text-xs lg:text-[13px] py-1 cursor-default"
           >
             <span className="flex items-center gap-2" style={{ color: "#4c4c4c" }}>
               <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: colorFor(s, i) }} />

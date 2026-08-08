@@ -59,7 +59,7 @@ export default function RoleDetailPanel({ roleId }: Props) {
     <div className="flex flex-col gap-6">
       <div>
         <div className="flex items-center gap-2">
-          <h4 className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>{role.name}</h4>
+          <h4 className="text-xs lg:text-[13px]" style={{ color: "var(--color-ink)" }}>{role.name}</h4>
           {role.isSystem && (
             <span className="text-[10px] bold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#f2f0ed", color: "#4c4c4c" }}>
               System role
@@ -67,7 +67,7 @@ export default function RoleDetailPanel({ roleId }: Props) {
           )}
         </div>
         {role.description && (
-          <p className="text-xs lg:text-smmt-1" style={{ color: "#777b86" }}>{role.description}</p>
+          <p className="text-xs lg:text-[13px]mt-1" style={{ color: "#777b86" }}>{role.description}</p>
         )}
       </div>
 
@@ -80,7 +80,7 @@ export default function RoleDetailPanel({ roleId }: Props) {
       {members.length > 0 && (
         <div className="flex flex-wrap gap-2 -mt-3">
           {members.map((m) => (
-            <span key={m.userId} className="text-xs lg:text-smpx-2.5 py-1 rounded-full" style={{ backgroundColor: "#f2f0ed", color: "var(--color-ink)" }}>
+            <span key={m.userId} className="text-xs lg:text-[13px]px-2.5 py-1 rounded-full" style={{ backgroundColor: "#f2f0ed", color: "var(--color-ink)" }}>
               {[m.firstName, m.lastName].filter(Boolean).join(" ") || m.email || m.userId}
             </span>
           ))}
@@ -88,11 +88,11 @@ export default function RoleDetailPanel({ roleId }: Props) {
       )}
 
       <div className="border-t pt-5" style={{ borderColor: "#f2f0ed" }}>
-        <p className="text-xs lg:text-sm mb-4" style={{ color: "#166534" }}>Included Permissions</p>
+        <p className="text-xs lg:text-[13px] mb-4" style={{ color: "#166534" }}>Included Permissions</p>
         <div className="flex flex-col gap-5">
           {Object.entries(grouped).map(([category, perms]) => (
             <div key={category}>
-              <p className="text-xs lg:text-sm mb-2" style={{ color: "var(--color-ink)" }}>{category}</p>
+              <p className="text-xs lg:text-[13px] mb-2" style={{ color: "var(--color-ink)" }}>{category}</p>
               <div className="flex flex-wrap gap-2">
                 {perms.map((p) => {
                   const included = selectedIds.has(p.id);
@@ -101,7 +101,7 @@ export default function RoleDetailPanel({ roleId }: Props) {
                       key={p.id}
                       onClick={() => toggle(p.id)}
                       title={p.description}
-                      className="flex items-center gap-1.5 text-xs lg:text-sm px-3 py-1.5 rounded-full border transition-colors"
+                      className="flex items-center gap-1.5 text-xs lg:text-[13px] px-3 py-1.5 rounded-full border transition-colors"
                       style={
                         included
                           ? { backgroundColor: "#dcfce7", color: "#166534", borderColor: "#bbf7d0" }
@@ -123,7 +123,7 @@ export default function RoleDetailPanel({ roleId }: Props) {
         <div className="sticky bottom-0 flex items-center justify-end gap-3 pt-4 border-t bg-white" style={{ borderColor: "#f2f0ed" }}>
           <button
             onClick={() => setSelectedIds(originalIds)}
-            className="text-xs lg:text-sm px-4 py-2"
+            className="text-xs lg:text-[13px] px-4 py-2"
             style={{ color: "#777b86" }}
           >
             Discard
@@ -131,7 +131,7 @@ export default function RoleDetailPanel({ roleId }: Props) {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="text-xs lg:text-sm px-5 py-2 rounded-full disabled:opacity-50"
+            className="text-xs lg:text-[13px] px-5 py-2 rounded-full disabled:opacity-50"
             style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
           >
             {saving ? "Saving..." : "Update Role"}

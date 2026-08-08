@@ -37,7 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <label
             htmlFor={inputId}
             className={cn(
-              "text-xs lg:text-sm leading-none",
+              "text-xs lg:text-[13px] leading-none",
               disabled && "opacity-50 cursor-not-allowed"
             )}
           >
@@ -58,7 +58,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             ref={ref}
             className={cn(
-              "flex h-[47px] w-full bold bg-[#fafafa] rounded-xl border px-3 py-2 text-xs lg:text-smring-offset-background",
+              "flex h-[47px] w-full bold bg-[#fafafa] rounded-xl border px-3 py-2 text-xs lg:text-[13px]ring-offset-background",
               "placeholder:text-muted-foreground",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               "disabled:cursor-not-allowed disabled:opacity-50",
@@ -126,10 +126,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {error && (
-          <p className="text-xs lg:text-sm text-destructive ">{error}</p>
+          <p className="text-xs lg:text-[13px] text-destructive ">{error}</p>
         )}
         {hint && !error && (
-          <p className="text-xs lg:text-sm text-muted-foreground">{hint}</p>
+          <p className="text-xs lg:text-[13px] text-muted-foreground">{hint}</p>
         )}
       </div>
     );

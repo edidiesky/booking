@@ -29,7 +29,7 @@ export default function DashboardRoles() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className="flex items-center gap-2 px-4 py-3 text-xs lg:text-sm relative -mb-px"
+              className="flex items-center gap-2 px-4 py-3 text-xs lg:text-[13px] relative -mb-px"
               style={{
                 color: active ? "var(--color-ink)" : "var(--color-muted-stone)",
                 borderBottom: active ? "2px solid var(--color-ink)" : "2px solid transparent",

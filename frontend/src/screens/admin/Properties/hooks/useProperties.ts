@@ -1,65 +1,21 @@
 import { useState } from "react";
-import {
-  useCreatePropertyMutation,
-  useCreateRoomTypeMutation,
-} from "@/redux/services/propertyApi";
-import { showToast } from "@/components/common/Toast";
-import type { CreatePropertyPayload, CreateRoomTypePayload } from "@/types/api";
-import {
-  useGetTenantPropertyStatsQuery,
-} from "../../../../redux/services/propertyApi";
-import { useListAdminPropertiesQuery } from "@/redux/services/adminApi";
+import { useListAdminPropertiesQuery, useGetPlatformStatsQuery } from "@/redux/services/adminApi";
 
-export function useProperties() {
+export function useAdminProperties() {
   const [page, setPage] = useState(1);
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(
-    null,
-  );
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
 
-  const { data, isLoading } = useListAdminPropertiesQuery({ page, limit: 20 });
-  const { data: statsData, isLoading: isStatsLoading } =
-    useGetTenantPropertyStatsQuery();
-  const [createProperty, { isLoading: creating }] = useCreatePropertyMutation();
-  const [createRoomType, { isLoading: creatingRoom }] =
-    useCreateRoomTypeMutation();
+  const { data, isLoading, isFetching } = useListAdminPropertiesQuery({ page, limit: 20 });
+  const { data: statsData, isLoading: isStatsLoading } = useGetPlatformStatsQuery();
 
   const properties = data?.data.properties ?? [];
 
-  const handleCreateProperty = async (payload: CreatePropertyPayload) => {
-    try {
-      await createProperty(payload).unwrap();
-      showToast("Property created.", "success");
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const handleCreateRoomType = async (
-    propertyId: string,
-    payload: CreateRoomTypePayload,
-  ) => {
-    try {
-      await createRoomType({ propertyId, body: payload }).unwrap();
-      showToast("Room type created.", "success");
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
   return {
-    properties,
-    isLoading,
-    page,
-    setPage,
-    selectedPropertyId,
-    setSelectedPropertyId,
-    handleCreateProperty,
-    creating,
-    handleCreateRoomType,
-    creatingRoom,
-    stats: statsData?.data,
+    properties, isLoading, isFetching,
+    page, setPage,
+    totalPages: data?.data.totalPages ?? 1,
+    selectedPropertyId, setSelectedPropertyId,
+    stats: statsData?.data.propertyBreakdown,
     isStatsLoading,
   };
 }

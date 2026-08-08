@@ -68,7 +68,7 @@ export default function BookingCalendarMonth({
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#e8e6e3]">
           <div>
             <h4 className="text-xl font-semibold text-[#17191c]">Calendar</h4>
-            <p className="text-xs lg:text-sm text-[#a3a6af] mt-0.5">
+            <p className="text-xs lg:text-[13px] text-[#a3a6af] mt-0.5">
               {format(startOfMonth(monthCursor), "MMM d")} –{" "}
               {format(endOfMonth(monthCursor), "MMM d, yyyy")}
             </p>
@@ -91,7 +91,7 @@ export default function BookingCalendarMonth({
             </button>
             <button
               onClick={onAddBooking}
-              className="flex items-center gap-1.5 h-9 px-4 bg-[#17191c] text-white text-xs lg:text-smrounded-full hover:opacity-90 transition-opacity"
+              className="flex items-center gap-1.5 h-9 px-4 bg-[#17191c] text-white text-xs lg:text-[13px]rounded-full hover:opacity-90 transition-opacity"
             >
               Add booking
             </button>
@@ -112,13 +112,13 @@ export default function BookingCalendarMonth({
             >
               <ChevronRight size={16} />
             </button>
-            <p className="text-xs lg:text-smfont-semibold text-[#17191c] ml-1">
+            <p className="text-xs lg:text-[13px]font-semibold text-[#17191c] ml-1">
               {format(monthCursor, "MMMM yyyy")}
             </p>
           </div>
           <button
             onClick={() => setMonthCursor(new Date())}
-            className="h-8 px-4 border border-[#e8e6e3] rounded-full text-xs lg:text-sm text-[#17191c] hover:bg-[#f2f0ed] transition-colors"
+            className="h-8 px-4 border border-[#e8e6e3] rounded-full text-xs lg:text-[13px] text-[#17191c] hover:bg-[#f2f0ed] transition-colors"
           >
             Today
           </button>
@@ -128,7 +128,7 @@ export default function BookingCalendarMonth({
           {WEEKDAYS.map((d) => (
             <div
               key={d}
-              className="text-center text-xs lg:text-sm text-[#a3a6af] uppercase py-2 border-r border-[#f2f0ed] last:border-r-0"
+              className="text-center text-xs lg:text-[13px] text-[#a3a6af] uppercase py-2 border-r border-[#f2f0ed] last:border-r-0"
             >
               {d}
             </div>
@@ -154,7 +154,7 @@ export default function BookingCalendarMonth({
                 className={`h-28 border-b border-r border-[#f2f0ed] p-1.5 flex flex-col gap-1 overflow-hidden last:border-r-0 ${!inMonth ? "bg-[#fafaf9]" : ""}`}
               >
                 <span
-                  className={`text-xs lg:text-smpx-1 w-fit rounded-full ${today ? "bg-[#17191c] text-white font-semibold" : "text-[#777b86]"}`}
+                  className={`text-xs lg:text-[13px]px-1 w-fit rounded-full ${today ? "bg-[#17191c] text-white font-semibold" : "text-[#777b86]"}`}
                 >
                   {format(day, "d")}
                 </span>
@@ -213,7 +213,7 @@ export default function BookingCalendarMonth({
                 className="w-2.5 h-2.5 rounded-full"
                 style={{ backgroundColor: style.color }}
               />
-              <span className="text-xs lg:text-sm text-[#777b86]">{style.label}</span>
+              <span className="text-xs lg:text-[13px] text-[#777b86]">{style.label}</span>
             </div>
           ))}
         </div>

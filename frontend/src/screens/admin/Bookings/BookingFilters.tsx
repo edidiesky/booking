@@ -24,7 +24,7 @@ export default function BookingFilters({ search, onSearch, statusFilter, onStatu
         placeholder="Search by reference..."
         value={search}
         onChange={(e) => onSearch(e.target.value)}
-        className="h-9 px-3 text-xs lg:text-sm border outline-none w-48"
+        className="h-9 px-3 text-xs lg:text-[13px] border outline-none w-48"
         style={{ borderColor: "#e8e6e3", color: "var(--color-ink)" }}
       />
       <div className="flex gap-2 flex-wrap">
@@ -32,7 +32,7 @@ export default function BookingFilters({ search, onSearch, statusFilter, onStatu
           <button
             key={label}
             onClick={() => onStatusFilter(value)}
-            className="px-3 py-1.5 text-xs lg:text-smrounded-full border transition-colors"
+            className="px-3 py-1.5 text-xs lg:text-[13px]rounded-full border transition-colors"
             style={{
               backgroundColor: statusFilter === value ? "var(--color-ink)"   : "transparent",
               color:           statusFilter === value ? "var(--color-canvas)" : "var(--color-muted-stone)",

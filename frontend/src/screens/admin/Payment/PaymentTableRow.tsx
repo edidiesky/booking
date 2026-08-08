@@ -16,13 +16,13 @@ export default function PaymentTableRow({ payment, onViewDetails }: Props) {
       style={{ borderColor: "#f2f0ed" }}
     >
       <td
-        className="px-5 py-3 text-xs lg:text-smwhitespace-nowrap"
+        className="px-5 py-3 text-xs lg:text-[13px]whitespace-nowrap"
         style={{ color: "var(--color-hint-of-grey)" }}
       >
         {payment.id?.slice(0, 10)}...
       </td>
       <td
-        className="px-5 py-3 text-xs lg:text-smwhitespace-nowrap"
+        className="px-5 py-3 text-xs lg:text-[13px]whitespace-nowrap"
         style={{ color: "var(--color-muted-stone)" }}
       >
         {payment.booking_id?.slice(0, 10)}...
@@ -43,7 +43,7 @@ export default function PaymentTableRow({ payment, onViewDetails }: Props) {
         <StatusBadge status={payment.status} />
       </td>
       <td
-        className="px-5 py-3 text-xs lg:text-smwhitespace-nowrap"
+        className="px-5 py-3 text-xs lg:text-[13px]whitespace-nowrap"
         style={{ color: "var(--color-muted-stone)" }}
       >
         {formatDate(payment.created_at)}

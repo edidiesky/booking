@@ -18,7 +18,7 @@ export default function RecentBookings({ bookings }: Props) {
         </p>
         <button
           onClick={() => navigate("/dashboard/bookings")}
-          className="text-xs lg:text-smtransition-opacity hover:opacity-70"
+          className="text-xs lg:text-[13px]transition-opacity hover:opacity-70"
           style={{ color: "var(--color-terracotta)" }}
         >
           View all

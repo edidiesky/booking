@@ -139,7 +139,7 @@ export default function AuthLayout({
         >
           <Link
             to="/"
-            className="text-xs lg:text-sm mb-8 block lg:hidden"
+            className="text-xs lg:text-[13px] mb-8 block lg:hidden"
             style={{ color: "#17191c" }}
           >
             Selleasi

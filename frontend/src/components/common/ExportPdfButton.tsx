@@ -42,7 +42,7 @@ export default function ExportPdfButton({ triggerUrl, label = "Export PDF" }: Pr
     <button
       onClick={handleClick}
       disabled={isRunning || starting}
-      className="flex items-center gap-1.5 h-9 px-4 rounded-full text-xs lg:text-sm border transition-colors hover:bg-[#f2f0ed] disabled:opacity-60"
+      className="flex items-center gap-1.5 h-9 px-4 rounded-full text-xs lg:text-[13px] border transition-colors hover:bg-[#f2f0ed] disabled:opacity-60"
       style={{ borderColor: "#e8e6e3", color: "#17191c" }}
     >
       {isRunning ? (

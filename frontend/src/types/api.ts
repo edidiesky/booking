@@ -941,6 +941,7 @@ export interface PlatformStatsResponse {
     guests: number;
     administrators: number;
     properties: number;
+    propertyBreakdown: { active: number; draft: number; paused: number; archived: number };
     bookings: {
       confirmedCount: number;
       checkedInCount: number;

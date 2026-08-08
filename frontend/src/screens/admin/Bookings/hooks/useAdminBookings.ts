@@ -1,23 +1,23 @@
-import { useState }                  from "react";
-import { useGetTenantBookingStatsQuery } from "@/redux/services/bookingApi";
+import { useState } from "react";
+import { useGetPlatformStatsQuery, useListAdminBookingsQuery } from "@/redux/services/adminApi";
 import { useCheckInMutation, useCheckOutMutation } from "@/redux/services/bookingApi";
-import { showToast }                 from "@/components/common/Toast";
-import type { BookingStatus }        from "@/types/api";
-import type { DateRange }            from "@/components/common/filters/DateRangeDropdown";
+import { showToast } from "@/components/common/Toast";
+import type { BookingStatus } from "@/types/api";
+import type { DateRange } from "@/components/common/filters/DateRangeDropdown";
 import { isWithinInterval, startOfDay, endOfDay } from "date-fns";
-import { useListAdminBookingsQuery } from "@/redux/services/adminApi";
 
 const ALL_STATUSES: BookingStatus[] = [
   "pending_payment", "confirmed", "checked_in", "checked_out", "cancelled", "refunded",
 ];
 
 export function useAdminBookings() {
-  const [page,           setPage]           = useState(1);
-  const [search,         setSearch]         = useState("");
-  const [statusFilter,   setStatusFilter]   = useState<Set<BookingStatus> | null>(null);
-  const [dateRange,      setDateRange]      = useState<DateRange>({ start: null, end: null });
+  const [page,         setPage]         = useState(1);
+  const [search,       setSearch]       = useState("");
+  const [statusFilter, setStatusFilter] = useState<Set<BookingStatus> | null>(null);
+  const [dateRange,    setDateRange]    = useState<DateRange>({ start: null, end: null });
+
   const { data, isLoading } = useListAdminBookingsQuery({ page, limit: 10 });
-  const { data: statsData, isLoading: isStatsLoading } = useGetTenantBookingStatsQuery();
+  const { data: statsData, isLoading: isStatsLoading } = useGetPlatformStatsQuery();
 
   const [checkIn,  { isLoading: checkingIn  }] = useCheckInMutation();
   const [checkOut, { isLoading: checkingOut }] = useCheckOutMutation();
@@ -73,6 +73,7 @@ export function useAdminBookings() {
     resetFilters,
     handleCheckIn,  checkingIn,
     handleCheckOut, checkingOut,
-    stats: statsData?.data, isStatsLoading,
+    stats: statsData?.data.bookings,
+    isStatsLoading,
   };
 }

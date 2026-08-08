@@ -11,7 +11,7 @@ export default function HowItWorks() {
     <section className="w-full py-20" style={{ backgroundColor: "var(--color-canvas)" }}>
       <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
         <div className="flex flex-col gap-3 mb-14">
-          <p className="text-xs lg:text-sm uppercase bold"
+          <p className="text-xs lg:text-[13px] uppercase bold"
              style={{ color: "var(--color-hint-of-grey)" }}>
             How it works
           </p>
@@ -37,10 +37,10 @@ export default function HowItWorks() {
                 {num}
               </span>
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>
+                <h3 className="text-xs lg:text-[13px]" style={{ color: "var(--color-ink)" }}>
                   {title}
                 </h3>
-                <p className="text-xs lg:text-smleading-relaxed" style={{ color: "var(--color-light-steel)" }}>
+                <p className="text-xs lg:text-[13px]leading-relaxed" style={{ color: "var(--color-light-steel)" }}>
                   {body}
                 </p>
               </div>

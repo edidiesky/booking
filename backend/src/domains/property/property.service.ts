@@ -385,4 +385,5 @@ export const propertyService = {
 
     return updated;
   },
+  
 };

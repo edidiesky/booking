@@ -34,18 +34,18 @@ export default function PropertyTableRow({
     >
       <td className="px-5 py-3 text-[#17191c] whitespace-nowrap">
         <div className="flex flex-col gap-0.5">
-          <span className="text-xs lg:text-sm medium">{property.name}</span>
+          <span className="text-xs lg:text-[13px] medium">{property.name}</span>
           {roomCount > 0 && (
-            <span className="text-xs lg:text-sm text-[#a3a6af]">{roomCount} room type{roomCount !== 1 ? "s" : ""}</span>
+            <span className="text-xs lg:text-[13px] text-[#a3a6af]">{roomCount} room type{roomCount !== 1 ? "s" : ""}</span>
           )}
         </div>
       </td>
-      <td className="px-5 py-3 capitalize text-xs lg:text-sm text-[#4c4c4c]">{property.property_type}</td>
-      <td className="px-5 py-3 text-xs lg:text-sm text-[#777b86] whitespace-nowrap">{property.address.city}, {property.address.state}</td>
+      <td className="px-5 py-3 capitalize text-xs lg:text-[13px] text-[#4c4c4c]">{property.property_type}</td>
+      <td className="px-5 py-3 text-xs lg:text-[13px] text-[#777b86] whitespace-nowrap">{property.address.city}, {property.address.state}</td>
       <td className="px-5 py-3">
-        <span className={`text-xs lg:text-sm medium px-3 py-1 rounded-full ${cfg.className}`}>{cfg.label}</span>
+        <span className={`text-xs lg:text-[13px] medium px-3 py-1 rounded-full ${cfg.className}`}>{cfg.label}</span>
       </td>
-      <td className="px-5 py-3 text-xs lg:text-sm text-[#777b86]">{formatDateTime(property.createdAt)}</td>
+      <td className="px-5 py-3 text-xs lg:text-[13px] text-[#777b86]">{formatDateTime(property.createdAt)}</td>
       <td className="px-5 py-3 text-right">
         <RowActionsMenu
           actions={[

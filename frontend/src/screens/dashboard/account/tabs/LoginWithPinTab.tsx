@@ -32,8 +32,8 @@ export default function LoginWithPinTab() {
       <div className="flex items-center gap-3">
         <KeyRound size={16} style={{ color: "#4c4c4c" }} />
         <div>
-          <p className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>Log in with PIN</p>
-          <p className="text-xs lg:text-smmt-0.5" style={{ color: "#777b86" }}>
+          <p className="text-xs lg:text-[13px]" style={{ color: "var(--color-ink)" }}>Log in with PIN</p>
+          <p className="text-xs lg:text-[13px]mt-0.5" style={{ color: "#777b86" }}>
             Use your transaction PIN instead of your password to log in.
           </p>
         </div>

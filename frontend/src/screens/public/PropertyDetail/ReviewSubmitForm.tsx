@@ -51,25 +51,25 @@
 
 //   return (
 //     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-lg">
-//       <h4 className="text-xs lg:text-smtext-[#171717]">Write a review</h4>
+//       <h4 className="text-xs lg:text-[13px]text-[#171717]">Write a review</h4>
 //       <div className="flex flex-col gap-1.5">
-//         <span className="text-xs lg:text-smtext-[#171717]">Your rating</span>
+//         <span className="text-xs lg:text-[13px]text-[#171717]">Your rating</span>
 //         <EditableStarRating value={rating} onChange={setRating} />
 //       </div>
 //       <div className="flex flex-col gap-1.5">
-//         <span className="text-xs lg:text-smtext-[#171717]">Your review</span>
+//         <span className="text-xs lg:text-[13px]text-[#171717]">Your review</span>
 //         <textarea
 //           value={comment}
 //           onChange={(e) => setComment(e.target.value)}
 //           rows={4}
 //           placeholder="Share your experience with this product..."
-//           className="border border-black/10 px-4 py-3 text-xs lg:text-smtext-[#171717] outline-none focus:border-[#171717] transition-colors resize-none"
+//           className="border border-black/10 px-4 py-3 text-xs lg:text-[13px]text-[#171717] outline-none focus:border-[#171717] transition-colors resize-none"
 //         />
 //       </div>
 //       <button
 //         type="submit"
 //         disabled={submitting || !comment.trim()}
-//         className="h-11 bg-[#171717] text-white text-xs lg:text-smhover:opacity-90 transition-opacity disabled:opacity-50 w-fit px-6"
+//         className="h-11 bg-[#171717] text-white text-xs lg:text-[13px]hover:opacity-90 transition-opacity disabled:opacity-50 w-fit px-6"
 //       >
 //         {submitting ? "Submitting..." : "Submit review"}
 //       </button>
@@ -129,40 +129,40 @@ export default function ReviewSubmitForm({ bookingId, onSubmitted }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-lg">
-      <h4 className="text-xs lg:text-smtext-[#171717]">Write a review</h4>
+      <h4 className="text-xs lg:text-[13px]text-[#171717]">Write a review</h4>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs lg:text-smtext-[#171717]">Your rating</span>
+        <span className="text-xs lg:text-[13px]text-[#171717]">Your rating</span>
         <EditableStarRating value={rating} onChange={setRating} />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs lg:text-smtext-[#171717]">Title (10-150 characters)</span>
+        <span className="text-xs lg:text-[13px]text-[#171717]">Title (10-150 characters)</span>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Sum up your stay in one line"
-          className="border border-black/10 px-4 py-3 text-xs lg:text-smtext-[#171717] outline-none focus:border-[#171717] transition-colors"
+          className="border border-black/10 px-4 py-3 text-xs lg:text-[13px]text-[#171717] outline-none focus:border-[#171717] transition-colors"
         />
-        {titleTooShort && <span className="text-xs lg:text-smtext-red-600">At least 10 characters.</span>}
+        {titleTooShort && <span className="text-xs lg:text-[13px]text-red-600">At least 10 characters.</span>}
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs lg:text-smtext-[#171717]">Your review (20-2000 characters)</span>
+        <span className="text-xs lg:text-[13px]text-[#171717]">Your review (20-2000 characters)</span>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           rows={4}
           placeholder="Share your experience with this stay..."
-          className="border border-black/10 px-4 py-3 text-xs lg:text-smtext-[#171717] outline-none focus:border-[#171717] transition-colors resize-none"
+          className="border border-black/10 px-4 py-3 text-xs lg:text-[13px]text-[#171717] outline-none focus:border-[#171717] transition-colors resize-none"
         />
-        {commentTooShort && <span className="text-xs lg:text-smtext-red-600">At least 20 characters.</span>}
+        {commentTooShort && <span className="text-xs lg:text-[13px]text-red-600">At least 20 characters.</span>}
       </div>
 
       <button
         type="submit"
         disabled={submitting || title.trim().length < 10 || comment.trim().length < 20}
-        className="h-11 bg-[#171717] text-white text-xs lg:text-smhover:opacity-90 transition-opacity disabled:opacity-50 w-fit px-6"
+        className="h-11 bg-[#171717] text-white text-xs lg:text-[13px]hover:opacity-90 transition-opacity disabled:opacity-50 w-fit px-6"
       >
         {submitting ? "Submitting..." : "Submit review"}
       </button>

@@ -508,21 +508,6 @@ export const propertyRepository = {
     };
   },
 
-  async listAllForAdmin(
-    page = 1,
-    limit = 20,
-  ): Promise<(Property & { tenant_name: string, tenant_id:string, tenant_email:string })[]> {
-    const offset = (page - 1) * limit;
-    return query<Property & { tenant_name: string, tenant_id:string, tenant_email:string }>(
-      `SELECT p.*, t.name AS tenant_name, t.id AS tenant_id, t.email AS tenant_email
-     FROM properties p
-     JOIN tenants t ON t.id = p.tenant_id
-     WHERE p.status != 'archived'
-     ORDER BY p.created_at DESC LIMIT $1 OFFSET $2`,
-      [limit, offset],
-    );
-  },
-
   async countAllForAdmin(): Promise<number> {
     const row = await queryOne<{ count: string }>(
       `SELECT COUNT(*) AS count FROM properties WHERE status != 'archived'`,
@@ -585,6 +570,55 @@ export const propertyRepository = {
       ? ((await client.query(sql, params)).rows[0] as RoomType | undefined)
       : await queryOne<RoomType>(sql, params);
     return row ?? null;
+  },
+
+  async listAllForAdmin(page = 1, limit = 20, tenantId?: string) {
+    const params: unknown[] = [limit, (page - 1) * limit];
+    const tenantClause = tenantId
+      ? `AND p.tenant_id = $${params.push(tenantId)}`
+      : "";
+    return query<
+      Property & {
+        tenant_name: string;
+        tenant_id: string;
+        tenant_email: string;
+      }
+    >(
+      `SELECT p.*, t.name AS tenant_name, t.id AS tenant_id, u.email AS tenant_email
+     FROM properties p
+     JOIN tenants t ON t.id = p.tenant_id
+     JOIN users   u ON u.id = t.owner_user_id
+     WHERE p.status != 'archived' ${tenantClause}
+     ORDER BY p.created_at DESC LIMIT $1 OFFSET $2`,
+      params,
+    );
+  },
+
+  async getStatsAllForAdmin(): Promise<{
+    active: number;
+    draft: number;
+    paused: number;
+    archived: number;
+  }> {
+    const row = await queryOne<{
+      active: string;
+      draft: string;
+      paused: string;
+      archived: string;
+    }>(
+      `SELECT
+       COUNT(*) FILTER (WHERE status = 'active')   AS active,
+       COUNT(*) FILTER (WHERE status = 'draft')    AS draft,
+       COUNT(*) FILTER (WHERE status = 'paused')   AS paused,
+       COUNT(*) FILTER (WHERE status = 'archived') AS archived
+     FROM properties`,
+    );
+    return {
+      active: Number(row?.active ?? 0),
+      draft: Number(row?.draft ?? 0),
+      paused: Number(row?.paused ?? 0),
+      archived: Number(row?.archived ?? 0),
+    };
   },
 };
 

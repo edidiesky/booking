@@ -59,11 +59,11 @@ export default function AdminCustomers() {
               key={label as string}
               className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-5"
             >
-              <p className="text-xs lg:text-sm uppercase text-[#a3a6af]">
+              <p className="text-xs lg:text-[13px] uppercase text-[#a3a6af]">
                 {label}
               </p>
               <p className="text-xl lg:text-4xl bold text-[#17191c]">{value}</p>
-              <p className="text-xs lg:text-sm medium text-[#a3a6af]">{sub}</p>
+              <p className="text-xs lg:text-[13px] medium text-[#a3a6af]">{sub}</p>
             </div>
           ))}
         </div>
@@ -73,7 +73,7 @@ export default function AdminCustomers() {
           placeholder="Search guests by name or email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-xs h-9 px-3 text-xs lg:text-sm border border-[#e8e6e3] rounded-lg outline-none"
+          className="w-full max-w-xs h-9 px-3 text-xs lg:text-[13px] border border-[#e8e6e3] rounded-lg outline-none"
         />
 
         <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
@@ -103,7 +103,7 @@ export default function AdminCustomers() {
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-5 py-10 text-center text-xs lg:text-sm text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]"
                   >
                     No guests found{search ? ` for "${search}"` : ""}.
                   </td>

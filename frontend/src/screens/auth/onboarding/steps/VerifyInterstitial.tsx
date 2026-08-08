@@ -22,7 +22,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           >
             Check your email
           </h1>
-          <p className="text-xs lg:text-smleading-relaxed" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-xs lg:text-[13px]leading-relaxed" style={{ color: "var(--color-muted-stone)" }}>
             We sent a 6-digit verification code to{" "}
             <span style={{ color: "var(--color-ink)" }}>{email}</span>.
           </p>
@@ -33,7 +33,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           style={{ backgroundColor: "var(--color-fog)", border: "1px solid #e8e6e3" }}
         >
           <p
-            className="text-xs lg:text-sm uppercase bold"
+            className="text-xs lg:text-[13px] uppercase bold"
             style={{ color: "var(--color-muted-stone)" }}
           >
             What to do next
@@ -45,7 +45,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           ].map((step, i) => (
             <div key={step} className="flex items-start gap-3">
               <span
-                className="w-5 h-5 flex items-center justify-center text-xs lg:text-smshrink-0 mt-0.5"
+                className="w-5 h-5 flex items-center justify-center text-xs lg:text-[13px]shrink-0 mt-0.5"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 {i + 1}
@@ -57,7 +57,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
 
         <button
           onClick={onContinue}
-          className="w-full h-12 flex items-center justify-center text-xs lg:text-smtransition-opacity hover:opacity-80 rounded-full"
+          className="w-full h-12 flex items-center justify-center text-xs lg:text-[13px]transition-opacity hover:opacity-80 rounded-full"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
           Enter the code
@@ -66,14 +66,14 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
         <button
           onClick={onResend}
           disabled={isResending}
-          className="flex items-center justify-center gap-2 text-xs lg:text-smtransition-opacity hover:opacity-60 disabled:opacity-40"
+          className="flex items-center justify-center gap-2 text-xs lg:text-[13px]transition-opacity hover:opacity-60 disabled:opacity-40"
           style={{ color: "var(--color-muted-stone)" }}
         >
           <RefreshCw size={13} className={isResending ? "animate-spin" : ""} />
           {isResending ? "Resending..." : "Didn't receive it? Resend"}
         </button>
 
-        <p className="text-xs lg:text-sm text-center" style={{ color: "var(--color-hint-of-grey)" }}>
+        <p className="text-xs lg:text-[13px] text-center" style={{ color: "var(--color-hint-of-grey)" }}>
           Code expires in 15 minutes.
         </p>
       </div>

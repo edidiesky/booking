@@ -46,7 +46,7 @@ export default function Header() {
             <Link
               key={item}
               to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="text-xs lg:text-sm transition-opacity px-4 py-2 rounded-full hover:bg-[#f5f5f3]"
+              className="text-xs lg:text-[13px] transition-opacity px-4 py-2 rounded-full hover:bg-[#f5f5f3]"
               style={{ color: "var(--color-ink)" }}
             >
               {item}
@@ -171,14 +171,14 @@ export default function Header() {
             <>
               <Link
                 to="/login"
-                className="h-10 px-5 text-xs lg:text-sm hover:bg-[#f5f5f3] transition-opacity flex items-center rounded-full"
+                className="h-10 px-5 text-xs lg:text-[13px] hover:bg-[#f5f5f3] transition-opacity flex items-center rounded-full"
                 style={{ color: "var(--color-ink)" }}
               >
                 Log in
               </Link>
               <Link
                 to="/onboarding"
-                className="h-10 px-5 text-xs lg:text-sm transition-opacity hover:opacity-80 flex items-center rounded-full"
+                className="h-10 px-5 text-xs lg:text-[13px] transition-opacity hover:opacity-80 flex items-center rounded-full"
                 style={{
                   backgroundColor: "var(--color-ink)",
                   color: "var(--color-canvas)",

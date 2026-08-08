@@ -50,7 +50,7 @@ export default function PasswordResetTab() {
       <button
         onClick={handleSubmit}
         disabled={isLoading || !currentPassword || tooShort || mismatch || !confirmPassword}
-        className="h-10 rounded-lg text-xs lg:text-sm disabled:opacity-50 w-fit px-5"
+        className="h-10 rounded-lg text-xs lg:text-[13px] disabled:opacity-50 w-fit px-5"
         style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
       >
         {isLoading ? "Saving..." : "Change Password"}

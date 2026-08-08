@@ -9,11 +9,11 @@ export default function EscrowTableRow({ escrow }: Props) {
   return (
     <tr className="border-b last:border-0 hover:bg-[#fafaf9] transition-colors"
         style={{ borderColor: "#f2f0ed" }}>
-      <td className="px-5 py-3 text-xs lg:text-smwhitespace-nowrap"
+      <td className="px-5 py-3 text-xs lg:text-[13px]whitespace-nowrap"
           style={{ color: "var(--color-hint-of-grey)" }}>
         {escrow.bookingRef}
       </td>
-      <td className="px-5 py-3 text-xs lg:text-smwhitespace-nowrap"
+      <td className="px-5 py-3 text-xs lg:text-[13px]whitespace-nowrap"
           style={{ color: "var(--color-muted-stone)" }}>
         {formatDate(escrow.checkIn)} – {formatDate(escrow.checkOut)}
       </td>
@@ -32,7 +32,7 @@ export default function EscrowTableRow({ escrow }: Props) {
       <td className="px-5 py-3">
         <StatusBadge status={escrow.status} />
       </td>
-      <td className="px-5 py-3 text-xs lg:text-smwhitespace-nowrap"
+      <td className="px-5 py-3 text-xs lg:text-[13px]whitespace-nowrap"
           style={{ color: "var(--color-muted-stone)" }}>
         {formatDate(escrow.createdAt)}
       </td>

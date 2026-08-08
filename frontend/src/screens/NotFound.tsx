@@ -12,27 +12,27 @@ export default function NotFound() {
           <h1 className="text-[28px]  " style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}>
             Page not found
           </h1>
-          <p className="text-xs lg:text-smleading-relaxed" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-xs lg:text-[13px]leading-relaxed" style={{ color: "var(--color-muted-stone)" }}>
             The page you're looking for doesn't exist or has been moved. If you followed a link, it may be outdated.
           </p>
         </div>
         <div className="p-4 flex flex-col gap-3 border rounded-xl" style={{backgroundColor: "var(--color-fog)" }}>
-          <p className="text-xs lg:text-sm medium uppercase" style={{ color: "var(--color-muted-stone)" }}>Try one of these instead</p>
+          <p className="text-xs lg:text-[13px] medium uppercase" style={{ color: "var(--color-muted-stone)" }}>Try one of these instead</p>
           {[
             "Check the URL for typos",
             "Go back to the previous page",
             "Return to the homepage and navigate from there",
           ].map((s, i) => (
             <div key={s} className="flex items-center gap-3">
-              <span className="w-8 h-8 flex items-center justify-center text-xs lg:text-smrounded-xl shrink-0 mt-0.5" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>{i + 1}</span>
-              <p className="text-xs lg:text-sm medium" style={{ color: "var(--color-muted-stone)" }}>{s}</p>
+              <span className="w-8 h-8 flex items-center justify-center text-xs lg:text-[13px]rounded-xl shrink-0 mt-0.5" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>{i + 1}</span>
+              <p className="text-xs lg:text-[13px] medium" style={{ color: "var(--color-muted-stone)" }}>{s}</p>
             </div>
           ))}
         </div>
-        <button onClick={() => navigate(-1)} className="w-full h-12 flex items-center justify-center text-xs lg:text-smrounded-full  transition-opacity hover:opacity-80" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
+        <button onClick={() => navigate(-1)} className="w-full h-12 flex items-center justify-center text-xs lg:text-[13px]rounded-full  transition-opacity hover:opacity-80" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
          Go back
         </button>
-        <button onClick={() => navigate("/")} className="w-full h-12 flex items-center justify-center text-xs lg:text-smrounded-full  border transition-opacity hover:opacity-70" style={{ color: "var(--color-ink)", borderColor: "var(--color-ink)" }}>
+        <button onClick={() => navigate("/")} className="w-full h-12 flex items-center justify-center text-xs lg:text-[13px]rounded-full  border transition-opacity hover:opacity-70" style={{ color: "var(--color-ink)", borderColor: "var(--color-ink)" }}>
           Return to homepage
         </button>
       </div>

@@ -29,7 +29,7 @@ export function ChartSelect({ value, onValueChange, options, placeholder }: Char
       value={toInternal(value)}
       onValueChange={(v) => onValueChange(toExternal(v))}
     >
-      <SelectTrigger className="py-1 rounded h-auto cursor-pointer border shadow-custom-light bg-white flex items-center justify-center w-[140px]">
+      <SelectTrigger className="p-1 rounded h-auto cursor-pointer border shadow-custom-light bg-white flex items-center justify-center w-[140px]">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className="bg-white border border-gray-200 rounded-xl shadow-sm">
@@ -37,7 +37,7 @@ export function ChartSelect({ value, onValueChange, options, placeholder }: Char
           <SelectItem
             key={toInternal(opt.value)}
             value={toInternal(opt.value)}
-            className="text-xs lg:text-smtext-gray-500 bold cursor-pointer hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700"
+            className="text-xs lg:text-[12px] text-gray-500 bold cursor-pointer hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700"
           >
             <div className="flex items-center bold gap-2 my-1">{opt.label}</div>
           </SelectItem>

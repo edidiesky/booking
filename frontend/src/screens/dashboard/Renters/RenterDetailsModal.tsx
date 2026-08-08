@@ -24,13 +24,13 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           {isLoading || !renter ? (
-            <p className="text-xs lg:text-sm text-[#17191c]">Loading...</p>
+            <p className="text-xs lg:text-[13px] text-[#17191c]">Loading...</p>
           ) : (
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#17191c] text-white flex items-center justify-center text-xs lg:text-sm">
+              <div className="w-9 h-9 rounded-full bg-[#17191c] text-white flex items-center justify-center text-xs lg:text-[13px]">
                 {renter.full_name.charAt(0).toUpperCase()}
               </div>
-              <p className="text-xs lg:text-sm text-[#17191c]">{renter.full_name}</p>
+              <p className="text-xs lg:text-[13px] text-[#17191c]">{renter.full_name}</p>
             </div>
           )}
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center hover:bg-[#f2f0ed] transition-colors">
@@ -47,7 +47,7 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
           ) : (
             <div className="flex flex-col gap-6">
               <div>
-                <p className="text-xs lg:text-sm uppercase text-[#a3a6af]  mb-3">Contact</p>
+                <p className="text-xs lg:text-[13px] uppercase text-[#a3a6af]  mb-3">Contact</p>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[#777b86] flex items-center gap-1.5"><Mail size={13} /> Email</span>
@@ -69,7 +69,7 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
               </div>
 
               <div>
-                <p className="text-xs lg:text-sm uppercase text-[#a3a6af]  mb-3">Current stay</p>
+                <p className="text-xs lg:text-[13px] uppercase text-[#a3a6af]  mb-3">Current stay</p>
                 {occupancy ? (
                   <div className="border border-[#e8e6e3] rounded-xl p-4 flex flex-col gap-2">
                     <div className="flex items-center justify-between text-xs">
@@ -87,7 +87,7 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
                     <StatusBadge status={occupancy.status as BookingStatus} />
                   </div>
                 ) : (
-                  <p className="text-xs lg:text-sm text-[#a3a6af]">No active booking, not currently staying at any property.</p>
+                  <p className="text-xs lg:text-[13px] text-[#a3a6af]">No active booking, not currently staying at any property.</p>
                 )}
               </div>
             </div>

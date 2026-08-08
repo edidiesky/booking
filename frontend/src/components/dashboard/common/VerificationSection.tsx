@@ -15,17 +15,17 @@ function Row({
     <div className="flex items-center justify-between py-3 border-b last:border-0" style={{ borderColor: "#f2f0ed" }}>
       <div className="flex items-center gap-3">
         <Icon size={16} style={{ color: "#4c4c4c" }} />
-        <span className="text-xs lg:text-sm" style={{ color: "var(--color-ink)" }}>{label}</span>
+        <span className="text-xs lg:text-[13px]" style={{ color: "var(--color-ink)" }}>{label}</span>
       </div>
       {verified ? (
-        <span className="text-xs lg:text-sm px-2.5 py-1 rounded-full" style={{ backgroundColor: "#dcfce7", color: "#166534" }}>
+        <span className="text-xs lg:text-[13px] px-2.5 py-1 rounded-full" style={{ backgroundColor: "#dcfce7", color: "#166534" }}>
           Verified
         </span>
       ) : (
         <button
           onClick={onVerify}
           disabled={verifying}
-          className="text-xs lg:text-sm px-3 py-1.5 rounded-full disabled:opacity-50"
+          className="text-xs lg:text-[13px] px-3 py-1.5 rounded-full disabled:opacity-50"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
           Verify
@@ -55,7 +55,7 @@ export default function VerificationSection({ isEmailVerified, isPhoneVerified, 
 
   return (
     <section>
-      <p className="text-xs lg:text-sm uppercase mb-3" style={{ color: "#a3a6af" }}>Verification</p>
+      <p className="text-xs lg:text-[13px] uppercase mb-3" style={{ color: "#a3a6af" }}>Verification</p>
       <div className="rounded-xl border px-4" style={{ borderColor: "#e8e6e3" }}>
         <Row icon={Mail} label="Email Verification" verified={isEmailVerified}
              onVerify={() => start("email_verify")} verifying={pending === "email_verify"} />

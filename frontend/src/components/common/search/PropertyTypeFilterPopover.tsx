@@ -48,18 +48,18 @@ export default function PropertyTypeFilterPopover({ selected, onApply, label = "
         onClick={() => setOpen((v) => !v)}
         className="flex flex-col items-start text-left gap-2 px-4 py-2.5 rounded-full lg:rounded-none w-full lg:w-auto"
       >
-        <span className="text-xs lg:text-smflex items-center gap-1.5" style={{ color: "#a3a6af" }}>
+        <span className="text-xs lg:text-[13px]flex items-center gap-1.5" style={{ color: "#a3a6af" }}>
           <Home size={18} /> {label}
         </span>
-        <span className="text-xs lg:text-sm truncate max-w-[160px]" style={{ color: "#17191c" }}>{displayValue}</span>
+        <span className="text-xs lg:text-[13px] truncate max-w-[160px]" style={{ color: "#17191c" }}>{displayValue}</span>
       </button>
 
       {open && (
         <div className="absolute left-0 top-full mt-2 w-72 bg-white border rounded-2xl shadow-xl z-30 p-5" style={{ borderColor: "#e8e6e3" }}>
           <div className="flex items-start justify-between mb-1">
             <div>
-              <p className="text-xs lg:text-smlg:lg-xl bold" style={{ color: "#17191c" }}>Select Property Type</p>
-              <p className="text-xs lg:text-smmt-0.5" style={{ color: "#a3a6af" }}>You can select multiple property types</p>
+              <p className="text-xs lg:text-[13px]lg:lg-xl bold" style={{ color: "#17191c" }}>Select Property Type</p>
+              <p className="text-xs lg:text-[13px]mt-0.5" style={{ color: "#a3a6af" }}>You can select multiple property types</p>
             </div>
             <button onClick={() => setOpen(false)} className="p-1 rounded-full hover:bg-[#f2f0ed]">
               <X size={14} />
@@ -80,7 +80,7 @@ export default function PropertyTypeFilterPopover({ selected, onApply, label = "
 
           <button
             onClick={() => { onApply(draft); setOpen(false); }}
-            className="w-full h-11 rounded-full text-xs lg:text-sm text-white mt-3"
+            className="w-full h-11 rounded-full text-xs lg:text-[13px] text-white mt-3"
             style={{ backgroundColor: "#17191c" }}
           >
             Apply Filter

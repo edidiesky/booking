@@ -29,7 +29,7 @@ export default function Header() {
           style={{ color: "var(--color-muted-stone)" }}
         >
           <Search size={15} />
-          <span className="text-xs lg:text-smhidden sm:block">Search or press ⌘K</span>
+          <span className="text-xs lg:text-[13px]hidden sm:block">Search or press ⌘K</span>
         </button>
 
         {/* Right side */}
@@ -42,7 +42,7 @@ export default function Header() {
             to="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 text-xs lg:text-sm px-4 py-1.5 rounded-full border transition-opacity hover:opacity-70"
+            className="hidden sm:flex items-center gap-1.5 text-xs lg:text-[13px] px-4 py-1.5 rounded-full border transition-opacity hover:opacity-70"
             style={{
               color: "var(--color-muted-stone)",
               borderColor: "var(--color-fog)",

@@ -51,7 +51,7 @@ export default function Hero() {
                 </div>
               ))}
             </div>
-            <span className="text-xs lg:text-smtext-[#eee] capitalize">
+            <span className="text-xs lg:text-[13px]text-[#eee] capitalize">
               5K+ guests booked with confidence
             </span>
           </div>
@@ -80,7 +80,7 @@ export default function Hero() {
           {/* {!isAuthenticated && (
             <button
               onClick={() => navigate("/select-user-type")}
-              className="text-xs lg:text-smtext-white underline"
+              className="text-xs lg:text-[13px]text-white underline"
             >
               List your property instead &rarr;
             </button>

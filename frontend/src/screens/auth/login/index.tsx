@@ -33,7 +33,7 @@ export default function Login() {
           <h1 className="text-[32px] leading-[1.1]" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
             Good to see you again
           </h1>
-          <p className="text-xs lg:text-sm" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-xs lg:text-[13px]" style={{ color: "var(--color-muted-stone)" }}>
             Sign in to check on bookings, payouts, and what's happening across your properties.
           </p>
         </div>
@@ -61,7 +61,7 @@ export default function Login() {
           </button>
         </form>
 
-        <p className="text-xs lg:text-sm text-center" style={{ color: "var(--color-muted-stone)" }}>
+        <p className="text-xs lg:text-[13px] text-center" style={{ color: "var(--color-muted-stone)" }}>
           Don't have an account?{" "}
           <Link to="/onboarding" className="underline underline-offset-4" style={{ color: "var(--color-ink)" }}>
             Get started
