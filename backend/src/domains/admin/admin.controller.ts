@@ -94,3 +94,10 @@ export const GetEscrowStatsHandler = asyncHandler(async (_req, res) => {
   const data = await adminService.getEscrowStats();
   res.status(200).json({ success: true, data });
 });
+
+export const GetGanttBookingsInRangeHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const from = req.query["from"] as string;
+  const to = req.query["to"] as string;
+  const data = await adminService.getGanttBookingsInRange(from, to);
+  res.status(200).json({ success: true, data });
+});

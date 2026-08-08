@@ -290,6 +290,33 @@ export class AdminService {
   async getEscrowStats() {
     return escrowRepository.getStatsAllForAdmin();
   }
+
+  async getGanttBookingsInRange(from: string, to: string) {
+    const rows = await bookingRepository.listForDateRange(from, to);
+    return rows.map((b) => ({
+      bookingId: b.id,
+      bookingRef: b.booking_ref,
+      status: b.status,
+      guestUserId: b.guest_user_id,
+      checkIn: b.check_in,
+      checkOut: b.check_out,
+      nights: b.nights,
+      roomsCount: b.rooms_count,
+      guestCount: b.guest_count,
+      totalAmountNgn: b.total_amount_ngn,
+      platformFeeNgn: b.platform_fee_ngn,
+      hostPayoutNgn: b.host_payout_ngn,
+      propertyId: b.property_id,
+      roomTypeId: b.room_type_id,
+      tenantId: b.tenant_id,
+      createdAt: b.created_at,
+      propertyName: b.property_name,
+      roomTypeName: b.room_type_name,
+      guestFirstName: b.guest_first_name,
+      guestLastName: b.guest_last_name,
+      tenant_name: b.tenant_name,
+    }));
+  }
 }
 
 export const adminService = new AdminService();

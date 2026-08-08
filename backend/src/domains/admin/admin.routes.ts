@@ -14,7 +14,8 @@ import {
   ListNotificationsAdminHandler,
   GetAdminRevenueTrendHandler,
   ListEscrowHandler,
-  GetEscrowStatsHandler
+  GetEscrowStatsHandler,
+  GetGanttBookingsInRangeHandler
 } from "./admin.controller";
 import { requirePermission } from "../../middleware/require-permission.middleware";
 
@@ -32,6 +33,7 @@ router.get("/revenue-trend", requirePermission("payment", "read"), GetAdminReven
 router.get("/administrators", ListAdministratorsHandler);
 router.get("/escrow", requirePermission("escrow", "read"), ListEscrowHandler);
 router.get("/escrow/stats", requirePermission("escrow", "read"), GetEscrowStatsHandler);
+router.get("/gantt/bookings-in-range", requirePermission("booking", "read"), GetGanttBookingsInRangeHandler);
 router.post("/administrators/:userId/promote", PromoteAdministratorHandler);
 router.post("/administrators/:userId/demote", DemoteAdministratorHandler);
 router.get("/tenants/:tenantId/activity", GetTenantActivityHandler);
