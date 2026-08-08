@@ -431,8 +431,28 @@ export interface PaymentSummary {
   guest_profile_image:  string | null;
   room_type_name:       string;
   room_type_images:     string[];
-  guest_email: string;
-  guest_user_type: string;
+  guest_email:          string;
+  guest_user_type:      string;
+}
+
+export interface AdminPaymentSummary {
+  id:              string;
+  bookingId:       string;
+  gateway:         PaymentGateway;
+  transactionId:   string | null;
+  amountNgn:       string;
+  status:          PaymentStatus;
+  channel:         string | null;
+  paidAt:          string | null;
+  createdAt:       string;
+  bookingRef:      string;
+  checkIn:         string;
+  checkOut:        string;
+  receiptUrl:      string | null;
+  guestFirstName:  string;
+  guestLastName:   string;
+  roomTypeName:    string;
+  tenantName:      string;
 }
 export interface Payment {
   id:             string;
