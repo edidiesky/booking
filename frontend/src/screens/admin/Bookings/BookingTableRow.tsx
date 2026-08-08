@@ -1,13 +1,13 @@
 import StatusBadge     from "@/components/common/StatusBadge";
 import { formatDateTime }  from "@/utils/formatDate";
 import { formatCurrency } from "@/utils/formatCurrency";
-import type { Booking } from "@/types/api";
+import type { AdminBookingSummary, Booking } from "@/types/api";
 import RowActionsMenu  from "@/components/common/RowActionsMenu";
 import { Download, Eye, LogIn, LogOut, XCircle } from "lucide-react";
 
 interface Props {
-  booking: Booking & { tenantName: string };
-  onViewDetails: (booking: Booking & { tenantName: string }) => void;
+booking: AdminBookingSummary;
+  onViewDetails: (booking: AdminBookingSummary) => void;
   onCancel:       (booking: Booking) => void;
   onCheckIn?:     (id: string) => void;
   onCheckOut?:    (id: string) => void;
