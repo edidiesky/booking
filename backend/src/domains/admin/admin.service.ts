@@ -193,6 +193,7 @@ export class AdminService {
       volume,
       revenueSplit,
       paymentsCount,
+      guestBreakdown
     ] = await Promise.all([
       tenantRepository.countAllByStatus(),
       userRepository.countByType("guest"),
@@ -202,6 +203,7 @@ export class AdminService {
       paymentRepository.getPlatformVolume(),
       bookingRepository.getRevenueSplitPlatformWide(),
       paymentRepository.countAllForAdmin(),
+      userRepository.getGuestBreakdown(),
     ]);
     return {
       tenants,
@@ -212,6 +214,7 @@ export class AdminService {
       volume,
       revenueSplit,
       paymentsCount,
+      guestBreakdown
     };
   }
 
