@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/pagination";
 import { useAdminCustomers } from "./hooks/useAdminCustomers";
 import CustomerDrawer from "./CustomerDrawer";
-
 export default function AdminCustomers() {
+  
   const {
     guests,
     isLoading,
