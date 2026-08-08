@@ -4,7 +4,7 @@ import type {
   AuditLogEntry,
   Booking,
   Property,
-  PaymentSummary,
+  AdminPaymentSummary,
 } from "@/types/api";
 import { ADMIN_URL } from "@/constants/api";
 
@@ -30,15 +30,6 @@ interface PaymentTenantInfo {
   tenant_email: string;
 }
 
-interface AdminPaymentListResponse {
-  success: boolean;
-  data: {
-    payments: (PaymentSummary & PaymentTenantInfo)[];
-    page: number;
-    limit: number;
-  };
-}
-
 interface AdminBookingListResponse {
   success: boolean;
   data: { bookings: (Booking & TenantInfo)[]; page: number; limit: number };
@@ -53,6 +44,11 @@ interface AdminPropertiesResponse {
     totalCount: number;
     totalPages: number;
   };
+}
+
+interface AdminPaymentListResponse {
+  success: boolean;
+  data: { payments: (AdminPaymentSummary & PaymentTenantInfo)[]; page: number; limit: number };
 }
 
 export const adminApi = apiSlice.injectEndpoints({
@@ -128,6 +124,31 @@ export const adminApi = apiSlice.injectEndpoints({
         url: `${ADMIN_URL}/calendar?startDate=${startDate}&endDate=${endDate}`,
       }),
     }),
+    listAdminNotifications: builder.query<
+      {
+        success: boolean;
+        data: {
+          notifications: {
+            id: string;
+            type: string;
+            title: string;
+            body: string;
+            isRead: boolean;
+            tenantName: string;
+            createdAt: string;
+          }[];
+          page: number;
+          limit: number;
+          unreadCount:   number;
+          totalPages:number
+        };
+      },
+      { page: number; limit?: number; tenantId?: string }
+    >({
+      query: ({ page, limit = 30, tenantId }) => ({
+        url: `${ADMIN_URL}/notifications?page=${page}&limit=${limit}${tenantId ? `&tenantId=${tenantId}` : ""}`,
+      }),
+    }),
     getTenantActivity: builder.query<
       {
         success: boolean;
@@ -137,6 +158,50 @@ export const adminApi = apiSlice.injectEndpoints({
     >({
       query: ({ tenantId, page, limit = 20 }) => ({
         url: `${ADMIN_URL}/tenants/${tenantId}/activity?page=${page}&limit=${limit}`,
+      }),
+    }),
+
+    getPlatformStats: builder.query<
+      {
+        success: boolean;
+        data: {
+          tenants: { active: number; suspended: number; draft: number };
+          guests: number;
+          administrators: number;
+          properties: number;
+          bookings: {
+            confirmedCount: number;
+            checkedInCount: number;
+            checkedOutCount: number;
+            cancelledCount: number;
+            pendingCount: number;
+          };
+          volume: {
+            currentMonthNgn: number;
+            previousMonthNgn: number;
+            growthPct: number;
+          };
+          revenueSplit: {
+            hostPayoutNgn: number;
+            platformFeeNgn: number;
+          };
+          paymentsCount: number;
+        };
+      },
+      void
+    >({
+      query: () => ({ url: `${ADMIN_URL}/stats` }),
+    }),
+
+    getAdminRevenueTrend: builder.query<
+      {
+        success: boolean;
+        data: { day: string; hostPayout: number; platformFee: number }[];
+      },
+      { range: string }
+    >({
+      query: ({ range }) => ({
+        url: `${ADMIN_URL}/revenue-trend?range=${range}`,
       }),
     }),
   }),
@@ -153,4 +218,7 @@ export const {
   useListAdminPaymentsQuery,
   useGetAdminCalendarQuery,
   useGetTenantActivityQuery,
+  useGetPlatformStatsQuery,
+  useListAdminNotificationsQuery,
+  useGetAdminRevenueTrendQuery,
 } = adminApi;
