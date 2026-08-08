@@ -208,6 +208,13 @@ export const adminApi = apiSlice.injectEndpoints({
     >({
       query: () => ({ url: `${ADMIN_URL}/escrow/stats` }),
     }),
+
+    getAdminBookingsInRange: builder.query<
+  { success: boolean; data: Booking[] },
+  { from: string; to: string }
+>({
+  query: ({ from, to }) => ({ url: `${ADMIN_URL}/gantt/bookings-in-range?from=${from}&to=${to}` }),
+}),
   }),
 });
 
@@ -226,5 +233,6 @@ export const {
   useListAdminNotificationsQuery,
   useGetAdminRevenueTrendQuery,
   useListAdminEscrowQuery,
-  useGetAdminEscrowStatsQuery
+  useGetAdminEscrowStatsQuery,
+  useLazyGetAdminBookingsInRangeQuery
 } = adminApi;
