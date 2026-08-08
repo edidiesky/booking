@@ -12,7 +12,9 @@ import {
   GetTenantActivityHandler,
   GetPlatformStatsHandler,
   ListNotificationsAdminHandler,
-  GetAdminRevenueTrendHandler
+  GetAdminRevenueTrendHandler,
+  ListEscrowHandler,
+  GetEscrowStatsHandler
 } from "./admin.controller";
 import { requirePermission } from "../../middleware/require-permission.middleware";
 
@@ -28,6 +30,8 @@ router.get("/audit-logs", ListAuditLogsHandler);
 router.get("/notifications", ListNotificationsAdminHandler);
 router.get("/revenue-trend", requirePermission("payment", "read"), GetAdminRevenueTrendHandler);
 router.get("/administrators", ListAdministratorsHandler);
+router.get("/escrow", requirePermission("escrow", "read"), ListEscrowHandler);
+router.get("/escrow/stats", requirePermission("escrow", "read"), GetEscrowStatsHandler);
 router.post("/administrators/:userId/promote", PromoteAdministratorHandler);
 router.post("/administrators/:userId/demote", DemoteAdministratorHandler);
 router.get("/tenants/:tenantId/activity", GetTenantActivityHandler);
