@@ -9,6 +9,8 @@ import {
 import { useSellerNotificationStream } from "@/hooks/useSellerNotificationStream";
 import type { SellerNotification, SellerNotificationType } from "@/types/api";
 import moment from "moment";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/redux/slices/authSlice";
 
 const TYPE_CONFIG: Record<SellerNotificationType, { icon: typeof CreditCard; color: string; bg: string }> = {
   booking_confirmed:   { icon: CreditCard, color: "#166534", bg: "#dcfce7" },
@@ -24,19 +26,27 @@ const TABS: { key: SellerNotificationType | "all"; label: string }[] = [
 ];
 
 export default function NotificationBell() {
+  const currentUser = useSelector(selectCurrentUser);
+  const isPlatformAdmin = currentUser?.userType === "platform:admin";
+
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<SellerNotificationType | "all">("all");
   const [liveExtras, setLiveExtras] = useState<SellerNotification[]>([]);
   const ref = useRef<HTMLDivElement>(null);
 
-  const { data, isLoading } = useListSellerNotificationsQuery({ page: 1 });
+  // Tenant-scoped, skip entirely for platform admins, they have no
+  // tenantId and this endpoint 400s for exactly that reason, correctly.
+  const { data, isLoading } = useListSellerNotificationsQuery(
+    { page: 1 },
+    { skip: isPlatformAdmin },
+  );
   const [markRead]    = useMarkNotificationReadMutation();
   const [markAllRead] = useMarkAllNotificationsReadMutation();
 
   const handleLiveNotification = useCallback((n: SellerNotification) => {
     setLiveExtras((prev) => [n, ...prev.filter((x) => x.id !== n.id)]);
   }, []);
-  useSellerNotificationStream(handleLiveNotification);
+  useSellerNotificationStream(isPlatformAdmin ? undefined : handleLiveNotification);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -66,6 +76,20 @@ export default function NotificationBell() {
     setLiveExtras((prev) => prev.map((x) => ({ ...x, is_read: true })));
     try { await markAllRead().unwrap(); } catch { /* errorMiddleware */ }
   };
+
+  if (isPlatformAdmin) {
+    return (
+      <Link
+        to="/admin/notifications"
+        className="relative w-8 h-8 flex items-center justify-center rounded-full transition-colors hover:opacity-70 outline-none"
+        style={{ color: "var(--color-muted-stone)" }}
+        title="Notifications"
+      >
+        <Bell size={16} />
+      </Link>
+    );
+  }
+
 
   return (
     <div className="relative" ref={ref}>
