@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useListGuestsQuery } from "@/redux/services/adminApi";
 import { useGetPlatformStatsQuery } from "@/redux/services/adminApi";
-import type { User } from "@/types/api";
+import { AdminGuestSummary } from "@/types/api";
 
 export function useAdminCustomers() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [selectedGuest, setSelectedGuest] = useState<User | null>(null);
-
+const [selectedGuest, setSelectedGuest] = useState<AdminGuestSummary | null>(null);
   const { data, isLoading, isFetching } = useListGuestsQuery({ page });
   const { data: statsData } = useGetPlatformStatsQuery();
 

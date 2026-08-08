@@ -34,6 +34,14 @@ export const DemoteAdministratorHandler = asyncHandler(async (req: Request, res:
   res.status(200).json({ success: true, message: "Administrator access revoked.", data });
 });
 
+
+
+export const ListEscrowHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { page, limit } = pageParams(req);
+  res.status(200).json({ success: true, data: await adminService.listEscrow(page, limit) });
+});
+
+
 export const ListAuditLogsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { page, limit } = pageParams(req);
   res.status(200).json({ success: true, data: await adminService.listAuditLogs(page, limit) });
@@ -79,5 +87,10 @@ export const ListNotificationsAdminHandler = asyncHandler(async (req: Request, r
 export const GetAdminRevenueTrendHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const rangeParam = (req.query["range"] as string) ?? "7-days";
   const data = await adminService.getRevenueTrend(rangeParam);
+  res.status(200).json({ success: true, data });
+});
+
+export const GetEscrowStatsHandler = asyncHandler(async (_req, res) => {
+  const data = await adminService.getEscrowStats();
   res.status(200).json({ success: true, data });
 });

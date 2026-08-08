@@ -10,6 +10,7 @@ import {
   LuCreditCard,
   LuCalendar,
   LuBell,
+  LuVault,
   // LuShield
 } from "react-icons/lu";
 import { selectCurrentUser, clearCredentials } from "@/redux/slices/authSlice";
@@ -89,6 +90,8 @@ const ADMIN_NAV_GROUPS = [
         path: "calendar",
         tour: "admin-calendar",
       },
+      // admin/layout.tsx, Marketplace group
+      { icon: LuVault, text: "Escrow", path: "escrow", tour: "admin-escrow" },
     ],
   },
   {

@@ -37,7 +37,7 @@ export default function AdminAuditLogs() {
   const [selectedActions, setSelectedActions] = useState<Set<string> | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>({ start: null, end: null });
 
-  const { data, isLoading, isFetching } = useListAuditLogsQuery({ page, limit: 30 });
+  const { data, isLoading, isFetching } = useListAuditLogsQuery({ page, limit: 9 });
   const totalPages = data?.data.totalPages ?? 1;
 
   const entries = (data?.data.logs ?? []).filter((entry) => {
@@ -74,7 +74,7 @@ export default function AdminAuditLogs() {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="w-full flex flex-col gap-6"
+      className="w-full p-6 lg:p-10 flex flex-col gap-6"
     >
       <Title
         title="Audit Logs"
@@ -129,16 +129,16 @@ export default function AdminAuditLogs() {
                 const Icon = cfg.icon;
                 return (
                   <tr key={entry.id} className="border-b last:border-0 hover:bg-[#fafaf9] transition-colors" style={{ borderColor: "#f2f0ed" }}>
-                    <td className="px-4 py-3 text-xs" style={{ color: "#17191c" }}>{entry.tenantName ?? "—"}</td>
-                    <td className="px-4 py-3 text-xs" style={{ color: "#17191c" }}>{resourceLabel(entry.resource)}</td>
-                    <td className="px-4 py-3 text-xs" style={{ color: "#17191c" }}>{actorName(entry)}</td>
+                    <td className="px-4 py-3 text-xs lg:text-[13px]" style={{ color: "#17191c" }}>{entry.tenantName ?? "—"}</td>
+                    <td className="px-4 py-3 text-xs lg:text-[13px]" style={{ color: "#17191c" }}>{resourceLabel(entry.resource)}</td>
+                    <td className="px-4 py-3 text-xs lg:text-[13px]" style={{ color: "#17191c" }}>{actorName(entry)}</td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center gap-1.5 text-xs lg:text-[13px] px-2 py-1 rounded-full" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
                         <Icon size={11} />
                         {cfg.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs" style={{ color: "#a3a6af" }}>{formatDate(entry.createdAt)}</td>
+                    <td className="px-4 py-3 text-xs lg:text-[13px]" style={{ color: "#a3a6af" }}>{formatDate(entry.createdAt)}</td>
                   </tr>
                 );
               })
@@ -148,8 +148,8 @@ export default function AdminAuditLogs() {
       </div>
 
       <div className="flex items-center gap-3">
-        <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="text-xs disabled:opacity-40">Previous</button>
-        <span className="text-xs" style={{ color: "var(--color-muted-stone)" }}>Page {page} of {totalPages}</span>
+        <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="text-xs lg:text-[13px] disabled:opacity-40">Previous</button>
+        <span className="text-xs lg:text-[13px]" style={{ color: "var(--color-muted-stone)" }}>Page {page} of {totalPages}</span>
         <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages || isFetching} className="text-xs disabled:opacity-40">Next</button>
       </div>
     </motion.div>

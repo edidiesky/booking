@@ -47,7 +47,7 @@ export default function StatusBadge({ status, size = "sm" }: Props) {
   return (
     <span
       className={`inline-flex items-center bold rounded-full whitespace-nowrap ${
-        size === "sm" ? "text-xs lg:text-xs px-2 py-0.5" : "text-xs lg:text-xs px-3 py-1"
+        size === "sm" ? "text-xs lg:text-[13px] px-2 py-0.5" : "text-xs lg:text-[13px] px-3 py-1"
       }`}
       style={{ color: config.color, backgroundColor: config.bg }}
     >
