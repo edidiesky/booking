@@ -6,23 +6,21 @@ import type {
   AdminPaymentSummary,
   PlatformStatsResponse,
   AdminAdministratorSummary,
+  AdminEscrowRecord,
+  AdminBookingListResponse,
+  AdminGuestSummary,
 } from "@/types/api";
 import { ADMIN_URL } from "@/constants/api";
-interface AdminGuestSummary {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string | null;
-  profileImage: string | null;
-  status: string;
-  isEmailVerified: boolean;
-  isPhoneVerified: boolean;
-  twoFactorEnabled: boolean;
-  googleId: string | null;
-  lastActiveAt: string | null;
-  createdAt: string;
+
+interface AdminEscrowStats {
+  held: { count: number; amountNgn: number };
+  released: { count: number; amountNgn: number };
+  refunded: { count: number; amountNgn: number };
+  currentMonthVolumeNgn: number;
+  previousMonthVolumeNgn: number;
+  volumeGrowthPct: number;
 }
+
 interface PaginatedResponse<T, K extends string> {
   success: boolean;
   data: { [key in K]: T[] } & {
@@ -45,10 +43,6 @@ interface PaymentTenantInfo {
   tenant_email: string;
 }
 
-interface AdminBookingListResponse {
-  success: boolean;
-  data: { bookings: (Booking & TenantInfo)[]; page: number; limit: number };
-}
 
 interface AdminPropertiesResponse {
   success: boolean;
@@ -63,7 +57,11 @@ interface AdminPropertiesResponse {
 
 interface AdminPaymentListResponse {
   success: boolean;
-  data: { payments: (AdminPaymentSummary & PaymentTenantInfo)[]; page: number; limit: number };
+  data: {
+    payments: (AdminPaymentSummary & PaymentTenantInfo)[];
+    page: number;
+    limit: number;
+  };
 }
 
 export const adminApi = apiSlice.injectEndpoints({
@@ -154,8 +152,8 @@ export const adminApi = apiSlice.injectEndpoints({
           }[];
           page: number;
           limit: number;
-          unreadCount:   number;
-          totalPages:number
+          unreadCount: number;
+          totalPages: number;
         };
       },
       { page: number; limit?: number; tenantId?: string }
@@ -176,9 +174,7 @@ export const adminApi = apiSlice.injectEndpoints({
       }),
     }),
 
-    getPlatformStats: builder.query<PlatformStatsResponse,
-      void
-    >({
+    getPlatformStats: builder.query<PlatformStatsResponse, void>({
       query: () => ({ url: `${ADMIN_URL}/stats` }),
     }),
 
@@ -192,6 +188,25 @@ export const adminApi = apiSlice.injectEndpoints({
       query: ({ range }) => ({
         url: `${ADMIN_URL}/revenue-trend?range=${range}`,
       }),
+    }),
+
+    listAdminEscrow: builder.query<
+      {
+        success: boolean;
+        data: { escrows: AdminEscrowRecord[]; page: number; limit: number };
+      },
+      { page: number; limit?: number; tenantId?: string }
+    >({
+      query: ({ page, limit = 10, tenantId }) => ({
+        url: `${ADMIN_URL}/escrow?page=${page}&limit=${limit}${tenantId ? `&tenantId=${tenantId}` : ""}`,
+      }),
+    }),
+
+    getAdminEscrowStats: builder.query<
+      { success: boolean; data: AdminEscrowStats },
+      void
+    >({
+      query: () => ({ url: `${ADMIN_URL}/escrow/stats` }),
     }),
   }),
 });
@@ -210,4 +225,6 @@ export const {
   useGetPlatformStatsQuery,
   useListAdminNotificationsQuery,
   useGetAdminRevenueTrendQuery,
+  useListAdminEscrowQuery,
+  useGetAdminEscrowStatsQuery
 } = adminApi;
