@@ -572,27 +572,30 @@ export const propertyRepository = {
     return row ?? null;
   },
 
-  async listAllForAdmin(page = 1, limit = 20, tenantId?: string) {
-    const params: unknown[] = [limit, (page - 1) * limit];
-    const tenantClause = tenantId
-      ? `AND p.tenant_id = $${params.push(tenantId)}`
-      : "";
-    return query<
-      Property & {
-        tenant_name: string;
-        tenant_id: string;
-        tenant_email: string;
-      }
-    >(
-      `SELECT p.*, t.name AS tenant_name, t.id AS tenant_id, u.email AS tenant_email
+async listAllForAdmin(page = 1, limit = 20, tenantId?: string) {
+  const params: unknown[] = [limit, (page - 1) * limit];
+  const tenantClause = tenantId
+    ? `AND p.tenant_id = $${params.push(tenantId)}`
+    : "";
+  return query<
+    Property & {
+      tenant_name: string;
+      tenant_id: string;
+      tenant_email: string;
+      tenant_owner_first_name: string;
+      tenant_owner_last_name: string;
+    }
+  >(
+    `SELECT p.*, t.name AS tenant_name, t.id AS tenant_id,
+            u.email AS tenant_email, u.first_name AS tenant_owner_first_name, u.last_name AS tenant_owner_last_name
      FROM properties p
      JOIN tenants t ON t.id = p.tenant_id
      JOIN users   u ON u.id = t.owner_user_id
      WHERE p.status != 'archived' ${tenantClause}
      ORDER BY p.created_at DESC LIMIT $1 OFFSET $2`,
-      params,
-    );
-  },
+    params,
+  );
+},
 
   async getStatsAllForAdmin(): Promise<{
     active: number;
