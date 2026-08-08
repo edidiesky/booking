@@ -28,11 +28,11 @@ export default function AdminTenantPaymentsTab({ tenantId }: { tenantId: string 
           ) : (
             payments.map((p) => (
               <tr key={p.id} className="border-b" style={{ borderColor: "#f2f0ed" }}>
-                <td className="py-2">{p.booking_ref}</td>
+                <td className="py-2">{p.bookingRef}</td>
                 <td className="py-2 capitalize">{p.gateway}</td>
-                <td className="py-2">{formatCurrency(Number(p.amount_ngn))}</td>
+                <td className="py-2">{formatCurrency(Number(p.amountNgn))}</td>
                 <td className="py-2 capitalize">{p.status}</td>
-                <td className="py-2" style={{ color: "#a3a6af" }}>{formatDate(p.created_at)}</td>
+                <td className="py-2" style={{ color: "#a3a6af" }}>{formatDate(p.createdAt)}</td>
               </tr>
             ))
           )}
