@@ -10,7 +10,10 @@ function pageParams(req: Request) {
     limit: Number(req.query["limit"] ?? 20),
   };
 }
-
+export const GetPlatformStatsHandler = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
+  const data = await adminService.getPlatformStats();
+  res.status(200).json({ success: true, data });
+});
 export const ListGuestsHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { page, limit } = pageParams(req);
   res.status(200).json({ success: true, data: await adminService.listGuests(page, limit) });
@@ -63,5 +66,18 @@ export const GetCalendarAdminHandler = asyncHandler(async (req: Request, res: Re
 export const GetTenantActivityHandler = asyncHandler(async (req, res) => {
   const { page, limit } = pageParams(req);
   const data = await adminService.getTenantActivity(req.params["tenantId"] as string, page, limit);
+  res.status(200).json({ success: true, data });
+});
+
+export const ListNotificationsAdminHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { page, limit } = pageParams(req);
+  const tenantId = req.query["tenantId"] as string | undefined;
+  const data = await adminService.listNotifications(page, limit, tenantId);
+  res.status(200).json({ success: true, data });
+});
+
+export const GetAdminRevenueTrendHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const rangeParam = (req.query["range"] as string) ?? "7-days";
+  const data = await adminService.getRevenueTrend(rangeParam);
   res.status(200).json({ success: true, data });
 });

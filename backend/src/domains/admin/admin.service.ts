@@ -5,6 +5,8 @@ import { paymentRepository } from "../payment/payment.repository";
 import { BookingStatus } from "../../types";
 import { propertyRepository } from "../property/property.repository";
 import { bookingRepository } from "../booking/booking.repository";
+import { tenantRepository } from "../tenant/tenant.repository";
+import { sellerNotificationRepository } from "../seller-notification/seller.notification.repository";
 
 export class AdminService {
   async listGuests(page: number, limit: number) {
@@ -159,13 +161,80 @@ export class AdminService {
     }));
     return { payments, page, limit };
   }
-
-  async getCalendar(startDate: string, endDate: string) {
-    return bookingRepository.listForDateRange(startDate, endDate);
-  }
   async getTenantActivity(tenantId: string, page: number, limit: number) {
     const logs = await auditRepository.listByTenant(tenantId, page, limit);
     return { logs, page, limit };
+  }
+  async listNotifications(page: number, limit: number, tenantId?: string) {
+    const rows = await sellerNotificationRepository.listAllForAdmin(
+      page,
+      limit,
+      tenantId,
+    );
+    const notifications = rows.map((n) => ({
+      id: n.id,
+      type: n.type,
+      title: n.title,
+      body: n.body,
+      isRead: n.is_read,
+      tenantName: n.tenant_name,
+      createdAt: n.created_at,
+    }));
+    return { notifications, page, limit };
+  }
+
+  async getPlatformStats() {
+    const [
+      tenants,
+      guests,
+      administrators,
+      properties,
+      bookings,
+      volume,
+      revenueSplit,
+      paymentsCount,
+    ] = await Promise.all([
+      tenantRepository.countAllByStatus(),
+      userRepository.countByType("guest"),
+      userRepository.countByType("platform:admin"),
+      propertyRepository.countAllForAdmin(),
+      bookingRepository.getPlatformStats(),
+      paymentRepository.getPlatformVolume(),
+      bookingRepository.getRevenueSplitPlatformWide(),
+      paymentRepository.countAllForAdmin(),
+    ]);
+    return {
+      tenants,
+      guests,
+      administrators,
+      properties,
+      bookings,
+      volume,
+      revenueSplit,
+      paymentsCount,
+    };
+  }
+
+  async getRevenueTrend(rangeParam: string) {
+    const days =
+      { "7-days": 7, "3-weeks": 21, "3-months": 90 }[rangeParam] ?? 7;
+    return bookingRepository.getRevenueTrendPlatformWide(days);
+  }
+
+  async getCalendar(startDate: string, endDate: string) {
+    const rows = await bookingRepository.listForDateRange(startDate, endDate);
+    return rows.map((b) => ({
+      bookingId: b.id,
+      bookingRef: b.booking_ref,
+      status: b.status,
+      checkIn: b.check_in,
+      checkOut: b.check_out,
+      guestFirstName: b.guest_first_name,
+      guestLastName: b.guest_last_name,
+      propertyName: b.property_name,
+      roomTypeName: b.room_type_name,
+      tenantName: b.tenant_name,
+    }));
   }
 }
 
