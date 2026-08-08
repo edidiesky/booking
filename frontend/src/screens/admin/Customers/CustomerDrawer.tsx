@@ -2,10 +2,10 @@ import Drawer from "@/components/common/Drawer";
 import DrawerField from "@/components/common/DrawerField";
 import DrawerSection from "@/components/common/DrawerSection";
 import { formatDate } from "@/utils/formatDate";
-import type { User } from "@/types/api";
+import type { AdminGuestSummary } from "@/types/api";
 
 interface Props {
-  guest: User;
+  guest: AdminGuestSummary;
   onClose: () => void;
 }
 
