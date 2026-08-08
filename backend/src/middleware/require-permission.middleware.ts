@@ -17,17 +17,9 @@ export function requirePermission(resource: string, action: string) {
       return;
     }
 
-    // platform:admin bypasses all permission checks
-    if (req.user.userType === "platform:admin") {
-      next();
-      return;
-    }
-
-    const tenantId = req.tenantId ?? req.user.tenantId;
-    if (!tenantId) {
-      res.status(403).json({ success: false, message: "Tenant context required for permission check." });
-      return;
-    }
+     const tenantId = req.user.userType === "platform:admin"
+      ? null
+      : (req.tenantId ?? req.user.tenantId ?? null);
 
     try {
       const granted = await permissionResolver.has(req.user.userId, tenantId, resource, action);
