@@ -44,7 +44,7 @@ export interface PaymentSummary {
   guest_profile_image: string | null;
   room_type_name: string;
   room_type_images: string[];
-  tenant_name:string;
+  tenant_name: string;
 }
 
 function ctx() {
@@ -314,6 +314,46 @@ export const paymentRepository = {
      ORDER BY p.created_at DESC LIMIT $1 OFFSET $2`,
       [limit, offset],
     );
+  },
+  async getPlatformVolume(): Promise<{
+    currentMonthNgn: number;
+    previousMonthNgn: number;
+    growthPct: number;
+  }> {
+    const row = await queryOne<{
+      current_month: number;
+      previous_month: number;
+    }>(
+      `SELECT
+       COALESCE(SUM(amount_ngn) FILTER (
+         WHERE status = 'success' AND created_at >= date_trunc('month', now())
+       ), 0) AS current_month,
+       COALESCE(SUM(amount_ngn) FILTER (
+         WHERE status = 'success'
+           AND created_at >= date_trunc('month', now()) - interval '1 month'
+           AND created_at <  date_trunc('month', now())
+       ), 0) AS previous_month
+     FROM payments`,
+    );
+    const current = Number(row?.current_month ?? 0);
+    const previous = Number(row?.previous_month ?? 0);
+    const growthPct =
+      previous === 0
+        ? current > 0
+          ? 100
+          : 0
+        : ((current - previous) / previous) * 100;
+    return {
+      currentMonthNgn: current,
+      previousMonthNgn: previous,
+      growthPct: Math.round(growthPct * 10) / 10,
+    };
+  },
+  async countAllForAdmin(): Promise<number> {
+    const row = await queryOne<{ count: string }>(
+      `SELECT COUNT(*) AS count FROM payments WHERE status = 'success'`,
+    );
+    return parseInt(row?.count ?? "0", 10);
   },
 };
 

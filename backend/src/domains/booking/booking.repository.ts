@@ -383,7 +383,6 @@ export const bookingRepository = {
       [startDate, endDate],
     );
   },
-  
 
   async getRevenueTrend(
     tenantId: string,
@@ -412,6 +411,86 @@ export const bookingRepository = {
      GROUP BY days.day
      ORDER BY days.day ASC`,
       [tenantId, days],
+    );
+    return rows.map((r) => ({
+      day: r.day,
+      hostPayout: Number(r.host_payout),
+      platformFee: Number(r.platform_fee),
+    }));
+  },
+  async getPlatformStats(): Promise<
+    Omit<
+      BookingStats,
+      "revenueGrowthPct" | "currentMonthRevenueNgn" | "previousMonthRevenueNgn"
+    >
+  > {
+    const row = await queryOne<{
+      confirmed_count: string;
+      checked_in_count: string;
+      checked_out_count: string;
+      cancelled_count: string;
+      pending_count: string;
+    }>(
+      `SELECT
+       COUNT(*) FILTER (WHERE status = 'confirmed')       AS confirmed_count,
+       COUNT(*) FILTER (WHERE status = 'checked_in')      AS checked_in_count,
+       COUNT(*) FILTER (WHERE status = 'checked_out')     AS checked_out_count,
+       COUNT(*) FILTER (WHERE status = 'cancelled')       AS cancelled_count,
+       COUNT(*) FILTER (WHERE status = 'pending_payment') AS pending_count
+     FROM bookings`,
+    );
+    return {
+      confirmedCount: Number(row?.confirmed_count ?? 0),
+      checkedInCount: Number(row?.checked_in_count ?? 0),
+      checkedOutCount: Number(row?.checked_out_count ?? 0),
+      cancelledCount: Number(row?.cancelled_count ?? 0),
+      pendingCount: Number(row?.pending_count ?? 0),
+    };
+  },
+
+  async getRevenueSplitPlatformWide(): Promise<{
+    hostPayoutNgn: number;
+    platformFeeNgn: number;
+  }> {
+    const row = await queryOne<{ host_payout: number; platform_fee: number }>(
+      `SELECT
+       COALESCE(SUM(host_payout_ngn), 0)  AS host_payout,
+       COALESCE(SUM(platform_fee_ngn), 0) AS platform_fee
+     FROM bookings
+     WHERE status IN ('confirmed', 'checked_in', 'checked_out')
+       AND created_at >= date_trunc('month', now())`,
+    );
+    return {
+      hostPayoutNgn: Number(row?.host_payout ?? 0),
+      platformFeeNgn: Number(row?.platform_fee ?? 0),
+    };
+  },
+
+  async getRevenueTrendPlatformWide(
+    days: number,
+  ): Promise<{ day: string; hostPayout: number; platformFee: number }[]> {
+    const rows = await query<{
+      day: string;
+      host_payout: string;
+      platform_fee: string;
+    }>(
+      `WITH days AS (
+       SELECT generate_series(
+         date_trunc('day', now() - ($1 || ' days')::interval),
+         date_trunc('day', now()),
+         '1 day'::interval
+       ) AS day
+     )
+     SELECT days.day,
+            COALESCE(SUM(b.host_payout_ngn), 0)  AS host_payout,
+            COALESCE(SUM(b.platform_fee_ngn), 0) AS platform_fee
+     FROM days
+     LEFT JOIN bookings b
+       ON date_trunc('day', b.created_at) = days.day
+       AND b.status IN ('confirmed', 'checked_in', 'checked_out')
+     GROUP BY days.day
+     ORDER BY days.day ASC`,
+      [days],
     );
     return rows.map((r) => ({
       day: r.day,
