@@ -37,16 +37,16 @@ export default function BookingTableRow({
 }: Props) {
   return (
     <tr onClick={() => setSelectedOrder()} className="border-b cursor-pointer last:border-0 hover:bg-[#fafaf9] transition-colors" style={{ borderColor: "#f2f0ed" }}>
-      <td className="px-5 py-3 bold text-xs lg:text-[13px]whitespace-nowrap" style={{ color: "var(--color-ink)" }}>
+      <td className="px-5 py-3 bold text-xs lg:text-[13px] whitespace-nowrap" style={{ color: "var(--color-ink)" }}>
         {booking.bookingRef}
       </td>
-      <td className="px-5 py-3 text-xs lg:text-[13px]whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
+      <td className="px-5 py-3 text-xs lg:text-[13px] whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
         {(booking.propertyName)}
       </td>
-      <td className="px-5 py-3 text-xs lg:text-[13px]whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
+      <td className="px-5 py-3 text-xs lg:text-[13px] whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
         {formatDateTime(booking.checkOut)}
       </td>
-      <td className="px-5 py-3 text-xs lg:text-[13px]whitespace-nowrap" style={{ color: "var(--color-ink)" }}>
+      <td className="px-5 py-3 text-xs lg:text-[13px] whitespace-nowrap" style={{ color: "var(--color-ink)" }}>
         {formatCurrency(booking.totalAmountNgn)}
       </td>
       <td className="px-5 py-3">

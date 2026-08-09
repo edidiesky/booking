@@ -95,7 +95,7 @@ export default function TeamManagementTab() {
                     <td className="px-5 py-3 text-xs" style={{ color: "var(--color-muted-stone)" }}>
                       {a.assignedBy}
                     </td>
-                    <td className="px-5 py-3 text-xs lg:text-[13px]whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
+                    <td className="px-5 py-3 text-xs lg:text-[13px] whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
                       {formatDate(a.assignedAt)}
                     </td>
                     <td className="px-5 py-3">

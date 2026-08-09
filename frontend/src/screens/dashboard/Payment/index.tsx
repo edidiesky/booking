@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useGetTenantPaymentsQuery, useGetTenantPaymentStatsQuery } from "@/redux/services/paymentApi";
+import {
+  useGetTenantPaymentsQuery,
+  useGetTenantPaymentStatsQuery,
+} from "@/redux/services/paymentApi";
 import { ChartSelect } from "@/components/common/charts/Chartselect";
-import type {PaymentStatus, PaymentGateway, PaymentSummary } from "@/types/api";
+import type {
+  PaymentStatus,
+  PaymentGateway,
+  PaymentSummary,
+} from "@/types/api";
 import Title from "@/components/dashboard/common/Title";
 import PaymentTableRow from "./PaymentTableRow";
 import PaymentDetailsModal from "./PaymentDetailsModal";
@@ -41,7 +48,9 @@ const STATUS_OPTIONS: PaymentStatus[] = [
 const GATEWAY_OPTIONS: PaymentGateway[] = ["paystack", "flutterwave"];
 
 export default function DashboardPayments() {
-  const [selectedPayment, setSelectedPayment] = useState<PaymentSummary | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentSummary | null>(
+    null,
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<PaymentStatus | "">("");
   const [gatewayFilter, setGatewayFilter] = useState<PaymentGateway | "">("");
@@ -50,7 +59,8 @@ export default function DashboardPayments() {
     page: currentPage,
     limit: ROWS_PER_PAGE,
   });
-  const { data: statsData, isLoading: isStatsLoading } = useGetTenantPaymentStatsQuery();
+  const { data: statsData, isLoading: isStatsLoading } =
+    useGetTenantPaymentStatsQuery();
 
   const allPayments: PaymentSummary[] = data?.data ?? [];
 
@@ -86,13 +96,29 @@ export default function DashboardPayments() {
           growthPct={statsData?.data.volumeGrowthPct}
           growthTooltip="Successful payment volume this calendar month vs. last calendar month"
           cards={[
-            { label: "Success",  value: String(statsData?.data.successCount ?? 0),  color: "#166534", bg: "#dcfce7" },
-            { label: "Failed",   value: String(statsData?.data.failedCount ?? 0),   color: "#991b1b", bg: "#fee2e2" },
-            { label: "Pending",  value: String(statsData?.data.pendingCount ?? 0),  color: "#92400e", bg: "#fef3c7" },
+            {
+              label: "Success",
+              value: String(statsData?.data.successCount ?? 0),
+              color: "#166534",
+              bg: "#dcfce7",
+            },
+            {
+              label: "Failed",
+              value: String(statsData?.data.failedCount ?? 0),
+              color: "#991b1b",
+              bg: "#fee2e2",
+            },
+            {
+              label: "Pending",
+              value: String(statsData?.data.pendingCount ?? 0),
+              color: "#92400e",
+              bg: "#fef3c7",
+            },
             {
               label: "Volume (Month)",
               value: formatCurrency(statsData?.data.currentMonthVolumeNgn ?? 0),
-              color: "#5b21b6", bg: "#ede9fe",
+              color: "#5b21b6",
+              bg: "#ede9fe",
             },
           ]}
         />
@@ -129,9 +155,9 @@ export default function DashboardPayments() {
         </div>
 
         <div className="border border-[#e8e6e3] overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full ">
             <thead>
-              <tr className="border-b border-[#e8e6e3]">
+              <tr className="border-b text-xs border-[#e8e6e3]">
                 {[
                   "Payment ID",
                   "Booking ID",
