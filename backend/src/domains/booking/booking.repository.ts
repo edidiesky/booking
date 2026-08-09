@@ -29,9 +29,6 @@ export interface Booking {
   updated_at: Date;
   receipt_url: string;
   room_type_images?: string[];
-  // Joined columns from listByTenant/listByGuest (property_name, etc. via
-  // `AS` aliases in the SQL), declared here with their real names, not the
-  // camelCase versions that were silently always undefined before.
   property_name?: string;
   property_city?: string;
   room_type_name?: string;
@@ -245,32 +242,29 @@ export const bookingRepository = {
 
   async listByTenant(
     tenantId: string,
-    opts: { status?: BookingStatus; page?: number; limit?: number } = {},
+    status: BookingStatus | undefined,
+    page = 1,
+    limit = 20,
   ): Promise<Booking[]> {
-    const { status, page = 1, limit = 20 } = opts;
     const offset = (page - 1) * limit;
     const params: unknown[] = [tenantId, limit, offset];
     const where = status ? `AND b.status = $${params.push(status)}` : "";
 
-    try {
-      return await query<Booking>(
-        `SELECT b.*, t.id AS tenant_id, t.name AS tenant_name, t.email AS tenant_email,
-                u.first_name AS guest_first_name, u.last_name AS guest_last_name,
-                u.email AS guest_email, rt.images AS room_types_image, p.name AS property_name,
-                rt.name AS room_type_name, rt.quantity AS room_type_quantity
-         FROM bookings b
-         JOIN users      u  ON u.id  = b.guest_user_id
-         JOIN properties p  ON p.id  = b.property_id
-         JOIN room_types rt ON rt.id = b.room_type_id
-         JOIN tenants    t  ON t.id  = b.tenant_id
-         WHERE b.tenant_id = $1 ${where}
-         ORDER BY b.created_at DESC LIMIT $2 OFFSET $3`,
-        params,
-      );
-    } catch (err) {
-      trackError("booking_list_failed", "booking_repository", "medium");
-      throw err;
-    }
+    return query<Booking>(
+      `SELECT b.*, t.id AS tenant_id, t.name AS tenant_name, owner.email AS tenant_email,
+            u.first_name AS guest_first_name, u.last_name AS guest_last_name,
+            u.email AS guest_email, rt.images AS room_types_image, p.name AS property_name,
+            rt.name AS room_type_name, rt.quantity AS room_type_quantity
+     FROM bookings b
+     JOIN users      u     ON u.id     = b.guest_user_id
+     JOIN properties p     ON p.id     = b.property_id
+     JOIN room_types rt    ON rt.id    = b.room_type_id
+     JOIN tenants    t     ON t.id     = b.tenant_id
+     JOIN users      owner ON owner.id = t.owner_user_id
+     WHERE b.tenant_id = $1 ${where}
+     ORDER BY b.created_at DESC LIMIT $2 OFFSET $3`,
+      params,
+    );
   },
 
   async countByTenant(
@@ -344,16 +338,18 @@ export const bookingRepository = {
     };
   },
 
-async listAllForAdmin(
-  opts: { status?: BookingStatus; page?: number; limit?: number } = {},
-): Promise<Booking[]> {
-  const { status, page = 1, limit = 20 } = opts;
-  const offset = (page - 1) * limit;
-  const params: unknown[] = [limit, offset];
-  const whereClause = status ? `WHERE b.status = $${params.push(status)}` : "";
+  async listAllForAdmin(
+    opts: { status?: BookingStatus; page?: number; limit?: number } = {},
+  ): Promise<Booking[]> {
+    const { status, page = 1, limit = 20 } = opts;
+    const offset = (page - 1) * limit;
+    const params: unknown[] = [limit, offset];
+    const whereClause = status
+      ? `WHERE b.status = $${params.push(status)}`
+      : "";
 
-  return query<Booking>(
-    `SELECT b.*, t.id AS tenant_id, t.name AS tenant_name, owner.email AS tenant_email,
+    return query<Booking>(
+      `SELECT b.*, t.id AS tenant_id, t.name AS tenant_name, owner.email AS tenant_email,
             u.first_name AS guest_first_name, u.last_name AS guest_last_name, u.email AS guest_email,
             p.name AS property_name, rt.name AS room_type_name, rt.images AS room_type_images
     FROM bookings b
@@ -364,9 +360,9 @@ async listAllForAdmin(
     JOIN room_types rt    ON rt.id    = b.room_type_id
     ${whereClause}
     ORDER BY b.created_at DESC LIMIT $1 OFFSET $2`,
-    params,
-  );
-},
+      params,
+    );
+  },
 
   async listForDateRange(
     startDate: string,
