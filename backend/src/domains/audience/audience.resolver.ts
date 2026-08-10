@@ -7,12 +7,6 @@ export interface ResolvedUser {
   phone: string | null;
 }
 
-// Translates each condition into one WHERE fragment (direct column
-// comparisons) or one correlated-subquery fragment (bookings/properties
-// derived conditions), joined by AND. Building this as fragments rather
-// than one big hand-written query per possible combination is what keeps
-// this extensible: adding a new AudienceField later is "add one case to
-// this switch", not "touch a monolithic query".
 function buildCondition(
   condition: AudienceCondition,
   params: unknown[],
@@ -83,12 +77,6 @@ function buildWhereClause(filter: AudienceFilter, params: unknown[]): string {
 }
 
 export const audienceResolver = {
-  // Same query, two purposes: preview (count only, cheap) and resolve
-  // (full rows, used at send time to snapshot into campaign_recipients).
-  // Kept as one function with a `countOnly` flag rather than two
-  // near-duplicate queries, so the preview a campaign creator sees is
-  // provably the same audience that gets sent to, not two queries that
-  // could drift out of sync with each other.
   async count(filter: AudienceFilter, tenantId?: string): Promise<number> {
     const params: unknown[] = [];
     let where = buildWhereClause(filter, params);

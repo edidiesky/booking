@@ -822,7 +822,7 @@ export const bookingService = {
     tenantId: string,
     opts: { status?: BookingStatus; page?: number; limit?: number } = {},
   ): Promise<BookingDto[]> {
-    return (await bookingRepository.listByTenant(tenantId, opts)).map((b) =>
+    return (await bookingRepository.listByTenant(tenantId, opts.status, opts.limit, opts.page)).map((b) =>
       toDto(b),
     );
   },

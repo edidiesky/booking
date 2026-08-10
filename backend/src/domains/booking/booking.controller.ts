@@ -176,9 +176,7 @@ export const ExportTenantBookingsHandler = asyncHandler(
     void runExportJob(
       jobId,
       async () => {
-        const bookings = await bookingRepository.listByTenant(tenantId, {
-          limit: 1000,
-        });
+        const bookings = await bookingRepository.listByTenant(tenantId,undefined, 1, 1000);
         return {
           title: "Bookings Export",
           subtitle: "All bookings for your properties",
