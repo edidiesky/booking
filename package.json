@@ -1,18 +1,16 @@
 {
   "name": "booking-platform",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "scripts": {
     "build": "npm run build -w @booking/shared && npm run build --workspaces --if-present",
     "build:shared": "npm run build -w @booking/shared",
-    "docker:up": "docker compose -f  booking-infra/docker-compose.dev.yml -f  booking-infra/docker-compose.monitoring.yml -f  booking-infra/docker-compose.workers.yml up -d",
-    "docker:up:build": "docker compose -f  booking-infra/docker-compose.dev.yml -f  booking-infra/docker-compose.monitoring.yml -f  booking-infra/docker-compose.workers.yml up -d --build",
-    "docker:down": "docker compose -f  booking-infra/docker-compose.dev.yml -f  booking-infra/docker-compose.monitoring.yml -f  booking-infra/docker-compose.workers.yml down",
-    "docker:down:clean": "docker compose -f  booking-infra/docker-compose.dev.yml -f  booking-infra/docker-compose.monitoring.yml -f  booking-infra/docker-compose.workers.yml down -v",
-    "docker:logs": "docker compose -f  booking-infra/docker-compose.dev.yml -f  booking-infra/docker-compose.monitoring.yml logs -f --tail=100",
-    "docker:ps": "docker compose -f  booking-infra/docker-compose.dev.yml -f  booking-infra/docker-compose.monitoring.yml ps"
+    "docker:up": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml up -d",
+    "docker:up:build": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml up -d --build",
+    "docker:down": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml down",
+    "docker:down:clean": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml down -v",
+    "docker:logs": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml logs -f --tail=100",
+    "docker:ps": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml ps"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.8",
