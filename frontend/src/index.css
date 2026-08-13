@@ -582,3 +582,68 @@ html.lenis body {
   outline-offset: 3px !important;
   border-radius: 4px !important;
 }
+
+/* CARD STACKING */
+.card-stack {
+  --stack-row: 100svh;
+  --stack-top: 10svh;
+  --stack-card-height: calc(var(--stack-row) - 2 * var(--stack-top));
+  view-timeline-name: --card-stack;
+  grid-auto-rows: var(--stack-row);
+  width: 100%;
+  display: grid;
+  position: relative;
+}
+
+.card-stack__item {
+  transform-origin: 50% 100%;
+  top: var(--stack-top);
+  height: var(--stack-card-height);
+  border-radius: 2em;
+  padding: 3em;
+  position: sticky;
+  overflow: hidden;
+}
+
+.card-stack__item-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.card-stack__item:nth-child(1) { --stack-i: 1; }
+.card-stack__item:nth-child(2) { --stack-i: 2; }
+.card-stack__item:nth-child(3) { --stack-i: 3; }
+.card-stack__item:nth-child(4) { --stack-i: 4; }
+
+@supports (width: calc(sibling-index() * 1px)) {
+  .card-stack__item { --stack-i: sibling-index(); }
+}
+
+@supports (animation-timeline: view()) {
+  .card-stack__item {
+    animation: card-stack-away linear forwards;
+    animation-timeline: --card-stack;
+    animation-range:
+      exit-crossing calc(var(--stack-i, 1) * var(--stack-row) - 100svh)
+      exit-crossing calc(var(--stack-i, 1) * var(--stack-row) - var(--stack-top));
+  }
+
+  .card-stack__item:last-of-type { animation: none; }
+}
+
+@keyframes card-stack-away {
+  to {
+    transform: perspective(60em) rotateX(25deg) scale(0.85);
+    filter: brightness(0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-stack__item { animation: none; }
+}
+
+@media screen and (max-width: 767px) {
+  .card-stack__item { padding: 2em; }
+  .card-stack__item .grid { grid-template-columns: 1fr; }
+}

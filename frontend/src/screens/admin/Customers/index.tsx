@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/pagination";
 import { useAdminCustomers } from "./hooks/useAdminCustomers";
 import CustomerDrawer from "./CustomerDrawer";
+import StatsOverview from "@/components/dashboard/common/StatsOverview";
 export default function AdminCustomers() {
-  
   const {
     guests,
     isLoading,
@@ -41,33 +41,33 @@ export default function AdminCustomers() {
           description="Every guest account registered on the platform."
         />
 
-        <div className="grid grid-cols-3 gap-4">
-          {[
-            ["Total", stats?.total ?? 0, "Registered guest accounts"],
-            [
-              "Email verified",
-              stats?.verified ?? 0,
-              "Confirmed their email address",
-            ],
-            [
-              "Via Google",
-              stats?.viaGoogle ?? 0,
-              "Signed up with Google OAuth",
-            ],
-          ].map(([label, value, sub]) => (
-            <div
-              key={label as string}
-              className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-5"
-            >
-              <p className="text-xs lg:text-[13px] uppercase text-[#a3a6af]">
-                {label}
-              </p>
-              <p className="text-xl lg:text-4xl bold text-[#17191c]">{value}</p>
-              <p className="text-xs lg:text-[13px] medium text-[#a3a6af]">{sub}</p>
-            </div>
-          ))}
-        </div>
-
+        <StatsOverview
+          isLoading={isLoading}
+          growthTooltip="Successful payment volume this calendar month vs. last calendar month"
+          cards={[
+            {
+              label: "Total",
+              sub: "Registered guest accounts",
+              value: String(stats?.total ?? 0),
+              color: "#166534",
+              bg: "#dcfce7",
+            },
+            {
+              label: "Email verified",
+              sub: "Confirmed their email address",
+              value: String(stats?.verified ?? 0),
+              color: "#5b21b6",
+              bg: "#ede9fe",
+            },
+            {
+              label: "Via Google",
+              sub: "Signed up with Google OAuth",
+              value: String(stats?.total ?? 0),
+              color: "#5b21b6",
+              bg: "#ede9fe",
+            },
+          ]}
+        />
         <Input
           type="text"
           placeholder="Search guests by name or email..."

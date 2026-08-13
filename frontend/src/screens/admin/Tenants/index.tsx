@@ -5,6 +5,7 @@ import { useAdminTenants } from "./hooks/useAdminTenants";
 import TenantDetailModal from "./TenantDetailModal";
 import type { Tenant } from "@/types/api";
 import Title from "@/components/dashboard/common/Title";
+import StatsOverview from "@/components/dashboard/common/StatsOverview";
 
 const STATUS_CFG: Record<
   Tenant["status"],
@@ -35,7 +36,7 @@ export default function AdminTenants() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-      className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
       >
         <div className="flex items-start justify-between gap-4">
           <Title
@@ -43,8 +44,34 @@ export default function AdminTenants() {
             description="Every seller account on the platform, active, suspended, or in draft."
           />
         </div>
-
-        <div className="grid grid-cols-3 gap-4">
+        <StatsOverview
+          isLoading={isLoading}
+          growthTooltip="Successful payment volume this calendar month vs. last calendar month"
+          cards={[
+            {
+              label: "Active",
+              sub: "Currently operating on the platform",
+              value: String(stats?.active ?? 0),
+              color: "#166534",
+              bg: "#dcfce7",
+            },
+            {
+              label: "Suspended",
+              sub: "Access revoked, pending review",
+              value: String(stats?.suspended ?? 0),
+              color: "#5b21b6",
+              bg: "#ede9fe",
+            },
+            {
+              label: "Draft",
+              sub: "Onboarding not yet completed",
+              value: String(stats?.draft ?? 0),
+              color: "#5b21b6",
+              bg: "#ede9fe",
+            },
+          ]}
+        />
+        {/* <div className="grid grid-cols-3 gap-4">
           {[
             [
               "Active",
@@ -69,7 +96,7 @@ export default function AdminTenants() {
               <p className="text-xs lg:text-[13px] medium text-[#a3a6af]">{sub}</p>
             </div>
           ))}
-        </div>
+        </div> */}
 
         <Input
           type="text"
@@ -80,7 +107,7 @@ export default function AdminTenants() {
         />
 
         <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
-        <table className="w-full text-xs lg:text-[13px]">
+          <table className="w-full text-xs lg:text-[13px]">
             <thead>
               <tr className="border-b border-[#e8e6e3]">
                 {["Name", "Slug", "Status", "Platform fee", ""].map((h) => (

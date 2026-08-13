@@ -817,15 +817,14 @@ export const bookingService = {
       (b) => toDto(b),
     );
   },
-
-  async getTenantBookings(
-    tenantId: string,
-    opts: { status?: BookingStatus; page?: number; limit?: number } = {},
-  ): Promise<BookingDto[]> {
-    return (await bookingRepository.listByTenant(tenantId, opts.status, opts.limit, opts.page)).map((b) =>
-      toDto(b),
-    );
-  },
+async getTenantBookings(
+  tenantId: string,
+  opts: { status?: BookingStatus; page?: number; limit?: number } = {},
+): Promise<BookingDto[]> {
+  return (await bookingRepository.listByTenant(tenantId, opts.status, opts.page, opts.limit)).map((b) =>
+    toDto(b),
+  );
+},
 
   async getTenantBookingStats(tenantId: string) {
     return bookingRepository.getStatsForTenant(tenantId);
