@@ -19,3 +19,9 @@ udemy-video.pem
 run_production.sh
 k8s
 vault.sh
+.env
+*.tfvars
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
