@@ -74,8 +74,29 @@ booking-infra/
 │   │   │   └── deployment.yaml
 │   │   └── seller-notification-worker/
 │   │       └── deployment.yaml
-│   │
-│   └── ingress/                  2
+
+    ├── monitoring/                    # Phase 11b
+│   ├── namespace.yaml
+│   ├── prometheus/
+│   │   ├── values.yaml            # kube-prometheus-stack Helm values
+│   │   └── prometheusrule.yaml    # Booking platform alert rules
+│   ├── grafana/
+│   │   ├── datasources.yaml       # Prometheus + Loki datasources
+│   │   └── dashboards/
+│   │       ├── cluster-overview.yaml    # What you see in the photo
+│   │       ├── booking-api.yaml         # Request rate, latency, errors
+│   │       ├── workers.yaml             # Queue depth, processing rate
+│   │       └── postgres.yaml            # Connection pool, query time
+│   ├── loki/
+│   │   ├── values.yaml            # Loki stack Helm values
+│   │   └── promtail.yaml          # DaemonSet scraping all pod logs
+│   └── alerts/
+│       ├── booking-api.yaml       # 5xx rate, p99 latency
+│       ├── workers.yaml           # Queue depth, consumer lag
+│       ├── postgres.yaml          # Connection pool exhaustion
+│       └── redis.yaml             # Memory usage, evictions
+│
+│   ── ingress/                  2
 │       ├── ingress.yaml          # AWS ALB ingress
 │       └── cert.yaml             # ACM cert
 │
