@@ -437,7 +437,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
             type="submit"
             form="property-form"
             disabled={isBusy}
-            className="bg-[#17191c] text-white text-xs lg:text-[13px]px-6 rounded-full h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="bg-[#17191c] text-white text-xs lg:text-[13px] px-6 rounded-full h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {isBusy
               ? isEdit

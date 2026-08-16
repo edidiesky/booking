@@ -20,6 +20,7 @@ run_production.sh
 k8s
 vault.sh
 .env
+.env.railway.prod
 *.tfvars
 .terraform/
 terraform.tfstate
