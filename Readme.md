@@ -67,6 +67,22 @@ npm install
 npm run docker:up:build
 ```
 
+
+**Windows**: `npm install` inside `backend/` will fail on `puppeteer`'s
+postinstall step, it tries to download its own bundled Chrome build,
+which is unreliable on Windows and fails with `Failed to set up
+chrome-headless-shell`. Neither a `puppeteer_skip_download` nor
+`puppeteer_skip_chromium_download` key in `.npmrc` works around this,
+both are silently rejected as `Unknown project config` by this npm
+version, npm does not forward `.npmrc` entries into a dependency's
+install script as an environment variable. `setx` (a persistent
+Windows env var) was also tried and did not take effect in the same
+session it was set. What works, confirmed:
+
+```
+PUPPETEER_SKIP_DOWNLOAD=true npm install
+```
+
 Individual services/workers are not independently runnable outside the
 monorepo root scripts as configured, `docker:up`/`docker:up:build` bring
 up the full dev + monitoring + workers stack via three combined
