@@ -78,7 +78,7 @@ export default function MyBookings() {
                 </h1>
                 <Link
                   to="/properties"
-                  className="text-xs lg:text-[13px]md:text-xs lg:text-[13px]font-normal pb-1 pt-3 w-fit border-b border-[#17191c] uppercase tracking-wider text-[#17191c]"
+                  className="text-xs lg:text-[13px]md:text-xs lg:text-[13px] font-normal pb-1 pt-3 w-fit border-b border-[#17191c] uppercase tracking-wider text-[#17191c]"
                 >
                   Visit our properties collection
                 </Link>

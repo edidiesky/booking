@@ -63,7 +63,7 @@ const Blog = () => {
                   <LazyImage src={blog?.image} />
                 </div>
                 <div className="py-8 border-b border-dotted px-4 flex flex-col gap-4">
-                  <h5 className="text-xs lg:text-[13px]font-normal">
+                  <h5 className="text-xs lg:text-[13px] font-normal">
                     <AnimateTextWord>Categories: </AnimateTextWord>
                     <span className="text-[var(--primary)]">
                       <AnimateTextWord> Luxury Living</AnimateTextWord>
