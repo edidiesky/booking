@@ -17,8 +17,7 @@ export default function PropertyGallery({ images, name }: Props) {
   if (!images.length) {
     return (
       <div
-        style={{ height: GALLERY_HEIGHT }}
-        className="w-full rounded-xl flex items-center justify-center bg-[#f2f0ed]"
+        className={`w-full h-[${GALLERY_HEIGHT}px] rounded-xl flex items-center justify-center bg-[#f2f0ed]`}
       >
         <MapPin size={32} className="text-[#a3a6af]" />
       </div>
@@ -27,6 +26,7 @@ export default function PropertyGallery({ images, name }: Props) {
 
   const count = images.length;
   const rightSideImages = images.slice(1, 3);
+  const rightRowCount = Math.min(count, 4);
 
   return (
     <>
@@ -35,28 +35,30 @@ export default function PropertyGallery({ images, name }: Props) {
         {count === 1 && (
           <button
             onClick={() => setLightboxIndex(0)}
-            style={{ height: GALLERY_HEIGHT }}
-            className="w-full overflow-hidden rounded-xl block"
+            className={`w-full h-[${GALLERY_HEIGHT}px] overflow-hidden rounded-xl block`}
           >
             <LazyImage src={images[0]} alt={name} />
           </button>
         )}
 
         {count >= 2 && (
-          <div className="w-full grid grid-cols-2 gap-2" style={{ height: GALLERY_HEIGHT }}>
+          <div className={`w-full h-[${GALLERY_HEIGHT}px] overflow-hidden grid grid-cols-2 gap-2`}>
             <button
               onClick={() => setLightboxIndex(0)}
-              className="w-full h-full overflow-hidden rounded-xl block"
+              className={`w-full h-[${GALLERY_HEIGHT}px] overflow-hidden rounded-xl block`}
             >
               <LazyImage src={images[0]} alt={name} />
             </button>
 
-            <div className="grid grid-rows-2 gap-2 h-full">
+            <div
+              className="grid gap-2 h-[210px]"
+              style={{ gridTemplateRows: `repeat(${rightRowCount}, 1fr)` }}
+            >
               {rightSideImages.map((src, i) => (
                 <button
                   key={i}
                   onClick={() => setLightboxIndex(i + 1)}
-                  className="relative w-full h-full overflow-hidden rounded-xl block"
+                  className={`relative w-full h-[${260}px] overflow-hidden rounded-xl block`}
                 >
                   <LazyImage src={src} alt={`${name} ${i + 2}`} />
                   {i === 1 && count > 3 && (
