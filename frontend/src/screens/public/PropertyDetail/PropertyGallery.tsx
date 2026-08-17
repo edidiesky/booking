@@ -9,6 +9,7 @@ interface Props {
 }
 
 const GALLERY_HEIGHT = 520;
+const GAP = 8; // matches Tailwind's gap-2
 
 export default function PropertyGallery({ images, name }: Props) {
   const [active, setActive] = useState(0);
@@ -28,6 +29,14 @@ export default function PropertyGallery({ images, name }: Props) {
   const count = images.length;
   const rightSideImages = images.slice(1, 3);
 
+  // right column height per tile so the stack's total height
+  // (including gaps) always equals GALLERY_HEIGHT exactly
+  const rightTileHeight =
+    rightSideImages.length > 0
+      ? (GALLERY_HEIGHT - GAP * (rightSideImages.length - 1)) /
+        rightSideImages.length
+      : 0;
+
   return (
     <>
       {/* desktop */}
@@ -43,31 +52,22 @@ export default function PropertyGallery({ images, name }: Props) {
         )}
 
         {count >= 2 && (
-          <div
-            style={{ height: GALLERY_HEIGHT }}
-            className="w-full overflow-hidden grid grid-cols-2 gap-2"
-          >
+          <div className="w-full grid grid-cols-2 gap-2">
             <button
               onClick={() => setLightboxIndex(0)}
-              className="w-full h-full overflow-hidden rounded-xl block"
+              style={{ height: GALLERY_HEIGHT }}
+              className="w-full overflow-hidden rounded-xl block"
             >
               <LazyImage src={images[0]} alt={name} />
             </button>
 
-            {/* row count matches the number of items actually rendered on the right,
-                so each cell stretches (1fr) to fill the full GALLERY_HEIGHT and
-                stays in sync with the left column */}
-            <div
-              className="grid gap-2 h-full"
-              style={{
-                gridTemplateRows: `repeat(${rightSideImages.length}, 1fr)`,
-              }}
-            >
+            <div className="flex flex-col gap-2">
               {rightSideImages.map((src, i) => (
                 <button
                   key={i}
                   onClick={() => setLightboxIndex(i + 1)}
-                  className="relative w-full h-full overflow-hidden rounded-xl block"
+                  style={{ height: rightTileHeight }}
+                  className="relative w-full overflow-hidden rounded-xl block"
                 >
                   <LazyImage src={src} alt={`${name} ${i + 2}`} />
                   {i === 1 && count > 3 && (
