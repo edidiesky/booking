@@ -17,7 +17,7 @@ interface Props {
 
 // Fallback palette, used only when a segment doesn't specify its own
 // color. Distinct hues, not a grayscale ramp, matching the actual ask.
-const DEFAULT_COLORS = ["#1e40af", "#166534", "#991b1b", "#92400e", "#5b21b6"];
+const DEFAULT_COLORS = ["#ede9fe", "#5b21b6", "#166534", "#92400e", "#5b21b6"];
 
 export default function RadialTickCard({ title, totalValue, totalLabel = "Total", segments, icon }: Props) {
   const [hovered, setHovered] = useState<RadialTickSegment | null>(null);
