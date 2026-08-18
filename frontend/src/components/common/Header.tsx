@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   Calendar,
@@ -18,25 +18,39 @@ import {
   selectIsAuthenticated,
 } from "@/redux/slices/authSlice";
 import AccountDropdown from "@/components/common/AccountDropdown";
-
+import { useEffect, useState } from "react";
+const TRANSPARENT_ROUTES = ["/"];
 export default function Header() {
+  const location = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const canBeTransparent = TRANSPARENT_ROUTES.includes(location.pathname);
+  const isTransparent = canBeTransparent && !scrolled && !mobileOpen;
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const currentUser = useSelector(selectCurrentUser);
   const isHost = currentUser?.userType.startsWith("host:") ?? false;
+  useEffect(() => {
+    if (!canBeTransparent) return;
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [canBeTransparent]);
 
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
   return (
     <nav
-      className="w-full top-0 z-50"
-      style={{
-        backgroundColor: "var(--color-canvas)",
-        boxShadow: "rgba(0,0,0,0.04) 0px 0px 0px 1px",
-      }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        isTransparent ? "bg-transparent" : "bg-white border-b border-[#e8e6e3]"
+      }`}
     >
       <div className="mx-auto px-6 lg:px-0 h-16 flex items-center justify-between max-w-screen-xl">
         <Link
           to="/"
-          className="text-lg tracking-tight bold"
-          style={{ color: "var(--color-ink)" }}
+          className={`${isTransparent ? "text-white" : "text-dark"} text-lg`}
         >
           Booking
         </Link>
@@ -46,8 +60,7 @@ export default function Header() {
             <Link
               key={item}
               to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="text-xs lg:text-[13px] transition-opacity px-4 py-2 rounded-full hover:bg-[#f5f5f3]"
-              style={{ color: "var(--color-ink)" }}
+              className={`${isTransparent ? "text-white" : "text-dark"} text-sm lg:text-base transition-opacity px-4 py-2 rounded-full hover:bg-[#f5f5f3]`}
             >
               {item}
             </Link>
