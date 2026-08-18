@@ -12,6 +12,7 @@ import {
   Bell,
   LayoutDashboard,
   Heart,
+  Menu,
 } from "lucide-react";
 import {
   selectCurrentUser,
@@ -19,6 +20,7 @@ import {
 } from "@/redux/slices/authSlice";
 import AccountDropdown from "@/components/common/AccountDropdown";
 import { useEffect, useState } from "react";
+import MobileSidebar from "../dashboard/common/MobileSidebar";
 const TRANSPARENT_ROUTES = ["/"];
 export default function Header() {
   const location = useLocation();
@@ -47,7 +49,14 @@ export default function Header() {
         isTransparent ? "bg-transparent" : "bg-white border-b border-[#e8e6e3]"
       }`}
     >
-      <div className="mx-auto px-6 lg:px-0 h-16 flex items-center justify-between max-w-screen-xl">
+      <MobileSidebar isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <div className="mx-auto px-4 lg:px-0 h-16 flex items-center justify-between max-w-screen-xl">
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="lg:hidden w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#f2f0ed] transition-colors"
+        >
+          <Menu size={18} style={{ color: "var(--color-ink)" }} />
+        </button>
         <Link
           to="/"
           className={`${isTransparent ? "text-white" : "text-dark"} text-lg`}
