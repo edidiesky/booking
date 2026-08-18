@@ -287,7 +287,7 @@ export default function Hero() {
 
       <div className="w-full h-full absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
 
-      <div className="w-full h-full mx-auto flex items-end max-w-screen-xl relative pb-20 lg:pb-24">
+      <div className="w-full h-full mx-auto flex items-end max-w-screen-xl relative pb-20 lg:pb-20">
         <div className="max-w-screen-2xl px-4 lg:px-0 relative z-10 flex flex-col gap-8 w-full">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
