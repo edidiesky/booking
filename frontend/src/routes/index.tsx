@@ -1,12 +1,23 @@
-import { createBrowserRouter } from "react-router-dom";
-import { authRoutes }          from "./authRoutes";
-import { guestRoutes }         from "./guestRoutes";
-import { dashboardRoutes }     from "./dashboardRoutes";
-import { adminRoutes }         from "./adminRoutes";
+import { createBrowserRouter, ScrollRestoration, Outlet } from "react-router-dom";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { authRoutes }      from "./authRoutes";
+import { guestRoutes }     from "./guestRoutes";
+import { dashboardRoutes } from "./dashboardRoutes";
+import { adminRoutes }     from "./adminRoutes";
+
+function RootLayout() {
+  useScrollToTop();
+  return (
+    <>
+      <Outlet />
+      <ScrollRestoration />
+    </>
+  );
+}
 
 export const router = createBrowserRouter([
-  ...guestRoutes,
-  ...authRoutes,
-  ...dashboardRoutes,
-  ...adminRoutes,
+  {
+    element: <RootLayout />,
+    children: [...guestRoutes, ...authRoutes, ...dashboardRoutes, ...adminRoutes],
+  },
 ]);

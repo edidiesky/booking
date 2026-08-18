@@ -69,6 +69,9 @@
   * {
     @apply border-border;
   }
+  html, body {
+  overflow-anchor: none;
+}
 
   body {
     @apply bg-background text-foreground;
@@ -84,6 +87,7 @@
     font-family: "Bricolage Grotesque", sans-serif;
     line-height: 2;
   }
+
 
   h3,
   a,

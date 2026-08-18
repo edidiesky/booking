@@ -13,6 +13,7 @@ import BookingForm             from "./BookingForm";
 import { usePropertyDetail }   from "./hooks/usePropertyDetail";
 import SellerSection from "./SellerSection";
 import { RoomType } from "@/types/api";
+import { useLayoutEffect } from "react";
 
 function Skeleton() {
   return (
@@ -42,12 +43,19 @@ export default function PropertyDetail() {
 
   const roomTypes = property?.roomTypes ?? [];
 
+  useLayoutEffect(() => {
+    if (!isLoading && property) {
+      window.scrollTo(0, 0);
+    }
+  }, [isLoading, property]);
+
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="flex flex-col min-h-screen"
+      className="flex flex-col lg:pt-20 min-h-screen"
     >
       <Header />
 
