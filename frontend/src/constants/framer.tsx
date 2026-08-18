@@ -237,3 +237,23 @@ export const chatCardVariants = {
     height: "6rem",
   },
 };
+
+
+export const slideSidebarFromLeft = {
+  initial: {
+    left: "-100%",
+  },
+  enter: {
+    left: "0%",
+    transition: {
+      duration: 1,
+      ease: [0.76, 0, 0.24, 1],
+    },
+  },
+  exit: {
+    left: "-100%",
+    transition: {
+      duration: 1,
+    },
+  },
+};
