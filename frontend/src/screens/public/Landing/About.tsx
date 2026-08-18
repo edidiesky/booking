@@ -10,7 +10,8 @@ const cards = [
     image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
     value: "12,000+",
     label: "Bookings confirmed to date",
-    description: "Across shortlets, hotels, and guesthouses, tracked in real time, not end-of-day batch counts.",
+    description:
+      "Across shortlets, hotels, and guesthouses, tracked in real time, not end-of-day batch counts.",
     bg: "#e8e6e3",
     color: "#111111",
   },
@@ -18,7 +19,8 @@ const cards = [
     image: "https://2025.moniepoint.com/_next/static/media/Fruit.527795c5.svg",
     value: "850+",
     label: "Properties actively listed",
-    description: "Live inventory across three property types, one shared calendar per host.",
+    description:
+      "Live inventory across three property types, one shared calendar per host.",
     bg: "#f8e600",
     color: "#111111",
   },
@@ -26,8 +28,9 @@ const cards = [
     image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
     value: "₦2.14B",
     label: "Released to hosts via escrow",
-    description: "Held from booking to checkout, released automatically, zero manual payout requests.",
-   
+    description:
+      "Held from booking to checkout, released automatically, zero manual payout requests.",
+
     bg: "#00a86b",
     color: "#ffffff",
   },
@@ -35,7 +38,8 @@ const cards = [
     image: "https://2025.moniepoint.com/_next/static/media/Fruit.527795c5.svg",
     value: "3hr",
     label: "Turnover buffer, enforced automatically",
-    description: "Blocked between every checkout and next check-in, no host has to remember to set it.",
+    description:
+      "Blocked between every checkout and next check-in, no host has to remember to set it.",
     bg: "#1a56ff",
     color: "#ffffff",
   },
@@ -43,7 +47,8 @@ const cards = [
     image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
     value: "99.99%",
     label: "Platform uptime, trailing 90 days",
-    description: "Measured against the booking and payment paths specifically, not marketing-page uptime.",
+    description:
+      "Measured against the booking and payment paths specifically, not marketing-page uptime.",
     bg: "#17191c",
     color: "#ffffff",
   },
@@ -51,7 +56,8 @@ const cards = [
     image: "https://2025.moniepoint.com/_next/static/media/POS.d298f7b6.svg",
     value: "< 4min",
     label: "Median first response time",
-    description: "Guest and host support, including overnight, not just business hours.",
+    description:
+      "Guest and host support, including overnight, not just business hours.",
     bg: "#dc2626",
     color: "#ffffff",
   },
@@ -59,7 +65,7 @@ const cards = [
 
 const ANGLE_STEP_DEG = 40;
 const ARC_RADIUS = 900;
-const TOP_Y = 80; 
+const TOP_Y = 80;
 const CARD_HEIGHT = 680;
 
 export default function About() {
@@ -127,7 +133,7 @@ export default function About() {
   return (
     <div style={{ backgroundColor: "var(--color-canvas)" }}>
       <div
-        className="mx-auto px-6 lg:px-8 pt-32 pb-10 flex items-center justify-center flex-col"
+        className="px-6 mx-auto lg:px-8 pt-32 pb-10 flex flex-col"
         style={{ maxWidth: "1280px" }}
       >
         <span
@@ -137,11 +143,13 @@ export default function About() {
           Everything you need
         </span>
         <h3
-          className="text-4xl lg:text-6xl mt-2 max-w-2xl text-center mx-auto "
+          className="text-4xl lg:text-6xl mt-2 max-w-3xl"
           style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
         >
-          <AnimateTextWord type="bigtext_Center">
+          <AnimateTextWord type="bigtext">
             Built for hosts who don't have time to babysit a calendar.
+            {/* Availability updates the moment a booking comes in, so nothing gets
+            double-booked while you're busy actually running the place. */}
           </AnimateTextWord>
         </h3>
       </div>

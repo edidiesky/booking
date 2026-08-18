@@ -58,13 +58,13 @@ export default function Expert() {
 
   return (
     <section style={{ backgroundColor: "var(--color-canvas)" }}>
-      <div className="mx-auto px-6 lg:px-8 pt-32 pb-20 text-center" style={{ maxWidth: "1280px" }}>
+      <div className="mx-auto px-4 lg:px-0 pt-32 pb-20" style={{ maxWidth: "1280px" }}>
         <span className="text-base lg:text-xl uppercase" style={{ color: "var(--color-light-steel)" }}>
           Everything you need
         </span>
-        <h2 className="text-4xl lg:text-6xl mt-2 max-w-2xl mx-auto text-center" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
-          <AnimateTextWord type="bigtext_Center">
-            One platform. Every tool your booking business needs.
+        <h2 className="text-4xl lg:text-6xl mt-2 max-w-2xl" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
+          <AnimateTextWord type="bigtext">
+            One platform. Every tool a real booking business needs.
           </AnimateTextWord>
         </h2>
       </div>

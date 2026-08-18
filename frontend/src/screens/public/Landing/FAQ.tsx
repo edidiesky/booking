@@ -58,7 +58,7 @@ export default function FAQ() {
             className="text-xs lg:text-[13px] uppercase bold sticky"
             style={{ color: "var(--color-hint-of-grey)", top: "24px" }}
           >
-            FAQs
+            Before you commit
           </p>
         </div>
 
