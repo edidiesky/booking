@@ -48,7 +48,7 @@ export default function PropertyTypeFilterPopover({ selected, onApply, label = "
         onClick={() => setOpen((v) => !v)}
         className="flex flex-col items-start text-left gap-2 px-4 py-2.5 rounded-full lg:rounded-none w-full lg:w-auto"
       >
-        <span className="text-xs lg:text-[13px]flex items-center gap-1.5" style={{ color: "#a3a6af" }}>
+        <span className="text-xs lg:text-[13px] flex items-center gap-1.5" style={{ color: "#a3a6af" }}>
           <Home size={18} /> {label}
         </span>
         <span className="text-xs lg:text-[13px] truncate max-w-[160px]" style={{ color: "#17191c" }}>{displayValue}</span>

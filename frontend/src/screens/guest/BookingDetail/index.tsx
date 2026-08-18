@@ -50,7 +50,7 @@ export default function BookingPayment() {
                 </h3>
                 <ul className="flex flex-col gap-4 pb-8 border-b border-[#e8e6e3]">
                   {CHECKLIST.map((item) => (
-                    <li key={item} className="text-xs lg:text-[13px]flex items-start gap-2 text-[#4c4c4c]">
+                    <li key={item} className="text-xs lg:text-[13px] flex items-start gap-2 text-[#4c4c4c]">
                       <BiCheck size={20} className="shrink-0 mt-0.5" />
                       {item}
                     </li>

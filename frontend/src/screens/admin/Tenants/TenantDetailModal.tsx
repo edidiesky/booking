@@ -86,7 +86,7 @@ export default function TenantDetailModal({ tenantId, onClose }: Props) {
               <p className="text-xs lg:text-[13px] mb-3" style={{ color: "var(--color-ink)" }}>Recent activity</p>
               <div className="flex flex-col gap-2">
                 {data.data.recentActivity.map((a) => (
-                  <div key={a.id} className="text-xs lg:text-[13px]flex items-center justify-between">
+                  <div key={a.id} className="text-xs lg:text-[13px] flex items-center justify-between">
                     <span>
                       {[a.actor_first_name, a.actor_last_name].filter(Boolean).join(" ") || "System"} {a.action} {a.resource}
                     </span>

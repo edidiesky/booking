@@ -16,7 +16,10 @@ import ExportPdfButton from "@/components/common/ExportPdfButton";
 import { BOOKING_URL } from "@/constants/api";
 import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { FilterBar, FilterSearchInput } from "@/components/common/filters/FilterBar";
+import {
+  FilterBar,
+  FilterSearchInput,
+} from "@/components/common/filters/FilterBar";
 import { STATUS_MAP } from "@/components/common/StatusBadge";
 import MultiSelectDropdown from "@/components/dashboard/common/gant/MultiSelectDropdown";
 import DateRangeDropdown from "@/components/common/filters/DateRangeDropdown";
@@ -40,7 +43,6 @@ const HEADERS = [
 ];
 
 export default function DashboardBookings() {
-
   const {
     bookings,
     isLoading,
@@ -93,8 +95,10 @@ export default function DashboardBookings() {
     }
   };
   const totalBookings =
-  (stats?.confirmedCount ?? 0) + (stats?.checkedInCount ?? 0) + (stats?.cancelledCount ?? 0) || 1;
-
+    (stats?.confirmedCount ?? 0) +
+      (stats?.checkedInCount ?? 0) +
+      (stats?.cancelledCount ?? 0) || 1;
+const PEAK_AMT = 1000000
   return (
     <>
       <AnimatePresence>
@@ -139,75 +143,83 @@ export default function DashboardBookings() {
           </span>
         </div>
 
+        <StatsOverview
+          isLoading={isStatsLoading}
+          growthPct={stats?.revenueGrowthPct}
+          growthTooltip="Confirmed booking revenue this calendar month vs. last calendar month"
+          cards={[
+            {
+              label: "Confirmed",
+              value: String(stats?.confirmedCount ?? 0),
+              color: "#1e40af",
+              bg: "#dbeafe",
+              fillPercent: ((stats?.confirmedCount ?? 0) / totalBookings) * 100,
+            },
+            {
+              label: "Checked In",
+              value: String(stats?.checkedInCount ?? 0),
+              color: "#166534",
+              bg: "#dcfce7",
+              fillPercent: ((stats?.checkedInCount ?? 0) / totalBookings) * 100,
+            },
+            {
+              label: "Cancelled",
+              value: String(stats?.cancelledCount ?? 0),
+              color: "#991b1b",
+              bg: "#fee2e2",
+              fillPercent: ((stats?.cancelledCount ?? 0) / totalBookings) * 100,
+            },
+            {
+              label: "Revenue (Month)",
+              value: formatCurrency(stats?.currentMonthRevenueNgn ?? 0),
+              color: "#5b21b6",
+              bg: "#ede9fe",
+              fillPercent: ((stats?.currentMonthRevenueNgn ?? 0) / PEAK_AMT) * 100,
+              // no fillPercent, genuinely nothing to divide revenue by here
+            },
+          ]}
+        />
 
+        <div className="w-full flex lg:items-center justify-between lg:flex-row flex-col gap-3">
+          <FilterBar>
+            <FilterSearchInput
+              value={search}
+              onChange={setSearch}
+              placeholder="Search by booking reference..."
+            />
+            <MultiSelectDropdown
+              label="Status"
+              options={STATUS_OPTIONS.filter((o) => o.value !== "").map(
+                (o) => ({
+                  value: o.value,
+                  label: o.label,
+                  color: STATUS_MAP[o.value]?.color,
+                }),
+              )}
+              selected={statusFilter}
+              onToggle={toggleStatus}
+            />
+            <DateRangeDropdown
+              value={dateRange}
+              onApply={setDateRange}
+              placeholder="Check-in date range"
+            />
+            <button
+              onClick={resetFilters}
+              className="text-xs lg:text-[13px] underline"
+              style={{ color: "#777b86" }}
+            >
+              Reset
+            </button>
+          </FilterBar>
 
-<StatsOverview
-  isLoading={isStatsLoading}
-  growthPct={stats?.revenueGrowthPct}
-  growthTooltip="Confirmed booking revenue this calendar month vs. last calendar month"
-  cards={[
-    {
-      label: "Confirmed",
-      value: String(stats?.confirmedCount ?? 0),
-      color: "#1e40af",
-      bg: "#dbeafe",
-      fillPercent: ((stats?.confirmedCount ?? 0) / totalBookings) * 100,
-    },
-    {
-      label: "Checked In",
-      value: String(stats?.checkedInCount ?? 0),
-      color: "#166534",
-      bg: "#dcfce7",
-      fillPercent: ((stats?.checkedInCount ?? 0) / totalBookings) * 100,
-    },
-    {
-      label: "Cancelled",
-      value: String(stats?.cancelledCount ?? 0),
-      color: "#991b1b",
-      bg: "#fee2e2",
-      fillPercent: ((stats?.cancelledCount ?? 0) / totalBookings) * 100,
-    },
-    {
-      label: "Revenue (Month)",
-      value: formatCurrency(stats?.currentMonthRevenueNgn ?? 0),
-      color: "#5b21b6",
-      bg: "#ede9fe",
-      // no fillPercent, genuinely nothing to divide revenue by here
-    },
-  ]}
-/>
-
-       <div className="w-full flex lg:items-center justify-between lg:flex-row flex-col gap-3">
-         <FilterBar>
-          <FilterSearchInput
-            value={search}
-            onChange={setSearch}
-            placeholder="Search by booking reference..."
-          />
-          <MultiSelectDropdown
-            label="Status"
-            options={STATUS_OPTIONS.filter((o) => o.value !== "").map((o) => ({
-              value: o.value,
-              label: o.label,
-              color: STATUS_MAP[o.value]?.color,
-            }))}
-            selected={statusFilter}
-            onToggle={toggleStatus}
-          />
-          <DateRangeDropdown
-            value={dateRange}
-            onApply={setDateRange}
-            placeholder="Check-in date range"
-          />
-          <button onClick={resetFilters} className="text-xs lg:text-[13px] underline" style={{ color: "#777b86" }}>
-            Reset
-          </button>
-        </FilterBar>
-
-        <div className="flex lg:justify-end">
-          <ExportPdfButton triggerUrl={`${BOOKING_URL}/tenant/export`} label="Export bookings PDF" />
+          <div className="flex lg:justify-end">
+            <ExportPdfButton
+              triggerUrl={`${BOOKING_URL}/tenant/export`}
+              label="Export bookings PDF"
+            />
+          </div>
         </div>
-       </div>
 
         <div className="border border-[#e8e6e3] overflow-x-auto">
           <table className="w-full text-xs">
@@ -252,7 +264,7 @@ export default function DashboardBookings() {
                       onCancel={setCancelTarget}
                       onCheckIn={handleCheckIn}
                       onCheckOut={handleCheckOut}
-                      setSelectedOrder={()=> setSelectedBooking(b)}
+                      setSelectedOrder={() => setSelectedBooking(b)}
                     />
                   );
                 })

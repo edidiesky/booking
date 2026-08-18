@@ -17,7 +17,7 @@ function formatNgn(amount: number): string {
 
 const TICK_COUNT = 24;
 
-function TickBar({ fillPercent, color }: { fillPercent: number | null; color: string }) {
+function TickBar({ fillPercent, color }: { fillPercent: number | null | undefined; color: string }) {
   // fillPercent === null means "no real ratio exists for this stat",
   // rendered as a single solid accent stripe instead of a partial
   // fill, so it never implies a proportion that isn't real.
@@ -29,7 +29,7 @@ function TickBar({ fillPercent, color }: { fillPercent: number | null; color: st
     );
   }
 
-  const filledTicks = Math.round((Math.min(100, Math.max(0, fillPercent)) / 100) * TICK_COUNT);
+  const filledTicks = Math.round((Math.min(100, Math.max(0, Number(fillPercent))) / 100) * TICK_COUNT);
   return (
     <div className="flex items-end gap-[2px] mt-1" style={{ height: 16 }}>
       {Array.from({ length: TICK_COUNT }, (_, i) => (
@@ -54,6 +54,7 @@ export default function StatsGrid({
   // total is meaningful data, not an invented number for the sake of
   // having a bar to draw.
   const totalBookings = confirmedCount + checkedInCount + cancelledCount || 1;
+  const PEAK_AMT = 1000000
 
   const stats = [
     {
@@ -64,7 +65,7 @@ export default function StatsGrid({
       Icon: TrendingUp,
       color: "#166534",
       bg: "#dcfce7",
-      fillPercent: null, // no natural ratio, currency total, not a count
+      illPercent: ((totalRevenue ?? 0) / PEAK_AMT) * 100,
     },
     {
       id: "confirmed",

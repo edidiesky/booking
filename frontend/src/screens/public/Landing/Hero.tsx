@@ -330,7 +330,7 @@ export default function Hero() {
             {isAuthenticated ? (
               <button
                 onClick={() => navigate(isHost ? "/dashboard" : "/search")}
-                className="w-fit min-w-44 flex items-center gap-2 px-6 py-4 rounded-full border border-white/40 text-white font-medium hover:bg-white/10 transition-colors"
+                className="w-fit min-w-44 flex items-center justify-center gap-2 px-6 py-4 rounded-full border border-white/40 text-white font-medium hover:bg-white/10 transition-colors"
               >
                 {isHost ? "Go to your dashboard" : "Start booking"}
               </button>

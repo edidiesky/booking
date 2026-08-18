@@ -32,7 +32,7 @@ export default function DashboardHome() {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="w-full p-6 lg:p-10 flex flex-col gap-8"
+      className="w-full p-4 lg:p-10 flex flex-col gap-8"
     >
       <Title
         title={`Welcome back, ${currentUser?.firstName ?? "Host"}`}
@@ -59,26 +59,32 @@ export default function DashboardHome() {
             cancelledCount={cancelledCount}
           />
           <div className="grid grid-cols-1 lg:grid-cols-[60%_40%] gap-4">
-           <div className="w-full flex flex-col gap-4">
-             <RevenueTrendCard />
-               <LinearTickBarCard
+            <div className="w-full flex flex-col gap-4">
+              <RevenueTrendCard />
+              <LinearTickBarCard
                 title="Revenue Split"
-                totalValue={new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", minimumFractionDigits: 0 }).format(totalRevenue)}
+                totalValue={new Intl.NumberFormat("en-NG", {
+                  style: "currency",
+                  currency: "NGN",
+                  minimumFractionDigits: 0,
+                }).format(totalRevenue)}
                 trend={{ value: revenueGrowthPct, label: "vs last month" }}
                 segments={[
                   {
                     label: "Host Payout",
-                    value: totalRevenue * (1 - (tenant?.platformFeePct ?? 10) / 100),
+                    value:
+                      totalRevenue * (1 - (tenant?.platformFeePct ?? 10) / 100),
                     color: "#17191c",
                   },
                   {
                     label: "Platform Fee",
-                    value: totalRevenue * ((tenant?.platformFeePct ?? 10) / 100),
+                    value:
+                      totalRevenue * ((tenant?.platformFeePct ?? 10) / 100),
                     color: "#777b86",
                   },
                 ]}
               />
-           </div>
+            </div>
 
             <div className="flex flex-col gap-4">
               <RadialTickCard
@@ -89,7 +95,7 @@ export default function DashboardHome() {
                 segments={[
                   { label: "Confirmed", value: confirmedCount },
                   { label: "Checked in", value: checkedInCount },
-                  { label: "Cancelled",  value: cancelledCount },
+                  { label: "Cancelled", value: cancelledCount },
                 ]}
               />
               <RecentTransactionsCard
