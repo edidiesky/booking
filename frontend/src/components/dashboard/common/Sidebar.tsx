@@ -53,6 +53,7 @@ export default function Sidebar() {
   const refreshToken  = useSelector(selectRefreshToken);
   const [logout]      = useLogoutMutation();
 
+
 const handleSignOut = async () => {
   try {
     if (refreshToken) await logout({ refreshToken }).unwrap();
@@ -73,7 +74,7 @@ const handleSignOut = async () => {
       className="hidden lg:flex flex-col w-[220px] h-screen shrink-0 border-r"
       style={{ backgroundColor: "var(--color-canvas)", borderColor: "#ebebeb" }}
     >
-      <nav className="flex-1 overflow-y-auto py-4 px-3">
+      <nav className="flex-1 overflow-y-auto py-12 px-3">
         {NAV_GROUPS.map((group) => (
           <NavGroup key={group.label} group={group} />
         ))}
