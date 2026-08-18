@@ -72,6 +72,10 @@ export default function DashboardPayments() {
 
   const totalPages = Math.max(1, Math.ceil(payments.length / ROWS_PER_PAGE));
 
+  const statusTotal =
+    (statsData?.data.successCount ?? 0) +
+      (statsData?.data.failedCount ?? 0) +
+      (statsData?.data.pendingCount ?? 0) || 1;
   return (
     <>
       <motion.div
@@ -101,24 +105,33 @@ export default function DashboardPayments() {
               value: String(statsData?.data.successCount ?? 0),
               color: "#166534",
               bg: "#dcfce7",
+              fillPercent:
+                ((statsData?.data.successCount ?? 0) / statusTotal) * 100,
             },
             {
               label: "Failed",
               value: String(statsData?.data.failedCount ?? 0),
               color: "#991b1b",
               bg: "#fee2e2",
+              fillPercent:
+                ((statsData?.data.failedCount ?? 0) / statusTotal) * 100,
             },
             {
               label: "Pending",
               value: String(statsData?.data.pendingCount ?? 0),
               color: "#92400e",
               bg: "#fef3c7",
+              fillPercent:
+                ((statsData?.data.pendingCount ?? 0) / statusTotal) * 100,
             },
             {
               label: "Volume (Month)",
               value: formatCurrency(statsData?.data.currentMonthVolumeNgn ?? 0),
               color: "#5b21b6",
               bg: "#ede9fe",
+              fillPercent:
+                ((statsData?.data.currentMonthVolumeNgn ?? 0) / 1000000) * 100,
+              // no fillPercent, currency total, nothing to divide it by
             },
           ]}
         />

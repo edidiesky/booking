@@ -57,6 +57,12 @@ export default function DashboardProperties() {
     setModalOpen(true);
   };
 
+  const propertyTotal =
+    (stats?.activeCount ?? 0) +
+      (stats?.draftCount ?? 0) +
+      (stats?.pausedCount ?? 0) +
+      (stats?.archivedCount ?? 0) || 1;
+
   return (
     <>
       <AnimatePresence>
@@ -132,7 +138,6 @@ export default function DashboardProperties() {
             </button>
           </div>
         </div>
-
         <StatsOverview
           isLoading={isStatsLoading}
           growthPct={stats?.newListingsGrowthPct}
@@ -144,24 +149,28 @@ export default function DashboardProperties() {
               value: String(stats?.activeCount ?? 0),
               color: "#166534",
               bg: "#dcfce7",
+              fillPercent: ((stats?.activeCount ?? 0) / propertyTotal) * 100,
             },
             {
               label: "Draft",
               value: String(stats?.draftCount ?? 0),
               color: "#92400e",
               bg: "#fef3c7",
+              fillPercent: ((stats?.draftCount ?? 0) / propertyTotal) * 100,
             },
             {
               label: "Paused",
               value: String(stats?.pausedCount ?? 0),
               color: "#374151",
               bg: "#f3f4f6",
+              fillPercent: ((stats?.pausedCount ?? 0) / propertyTotal) * 100,
             },
             {
               label: "Archived",
               value: String(stats?.archivedCount ?? 0),
               color: "#991b1b",
               bg: "#fee2e2",
+              fillPercent: ((stats?.archivedCount ?? 0) / propertyTotal) * 100,
             },
           ]}
         />

@@ -92,6 +92,8 @@ export default function DashboardBookings() {
       /* errorMiddleware */
     }
   };
+  const totalBookings =
+  (stats?.confirmedCount ?? 0) + (stats?.checkedInCount ?? 0) + (stats?.cancelledCount ?? 0) || 1;
 
   return (
     <>
@@ -137,21 +139,43 @@ export default function DashboardBookings() {
           </span>
         </div>
 
-        <StatsOverview
-          isLoading={isStatsLoading}
-          growthPct={stats?.revenueGrowthPct}
-          growthTooltip="Confirmed booking revenue this calendar month vs. last calendar month"
-          cards={[
-            { label: "Confirmed",  value: String(stats?.confirmedCount ?? 0),  color: "#1e40af", bg: "#dbeafe" },
-            { label: "Checked In", value: String(stats?.checkedInCount ?? 0),  color: "#166534", bg: "#dcfce7" },
-            { label: "Cancelled",  value: String(stats?.cancelledCount ?? 0),  color: "#991b1b", bg: "#fee2e2" },
-            {
-              label: "Revenue (Month)",
-              value: formatCurrency(stats?.currentMonthRevenueNgn ?? 0),
-              color: "#5b21b6", bg: "#ede9fe",
-            },
-          ]}
-        />
+
+
+<StatsOverview
+  isLoading={isStatsLoading}
+  growthPct={stats?.revenueGrowthPct}
+  growthTooltip="Confirmed booking revenue this calendar month vs. last calendar month"
+  cards={[
+    {
+      label: "Confirmed",
+      value: String(stats?.confirmedCount ?? 0),
+      color: "#1e40af",
+      bg: "#dbeafe",
+      fillPercent: ((stats?.confirmedCount ?? 0) / totalBookings) * 100,
+    },
+    {
+      label: "Checked In",
+      value: String(stats?.checkedInCount ?? 0),
+      color: "#166534",
+      bg: "#dcfce7",
+      fillPercent: ((stats?.checkedInCount ?? 0) / totalBookings) * 100,
+    },
+    {
+      label: "Cancelled",
+      value: String(stats?.cancelledCount ?? 0),
+      color: "#991b1b",
+      bg: "#fee2e2",
+      fillPercent: ((stats?.cancelledCount ?? 0) / totalBookings) * 100,
+    },
+    {
+      label: "Revenue (Month)",
+      value: formatCurrency(stats?.currentMonthRevenueNgn ?? 0),
+      color: "#5b21b6",
+      bg: "#ede9fe",
+      // no fillPercent, genuinely nothing to divide revenue by here
+    },
+  ]}
+/>
 
        <div className="w-full flex lg:items-center justify-between lg:flex-row flex-col gap-3">
          <FilterBar>
