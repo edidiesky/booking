@@ -124,7 +124,7 @@ export default function StatsGrid({
               </h3>
               <TickBar fillPercent={fillPercent} color={color} />
               <p
-                className="text-[13px] medium"
+                className="text-xs lg:text-[13px] medium"
                 style={{ color: "var(--color-muted-stone)" }}
               >
                 {sub}
