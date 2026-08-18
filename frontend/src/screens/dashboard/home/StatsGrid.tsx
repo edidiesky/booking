@@ -104,11 +104,11 @@ export default function StatsGrid({
         {stats.map(({ id, label, value, sub, color, fillPercent }) => (
           <div
             key={id}
-            className="flex h-36 lg:h-44 items-start flex-col justify-between gap-3 px-5 py-4"
+            className="flex h-44 items-start flex-col justify-between gap-3 px-5 py-4"
           >
             <div className="w-full flex items-center justify-between">
               <p
-                className="text-xs lg:text-[13px] uppercase medium"
+                className="text-[13px] uppercase medium"
                 style={{ color: "var(--color-muted-stone)" }}
               >
                 {label}
@@ -116,15 +116,15 @@ export default function StatsGrid({
               
             </div>
             <div className="w-full flex flex-col gap-2">
-              <h1
-                className="text-xl mt-1 font-semibold lg:text-3xl"
+              <h3
+                className="text-2xl mt-1 font-semibold lg:text-3xl"
                 style={{ color: "var(--color-ink)" }}
               >
                 {value}
-              </h1>
+              </h3>
               <TickBar fillPercent={fillPercent} color={color} />
               <p
-                className="text-xs lg:text-[13px] medium"
+                className="text-[13px] medium"
                 style={{ color: "var(--color-muted-stone)" }}
               >
                 {sub}
