@@ -38,7 +38,7 @@ export default function SearchSelectDropdown({ placeholder, options, value, onCh
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="h-9 px-3 rounded-lg text-xs lg:text-[13px] flex items-center gap-1.5 border transition-colors hover:bg-[#fafaf9]"
+        className="h-9 px-3 rounded-lg text-xs lg:text-[13px]  flex items-center gap-1.5 border transition-colors hover:bg-[#fafaf9]"
         style={{ borderColor: "#e8e6e3", color: selectedLabel ? "#17191c" : "#777b86" }}
       >
         <Search size={12} style={{ color: "#a3a6af" }} />
@@ -57,7 +57,7 @@ export default function SearchSelectDropdown({ placeholder, options, value, onCh
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
-              className="w-full h-8 px-2 text-xs lg:text-[13px] border rounded-md outline-none"
+              className="w-full h-8 px-2 text-xs lg:text-[13px]  border rounded-md outline-none"
               style={{ borderColor: "#e8e6e3" }}
             />
           </div>

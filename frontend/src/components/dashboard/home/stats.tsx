@@ -15,14 +15,14 @@ export default function Stats() {
             key={block.id}
             className={`flex flex-col gap-3 ${i < statBlocks.length - 1 ? "lg:border-r px-4 border-b lg:border-b-0 border-[#e8e6e3]" : "px-4"}`}
           >
-            <p className="text-xs lg:text-[13px] uppercase  text-[#a3a6af] ">
+            <p className="text-xs lg:text-[13px]  uppercase  text-[#a3a6af] ">
               {block.label}
             </p>
             <div>
               <p className="text-3xl  text-[#17191c]">
                 {block.value}
               </p>
-              <p className="text-xs lg:text-[13px] text-[#777b86] mt-0.5">
+              <p className="text-xs lg:text-[13px]  text-[#777b86] mt-0.5">
                 {block.sub}
               </p>
             </div>
@@ -34,12 +34,12 @@ export default function Stats() {
             </div>
             <div className="flex items-center gap-2">
               <span
-                className={`text-xs lg:text-[13px] px-1.5 py-0.5 ${block.deltaPositive ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}
+                className={`text-xs lg:text-[13px]  px-1.5 py-0.5 ${block.deltaPositive ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}
               >
                 {block.deltaPositive ? "+" : "-"}
                 {block.delta}
               </span>
-              <span className="text-xs lg:text-[13px] text-[#777b86] ">
+              <span className="text-xs lg:text-[13px]  text-[#777b86] ">
                 {block.deltaNote}
               </span>
             </div>

@@ -83,7 +83,7 @@ export default function DashboardActivity() {
         />
         <DateRangeDropdown value={dateRange} onApply={setDateRange} placeholder="Date range" />
         {hasActiveFilters && (
-          <button onClick={resetFilters} className="text-xs lg:text-[13px] underline" style={{ color: "#777b86" }}>
+          <button onClick={resetFilters} className="text-xs lg:text-[13px]  underline" style={{ color: "#777b86" }}>
             Reset
           </button>
         )}
@@ -126,7 +126,7 @@ export default function DashboardActivity() {
                     <td className="px-4 py-3 text-xs" style={{ color: "#17191c" }}>{resourceLabel(entry.resource)}</td>
                     <td className="px-4 py-3 text-xs" style={{ color: "#17191c" }}>{actorName(entry)}</td>
                     <td className="px-4 py-3">
-                      <span className="inline-flex items-center gap-1.5 text-xs lg:text-[13px] px-2 py-1 rounded-full" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
+                      <span className="inline-flex items-center gap-1.5 text-xs lg:text-[13px]  px-2 py-1 rounded-full" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
                         <Icon size={11} />
                         {cfg.label}
                       </span>

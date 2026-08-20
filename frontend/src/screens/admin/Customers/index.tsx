@@ -73,7 +73,7 @@ export default function AdminCustomers() {
           placeholder="Search guests by name or email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-xs h-9 px-3 text-xs lg:text-[13px] border border-[#e8e6e3] rounded-lg outline-none"
+          className="w-full max-w-xs h-9 px-3 text-xs lg:text-[13px]  border border-[#e8e6e3] rounded-lg outline-none"
         />
 
         <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
@@ -103,7 +103,7 @@ export default function AdminCustomers() {
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-[13px]  text-[#a3a6af]"
                   >
                     No guests found{search ? ` for "${search}"` : ""}.
                   </td>

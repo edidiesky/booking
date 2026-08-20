@@ -49,7 +49,7 @@ export default function TwoFactorStep({ challengeToken, onVerified }: Props) {
       <button
         type="submit"
         disabled={isLoading || code.length < 6}
-        className="w-full h-12 flex items-center justify-center text-xs lg:text-[13px] rounded-full transition-opacity hover:opacity-80 disabled:opacity-50"
+        className="w-full h-12 flex items-center justify-center text-xs lg:text-[13px]  rounded-full transition-opacity hover:opacity-80 disabled:opacity-50"
         style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
       >
         {isLoading ? "Verifying..." : "Verify and sign in"}

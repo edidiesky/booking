@@ -65,7 +65,7 @@ export default function ResetPassword() {
             className="p-4 flex flex-col gap-2"
             style={{ backgroundColor: "var(--color-fog)" }}
           >
-            <p className="text-xs lg:text-[13px] uppercase " style={{ color: "var(--color-muted-stone)" }}>
+            <p className="text-xs lg:text-[13px]  uppercase " style={{ color: "var(--color-muted-stone)" }}>
               Didn't receive it?
             </p>
             <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
@@ -120,13 +120,13 @@ export default function ResetPassword() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 flex items-center justify-center gap-2 text-xs lg:text-[13px] transition-opacity hover:opacity-80 disabled:opacity-50"
+          className="w-full h-12 flex items-center justify-center gap-2 text-xs lg:text-[13px]  transition-opacity hover:opacity-80 disabled:opacity-50"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
           {isLoading ? "Sending..." : "Send reset link"}
         </button>
 
-        <p className="text-xs lg:text-[13px] text-center" style={{ color: "var(--color-muted-stone)" }}>
+        <p className="text-xs lg:text-[13px]  text-center" style={{ color: "var(--color-muted-stone)" }}>
           Remember your password?{" "}
           <Link
             to="/login"

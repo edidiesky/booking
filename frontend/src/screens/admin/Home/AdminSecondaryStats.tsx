@@ -18,10 +18,10 @@ export default function AdminSecondaryStats({ propertiesCount, paymentsCount, gu
       <div className="w-full rounded-3xl bg-white grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[var(--color-fog)]">
         {stats.map(({ id, label, value, sub }) => (
           <div key={id} className="flex h-36 lg:h-44 items-start flex-col justify-between gap-3 px-5 py-4">
-            <p className="text-xs lg:text-[13px] uppercase medium" style={{ color: "var(--color-muted-stone)" }}>{label}</p>
+            <p className="text-xs lg:text-[13px]  uppercase medium" style={{ color: "var(--color-muted-stone)" }}>{label}</p>
             <div className="w-full flex flex-col gap-3">
               <h1 className="text-xl mt-1 font-semibold lg:text-3xl" style={{ color: "var(--color-ink)" }}>{value}</h1>
-              <p className="text-xs lg:text-[13px] medium" style={{ color: "var(--color-muted-stone)" }}>{sub}</p>
+              <p className="text-xs lg:text-[13px]  medium" style={{ color: "var(--color-muted-stone)" }}>{sub}</p>
             </div>
           </div>
         ))}

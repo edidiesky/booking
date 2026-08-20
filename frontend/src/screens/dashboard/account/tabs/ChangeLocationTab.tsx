@@ -64,7 +64,7 @@ export default function ChangeLocationTab() {
       <button
         onClick={handleSave}
         disabled={saving || !selected || selected === data.data.countryCode}
-        className="h-10 rounded-lg text-xs lg:text-[13px] disabled:opacity-50 w-fit px-5"
+        className="h-10 rounded-lg text-xs lg:text-[13px]  disabled:opacity-50 w-fit px-5"
         style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
       >
         {saving ? "Saving..." : "Change Location"}

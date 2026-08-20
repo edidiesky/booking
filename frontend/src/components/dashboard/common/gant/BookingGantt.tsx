@@ -90,7 +90,7 @@ export default function BookingGantt({ onSelectBooking }: Props) {
             <button
               key={v}
               onClick={() => setView(v)}
-              className="px-3 h-7 text-xs lg:text-[13px] rounded-full capitalize transition-colors"
+              className="px-3 h-7 text-xs lg:text-[13px]  rounded-full capitalize transition-colors"
               style={{ backgroundColor: view === v ? "#17191c" : "transparent", color: view === v ? "#fff" : "#777b86" }}
             >
               {v}
@@ -157,7 +157,7 @@ export default function BookingGantt({ onSelectBooking }: Props) {
                   <div className="w-12 h-12 rounded shrink-0" style={{ backgroundColor: "#f2f0ed" }} />
                 )}
                 <div className="min-w-0">
-                  <p className="text-xs lg:text-[13px] truncate" style={{ color: "#17191c" }}>{row.roomTypeName}</p>
+                  <p className="text-xs lg:text-[13px]  truncate" style={{ color: "#17191c" }}>{row.roomTypeName}</p>
                   {row.quantity !== undefined && row.laneCount > row.quantity && (
                     <p className="text-[10px]" style={{ color: "#dc2626" }}>⚠ {row.laneCount} over capacity</p>
                   )}

@@ -71,7 +71,7 @@ export default function Testimonials() {
       <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
         <div className="flex flex-col gap-3 mb-14 text-center">
           <p
-            className="text-xs lg:text-[13px] uppercase bold"
+            className="text-xs lg:text-[13px]  uppercase bold"
             style={{ color: "var(--color-hint-of-grey)" }}
           >
             What hosts say

@@ -119,7 +119,7 @@ export default function SearchPage() {
                 ))}
               </div>
             ) : properties.length === 0 ? (
-              <p className="text-xs lg:text-[13px] text-center py-20" style={{ color: "#a3a6af" }}>
+              <p className="text-xs lg:text-[13px]  text-center py-20" style={{ color: "#a3a6af" }}>
                 No properties match your filters.
               </p>
             ) : (

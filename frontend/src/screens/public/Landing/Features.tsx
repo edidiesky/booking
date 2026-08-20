@@ -24,7 +24,7 @@ export default function Features() {
     <section className="w-full py-20" style={{ backgroundColor: "var(--color-fog)" }}>
       <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
         <div className="flex flex-col gap-3 mb-14">
-          <p className="text-xs lg:text-[13px] uppercase bold"
+          <p className="text-xs lg:text-[13px]  uppercase bold"
              style={{ color: "var(--color-hint-of-grey)" }}>
             Why Booking Platform
           </p>

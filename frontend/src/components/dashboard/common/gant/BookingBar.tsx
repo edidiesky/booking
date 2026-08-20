@@ -32,7 +32,7 @@ export default function BookingBar({ bar, unitWidth, totalUnits, roomImage, onCl
     >
       {showText && (
         <span className="flex flex-col justify-center min-w-0">
-          <span className="text-xs lg:text-[13px] truncate">{bar.booking.bookingRef}</span>
+          <span className="text-xs lg:text-[13px]  truncate">{bar.booking.bookingRef}</span>
           <span className="text-xs lg:text-[13px]truncate opacity-90">
             {[bar.booking.guestFirstName, bar.booking.guestLastName].filter(Boolean).join(" ") || "Guest"}
           </span>

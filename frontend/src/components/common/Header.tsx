@@ -46,23 +46,27 @@ export default function Header() {
   return (
     <nav
       className={` top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-        isTransparent ? "bg-transparent fixed" : "bg-white border-b border-[#e8e6e3]"
+        isTransparent
+          ? "bg-transparent fixed"
+          : "bg-white border-b border-[#e8e6e3]"
       }`}
     >
       <MobileSidebar isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
       <div className="mx-auto px-4 lg:px-0 h-16 flex items-center justify-between max-w-screen-xl">
-        <button
-          onClick={() => setMobileOpen(true)}
-          className="lg:hidden w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#f2f0ed] transition-colors"
-        >
-          <Menu size={18} style={{ color: "var(--color-ink)" }} />
-        </button>
-        <Link
-          to="/"
-          className={`${isTransparent ? "text-white" : "text-dark"} text-lg`}
-        >
-          Booking
-        </Link>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="lg:hidden w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#f2f0ed] transition-colors"
+          >
+            <Menu size={18} style={{ color: "var(--color-ink)" }} />
+          </button>
+          <Link
+            to="/"
+            className={`${isTransparent ? "text-white" : "text-dark"} text-lg`}
+          >
+            Booking
+          </Link>
+        </div>
 
         <div className="hidden md:flex items-center gap-4">
           {["Properties", "How it works", "About"].map((item) => (
@@ -193,14 +197,14 @@ export default function Header() {
             <>
               <Link
                 to="/login"
-                className="h-10 px-5 text-xs lg:text-[13px] hover:bg-[#f5f5f3] transition-opacity flex items-center rounded-full"
+                className="h-10 px-5 text-xs lg:text-[13px]  hover:bg-[#f5f5f3] transition-opacity flex items-center rounded-full"
                 style={{ color: "var(--color-ink)" }}
               >
                 Log in
               </Link>
               <Link
                 to="/onboarding"
-                className="h-10 px-5 text-xs lg:text-[13px] transition-opacity hover:opacity-80 flex items-center rounded-full"
+                className="h-10 px-5 text-xs lg:text-[13px]  transition-opacity hover:opacity-80 flex items-center rounded-full"
                 style={{
                   backgroundColor: "var(--color-ink)",
                   color: "var(--color-canvas)",

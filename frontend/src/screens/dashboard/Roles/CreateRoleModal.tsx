@@ -62,7 +62,7 @@ export default function CreateRoleModal({ onClose, onCreated }: Props) {
         <div className="w-full flex px-8 items-start justify-between gap-1">
           <div>
             <h3 className="text-lg text-[#17191c]">Create Custom Role</h3>
-            <p className="text-xs lg:text-[13px] text-[#777b86] mt-1 max-w-[380px]">
+            <p className="text-xs lg:text-[13px]  text-[#777b86] mt-1 max-w-[380px]">
               Name your role and choose exactly what it can access.
             </p>
           </div>
@@ -75,7 +75,7 @@ export default function CreateRoleModal({ onClose, onCreated }: Props) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Name your role"
-              className="h-10 px-3 text-xs lg:text-[13px] border rounded-lg outline-none"
+              className="h-10 px-3 text-xs lg:text-[13px]  border rounded-lg outline-none"
               style={{ borderColor: "#e8e6e3", color: "#17191c" }}
             />
           </div>
@@ -85,14 +85,14 @@ export default function CreateRoleModal({ onClose, onCreated }: Props) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe your role"
-              className="h-10 px-3 text-xs lg:text-[13px] border rounded-lg outline-none"
+              className="h-10 px-3 text-xs lg:text-[13px]  border rounded-lg outline-none"
               style={{ borderColor: "#e8e6e3", color: "#17191c" }}
             />
           </div>
 
           {Object.entries(grouped).map(([category, perms]) => (
             <div key={category}>
-              <p className="text-xs lg:text-[13px] mb-2" style={{ color: "#17191c" }}>{category}</p>
+              <p className="text-xs lg:text-[13px]  mb-2" style={{ color: "#17191c" }}>{category}</p>
               <div className="flex flex-col gap-2">
                 {perms.map((p) => (
                   <label key={p.id} className="flex items-center gap-2 text-xs" style={{ color: "#17191c" }}>
@@ -114,7 +114,7 @@ export default function CreateRoleModal({ onClose, onCreated }: Props) {
             type="button"
             onClick={onClose}
             disabled={creating}
-            className="h-9 px-5 text-xs lg:text-[13px] rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
+            className="h-9 px-5 text-xs lg:text-[13px]  rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -122,7 +122,7 @@ export default function CreateRoleModal({ onClose, onCreated }: Props) {
             type="button"
             onClick={handleCreate}
             disabled={creating || !name.trim() || selected.size === 0}
-            className="h-9 px-5 text-xs lg:text-[13px] rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+            className="h-9 px-5 text-xs lg:text-[13px]  rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
           >
             {creating ? (
               <>

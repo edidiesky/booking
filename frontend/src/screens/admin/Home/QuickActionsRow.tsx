@@ -21,7 +21,7 @@ export default function AdminQuickActionsRow() {
           </div>
           <div className="flex-1 min-w-0 flex flex-col gap-1">
             <p className="text-xs lg:text-[13px]" style={{ color: "var(--color-ink)" }}>{title}</p>
-            <p className="text-xs lg:text-[13px] medium truncate" style={{ color: "var(--color-muted-stone)" }}>{subtitle}</p>
+            <p className="text-xs lg:text-[13px]  medium truncate" style={{ color: "var(--color-muted-stone)" }}>{subtitle}</p>
           </div>
         </a>
       ))}

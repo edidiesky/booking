@@ -17,7 +17,7 @@ export default function NotFound() {
           </p>
         </div>
         <div className="p-4 flex flex-col gap-3 border rounded-xl" style={{backgroundColor: "var(--color-fog)" }}>
-          <p className="text-xs lg:text-[13px] medium uppercase" style={{ color: "var(--color-muted-stone)" }}>Try one of these instead</p>
+          <p className="text-xs lg:text-[13px]  medium uppercase" style={{ color: "var(--color-muted-stone)" }}>Try one of these instead</p>
           {[
             "Check the URL for typos",
             "Go back to the previous page",
@@ -25,7 +25,7 @@ export default function NotFound() {
           ].map((s, i) => (
             <div key={s} className="flex items-center gap-3">
               <span className="w-8 h-8 flex items-center justify-center text-xs lg:text-[13px]rounded-xl shrink-0 mt-0.5" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>{i + 1}</span>
-              <p className="text-xs lg:text-[13px] medium" style={{ color: "var(--color-muted-stone)" }}>{s}</p>
+              <p className="text-xs lg:text-[13px]  medium" style={{ color: "var(--color-muted-stone)" }}>{s}</p>
             </div>
           ))}
         </div>

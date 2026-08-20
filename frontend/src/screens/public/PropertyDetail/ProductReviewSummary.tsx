@@ -43,7 +43,7 @@
 // //               strokeWidth={0}
 // //             />
 // //           </div>
-// //           <span className="text-xs lg:text-[13px] underline underline-offset-4 text-[#171717]">
+// //           <span className="text-xs lg:text-[13px]  underline underline-offset-4 text-[#171717]">
 // //             Item average ({stats.totalReviews} reviews)
 // //           </span>
 // //         </div>

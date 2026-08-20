@@ -60,7 +60,7 @@ export default function DateRangeDropdown({ value, onApply, placeholder = "Selec
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="h-9 px-3 rounded-lg text-xs lg:text-[13px] flex items-center gap-1.5 border transition-colors hover:bg-[#fafaf9]"
+        className="h-9 px-3 rounded-lg text-xs lg:text-[13px]  flex items-center gap-1.5 border transition-colors hover:bg-[#fafaf9]"
         style={{ borderColor: "#e8e6e3", color: value.start ? "#17191c" : "#777b86" }}
       >
         <CalendarIcon size={12} style={{ color: "#a3a6af" }} />
@@ -95,7 +95,7 @@ export default function DateRangeDropdown({ value, onApply, placeholder = "Selec
                   key={day.toISOString()}
                   onClick={() => handleDayClick(day)}
                   disabled={!isSameMonth(day, month)}
-                  className="text-xs lg:text-[13px] h-7 w-7 rounded-full mx-auto flex items-center justify-center disabled:opacity-0"
+                  className="text-xs lg:text-[13px]  h-7 w-7 rounded-full mx-auto flex items-center justify-center disabled:opacity-0"
                   style={{
                     backgroundColor: isEndpoint ? "#17191c" : inRange ? "#f2f0ed" : "transparent",
                     color: isEndpoint ? "#fff" : "#17191c",
@@ -107,7 +107,7 @@ export default function DateRangeDropdown({ value, onApply, placeholder = "Selec
             })}
           </div>
 
-          <div className="flex flex-col gap-1.5 text-xs lg:text-[13px] pt-1 border-t" style={{ borderColor: "#f2f0ed", color: "#777b86" }}>
+          <div className="flex flex-col gap-1.5 text-xs lg:text-[13px]  pt-1 border-t" style={{ borderColor: "#f2f0ed", color: "#777b86" }}>
             <div className="flex items-center justify-between">
               <span>Start</span>
               <span className="bold" style={{ color: "#17191c" }}>{draftStart ? format(draftStart, "MMM d, yyyy") : "—"}</span>
@@ -121,7 +121,7 @@ export default function DateRangeDropdown({ value, onApply, placeholder = "Selec
           <button
             onClick={handleApply}
             disabled={!draftStart}
-            className="h-9 rounded-lg text-xs lg:text-[13px] disabled:opacity-50"
+            className="h-9 rounded-lg text-xs lg:text-[13px]  disabled:opacity-50"
             style={{ backgroundColor: "#17191c", color: "#fff" }}
           >
             Apply

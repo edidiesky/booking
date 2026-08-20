@@ -33,7 +33,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           style={{ backgroundColor: "var(--color-fog)", border: "1px solid #e8e6e3" }}
         >
           <p
-            className="text-xs lg:text-[13px] uppercase bold"
+            className="text-xs lg:text-[13px]  uppercase bold"
             style={{ color: "var(--color-muted-stone)" }}
           >
             What to do next
@@ -73,7 +73,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           {isResending ? "Resending..." : "Didn't receive it? Resend"}
         </button>
 
-        <p className="text-xs lg:text-[13px] text-center" style={{ color: "var(--color-hint-of-grey)" }}>
+        <p className="text-xs lg:text-[13px]  text-center" style={{ color: "var(--color-hint-of-grey)" }}>
           Code expires in 15 minutes.
         </p>
       </div>

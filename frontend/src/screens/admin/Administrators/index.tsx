@@ -27,9 +27,9 @@ export default function AdminAdministrators() {
       />
 
       <div className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-5 w-fit min-w-[220px]">
-        <p className="text-xs lg:text-[13px] uppercase text-[#a3a6af]">Total</p>
+        <p className="text-xs lg:text-[13px]  uppercase text-[#a3a6af]">Total</p>
         <p className="text-xl lg:text-4xl bold text-[#17191c]">{totalCount}</p>
-        <p className="text-xs lg:text-[13px] medium text-[#a3a6af]">Active platform administrator accounts</p>
+        <p className="text-xs lg:text-[13px]  medium text-[#a3a6af]">Active platform administrator accounts</p>
       </div>
 
       <Input
@@ -37,7 +37,7 @@ export default function AdminAdministrators() {
         placeholder="Search administrators by name or email..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full max-w-xs h-9 px-3 text-xs lg:text-[13px] border border-[#e8e6e3] rounded-lg outline-none"
+        className="w-full max-w-xs h-9 px-3 text-xs lg:text-[13px]  border border-[#e8e6e3] rounded-lg outline-none"
       />
 
       <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">

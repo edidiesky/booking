@@ -164,7 +164,7 @@ function FooterSection1() {
             <FaApple size={16} style={{ color: "var(--color-primary)" }} />
             <FaGooglePlay size={14} style={{ color: "var(--color-primary)" }} />
             <span
-              className="text-xs lg:text-[13px] ml-1"
+              className="text-xs lg:text-[13px]  ml-1"
               style={{ color: "var(--color-primary)" }}
             >
               Get the app
@@ -176,7 +176,7 @@ function FooterSection1() {
           {COLUMNS.map((col) => (
             <div key={col.title} className="flex flex-col gap-3">
               <p
-                className="text-xs lg:text-[13px] uppercase tracking-wide"
+                className="text-xs lg:text-[13px]  uppercase tracking-wide"
                 style={{ color: "rgba(0,0,0,0.5)" }}
               >
                 {col.title}
@@ -185,7 +185,7 @@ function FooterSection1() {
                 <Link
                   key={link.label}
                   to={link.to}
-                  className="text-xs lg:text-[13px] hover:underline"
+                  className="text-xs lg:text-[13px]  hover:underline"
                   style={{ color: "var(--color-primary-foreground)" }}
                 >
                   {link.label}

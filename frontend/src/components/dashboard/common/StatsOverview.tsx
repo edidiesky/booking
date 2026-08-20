@@ -70,7 +70,7 @@ export default function StatsOverview({
         <div className="flex items-center justify-end px-4 pb-3">
           <span
             title={growthTooltip}
-            className="text-xs lg:text-[13px] medium px-2.5 py-1 rounded-full"
+            className="text-xs lg:text-[13px]  medium px-2.5 py-1 rounded-full"
             style={{
               color: growthPct >= 0 ? "#166534" : "#991b1b",
               backgroundColor: growthPct >= 0 ? "#dcfce7" : "#fee2e2",

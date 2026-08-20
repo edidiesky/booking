@@ -41,7 +41,7 @@ export default function MyFavorites() {
             </p>
             <button
               onClick={() => navigate("/properties")}
-              className="text-xs lg:text-[13px] underline"
+              className="text-xs lg:text-[13px]  underline"
               style={{ color: "#17191c" }}
             >
               Browse properties

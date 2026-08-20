@@ -47,7 +47,7 @@ export default function MyBookings() {
             <div className="flex items-center justify-between gap-4">
               <h3 className="text-3xl flex-1 md:text-3xl bold text-[#17191c]">
                 My Reservations
-                <span className="block pt-3 font-normal text-xs lg:text-[13px]md:text-xs lg:text-[13px] text-[#4c4c4c]">
+                <span className="block pt-3 font-normal text-xs lg:text-[13px]md:text-xs lg:text-[13px]  text-[#4c4c4c]">
                   Here is your list of booked stays.
                 </span>
               </h3>
@@ -57,7 +57,7 @@ export default function MyBookings() {
                 placeholder="Search by reference..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="max-w-[400px] h-9 px-3 text-xs lg:text-[13px] border border-[#e8e6e3] outline-none rounded-lg"
+                className="max-w-[400px] h-9 px-3 text-xs lg:text-[13px]  border border-[#e8e6e3] outline-none rounded-lg"
               />
               </div>
             </div>
@@ -78,7 +78,7 @@ export default function MyBookings() {
                 </h1>
                 <Link
                   to="/properties"
-                  className="text-xs lg:text-[13px]md:text-xs lg:text-[13px] font-normal pb-1 pt-3 w-fit border-b border-[#17191c] uppercase tracking-wider text-[#17191c]"
+                  className="text-xs lg:text-[13px]md:text-xs lg:text-[13px]  font-normal pb-1 pt-3 w-fit border-b border-[#17191c] uppercase tracking-wider text-[#17191c]"
                 >
                   Visit our properties collection
                 </Link>

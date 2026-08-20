@@ -126,19 +126,19 @@ export default function ProductShortDescription({
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-xs lg:text-[13px] hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-xs lg:text-[13px]  hover:bg-[#FAF8F5]"
             >
               <FaXTwitter />
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-xs lg:text-[13px] hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-xs lg:text-[13px]  hover:bg-[#FAF8F5]"
             >
               <FaInstagram />
             </Link>
             <Link
               to={"cart/36364374"}
-              className="p-3 rounded-full text-xs lg:text-[13px] hover:bg-[#FAF8F5]"
+              className="p-3 rounded-full text-xs lg:text-[13px]  hover:bg-[#FAF8F5]"
             >
               <FaYoutube />
             </Link>

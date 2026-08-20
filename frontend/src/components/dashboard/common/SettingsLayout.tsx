@@ -48,7 +48,7 @@ export default function SettingsLayout({
               {headerName.charAt(0).toUpperCase()}
             </span>
             <div className="min-w-0">
-              <p className="text-xs lg:text-[13px] truncate" style={{ color: "var(--color-ink)" }}>{headerName}</p>
+              <p className="text-xs lg:text-[13px]  truncate" style={{ color: "var(--color-ink)" }}>{headerName}</p>
               {headerSubtitle && (
                 <p className="text-xs lg:text-[13px]truncate" style={{ color: "#777b86" }}>{headerSubtitle}</p>
               )}
@@ -78,7 +78,7 @@ export default function SettingsLayout({
                       }}
                     >
                       <Icon size={16} style={{ color: "#4c4c4c" }} className="shrink-0" />
-                      <span className="text-xs lg:text-[13px] flex-1">{item.label}</span>
+                      <span className="text-xs lg:text-[13px]  flex-1">{item.label}</span>
                       {item.badge}
                       <ChevronRight size={14} style={{ color: "#a3a6af" }} className="shrink-0" />
                     </button>

@@ -78,7 +78,7 @@ export default function PropertySearchBar({ initialValue, onSearch, className = 
 
       <button
         onClick={handleSearch}
-        className="flex min-w-32 items-center justify-center gap-2 h-11 lg:h-14 lg:h-11 rounded-full text-xs lg:text-[13px] text-white shrink-0"
+        className="flex min-w-32 items-center justify-center gap-2 h-11 lg:h-14 lg:h-11 rounded-full text-xs lg:text-[13px]  text-white shrink-0"
         style={{ backgroundColor: "var(--color-ink, #17191c)" }}
       >
         <SearchIcon size={15} />

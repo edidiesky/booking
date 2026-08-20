@@ -27,7 +27,7 @@ export default function CancelBookingModal({ bookingRef, isLoading, isOpen, onCo
         <div className="w-full flex px-8 items-start justify-between gap-1">
           <div>
             <h3 className="text-lg text-[#17191c]">Cancel Booking</h3>
-            <p className="text-xs lg:text-[13px] text-[#777b86] mt-1 max-w-[380px]">
+            <p className="text-xs lg:text-[13px]  text-[#777b86] mt-1 max-w-[380px]">
               Are you sure you want to cancel{" "}
               <span className="text-[#17191c]">{bookingRef}</span>?
               A refund may apply based on the cancellation policy.

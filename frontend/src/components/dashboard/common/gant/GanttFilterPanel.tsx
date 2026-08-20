@@ -41,7 +41,7 @@ export default function GanttFilterDropdown({ propertyId, currentSortMode, curre
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 h-8 px-3 text-xs lg:text-[13px] border rounded-full hover:bg-[#f2f0ed] transition-colors"
+        className="flex items-center gap-1.5 h-8 px-3 text-xs lg:text-[13px]  border rounded-full hover:bg-[#f2f0ed] transition-colors"
         style={{ borderColor: "#e8e6e3", color: "#17191c" }}
       >
         Filter rooms

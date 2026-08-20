@@ -66,7 +66,7 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
             className="absolute top-2 left-1/2 -translate-x-1/2 bg-white border rounded-xl shadow-lg px-3 py-2 z-10 whitespace-nowrap pointer-events-none"
             style={{ borderColor: "#e8e6e3" }}
           >
-            <p className="text-xs lg:text-[13px] flex items-center gap-1.5" style={{ color: "#17191c" }}>
+            <p className="text-xs lg:text-[13px]  flex items-center gap-1.5" style={{ color: "#17191c" }}>
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colorFor(hovered, segments.indexOf(hovered)) }} />
               {hovered.label}
             </p>
@@ -121,7 +121,7 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
             key={i}
             onMouseEnter={() => setHovered(s)}
             onMouseLeave={() => setHovered(null)}
-            className="flex items-center justify-between text-xs lg:text-[13px] py-1 cursor-default"
+            className="flex items-center justify-between text-xs lg:text-[13px]  py-1 cursor-default"
           >
             <span className="flex items-center gap-2" style={{ color: "#4c4c4c" }}>
               <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: colorFor(s, i) }} />

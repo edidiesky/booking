@@ -35,7 +35,7 @@ export default function NavGroupComponent({ group, base = "/dashboard"  }: Props
   return (
     <div className="mb-5">
       <p
-        className="text-xs lg:text-[13px] uppercase px-2 mb-1.5 font-semibold"
+        className="text-xs lg:text-[13px]  uppercase px-2 mb-1.5 font-semibold"
         style={{ color: "var(--color-hint-of-grey)" }}
       >
         {group.label}
@@ -55,7 +55,7 @@ export default function NavGroupComponent({ group, base = "/dashboard"  }: Props
             onMouseLeave={() => setHoveredPath(null)}
             className={({ isActive }) =>
               [
-                "flex items-center gap-2.5 text-[#9e9e9e] px-2.5 py-2 rounded-[8px] font-semibold text-xs lg:text-[13px] transition-colors w-full mb-0.5",
+                "flex items-center gap-2.5 text-[#9e9e9e] px-2.5 py-2 rounded-[8px] font-semibold text-xs lg:text-[13px]  transition-colors w-full mb-0.5",
                 isActive ? "bg-[#f5f5f3] font-medium" : "hover:bg-[#f5f5f3]",
               ].join(" ")
             }

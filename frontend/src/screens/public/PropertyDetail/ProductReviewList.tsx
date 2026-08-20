@@ -43,7 +43,7 @@
 
 // //         <button
 // //           onClick={onViewAll}
-// //           className="rounded-full border border-black/10 px-6 py-3 text-xs lg:text-[13px] text-[#171717] hover:bg-[#f4f3ee] transition-colors"
+// //           className="rounded-full border border-black/10 px-6 py-3 text-xs lg:text-[13px]  text-[#171717] hover:bg-[#f4f3ee] transition-colors"
 // //         >
 // //           View all reviews for this item
 // //         </button>
@@ -206,7 +206,7 @@
 //       <div className="flex items-center gap-2 flex-wrap ">
 //         <button
 //           onClick={() => setActiveTag("Suggested")}
-//           className={`shrink-0 rounded-full border px-4 py-1.5 text-xs lg:text-[13px] transition-colors ${
+//           className={`shrink-0 rounded-full border px-4 py-1.5 text-xs lg:text-[13px]  transition-colors ${
 //             activeTag === "Suggested"
 //               ? "border-[#171717] bg-[#171717] text-white"
 //               : "border-[#EDEAE3] text-[#171717] hover:border-[#171717]"
@@ -218,7 +218,7 @@
 //           <button
 //             key={tag}
 //             onClick={() => setActiveTag(tag)}
-//             className={`shrink-0 rounded-full border px-4 py-1.5 text-xs lg:text-[13px] whitespace-nowrap transition-colors ${
+//             className={`shrink-0 rounded-full border px-4 py-1.5 text-xs lg:text-[13px]  whitespace-nowrap transition-colors ${
 //               activeTag === tag
 //                 ? "border-[#171717] bg-[#171717] text-white"
 //                 : "border-[#EDEAE3] text-[#171717] hover:border-[#171717]"
@@ -282,7 +282,7 @@ function ReviewCard({ review }: { review: Review }) {
               <Stars rating={review.rating} />
               <span className="text-xs lg:text-[13px]lg:text-lg bold">{displayName}</span>
             </div>
-            <p className="text-xs lg:text-[13px] text-[#171717] mt-0.5">{review.title}</p>
+            <p className="text-xs lg:text-[13px]  text-[#171717] mt-0.5">{review.title}</p>
           </div>
         </div>
         {review.is_verified_purchase && (

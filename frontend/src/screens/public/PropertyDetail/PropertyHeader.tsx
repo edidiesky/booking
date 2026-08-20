@@ -42,7 +42,7 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
           {lowestPrice !== null && (
             <h1 className="text-xl lg:text-3xl bold text-[#17191c]">
               ₦{Number(lowestPrice).toLocaleString()}
-              <span className="text-xs lg:text-[13px] font-normal text-[#777b86]"> /night</span>
+              <span className="text-xs lg:text-[13px]  font-normal text-[#777b86]"> /night</span>
             </h1>
           )}
         </div>
@@ -69,7 +69,7 @@ export default function PropertyHeader({ property, roomTypes }: Props) {
             </div>
             <div className="flex items-center gap-1">
               <span className="text-xs">{value}</span>
-<h4 className="text-xs lg:text-[13px] text-[#17191c]">{label}</h4>
+<h4 className="text-xs lg:text-[13px]  text-[#17191c]">{label}</h4>
             </div>
                         
           </div>

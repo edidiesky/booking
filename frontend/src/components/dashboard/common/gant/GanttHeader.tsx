@@ -22,7 +22,7 @@ export default function GanttHeader({ windowStart, visibleDays }: Props) {
               {format(day, "EEE")}
             </span>
             <span
-              className="text-xs lg:text-[13px] w-5 h-5 rounded-full flex items-center justify-center"
+              className="text-xs lg:text-[13px]  w-5 h-5 rounded-full flex items-center justify-center"
               style={{
                 backgroundColor: today ? "#17191c" : "transparent",
                 color: today ? "#fff" : "#17191c",

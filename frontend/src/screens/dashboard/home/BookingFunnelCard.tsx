@@ -56,14 +56,14 @@ export default function RecentTransactionsCard({ recentTransactions }: Props) {
                   {initialsFromName(guest_first_name , guest_last_name, booking_ref)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs lg:text-[13px] truncate" style={{ color: "var(--color-ink)" }}>
+                  <p className="text-xs lg:text-[13px]  truncate" style={{ color: "var(--color-ink)" }}>
                     {name} &middot; {fmtNaira(amount_ngn )} via <span className="capitalize">{gateway}</span>
                   </p>
-                  <p className="text-xs lg:text-[13px] medium mt-0.5 truncate" style={{ color: "var(--color-muted-stone)" }}>
+                  <p className="text-xs lg:text-[13px]  medium mt-0.5 truncate" style={{ color: "var(--color-muted-stone)" }}>
                     {transaction_id ?? booking_ref}
                   </p>
                 </div>
-                <span className="text-xs lg:text-[13px] medium shrink-0">
+                <span className="text-xs lg:text-[13px]  medium shrink-0">
                   <StatusBadge status={status} />
                 </span>
               </div>

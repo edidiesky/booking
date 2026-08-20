@@ -92,7 +92,7 @@ export default function StepInitiate({ onSubmit, isLoading, userChoice }: Props)
         </button>
       </form>
 
-      <p className="text-xs lg:text-[13px] text-center" style={{ color: "var(--color-muted-stone)" }}>
+      <p className="text-xs lg:text-[13px]  text-center" style={{ color: "var(--color-muted-stone)" }}>
         Already have an account?{" "}
         <Link to="/login" className="underline underline-offset-4"
               style={{ color: "var(--color-ink)" }}>

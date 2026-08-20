@@ -43,7 +43,7 @@ export default function TeamManagementTab() {
         placeholder="Search by user ID or role..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="h-9 px-3 text-xs lg:text-[13px] border rounded-lg outline-none w-64"
+        className="h-9 px-3 text-xs lg:text-[13px]  border rounded-lg outline-none w-64"
         style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
       />
 
@@ -95,7 +95,7 @@ export default function TeamManagementTab() {
                     <td className="px-5 py-3 text-xs" style={{ color: "var(--color-muted-stone)" }}>
                       {a.assignedBy}
                     </td>
-                    <td className="px-5 py-3 text-xs lg:text-[13px] whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
+                    <td className="px-5 py-3 text-xs lg:text-[13px]  whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
                       {formatDate(a.assignedAt)}
                     </td>
                     <td className="px-5 py-3">

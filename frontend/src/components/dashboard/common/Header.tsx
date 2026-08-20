@@ -58,7 +58,7 @@ export default function Header() {
             to="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 text-xs lg:text-[13px] px-4 py-1.5 rounded-full border transition-opacity hover:opacity-70"
+            className="hidden sm:flex items-center gap-1.5 text-xs lg:text-[13px]  px-4 py-1.5 rounded-full border transition-opacity hover:opacity-70"
             style={{
               color: "var(--color-muted-stone)",
               borderColor: "var(--color-fog)",

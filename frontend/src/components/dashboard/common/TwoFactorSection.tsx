@@ -23,7 +23,7 @@ export default function TwoFactorSection({ enabled }: Props) {
 
   return (
     <section>
-      <p className="text-xs lg:text-[13px] uppercase mb-3" style={{ color: "#a3a6af" }}>Two-Factor Authentication</p>
+      <p className="text-xs lg:text-[13px]  uppercase mb-3" style={{ color: "#a3a6af" }}>Two-Factor Authentication</p>
       <div className="rounded-xl border p-4 flex items-center justify-between" style={{ borderColor: "#e8e6e3" }}>
         <div className="flex items-center gap-3">
           <ShieldCheck size={16} style={{ color: "#4c4c4c" }} />
@@ -38,7 +38,7 @@ export default function TwoFactorSection({ enabled }: Props) {
         </div>
         <button
           onClick={() => start(enabled ? "two_factor_disable" : "two_factor_enable")}
-          className="text-xs lg:text-[13px] px-3 py-1.5 rounded-full shrink-0"
+          className="text-xs lg:text-[13px]  px-3 py-1.5 rounded-full shrink-0"
           style={{
             backgroundColor: enabled ? "#fee2e2" : "var(--color-ink)",
             color: enabled ? "#991b1b" : "var(--color-canvas)",

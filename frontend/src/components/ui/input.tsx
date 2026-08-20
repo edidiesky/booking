@@ -37,7 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <label
             htmlFor={inputId}
             className={cn(
-              "text-xs lg:text-[13px] leading-none",
+              "text-xs lg:text-[13px]  leading-none",
               disabled && "opacity-50 cursor-not-allowed"
             )}
           >
@@ -126,10 +126,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {error && (
-          <p className="text-xs lg:text-[13px] text-destructive ">{error}</p>
+          <p className="text-xs lg:text-[13px]  text-destructive ">{error}</p>
         )}
         {hint && !error && (
-          <p className="text-xs lg:text-[13px] text-muted-foreground">{hint}</p>
+          <p className="text-xs lg:text-[13px]  text-muted-foreground">{hint}</p>
         )}
       </div>
     );

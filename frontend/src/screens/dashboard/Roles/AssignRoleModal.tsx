@@ -21,7 +21,7 @@ interface Props {
   isSaving: boolean;
 }
 
-const field      = "w-full h-10 px-3 text-xs lg:text-[13px] border rounded-lg outline-none";
+const field      = "w-full h-10 px-3 text-xs lg:text-[13px]  border rounded-lg outline-none";
 const fieldStyle = { borderColor: "#e8e6e3", color: "#17191c" };
 
 export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: Props) {
@@ -47,7 +47,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
         <div className="w-full flex px-8 items-start justify-between gap-1">
           <div>
             <h3 className="text-lg text-[#17191c]">Assign Role</h3>
-            <p className="text-xs lg:text-[13px] text-[#777b86] mt-1 max-w-[380px]">
+            <p className="text-xs lg:text-[13px]  text-[#777b86] mt-1 max-w-[380px]">
               Grant a team member one of your tenant's roles.
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
             type="button"
             onClick={onClose}
             disabled={isSaving}
-            className="h-9 px-5 text-xs lg:text-[13px] rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
+            className="h-9 px-5 text-xs lg:text-[13px]  rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -96,7 +96,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
             type="button"
             onClick={handleSubmit(submit)}
             disabled={isSaving}
-            className="h-9 px-5 text-xs lg:text-[13px] rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+            className="h-9 px-5 text-xs lg:text-[13px]  rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
           >
             {isSaving ? (
               <>

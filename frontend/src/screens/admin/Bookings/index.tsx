@@ -157,7 +157,7 @@ export default function DashboardBookings() {
               actions.
             </p>
           </div>
-          <span className="text-xs lg:text-[13px] text-[#a3a6af] mt-2">
+          <span className="text-xs lg:text-[13px]  text-[#a3a6af] mt-2">
             {bookings.length} total
           </span>
         </div>
@@ -220,7 +220,7 @@ export default function DashboardBookings() {
             />
             <button
               onClick={resetFilters}
-              className="text-xs lg:text-[13px] underline"
+              className="text-xs lg:text-[13px]  underline"
               style={{ color: "#777b86" }}
             >
               Reset
@@ -264,7 +264,7 @@ export default function DashboardBookings() {
                   <tr>
                     <td
                       colSpan={7}
-                      className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]"
+                      className="px-5 py-10 text-center text-xs lg:text-[13px]  text-[#a3a6af]"
                     >
                       No bookings found{search ? ` for "${search}"` : ""}
                     </td>

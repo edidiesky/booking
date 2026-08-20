@@ -65,7 +65,7 @@ export default function ChangePinTab() {
       <button
         onClick={handleSubmit}
         disabled={settingPin || changingPin || newPin.length < 4 || (hasPin && currentPin.length < 4)}
-        className="h-10 rounded-lg text-xs lg:text-[13px] disabled:opacity-50 w-fit px-5"
+        className="h-10 rounded-lg text-xs lg:text-[13px]  disabled:opacity-50 w-fit px-5"
         style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
       >
         {hasPin ? "Change PIN" : "Set PIN"}

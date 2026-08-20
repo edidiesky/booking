@@ -59,7 +59,7 @@ export default function RolesPermissionsTab() {
           <button
             key={t.key}
             onClick={() => setScope(t.key)}
-            className="h-8 px-4 rounded-full text-xs lg:text-[13px] transition-colors"
+            className="h-8 px-4 rounded-full text-xs lg:text-[13px]  transition-colors"
             style={{
               backgroundColor: scope === t.key ? "var(--color-ink)" : "transparent",
               color: scope === t.key ? "var(--color-canvas)" : "var(--color-muted-stone)",

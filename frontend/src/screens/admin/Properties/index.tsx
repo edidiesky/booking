@@ -57,7 +57,7 @@ export default function AdminProperties() {
               onValueChange={(v) => setStatusFilter(v as PropertyStatus | "")}
               options={STATUS_OPTIONS}
             />
-            <span className="text-xs lg:text-[13px] text-[#a3a6af]">
+            <span className="text-xs lg:text-[13px]  text-[#a3a6af]">
               {filtered.length} propert{filtered.length === 1 ? "y" : "ies"}
             </span>
           </div>
@@ -87,7 +87,7 @@ export default function AdminProperties() {
                 ))
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]">
+                  <td colSpan={6} className="px-5 py-10 text-center text-xs lg:text-[13px]  text-[#a3a6af]">
                     No properties found.
                   </td>
                 </tr>

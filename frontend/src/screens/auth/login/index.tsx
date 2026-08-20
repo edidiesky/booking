@@ -61,7 +61,7 @@ export default function Login() {
           </button>
         </form>
 
-        <p className="text-xs lg:text-[13px] text-center" style={{ color: "var(--color-muted-stone)" }}>
+        <p className="text-xs lg:text-[13px]  text-center" style={{ color: "var(--color-muted-stone)" }}>
           Don't have an account?{" "}
           <Link to="/onboarding" className="underline underline-offset-4" style={{ color: "var(--color-ink)" }}>
             Get started

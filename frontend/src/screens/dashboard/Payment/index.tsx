@@ -90,7 +90,7 @@ export default function DashboardPayments() {
             description="View all payment transactions across your property bookings."
           />
 
-          <span className="text-xs lg:text-[13px] text-[#a3a6af] mt-2">
+          <span className="text-xs lg:text-[13px]  text-[#a3a6af] mt-2">
             {allPayments.length} total
           </span>
         </div>
@@ -193,7 +193,7 @@ export default function DashboardPayments() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-[13px]  text-[#a3a6af]"
                   >
                     Loading payments...
                   </td>
@@ -210,7 +210,7 @@ export default function DashboardPayments() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-5 py-10 text-center text-xs lg:text-[13px] text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-[13px]  text-[#a3a6af]"
                   >
                     No payments found
                   </td>
@@ -221,14 +221,14 @@ export default function DashboardPayments() {
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-xs lg:text-[13px] text-[#a3a6af]">
+          <span className="text-xs lg:text-[13px]  text-[#a3a6af]">
             Page {currentPage} of {totalPages} - {allPayments.length} payments
           </span>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="h-8 px-3 text-xs lg:text-[13px] border border-[#e8e6e3] text-[#4c4c4c] disabled:opacity-40 hover:bg-[#f2f0ed]"
+              className="h-8 px-3 text-xs lg:text-[13px]  border border-[#e8e6e3] text-[#4c4c4c] disabled:opacity-40 hover:bg-[#f2f0ed]"
             >
               Prev
             </button>
@@ -239,7 +239,7 @@ export default function DashboardPayments() {
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`h-8 w-8 rounded-xl text-xs lg:text-[13px] border ${currentPage === page ? "bg-[#17191c] text-white border-[#17191c]" : "border-[#e8e6e3] text-[#4c4c4c] hover:bg-[#f2f0ed]"}`}
+                className={`h-8 w-8 rounded-xl text-xs lg:text-[13px]  border ${currentPage === page ? "bg-[#17191c] text-white border-[#17191c]" : "border-[#e8e6e3] text-[#4c4c4c] hover:bg-[#f2f0ed]"}`}
               >
                 {page}
               </button>
@@ -247,7 +247,7 @@ export default function DashboardPayments() {
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="h-8 px-3 text-xs lg:text-[13px] border border-[#e8e6e3] text-[#4c4c4c] disabled:opacity-40 hover:bg-[#f2f0ed]"
+              className="h-8 px-3 text-xs lg:text-[13px]  border border-[#e8e6e3] text-[#4c4c4c] disabled:opacity-40 hover:bg-[#f2f0ed]"
             >
               Next
             </button>
