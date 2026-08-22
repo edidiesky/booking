@@ -53,12 +53,12 @@ export default function AdminBookingDrawer({ booking, onClose }: Props) {
           </div>
           <div className="flex-1 min-w-0 flex flex-col gap-1">
             <p className="text-sm lg:text-sm bold text-[#17191c] truncate">{booking.propertyName}</p>
-            <p className="text-xs lg:text-[13px]  text-[#777b86] truncate">{booking.roomTypeName}</p>
-            <p className="text-xs lg:text-[13px]  text-[#777b86]">
+            <p className="text-xs lg:text-[13px]     text-[#777b86] truncate">{booking.roomTypeName}</p>
+            <p className="text-xs lg:text-[13px]     text-[#777b86]">
               {nights} night{nights !== 1 ? "s" : ""}
             </p>
           </div>
-          <p className="text-xs lg:text-[13px]  text-[#17191c] whitespace-nowrap">
+          <p className="text-xs lg:text-[13px]     text-[#17191c] whitespace-nowrap">
             {formatCurrency(Number(booking.totalAmountNgn))}
           </p>
         </div>
@@ -100,10 +100,10 @@ export default function AdminBookingDrawer({ booking, onClose }: Props) {
               <div key={step.key} className="flex items-start gap-3">
                 <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${i <= idx ? "bg-[#17191c]" : "bg-[#e8e6e3]"}`} />
                 <div>
-                  <p className={`text-xs lg:text-[13px]  ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}>
+                  <p className={`text-xs lg:text-[13px]     ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}>
                     {step.label}
                   </p>
-                  <p className="text-xs lg:text-[13px]  text-[#a3a6af]">{step.description}</p>
+                  <p className="text-xs lg:text-[13px]     text-[#a3a6af]">{step.description}</p>
                 </div>
               </div>
             ))}
@@ -114,14 +114,14 @@ export default function AdminBookingDrawer({ booking, onClose }: Props) {
       <div className="border-t border-[#e8e6e3] bg-white px-6 py-4 flex items-center justify-between mt-auto">
         <button
           onClick={onClose}
-          className="text-xs lg:text-[13px]  text-[#777b86] bold hover:text-[#17191c]"
+          className="text-xs lg:text-[13px]     text-[#777b86] bold hover:text-[#17191c]"
         >
           Close
         </button>
         {booking.receiptUrl && (
           <button
             onClick={() => window.open(booking.receiptUrl!, "_blank", "noopener,noreferrer")}
-            className="text-xs lg:text-[13px]  text-[#fff] bg-black rounded-full px-4 py-2"
+            className="text-xs lg:text-[13px]     text-[#fff] bg-black rounded-full px-4 py-2"
           >
             View receipt
           </button>

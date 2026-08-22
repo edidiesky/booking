@@ -32,7 +32,7 @@ export default function GuestProfile() {
           </div>
           <div className="flex flex-col gap-2">
             <h4 className="text-2xl font-semibold">{fullName} Settings</h4>
-            <span className="text-xs lg:text-[13px]capitalize text-[#777b86] truncate">{`${user?.userType} profile`}</span>
+            <span className="text-xs lg:text-[13px]   capitalize text-[#777b86] truncate">{`${user?.userType} profile`}</span>
           </div>
         </div>
         <div className="w-full gap-10">
@@ -42,7 +42,7 @@ export default function GuestProfile() {
                 <button
                   key={t.key}
                   onClick={() => setActive(t.key)}
-                  className={`px-4 min-w-56 lg:min-w-48 text-start  hover:bg-[#f5f5f3] py-3 text-xs lg:text-[13px]${active === t.key ? "border-r-2 bg-[#f5f5f3] border-[#17191c] font-semibold" : "text-[#a3a6af]"}`}
+                  className={`px-4 min-w-56 lg:min-w-48 text-start  hover:bg-[#f5f5f3] py-3 text-xs lg:text-[13px]   ${active === t.key ? "border-r-2 bg-[#f5f5f3] border-[#17191c] font-semibold" : "text-[#a3a6af]"}`}
                 >
                   {t.label}
                 </button>

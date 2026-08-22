@@ -42,15 +42,15 @@ export default function SettingsLayout({
         <div className="flex items-center justify-between gap-3 px-5 py-5">
           <div className="flex items-center gap-3 min-w-0">
             <span
-              className="w-11 h-11 rounded-full flex items-center justify-center text-xs lg:text-[13px]lg:text-lg bold shrink-0"
+              className="w-11 h-11 rounded-full flex items-center justify-center text-xs lg:text-[13px]   lg:text-lg bold shrink-0"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
             >
               {headerName.charAt(0).toUpperCase()}
             </span>
             <div className="min-w-0">
-              <p className="text-xs lg:text-[13px]  truncate" style={{ color: "var(--color-ink)" }}>{headerName}</p>
+              <p className="text-xs lg:text-[13px]     truncate" style={{ color: "var(--color-ink)" }}>{headerName}</p>
               {headerSubtitle && (
-                <p className="text-xs lg:text-[13px]truncate" style={{ color: "#777b86" }}>{headerSubtitle}</p>
+                <p className="text-xs lg:text-[13px]   truncate" style={{ color: "#777b86" }}>{headerSubtitle}</p>
               )}
             </div>
           </div>
@@ -78,7 +78,7 @@ export default function SettingsLayout({
                       }}
                     >
                       <Icon size={16} style={{ color: "#4c4c4c" }} className="shrink-0" />
-                      <span className="text-xs lg:text-[13px]  flex-1">{item.label}</span>
+                      <span className="text-xs lg:text-[13px]     flex-1">{item.label}</span>
                       {item.badge}
                       <ChevronRight size={14} style={{ color: "#a3a6af" }} className="shrink-0" />
                     </button>

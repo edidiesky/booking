@@ -6,13 +6,14 @@ import CreateRoomTypeModal from "./CreateRoomTypeModal";
 import DeletePropertyModal from "./DeletePropertyModal";
 import { useProperties } from "./hooks/useProperties";
 import { ChartSelect } from "@/components/common/charts/Chartselect";
-import type { PropertyStatus } from "@/types/api";
+import type { Property, PropertyStatus } from "@/types/api";
 import { useNavigate } from "react-router-dom";
 import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import ExportPdfButton from "@/components/common/ExportPdfButton";
 import { PROPERTY_URL } from "@/constants/api";
 import ImportRoomTypesModal from "./ImportRoomTypesModal";
 import Title from "@/components/dashboard/common/Title";
+import PropertyPerformanceModal from "./PropertyPerformanceModal";
 
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
@@ -26,7 +27,9 @@ const HEADERS = ["Name", "Type", "Location", "Status", "Created", "Actions"];
 
 export default function DashboardProperties() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [performancemodalopen, setPerformanceModalOpen] = useState(false);
   const [editPropertyId, setEditPropertyId] = useState<string | null>(null);
+  const [performanceDetail, sePerformanceDetail] = useState<Property | null>(null);
   const [roomTypeId, setRoomTypeId] = useState<string | null>(null);
   const [showImportPicker, setShowImportPicker] = useState(false);
   const [importPropertyId, setImportPropertyId] = useState<string | null>(null);
@@ -52,6 +55,16 @@ export default function DashboardProperties() {
     setEditPropertyId(null);
   };
 
+  const handlePropertyPerformanceModalClose = () => {
+    setPerformanceModalOpen(false);
+    sePerformanceDetail(null);
+  };
+
+    const handlePropertyPerformanceModalOpen = (property:Property) => {
+    setPerformanceModalOpen(true);
+    sePerformanceDetail(property);
+  };
+
   const handleOpenEdit = (id: string) => {
     setEditPropertyId(id);
     setModalOpen(true);
@@ -65,6 +78,16 @@ export default function DashboardProperties() {
 
   return (
     <>
+    {/* performancemodalOpen */}
+    <AnimatePresence>
+        {performancemodalopen && performanceDetail && (
+          <PropertyPerformanceModal
+            property={performanceDetail}
+            onClose={handlePropertyPerformanceModalClose}
+            isOpen={performancemodalopen}
+          />
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {modalOpen && (
           <PropertyModal
@@ -90,7 +113,7 @@ export default function DashboardProperties() {
             <div className="relative">
               <button
                 onClick={() => setShowImportPicker((v) => !v)}
-                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-[13px]  p-2 bold px-6"
+                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-[13px]     p-2 bold px-6"
               >
                 Bulk Import
               </button>
@@ -107,7 +130,7 @@ export default function DashboardProperties() {
                   </p>
                   {properties.length === 0 ? (
                     <p
-                      className="text-xs lg:text-[13px]px-2 py-2"
+                      className="text-xs lg:text-[13px]   px-2 py-2"
                       style={{ color: "#a3a6af" }}
                     >
                       Add a property first.
@@ -120,7 +143,7 @@ export default function DashboardProperties() {
                           setImportPropertyId(p.id);
                           setShowImportPicker(false);
                         }}
-                        className="w-full text-left text-xs lg:text-[13px]px-2 py-2 rounded-lg hover:bg-[#f2f0ed] transition-colors truncate"
+                        className="w-full text-left text-xs lg:text-[13px]   px-2 py-2 rounded-lg hover:bg-[#f2f0ed] transition-colors truncate"
                         style={{ color: "#17191c" }}
                       >
                         {p.name}
@@ -132,7 +155,7 @@ export default function DashboardProperties() {
             </div>
             <button
               onClick={handleOpenCreate}
-              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px]  p-2 bold px-6"
+              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px]     p-2 bold px-6"
             >
               Add Property
             </button>
@@ -181,7 +204,7 @@ export default function DashboardProperties() {
               onValueChange={(v) => setStatusFilter(v as PropertyStatus | "")}
               options={STATUS_OPTIONS}
             />
-            <span className="text-xs lg:text-[13px]  text-[#a3a6af]">
+            <span className="text-xs lg:text-[13px]     text-[#a3a6af]">
               {filtered.length} propert{filtered.length === 1 ? "y" : "ies"}
             </span>
           </div>
@@ -222,7 +245,7 @@ export default function DashboardProperties() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-5 py-10 text-center text-xs lg:text-[13px]  text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-[13px]     text-[#a3a6af]"
                   >
                     No properties found. Click "Add Property" to create your
                     first listing.
@@ -238,6 +261,7 @@ export default function DashboardProperties() {
                       navigate(`/dashboard/properties/${id}`)
                     }
                     onEditProperty={handleOpenEdit}
+                    onPropertyPerformanceModalOpen={handlePropertyPerformanceModalOpen}
                     onDeleteProperty={(property) =>
                       setDeleteTarget({ id: property.id, name: property.name })
                     }

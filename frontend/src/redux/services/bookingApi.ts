@@ -9,6 +9,8 @@ import type {
   TenantBookingQueryParams,
   ApiSuccessResponse,
   BookingStatsResponse,
+  PropertyPerformancePoint,
+  PropertySaleComparison,
 } from "@/types/api";
 
 interface BookingResponse {
@@ -121,8 +123,21 @@ export const bookingApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (_r, _e, { id }) => [{ type: "Booking", id }, "Booking"],
     }),
+    getPropertyPerformance: builder.query<
+      {
+        data: {
+          trend: PropertyPerformancePoint[];
+          comparison: PropertySaleComparison[];
+        };
+      },
+      { propertyId: string; range: string }
+    >({
+      query: ({ propertyId, range }) =>
+        `${BOOKING_URL}/property/${propertyId}/performance?range=${range}`,
+    }),
   }),
 });
+
 
 export const {
   useInitiateBookingMutation,
@@ -135,5 +150,7 @@ export const {
   useCheckOutMutation,
   useLazyGetBookingsInRangeQuery,
   useTransitionBookingStatusMutation,
-  useGetRevenueTrendQuery
+  useGetRevenueTrendQuery,
 } = bookingApi;
+
+

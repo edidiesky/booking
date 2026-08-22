@@ -85,14 +85,14 @@ export default function StepInitiate({ onSubmit, isLoading, userChoice }: Props)
 
         <button
           type="submit" disabled={isLoading}
-          className="w-full h-12 rounded-full flex items-center justify-center text-xs lg:text-[13px]transition-opacity hover:opacity-80 disabled:opacity-50"
+          className="w-full h-12 rounded-full flex items-center justify-center text-xs lg:text-[13px]   transition-opacity hover:opacity-80 disabled:opacity-50"
           style={{ backgroundColor: "var(--color-vivid)", color: "var(--color-vivid-foreground)" }}
         >
           {isLoading ? "Sending OTP..." : "Continue"}
         </button>
       </form>
 
-      <p className="text-xs lg:text-[13px]  text-center" style={{ color: "var(--color-muted-stone)" }}>
+      <p className="text-xs lg:text-[13px]     text-center" style={{ color: "var(--color-muted-stone)" }}>
         Already have an account?{" "}
         <Link to="/login" className="underline underline-offset-4"
               style={{ color: "var(--color-ink)" }}>

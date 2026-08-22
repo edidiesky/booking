@@ -24,7 +24,7 @@ const Listing = () => {
       <div className="mx-auto px-4 lg:px-0 pt-32 pb-20 flex flex-col gap-8 lg:gap-20" style={{ maxWidth: "1280px" }}>
         <div className="grid lg:grid-cols-2 gap-4 items-start lg:items-center w-full">
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs lg:text-[13px]  md:text-lg text-[var(--primary)]">
+            <h4 className="text-xs lg:text-[13px]     md:text-lg text-[var(--primary)]">
               Passionate – Dedicated – Professional
             </h4>
             <h4 className="text-4xl lg:text-6xl capitalize family2 text-[var(--dark-1)]">

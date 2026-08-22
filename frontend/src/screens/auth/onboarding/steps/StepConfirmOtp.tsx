@@ -123,7 +123,7 @@ export default function StepConfirmOtp({
       <button
         onClick={handleResend}
         disabled={countdown > 0 || isResending}
-        className="text-xs lg:text-[13px]transition-opacity disabled:opacity-40 text-left"
+        className="text-xs lg:text-[13px]   transition-opacity disabled:opacity-40 text-left"
         style={{ color: "var(--color-muted-stone)" }}
       >
         {countdown > 0

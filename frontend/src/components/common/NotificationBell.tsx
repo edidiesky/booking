@@ -116,7 +116,7 @@ export default function NotificationBell() {
           style={{ borderColor: "#e8e6e3", width: 380, maxHeight: 520 }}
         >
           <div className="flex items-center justify-between px-5 pt-5 pb-3">
-            <p className="text-xs lg:text-[13px]" style={{ color: "#17191c" }}>Notifications</p>
+            <p className="text-xs lg:text-[13px]   " style={{ color: "#17191c" }}>Notifications</p>
             <button
               onClick={handleMarkAllRead}
               disabled={unreadCount === 0}
@@ -173,9 +173,9 @@ export default function NotificationBell() {
                       )}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs lg:text-[13px]" style={{ color: "#17191c" }}>{n.title}</p>
-                      <p className="text-xs lg:text-[13px]mt-0.5 line-clamp-2" style={{ color: "#666" }}>{n.body}</p>
-                      <p className="text-xs lg:text-[13px]mt-1" style={{ color: "#a3a6af" }}>{moment(n.created_at).format("DD MMM YYYY")}</p>
+                      <p className="text-xs lg:text-[13px]   " style={{ color: "#17191c" }}>{n.title}</p>
+                      <p className="text-xs lg:text-[13px]   mt-0.5 line-clamp-2" style={{ color: "#666" }}>{n.body}</p>
+                      <p className="text-xs lg:text-[13px]   mt-1" style={{ color: "#a3a6af" }}>{moment(n.created_at).format("DD MMM YYYY")}</p>
                     </div>
                   </button>
                 );
@@ -187,7 +187,7 @@ export default function NotificationBell() {
             <Link
               to="/dashboard/notifications"
               onClick={() => setOpen(false)}
-              className="text-xs lg:text-[13px]"
+              className="text-xs lg:text-[13px]   "
               style={{ color: "#3b82f6" }}
             >
               View all notifications

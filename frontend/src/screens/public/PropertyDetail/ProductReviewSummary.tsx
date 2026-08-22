@@ -43,7 +43,7 @@
 // //               strokeWidth={0}
 // //             />
 // //           </div>
-// //           <span className="text-xs lg:text-[13px]  underline underline-offset-4 text-[#171717]">
+// //           <span className="text-xs lg:text-[13px]     underline underline-offset-4 text-[#171717]">
 // //             Item average ({stats.totalReviews} reviews)
 // //           </span>
 // //         </div>
@@ -72,7 +72,7 @@
 
 // //         return (
 // //           <div key={level} className="flex items-center gap-3">
-// //             <span className="w-3 text-xs lg:text-[13px]text-[#444] text-right">
+// //             <span className="w-3 text-xs lg:text-[13px]   text-[#444] text-right">
 // //               {level}
 // //             </span>
 // //             <Star size={12} className="text-[#e8a33d]" fill="currentColor" strokeWidth={0} />
@@ -82,7 +82,7 @@
 // //                 style={{ width: `${pct}%` }}
 // //               />
 // //             </div>
-// //             <span className="w-8 text-xs lg:text-[13px]text-[#666] text-right">
+// //             <span className="w-8 text-xs lg:text-[13px]   text-[#666] text-right">
 // //               {count}
 // //             </span>
 // //           </div>
@@ -123,11 +123,11 @@
 //             strokeDasharray={`${dash} ${circumference}`}
 //           />
 //         </svg>
-//         <div className="absolute inset-0 flex items-center justify-center text-xs lg:text-[13px]lg:text-lg bold text-[#171717]">
+//         <div className="absolute inset-0 flex items-center justify-center text-xs lg:text-[13px]   lg:text-lg bold text-[#171717]">
 //           {value.toFixed(1)}
 //         </div>
 //       </div>
-//       <span className="text-xs lg:text-[13px]text-[#666] text-center leading-tight">
+//       <span className="text-xs lg:text-[13px]   text-[#666] text-center leading-tight">
 //         {label}
 //       </span>
 //     </div>
@@ -148,14 +148,14 @@
 //     <div className="w-full flex flex-col gap-6">
 //       <h3 className="text-lg lg:text-2xl bold">Reviews for this item</h3>
 //       <div className="w-full flex flex-col gap-4">
-//         <p className="text-xs lg:text-[13px]lg:text-lg bold">
+//         <p className="text-xs lg:text-[13px]   lg:text-lg bold">
 //           What buyers say, summarized by AI:
 //         </p>
 //         <div className="flex flex-wrap gap-2">
 //           {mockAiSummary.map((chip) => (
 //             <span
 //               key={chip.label}
-//               className="inline-flex items-center gap-1 rounded-full border border-[#EDEAE3] px-3 py-1 text-xs lg:text-[13px]text-[#171717]"
+//               className="inline-flex items-center gap-1 rounded-full border border-[#EDEAE3] px-3 py-1 text-xs lg:text-[13px]   text-[#171717]"
 //             >
 //               <Check size={12} className="text-[#2F5D4F]" />
 //               {chip.label}
@@ -172,7 +172,7 @@
 //             </span>
 //             <Star size={22} className="fill-[#F5A623] text-[#F5A623]" />
 //           </div>
-//           <span className="text-xs lg:text-[13px]text-[#666]">
+//           <span className="text-xs lg:text-[13px]   text-[#666]">
 //             Item average{" "}
 //             <span className="underline">({totalReviews} reviews)</span>
 //           </span>
@@ -185,11 +185,11 @@
 //         </div>
 
 //         <div className="flex flex-col items-center gap-1 rounded-full border-2 border-[#F5A623] h-20 w-20 justify-center">
-//           <span className="text-xs lg:text-[13px]lg:text-lg bold text-[#171717]">
+//           <span className="text-xs lg:text-[13px]   lg:text-lg bold text-[#171717]">
 //             {recommendPercent}%
 //           </span>
 //         </div>
-//         <span className="text-xs lg:text-[13px]text-[#666] -ml-4 max-w-[70px]">
+//         <span className="text-xs lg:text-[13px]   text-[#666] -ml-4 max-w-[70px]">
 //           Buyers recommend
 //         </span>
 //       </div>
@@ -220,7 +220,7 @@ export default function ProductReviewSummary({ stats }: Props) {
             </span>
             <Star size={22} className="fill-[#F5A623] text-[#F5A623]" />
           </div>
-          <span className="text-xs lg:text-[13px]text-[#666]">
+          <span className="text-xs lg:text-[13px]   text-[#666]">
             {stats.totalReviews} review{stats.totalReviews === 1 ? "" : "s"}
             {stats.verifiedCount > 0 && ` · ${stats.verifiedCount} verified stays`}
           </span>
@@ -232,12 +232,12 @@ export default function ProductReviewSummary({ stats }: Props) {
             const pct = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0;
             return (
               <div key={level} className="flex items-center gap-3">
-                <span className="w-3 text-xs lg:text-[13px]text-[#444] text-right">{level}</span>
+                <span className="w-3 text-xs lg:text-[13px]   text-[#444] text-right">{level}</span>
                 <Star size={12} className="text-[#F5A623]" fill="currentColor" strokeWidth={0} />
                 <div className="flex-1 h-2 rounded-full bg-[#EDEAE3] overflow-hidden">
                   <div className="h-full rounded-full bg-[#F5A623]" style={{ width: `${pct}%` }} />
                 </div>
-                <span className="w-8 text-xs lg:text-[13px]text-[#666] text-right">{count}</span>
+                <span className="w-8 text-xs lg:text-[13px]   text-[#666] text-right">{count}</span>
               </div>
             );
           })}

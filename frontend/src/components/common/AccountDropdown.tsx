@@ -17,6 +17,7 @@ import {
 import { useLogoutMutation } from "@/redux/services/authApi";
 import { showToast } from "@/components/common/Toast";
 import Avatar from "./Avatar";
+import { apiSlice } from "@/redux/services/apiSlice";
 
 export interface AccountDropdownItem {
   label: string;
@@ -56,6 +57,9 @@ export default function AccountDropdown({
       /* errorMiddleware, proceed to clear regardless */
     }
     dispatch(clearCredentials());
+    dispatch(apiSlice.util.resetApiState());
+    localStorage.removeItem("auth:refreshToken");
+    localStorage.removeItem("auth:accessToken");
     navigate("/");
     showToast("Signed out successfully.", "success");
   };
@@ -86,7 +90,7 @@ export default function AccountDropdown({
               size={32}
             />
             <span
-              className="text-xs lg:text-[13px]  hidden md:block truncate max-w-[140px]"
+              className="text-xs lg:text-[13px]     hidden md:block truncate max-w-[140px]"
               style={{ color: "var(--color-ink)" }}
             >
               {triggerLabel}
@@ -109,7 +113,7 @@ export default function AccountDropdown({
             className="flex items-center gap-3 px-2.5 py-2.5 mb-1 cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
           >
             <span
-              className="w-9 h-9 rounded-full flex items-center justify-center text-xs lg:text-[13px]  shrink-0"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-xs lg:text-[13px]     shrink-0"
               style={{
                 backgroundColor: "var(--color-ink)",
                 color: "var(--color-canvas)",
@@ -118,10 +122,10 @@ export default function AccountDropdown({
               {initial}
             </span>
             <div className="flex flex-col leading-tight min-w-0">
-              <span className="text-xs lg:text-[13px]  text-[#17191c] truncate">
+              <span className="text-xs lg:text-[13px]     text-[#17191c] truncate">
                 {fullName || "My Account"}
               </span>
-              <span className="text-xs lg:text-[13px]capitalize text-[#777b86] truncate">{`${currentUser?.userType} profile`}</span>
+              <span className="text-xs lg:text-[13px]   capitalize text-[#777b86] truncate">{`${currentUser?.userType} profile`}</span>
             </div>
           </Link>
         </DropdownMenuItem>
@@ -137,7 +141,7 @@ export default function AccountDropdown({
                   <DropdownMenuItem key={item.to} asChild>
                     <Link
                       to={item.to}
-                      className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-[13px]font-semibold text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
+                      className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-[13px]   font-semibold text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
                     >
                       <Icon size={24} className="text-[#4c4c4c] shrink-0" />
                       {item.label}
@@ -156,7 +160,7 @@ export default function AccountDropdown({
 
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-[13px]  text-red-600 cursor-pointer hover:bg-red-50 rounded-lg outline-none"
+          className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-[13px]     text-red-600 cursor-pointer hover:bg-red-50 rounded-lg outline-none"
         >
           <LogOut size={16} className="shrink-0" />
           Sign out

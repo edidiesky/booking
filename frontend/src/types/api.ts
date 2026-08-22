@@ -368,6 +368,19 @@ export interface CancelBookingPayload {
   reason?: string;
 }
 
+export interface PropertyPerformancePoint {
+      day: string;
+      salesCount: number;
+      revenueNgn: number;
+      avgOrderValueNgn: number;
+    }
+export interface PropertySaleComparison {
+      propertyId: string;
+      propertyName: string;
+      salesCount: number;
+      isCurrent: boolean;
+    }
+
 export interface BookingListResponse {
   success: boolean;
   data:    Booking[];

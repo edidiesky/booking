@@ -89,11 +89,11 @@ export default function AdminTenants() {
               key={label as string}
               className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-5"
             >
-              <p className="text-xs lg:text-[13px]  uppercase text-[#a3a6af]">
+              <p className="text-xs lg:text-[13px]     uppercase text-[#a3a6af]">
                 {label}
               </p>
               <p className="text-xl lg:text-4xl bold text-[#17191c]">{value}</p>
-              <p className="text-xs lg:text-[13px]  medium text-[#a3a6af]">{sub}</p>
+              <p className="text-xs lg:text-[13px]     medium text-[#a3a6af]">{sub}</p>
             </div>
           ))}
         </div> */}
@@ -103,11 +103,11 @@ export default function AdminTenants() {
           placeholder="Search sellers by name or slug..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-xs h-9 px-3 text-xs lg:text-[13px]  border border-[#e8e6e3] rounded-lg outline-none"
+          className="w-full max-w-xs h-9 px-3 text-xs lg:text-[13px]     border border-[#e8e6e3] rounded-lg outline-none"
         />
 
         <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
-          <table className="w-full text-xs lg:text-[13px]">
+          <table className="w-full text-xs lg:text-[13px]   ">
             <thead>
               <tr className="border-b border-[#e8e6e3]">
                 {["Name", "Slug", "Status", "Platform fee", ""].map((h) => (
@@ -133,7 +133,7 @@ export default function AdminTenants() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-5 py-10 text-center text-xs lg:text-[13px]  text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-[13px]     text-[#a3a6af]"
                   >
                     No sellers found{search ? ` for "${search}"` : ""}.
                   </td>
@@ -171,7 +171,7 @@ export default function AdminTenants() {
                       <button
                         onClick={() => handleToggleStatus(tenant)}
                         disabled={isTogglingStatus}
-                        className="text-xs lg:text-[13px]  underline disabled:opacity-40"
+                        className="text-xs lg:text-[13px]     underline disabled:opacity-40"
                         style={{
                           color:
                             tenant.status === "suspended"
@@ -195,7 +195,7 @@ export default function AdminTenants() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="text-xs lg:text-[13px]  disabled:opacity-40"
+            className="text-xs lg:text-[13px]     disabled:opacity-40"
           >
             Previous
           </button>
@@ -204,7 +204,7 @@ export default function AdminTenants() {
           </span>
           <button
             onClick={() => setPage((p) => p + 1)}
-            className="text-xs lg:text-[13px]"
+            className="text-xs lg:text-[13px]   "
           >
             Next
           </button>

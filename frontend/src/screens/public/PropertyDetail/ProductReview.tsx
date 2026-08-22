@@ -67,7 +67,7 @@
 //       <div className="w-full flex items-center justify-center">
 //         <button
 //         onClick={onViewAll}
-//         className="border rounded-full p-4 py-2 text-xs lg:text-[13px]border-[#000] bold text-[#171717]"
+//         className="border rounded-full p-4 py-2 text-xs lg:text-[13px]   border-[#000] bold text-[#171717]"
 //       >
 //         View all reviews for this item
 //       </button>
@@ -109,7 +109,7 @@ export default function ProductReview({ roomTypeId }: Props) {
         <div className="w-full flex items-center justify-center">
           <button
             onClick={() => setShowAll(true)}
-            className="border rounded-full p-4 py-2 text-xs lg:text-[13px]border-[#000] bold text-[#171717]"
+            className="border rounded-full p-4 py-2 text-xs lg:text-[13px]   border-[#000] bold text-[#171717]"
           >
             View all reviews for this room type
           </button>

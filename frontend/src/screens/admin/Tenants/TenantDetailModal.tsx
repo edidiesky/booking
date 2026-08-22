@@ -20,7 +20,7 @@ export default function TenantDetailModal({ tenantId, onClose }: Props) {
         className="bg-white w-full rounded-2xl overflow-hidden relative flex flex-col lg:w-[640px] h-full"
       >
         <div className="border-b border-[#e8e6e3] flex items-center justify-between px-8 h-[72px] shrink-0">
-          <h4 className="text-xs lg:text-[13px]  text-[#17191c]">{data?.data.tenant.name ?? "Tenant"}</h4>
+          <h4 className="text-xs lg:text-[13px]     text-[#17191c]">{data?.data.tenant.name ?? "Tenant"}</h4>
           <button onClick={onClose} className="w-9 h-9 flex items-center justify-center hover:bg-[#f2f0ed] transition-colors" aria-label="Close">
             <X size={16} />
           </button>
@@ -33,7 +33,7 @@ export default function TenantDetailModal({ tenantId, onClose }: Props) {
         ) : (
           <div className="flex-1 overflow-y-auto px-8 py-6 flex flex-col gap-8">
             <section>
-              <p className="text-xs lg:text-[13px]  mb-3" style={{ color: "var(--color-ink)" }}>Profile</p>
+              <p className="text-xs lg:text-[13px]     mb-3" style={{ color: "var(--color-ink)" }}>Profile</p>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div><span style={{ color: "var(--color-hint-of-grey)" }}>Slug</span><p>{data.data.tenant.slug}</p></div>
                 <div><span style={{ color: "var(--color-hint-of-grey)" }}>Status</span><p>{data.data.tenant.status}</p></div>
@@ -43,7 +43,7 @@ export default function TenantDetailModal({ tenantId, onClose }: Props) {
             </section>
 
             <section>
-              <p className="text-xs lg:text-[13px]  mb-3" style={{ color: "var(--color-ink)" }}>At a glance</p>
+              <p className="text-xs lg:text-[13px]     mb-3" style={{ color: "var(--color-ink)" }}>At a glance</p>
               <div className="grid grid-cols-3 gap-3">
                 <div className="border rounded-xl p-3" style={{ borderColor: "#e8e6e3" }}>
                   <p className="text-xs" style={{ color: "var(--color-hint-of-grey)" }}>Escrow held</p>
@@ -61,7 +61,7 @@ export default function TenantDetailModal({ tenantId, onClose }: Props) {
             </section>
 
             <section>
-              <p className="text-xs lg:text-[13px]  mb-3" style={{ color: "var(--color-ink)" }}>Recent purchases</p>
+              <p className="text-xs lg:text-[13px]     mb-3" style={{ color: "var(--color-ink)" }}>Recent purchases</p>
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b text-left" style={{ borderColor: "#e8e6e3", color: "var(--color-hint-of-grey)" }}>
@@ -83,10 +83,10 @@ export default function TenantDetailModal({ tenantId, onClose }: Props) {
             </section>
 
             <section>
-              <p className="text-xs lg:text-[13px]  mb-3" style={{ color: "var(--color-ink)" }}>Recent activity</p>
+              <p className="text-xs lg:text-[13px]     mb-3" style={{ color: "var(--color-ink)" }}>Recent activity</p>
               <div className="flex flex-col gap-2">
                 {data.data.recentActivity.map((a) => (
-                  <div key={a.id} className="text-xs lg:text-[13px]  flex items-center justify-between">
+                  <div key={a.id} className="text-xs lg:text-[13px]     flex items-center justify-between">
                     <span>
                       {[a.actor_first_name, a.actor_last_name].filter(Boolean).join(" ") || "System"} {a.action} {a.resource}
                     </span>

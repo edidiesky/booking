@@ -137,7 +137,7 @@ export default function About() {
         style={{ maxWidth: "1280px" }}
       >
         <span
-          className="text-xs lg:text-[13px] lg:text-xl uppercase"
+          className="text-xs lg:text-[13px]    lg:text-xl uppercase"
           style={{ color: "var(--color-light-steel)" }}
         >
           Everything you need

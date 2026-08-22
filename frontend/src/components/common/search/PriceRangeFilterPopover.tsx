@@ -41,18 +41,18 @@ export default function PriceRangeFilterPopover({ min, max, onApply, ceiling = 5
         onClick={() => setOpen((v) => !v)}
         className="flex flex-col items-start text-left gap-2 px-4 py-2.5 rounded-full lg:rounded-none w-full lg:w-auto"
       >
-        <span className="text-xs lg:text-[13px]  flex items-center gap-1.5" style={{ color: "#a3a6af" }}>
+        <span className="text-xs lg:text-[13px]     flex items-center gap-1.5" style={{ color: "#a3a6af" }}>
           <Wallet size={18} /> {label}
         </span>
-        <span className="text-xs lg:text-[13px]" style={{ color: "#17191c" }}>{displayValue}</span>
+        <span className="text-xs lg:text-[13px]   " style={{ color: "#17191c" }}>{displayValue}</span>
       </button>
 
       {open && (
         <div className="absolute right-0 top-full mt-2 w-80 bg-white border rounded-2xl shadow-xl z-30 p-5" style={{ borderColor: "#e8e6e3" }}>
           <div className="flex items-start justify-between mb-1">
             <div>
-              <p className="text-xs lg:text-[13px]" style={{ color: "#17191c" }}>Your Budget</p>
-              <p className="text-xs lg:text-[13px]mt-0.5" style={{ color: "#a3a6af" }}>Enter your ideal price range for your budget.</p>
+              <p className="text-xs lg:text-[13px]   " style={{ color: "#17191c" }}>Your Budget</p>
+              <p className="text-xs lg:text-[13px]   mt-0.5" style={{ color: "#a3a6af" }}>Enter your ideal price range for your budget.</p>
             </div>
             <button onClick={() => setOpen(false)} className="p-1 rounded-full hover:bg-[#f2f0ed]">
               <X size={14} />
@@ -68,7 +68,7 @@ export default function PriceRangeFilterPopover({ min, max, onApply, ceiling = 5
                   type="number" min={0} max={draftMax}
                   value={draftMin}
                   onChange={(e) => setDraftMin(Math.min(Number(e.target.value) || 0, draftMax))}
-                  className="w-full text-xs lg:text-[13px]outline-none"
+                  className="w-full text-xs lg:text-[13px]   outline-none"
                 />
               </div>
             </label>
@@ -80,7 +80,7 @@ export default function PriceRangeFilterPopover({ min, max, onApply, ceiling = 5
                   type="number" min={draftMin} max={ceiling}
                   value={draftMax}
                   onChange={(e) => setDraftMax(Math.max(Number(e.target.value) || 0, draftMin))}
-                  className="w-full text-xs lg:text-[13px]outline-none"
+                  className="w-full text-xs lg:text-[13px]   outline-none"
                   placeholder="Any"
                 />
               </div>
@@ -111,7 +111,7 @@ export default function PriceRangeFilterPopover({ min, max, onApply, ceiling = 5
 
           <button
             onClick={() => { onApply(draftMin || null, draftMax === ceiling ? null : draftMax); setOpen(false); }}
-            className="w-full h-11 rounded-full text-xs lg:text-[13px]  text-white mt-4"
+            className="w-full h-11 rounded-full text-xs lg:text-[13px]     text-white mt-4"
             style={{ backgroundColor: "#17191c" }}
           >
             Apply Filter

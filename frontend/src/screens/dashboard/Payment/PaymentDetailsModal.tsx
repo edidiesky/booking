@@ -49,8 +49,8 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           <div>
-            <p className="text-xs lg:text-[13px]  text-[#17191c]">Payment details</p>
-            <p className="text-xs lg:text-[13px]  text-[#777b86] mt-0.5">{payment?.id}</p>
+            <p className="text-xs lg:text-[13px]     text-[#17191c]">Payment details</p>
+            <p className="text-xs lg:text-[13px]     text-[#777b86] mt-0.5">{payment?.id}</p>
           </div>
           <button
             onClick={onClose}
@@ -62,7 +62,7 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
 
         <div className="flex-1 flex w-full overflow-y-auto flex-col gap-2">
           <div className="w-full px-6 py-5 border-b flex flex-col gap-4">
-            <p className="text-xs lg:text-[13px]  uppercase text-[#a3a6af] bold">Room</p>
+            <p className="text-xs lg:text-[13px]     uppercase text-[#a3a6af] bold">Room</p>
             <div className="flex items-center gap-3">
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#f2f0ed] shrink-0">
                 {payment.room_type_images?.[0] ? (
@@ -70,16 +70,16 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
                 ) : null}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs lg:text-[13px]  text-[#17191c] truncate">{payment.room_type_name}</p>
-                <p className="text-xs lg:text-[13px]  text-[#777b86]">{nights} night{nights !== 1 ? "s" : ""}</p>
+                <p className="text-xs lg:text-[13px]     text-[#17191c] truncate">{payment.room_type_name}</p>
+                <p className="text-xs lg:text-[13px]     text-[#777b86]">{nights} night{nights !== 1 ? "s" : ""}</p>
               </div>
-              <p className="text-xs lg:text-[13px]  text-[#17191c] whitespace-nowrap">
+              <p className="text-xs lg:text-[13px]     text-[#17191c] whitespace-nowrap">
                 {formatCurrency(Number(payment.amount_ngn))}
               </p>
             </div>
           </div>
           <div className="w-full px-6 py-5 border-b flex flex-col gap-6">
-            <p className="w-full text-xs lg:text-[13px]  text-[#a3a6af] uppercase">
+            <p className="w-full text-xs lg:text-[13px]     text-[#a3a6af] uppercase">
               Payment breakdown
             </p>
             <div className="flex flex-col gap-4 lg:gap-4 lg:w-[75%]">
@@ -97,8 +97,8 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
                 ],
               ].map(([label, value]) => (
                 <div key={label} className="flex items-center justify-between">
-                  <span className="text-xs lg:text-[13px]  text-[#777b86]">{label}</span>
-                  <span className="text-xs lg:text-[13px]  text-[#17191c] bold text-right max-w-[60%] truncate">
+                  <span className="text-xs lg:text-[13px]     text-[#777b86]">{label}</span>
+                  <span className="text-xs lg:text-[13px]     text-[#17191c] bold text-right max-w-[60%] truncate">
                     {value}
                   </span>
                 </div>
@@ -106,7 +106,7 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
             </div>
           </div>
           <div className="w-full px-6 py-5 border-b flex flex-col gap-4">
-            <p className="w-full text-xs lg:text-[13px]  text-[#a3a6af] uppercase">
+            <p className="w-full text-xs lg:text-[13px]     text-[#a3a6af] uppercase">
               Customer breakdown
             </p>
             {[
@@ -119,14 +119,14 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
                 key={label}
                 className={`w-full flex items-center gap-8 lg:gap-10`}
               >
-                <p className="text-xs lg:text-[13px]  medium text-[#777b86]">{label}</p>
-                <p className="text-xs lg:text-[13px]  text-[#17191c] bold">{value}</p>
+                <p className="text-xs lg:text-[13px]     medium text-[#777b86]">{label}</p>
+                <p className="text-xs lg:text-[13px]     text-[#17191c] bold">{value}</p>
               </div>
             ))}
           </div>
 
            <div className="w-full px-6 py-5 border-b flex flex-col gap-4">
-            <p className="w-full text-xs lg:text-[13px]  text-[#a3a6af] uppercase">
+            <p className="w-full text-xs lg:text-[13px]     text-[#a3a6af] uppercase">
               
               Timeline</p>
             <div className="flex flex-col gap-4">
@@ -136,8 +136,8 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
                     i <= idx ? "bg-[#17191c] border-[#17191c]" : "bg-white border-[#e8e6e3]"
                   }`} />
                   <div>
-                    <p className={`text-xs lg:text-[13px]  ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}>{step.label}</p>
-                    <p className="text-xs lg:text-[13px]  medium text-[#a3a6af]">{step.description}</p>
+                    <p className={`text-xs lg:text-[13px]     ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}>{step.label}</p>
+                    <p className="text-xs lg:text-[13px]     medium text-[#a3a6af]">{step.description}</p>
                   </div>
                 </div>
               ))}
@@ -150,7 +150,7 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
           <div className="border-t sticky bottom-0 left-0 border-[#e8e6e3] px-6 py-4 flex items-center justify-between">
             <button
               onClick={onClose}
-              className="text-xs lg:text-[13px]  text-[#777b86] bold hover:text-[#17191c]"
+              className="text-xs lg:text-[13px]     text-[#777b86] bold hover:text-[#17191c]"
             >
               Cancel
             </button>
@@ -163,7 +163,7 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
                     "noopener,noreferrer",
                   )
                 }
-                className="text-xs lg:text-[13px]  text-[#fff] bg-black rounded-full px-4 py-2"
+                className="text-xs lg:text-[13px]     text-[#fff] bg-black rounded-full px-4 py-2"
               >
                 View receipt
               </button>

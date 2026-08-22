@@ -237,3 +237,16 @@ export const GetRevenueTrendHandler = asyncHandler(
     res.status(200).json({ success: true, data });
   },
 );
+
+
+export const GetPropertyPerformanceHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+    const propertyId = req.params["propertyId"] as string;
+    const rangeParam = (req.query["range"] as string) ?? "7-days";
+    const days = { "7-days": 7, "3-weeks": 21, "3-months": 90 }[rangeParam] ?? 7;
+
+    const data = await bookingService.getPropertyPerformance(propertyId, req.tenantId, days);
+    res.status(200).json({ success: true, data });
+  },
+);

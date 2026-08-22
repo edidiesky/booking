@@ -27,7 +27,7 @@ export default function CancelBookingModal({ bookingRef, isLoading, isOpen, onCo
         <div className="w-full flex px-8 items-start justify-between gap-1">
           <div>
             <h3 className="text-lg text-[#17191c]">Cancel Booking</h3>
-            <p className="text-xs lg:text-[13px]  text-[#777b86] mt-1 max-w-[380px]">
+            <p className="text-xs lg:text-[13px]     text-[#777b86] mt-1 max-w-[380px]">
               Are you sure you want to cancel{" "}
               <span className="text-[#17191c]">{bookingRef}</span>?
               A refund may apply based on the cancellation policy.
@@ -50,7 +50,7 @@ export default function CancelBookingModal({ bookingRef, isLoading, isOpen, onCo
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="h-9 px-5 text-xs lg:text-[13px]rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
+            className="h-9 px-5 text-xs lg:text-[13px]   rounded-full text-[#4c4c4c] border border-[#e8e6e3] hover:bg-[#f2f0ed] transition-colors disabled:opacity-50"
           >
             Keep booking
           </button>
@@ -58,7 +58,7 @@ export default function CancelBookingModal({ bookingRef, isLoading, isOpen, onCo
             type="button"
             onClick={() => onConfirm(reason || undefined)}
             disabled={isLoading}
-            className="h-9 px-5 text-xs lg:text-[13px]rounded-full bg-red-600 text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+            className="h-9 px-5 text-xs lg:text-[13px]   rounded-full bg-red-600 text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
           >
             {isLoading ? (
               <>

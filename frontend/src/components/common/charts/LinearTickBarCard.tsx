@@ -42,12 +42,12 @@ export default function LinearTickBarCard({ title, totalValue, trend, distributi
     <div className="border rounded-xl p-4" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center gap-2 mb-3">
         {icon}
-        <p className="text-xs lg:text-[13px]" style={{ color: "#17191c" }}>{title}</p>
+        <p className="text-xs lg:text-[13px]   " style={{ color: "#17191c" }}>{title}</p>
       </div>
 
       <p className="text-2xl bold" style={{ color: "#17191c" }}>{totalValue}</p>
       {trend && (
-        <p className="text-xs lg:text-[13px]mt-1">
+        <p className="text-xs lg:text-[13px]   mt-1">
           <span className="bold" style={{ color: trend.value >= 0 ? "#16a34a" : "#dc2626" }}>
             {trend.value >= 0 ? "+" : ""}{trend.value}%
           </span>{" "}
@@ -56,11 +56,11 @@ export default function LinearTickBarCard({ title, totalValue, trend, distributi
         </p>
       )}
 
-      <p className="text-xs lg:text-[13px]  mt-4 mb-2" style={{ color: "#17191c" }}>{distributionLabel}</p>
+      <p className="text-xs lg:text-[13px]     mt-4 mb-2" style={{ color: "#17191c" }}>{distributionLabel}</p>
       <div className="relative">
         {hoveredIdx !== null && (
           <div
-            className="absolute -top-9 bg-white border rounded-lg shadow-lg px-2.5 py-1.5 z-10 whitespace-nowrap text-xs lg:text-[13px]  pointer-events-none"
+            className="absolute -top-9 bg-white border rounded-lg shadow-lg px-2.5 py-1.5 z-10 whitespace-nowrap text-xs lg:text-[13px]     pointer-events-none"
             style={{
               borderColor: "#e8e6e3",
               color: "#17191c",
@@ -86,7 +86,7 @@ export default function LinearTickBarCard({ title, totalValue, trend, distributi
 
       <div className="flex flex-col mt-4">
         {segments.map((s, i) => (
-          <div key={i} className="flex items-center justify-between text-xs lg:text-[13px]  py-3 border-b last:border-0" style={{ borderColor: "#f2f0ed" }}>
+          <div key={i} className="flex items-center justify-between text-xs lg:text-[13px]     py-3 border-b last:border-0" style={{ borderColor: "#f2f0ed" }}>
             <span className="flex items-center gap-2" style={{ color: "#4c4c4c" }}>
               <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
               {s.label}

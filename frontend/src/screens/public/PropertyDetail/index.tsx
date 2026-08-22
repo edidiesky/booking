@@ -64,7 +64,7 @@ export default function PropertyDetail() {
 
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-xs lg:text-[13px]  text-[#777b86] mb-6 hover:text-[#17191c] transition-colors"
+            className="flex items-center gap-2 text-xs lg:text-[13px]     text-[#777b86] mb-6 hover:text-[#17191c] transition-colors"
           >
             <ArrowLeft size={16} /> Back to properties
           </button>

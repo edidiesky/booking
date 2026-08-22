@@ -30,7 +30,7 @@ export default function TeamManagementTab() {
         <Title title="Team Management" description="Assign roles to the people on your team." />
         <button
           onClick={() => setShowAssign(true)}
-          className="flex items-center gap-2 h-9 px-4 rounded-full text-xs lg:text-[13px]transition-opacity hover:opacity-80 shrink-0"
+          className="flex items-center gap-2 h-9 px-4 rounded-full text-xs lg:text-[13px]   transition-opacity hover:opacity-80 shrink-0"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
           <UserPlus size={14} />
@@ -43,7 +43,7 @@ export default function TeamManagementTab() {
         placeholder="Search by user ID or role..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="h-9 px-3 text-xs lg:text-[13px]  border rounded-lg outline-none w-64"
+        className="h-9 px-3 text-xs lg:text-[13px]     border rounded-lg outline-none w-64"
         style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
       />
 
@@ -83,11 +83,11 @@ export default function TeamManagementTab() {
                 return (
                   <tr key={a.id} className="border-b last:border-0 transition-colors hover:bg-[#fafaf9]"
                       style={{ borderColor: "var(--color-fog)" }}>
-                    <td className="px-5 py-3 text-xs lg:text-[13px]font-mono" style={{ color: "var(--color-muted-stone)" }}>
+                    <td className="px-5 py-3 text-xs lg:text-[13px]   font-mono" style={{ color: "var(--color-muted-stone)" }}>
                       {a.userId}
                     </td>
                     <td className="px-5 py-3">
-                      <span className="text-xs lg:text-[13px]px-2.5 py-1 rounded-full font-medium"
+                      <span className="text-xs lg:text-[13px]   px-2.5 py-1 rounded-full font-medium"
                             style={{ backgroundColor: cfg.bg, color: cfg.color }}>
                         {a.roleName}
                       </span>
@@ -95,11 +95,11 @@ export default function TeamManagementTab() {
                     <td className="px-5 py-3 text-xs" style={{ color: "var(--color-muted-stone)" }}>
                       {a.assignedBy}
                     </td>
-                    <td className="px-5 py-3 text-xs lg:text-[13px]  whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
+                    <td className="px-5 py-3 text-xs lg:text-[13px]     whitespace-nowrap" style={{ color: "var(--color-muted-stone)" }}>
                       {formatDate(a.assignedAt)}
                     </td>
                     <td className="px-5 py-3">
-                      <span className={`text-xs lg:text-[13px]px-2.5 py-1 rounded-full font-medium ${
+                      <span className={`text-xs lg:text-[13px]   px-2.5 py-1 rounded-full font-medium ${
                         a.isActive ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
                       }`}>
                         {a.isActive ? "Active" : "Inactive"}

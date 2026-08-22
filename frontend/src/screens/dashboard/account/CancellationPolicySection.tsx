@@ -36,7 +36,7 @@ export default function CancellationPolicySection({ tenant, onSave, isSaving }: 
               <label className="text-xs" style={{ color: "var(--color-hint-of-grey)" }}>
                 Hours before check-in
               </label>
-              <input type="number" className="h-9 border px-3 text-xs lg:text-[13px]outline-none"
+              <input type="number" className="h-9 border px-3 text-xs lg:text-[13px]   outline-none"
                      style={{ borderColor: "#e8e6e3", color: "var(--color-ink)" }}
                      {...register(`tiers.${i}.hours_before`, { valueAsNumber: true })} />
             </div>
@@ -45,7 +45,7 @@ export default function CancellationPolicySection({ tenant, onSave, isSaving }: 
                 Refund %
               </label>
               <input type="number" min={0} max={100}
-                     className="h-9 border px-3 text-xs lg:text-[13px]outline-none"
+                     className="h-9 border px-3 text-xs lg:text-[13px]   outline-none"
                      style={{ borderColor: "#e8e6e3", color: "var(--color-ink)" }}
                      {...register(`tiers.${i}.refund_pct`, { valueAsNumber: true })} />
             </div>
@@ -59,13 +59,13 @@ export default function CancellationPolicySection({ tenant, onSave, isSaving }: 
 
       <button type="button"
               onClick={() => append({ hours_before: 24, refund_pct: 50 })}
-              className="flex items-center gap-2 text-xs lg:text-[13px]self-start transition-opacity hover:opacity-70"
+              className="flex items-center gap-2 text-xs lg:text-[13px]   self-start transition-opacity hover:opacity-70"
               style={{ color: "var(--color-muted-stone)" }}>
         <Plus size={14} /> Add tier
       </button>
 
       <button type="submit" disabled={isSaving}
-              className="h-10 px-6 rounded-full text-xs lg:text-[13px]self-start transition-opacity hover:opacity-80 disabled:opacity-50"
+              className="h-10 px-6 rounded-full text-xs lg:text-[13px]   self-start transition-opacity hover:opacity-80 disabled:opacity-50"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
         {isSaving ? "Saving..." : "Save policy"}
       </button>

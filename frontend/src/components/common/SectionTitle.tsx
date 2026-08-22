@@ -12,7 +12,7 @@ export default function SectionTitle({ title, description, action }: Props) {
           {title}
         </h2>
         {description && (
-          <p className="text-xs lg:text-[13px]leading-relaxed max-w-[520px]" style={{ color: "var(--color-light-steel)" }}>
+          <p className="text-xs lg:text-[13px]   leading-relaxed max-w-[520px]" style={{ color: "var(--color-light-steel)" }}>
             {description}
           </p>
         )}

@@ -54,12 +54,12 @@ function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs lg:text-[13px]  text-[#17191c]">{label}</span>
+      <span className="text-xs lg:text-[13px]     text-[#17191c]">{label}</span>
       <div className=" py-2 px-2 flex flex-wrap gap-2 min-h-[45px] focus-within:border-[#17191c] transition-colors">
         {tags.map((tag, i) => (
           <span
             key={i}
-            className="inline-flex items-center gap-1 px-4 rounded-full bold py-1 bg-[#f2f0ed] text-xs lg:text-[13px]  text-[#17191c]"
+            className="inline-flex items-center gap-1 px-4 rounded-full bold py-1 bg-[#f2f0ed] text-xs lg:text-[13px]     text-[#17191c]"
           >
             {tag}
             <button
@@ -86,7 +86,7 @@ function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
           placeholder={tags.length === 0 ? placeholder : ""}
         />
       </div>
-      <p className="text-xs lg:text-[13px]  text-[#a3a6af]">Press Enter or comma to add</p>
+      <p className="text-xs lg:text-[13px]     text-[#a3a6af]">Press Enter or comma to add</p>
     </div>
   );
 }
@@ -227,7 +227,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
   };
 
   const inputClass =
-    "h-[42px] border border-[#e8e6e3] px-3 text-xs lg:text-[13px]outline-none focus:border-[#17191c] transition-colors w-full";
+    "h-[42px] border border-[#e8e6e3] px-3 text-xs lg:text-[13px]   outline-none focus:border-[#17191c] transition-colors w-full";
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-end p-4 z-50">
@@ -241,10 +241,10 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
         {/* header */}
         <div className="border-b flex items-center justify-between px-8 h-[72px] shrink-0">
           <div>
-            <h4 className="text-xs lg:text-[13px]  text-[#17191c]">
+            <h4 className="text-xs lg:text-[13px]     text-[#17191c]">
               {isEdit ? "Edit Property" : "Create Property"}
             </h4>
-            <p className="text-xs lg:text-[13px]  text-[#777b86] mt-0.5">
+            <p className="text-xs lg:text-[13px]     text-[#777b86] mt-0.5">
               {isEdit
                 ? "Update your property details and availability settings."
                 : "Fill in the details below to add a new property listing."}
@@ -288,7 +288,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                 {/* name + type */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs lg:text-[13px]  text-[#17191c]">
+                    <label className="text-xs lg:text-[13px]     text-[#17191c]">
                       Property Name
                     </label>
                     <Input
@@ -297,13 +297,13 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                       placeholder="e.g. Lekki Heights Shortlet"
                     />
                     {errors.name && (
-                      <p className="text-xs lg:text-[13px]text-red-500">
+                      <p className="text-xs lg:text-[13px]   text-red-500">
                         {errors.name.message}
                       </p>
                     )}
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs lg:text-[13px]  text-[#17191c]">
+                    <label className="text-xs lg:text-[13px]     text-[#17191c]">
                       Property Type
                     </label>
                     <Controller
@@ -319,7 +319,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                       )}
                     />
                     {errors.propertyType && (
-                      <p className="text-xs lg:text-[13px]text-red-500">
+                      <p className="text-xs lg:text-[13px]   text-red-500">
                         {errors.propertyType.message}
                       </p>
                     )}
@@ -328,18 +328,18 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
 
                 {/* description */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs lg:text-[13px]  text-[#17191c]">Description</label>
+                  <label className="text-xs lg:text-[13px]     text-[#17191c]">Description</label>
                   <textarea
                     {...register("description")}
                     rows={4}
-                    className="border border-[#e8e6e3] px-3 py-2.5 text-xs lg:text-[13px]outline-none resize-none focus:border-[#17191c] transition-colors"
+                    className="border border-[#e8e6e3] px-3 py-2.5 text-xs lg:text-[13px]   outline-none resize-none focus:border-[#17191c] transition-colors"
                     placeholder="Describe your property, nearby landmarks, access instructions..."
                   />
                 </div>
 
                 {/* address */}
                 <div className="flex flex-col gap-1.5">
-                  <p className="text-xs lg:text-[13px]  text-[#a3a6af] uppercase tracking-widest ">
+                  <p className="text-xs lg:text-[13px]     text-[#a3a6af] uppercase tracking-widest ">
                     Address
                   </p>
                   <div className="grid grid-cols-2 gap-3">
@@ -354,7 +354,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                       const fieldProps = register(key);
                       return (
                         <div key={key} className="flex flex-col gap-1.5">
-                          <label className="text-xs lg:text-[13px]  text-[#17191c]">
+                          <label className="text-xs lg:text-[13px]     text-[#17191c]">
                             {label}
                           </label>
                           <Input
@@ -367,7 +367,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                             placeholder={ph}
                           />
                           {errors[key] && (
-                            <p className="text-xs lg:text-[13px]text-red-500">
+                            <p className="text-xs lg:text-[13px]   text-red-500">
                               {errors[key]?.message}
                             </p>
                           )}
@@ -378,7 +378,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
 
                   <div className="mt-3">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs lg:text-[13px]  text-[#a3a6af]">
+                      <span className="text-xs lg:text-[13px]     text-[#a3a6af]">
                         {geocoding ? "Locating..." : latitude ? "Drag the pin if this isn't quite right." : "Fill in the address above to locate this property, or place the pin manually."}
                       </span>
                     </div>
@@ -393,7 +393,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                 {/* times */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs lg:text-[13px]  text-[#17191c]">
+                    <label className="text-xs lg:text-[13px]     text-[#17191c]">
                       Check-in Time
                     </label>
                     <Input
@@ -403,7 +403,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs lg:text-[13px]  text-[#17191c]">
+                    <label className="text-xs lg:text-[13px]     text-[#17191c]">
                       Check-out Time
                     </label>
                     <Input
@@ -429,7 +429,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
         <div className="border-t h-[68px] flex items-center justify-between px-8 shrink-0">
           <button
             onClick={onClose}
-            className="text-xs lg:text-[13px]  text-[#4c4c4c] hover:text-[#17191c] transition-colors"
+            className="text-xs lg:text-[13px]     text-[#4c4c4c] hover:text-[#17191c] transition-colors"
           >
             Cancel
           </button>
@@ -437,7 +437,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
             type="submit"
             form="property-form"
             disabled={isBusy}
-            className="bg-[#17191c] text-white text-xs lg:text-[13px]  px-6 rounded-full h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="bg-[#17191c] text-white text-xs lg:text-[13px]     px-6 rounded-full h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {isBusy
               ? isEdit

@@ -1,5 +1,9 @@
 import { v4 as uuid } from "uuid";
-import { availabilityBroadcaster, outboxRepository, withTransaction } from "@booking/shared";
+import {
+  availabilityBroadcaster,
+  outboxRepository,
+  withTransaction,
+} from "@booking/shared";
 import { bookingRepository, Booking } from "./booking.repository";
 import { availabilityRepository } from "../availability/availability.repository";
 import { propertyRepository } from "../property/property.repository";
@@ -817,14 +821,19 @@ export const bookingService = {
       (b) => toDto(b),
     );
   },
-async getTenantBookings(
-  tenantId: string,
-  opts: { status?: BookingStatus; page?: number; limit?: number } = {},
-): Promise<BookingDto[]> {
-  return (await bookingRepository.listByTenant(tenantId, opts.status, opts.page, opts.limit)).map((b) =>
-    toDto(b),
-  );
-},
+  async getTenantBookings(
+    tenantId: string,
+    opts: { status?: BookingStatus; page?: number; limit?: number } = {},
+  ): Promise<BookingDto[]> {
+    return (
+      await bookingRepository.listByTenant(
+        tenantId,
+        opts.status,
+        opts.page,
+        opts.limit,
+      )
+    ).map((b) => toDto(b));
+  },
 
   async getTenantBookingStats(tenantId: string) {
     return bookingRepository.getStatsForTenant(tenantId);
@@ -876,7 +885,7 @@ async getTenantBookings(
           tenantId,
           fromStatus: booking.status,
           toStatus: targetStatus,
-      },
+        },
         client,
       );
 
@@ -891,5 +900,21 @@ async getTenantBookings(
     });
 
     return toDto(updated);
+  },
+
+  async getPropertyPerformance(
+    propertyId: string,
+    tenantId: string,
+    days: number,
+  ) {
+    const property = await propertyRepository.findPropertyById(propertyId);
+    if (!property || property.tenant_id !== tenantId) {
+      throw AppError.notFound("Property not found.");
+    }
+    const [trend, comparison] = await Promise.all([
+      bookingRepository.getPropertyPerformance(propertyId, tenantId, days),
+      bookingRepository.getPropertySaleComparison(tenantId, propertyId),
+    ]);
+    return { trend, comparison };
   },
 };

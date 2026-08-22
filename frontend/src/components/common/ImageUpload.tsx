@@ -61,7 +61,7 @@ export default function ImageUpload({ images, onChange, label = "Images", max = 
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-xs lg:text-[13px]  text-[#17191c]">{label}</span>
+      <span className="text-xs lg:text-[13px]     text-[#17191c]">{label}</span>
 
       {hasAny ? (
         <div className="grid grid-cols-4 gap-3">
@@ -107,7 +107,7 @@ export default function ImageUpload({ images, onChange, label = "Images", max = 
               className="aspect-square border-2 border-dashed border-[#e8e6e3] flex flex-col items-center justify-center gap-1 hover:border-[#17191c] hover:bg-[#fafaf9] transition-colors"
             >
               <ImagePlus size={18} className="text-[#a3a6af]" />
-              <span className="text-xs lg:text-[13px]  text-[#a3a6af]">Add</span>
+              <span className="text-xs lg:text-[13px]     text-[#a3a6af]">Add</span>
             </button>
           )}
         </div>
@@ -119,10 +119,10 @@ export default function ImageUpload({ images, onChange, label = "Images", max = 
           className="border-2 border-dashed border-[#e8e6e3] h-[130px] flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[#17191c] hover:bg-[#fafaf9] transition-colors"
         >
           <Upload size={20} className="text-[#a3a6af]" />
-          <p className="text-xs lg:text-[13px]  text-[#777b86]">
+          <p className="text-xs lg:text-[13px]     text-[#777b86]">
             Drag & drop or <span className="text-[#17191c]">browse</span>
           </p>
-          <p className="text-xs lg:text-[13px]  text-[#a3a6af]">PNG, JPG, WebP — max {max} images</p>
+          <p className="text-xs lg:text-[13px]     text-[#a3a6af]">PNG, JPG, WebP — max {max} images</p>
         </div>
       )}
 

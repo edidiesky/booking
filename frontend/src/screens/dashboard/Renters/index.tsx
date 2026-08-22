@@ -22,11 +22,11 @@ export default function DashboardRenters() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h4 className="text-xl bold text-[#17191c]">Tenants</h4>
-            <p className="text-xs lg:text-[13px]text-[#64645f] mt-1">
+            <p className="text-xs lg:text-[13px]   text-[#64645f] mt-1">
               Manage tenant records across your properties.
             </p>
           </div>
-          <button className="bg-[#17191c] flex bold rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px]  p-2 px-4">
+          <button className="bg-[#17191c] flex bold rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px]     p-2 px-4">
             Add Tenant
           </button>
         </div>
@@ -49,9 +49,9 @@ export default function DashboardRenters() {
               key={label as string}
               className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-5"
             >
-              <p className="text-xs lg:text-[13px]  uppercase text-[#a3a6af]">{label}</p>
+              <p className="text-xs lg:text-[13px]     uppercase text-[#a3a6af]">{label}</p>
               <p className="text-xl lg:text-4xl bold text-[#17191c]">{value}</p>
-              <p className="text-xs lg:text-[13px]  medium text-[#a3a6af]">{sub}</p>
+              <p className="text-xs lg:text-[13px]     medium text-[#a3a6af]">{sub}</p>
             </div>
           ))}
         </div>
@@ -61,7 +61,7 @@ export default function DashboardRenters() {
           placeholder="Search tenants..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-xs h-9 px-3 text-xs lg:text-[13px]  border border-[#e8e6e3] rounded-lg outline-none"
+          className="w-full max-w-xs h-9 px-3 text-xs lg:text-[13px]     border border-[#e8e6e3] rounded-lg outline-none"
         />
 
         <div className="border border-[#e8e6e3] rounded-xl overflow-hidden">
@@ -91,7 +91,7 @@ export default function DashboardRenters() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-5 py-10 text-center text-xs lg:text-[13px]  text-[#a3a6af]"
+                    className="px-5 py-10 text-center text-xs lg:text-[13px]     text-[#a3a6af]"
                   >
                     No tenants found.
                   </td>
@@ -107,7 +107,7 @@ export default function DashboardRenters() {
                       <p className="bold text-[#17191c]">
                         {r.full_name}
                       </p>
-                      <p className="text-xs lg:text-[13px]  text-[#777b86]">{r.email}</p>
+                      <p className="text-xs lg:text-[13px]     text-[#777b86]">{r.email}</p>
                     </td>
                     <td className="px-5 py-3 text-[#4c4c4c]">
                       {r.phone ?? "—"}

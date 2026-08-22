@@ -23,8 +23,8 @@ export default function TodaysFocusCard({ confirmedCount, checkedInCount, cancel
           <button key={id} className="flex items-center gap-3 px-5 py-3.5 text-left hover:bg-[#f2f0ed5f] transition-colors">
             <Circle size={10} fill={color} style={{ color }} className="shrink-0" />
             <div className="flex-1">
-              <p className="text-xs lg:text-[13px]" style={{ color: "var(--color-ink)" }}>{label}</p>
-              <p className="text-xs lg:text-[13px]  medium mt-0.5" style={{ color: "var(--color-muted-stone)" }}>{note}</p>
+              <p className="text-xs lg:text-[13px]   " style={{ color: "var(--color-ink)" }}>{label}</p>
+              <p className="text-xs lg:text-[13px]     medium mt-0.5" style={{ color: "var(--color-muted-stone)" }}>{note}</p>
             </div>
             <ChevronRight size={16} style={{ color: "var(--color-muted-stone)" }} />
           </button>

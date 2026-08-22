@@ -35,7 +35,7 @@ export default function OtpEntry({ purpose, onDone, onCancel }: Props) {
         <button
           onClick={handleVerify}
           disabled={code.length !== 6 || isLoading}
-          className="h-10 px-4 rounded-lg text-xs lg:text-[13px]  disabled:opacity-50"
+          className="h-10 px-4 rounded-lg text-xs lg:text-[13px]     disabled:opacity-50"
           style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
         >
           Confirm

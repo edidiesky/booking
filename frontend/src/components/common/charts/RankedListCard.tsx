@@ -23,11 +23,11 @@ export default function RankedListCard({ title, icon, items, emptyLabel = "Nothi
     <div className="border rounded-xl p-4" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center gap-2 mb-3">
         {icon}
-        <p className="text-xs lg:text-[13px]" style={{ color: "#17191c" }}>{title}</p>
+        <p className="text-xs lg:text-[13px]   " style={{ color: "#17191c" }}>{title}</p>
       </div>
 
       {items.length === 0 ? (
-        <p className="text-xs lg:text-[13px]py-8 text-center" style={{ color: "#a3a6af" }}>{emptyLabel}</p>
+        <p className="text-xs lg:text-[13px]   py-8 text-center" style={{ color: "#a3a6af" }}>{emptyLabel}</p>
       ) : (
         <div className="flex flex-col">
           {items.map((item) => (
@@ -47,7 +47,7 @@ export default function RankedListCard({ title, icon, items, emptyLabel = "Nothi
               ) : null}
 
               <div className="min-w-0 flex-1">
-                <p className="text-xs lg:text-[13px]  truncate" style={{ color: "#17191c" }}>{item.title}</p>
+                <p className="text-xs lg:text-[13px]     truncate" style={{ color: "#17191c" }}>{item.title}</p>
                 {item.subtitle && <p className="text-[11px] truncate" style={{ color: "#a3a6af" }}>{item.subtitle}</p>}
               </div>
 
@@ -56,7 +56,7 @@ export default function RankedListCard({ title, icon, items, emptyLabel = "Nothi
                   {item.badge.label}
                 </span>
               )}
-              {item.value && <span className="text-xs lg:text-[13px]  shrink-0" style={{ color: "#17191c" }}>{item.value}</span>}
+              {item.value && <span className="text-xs lg:text-[13px]     shrink-0" style={{ color: "#17191c" }}>{item.value}</span>}
             </button>
           ))}
         </div>

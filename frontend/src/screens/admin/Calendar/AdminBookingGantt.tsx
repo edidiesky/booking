@@ -82,7 +82,7 @@ const { bookings, loadedDays, loadingMore, reachedCap, loadMore } = useAdminIncr
             <button
               key={v}
               onClick={() => setView(v)}
-              className="px-3 h-7 text-xs lg:text-[13px]  rounded-full capitalize transition-colors"
+              className="px-3 h-7 text-xs lg:text-[13px]     rounded-full capitalize transition-colors"
               style={{ backgroundColor: view === v ? "#17191c" : "transparent", color: view === v ? "#fff" : "#777b86" }}
             >
               {v}
@@ -104,7 +104,7 @@ const { bookings, loadedDays, loadingMore, reachedCap, loadMore } = useAdminIncr
             }}
             searchable
           />
-          <label className="flex items-center gap-1.5 text-xs lg:text-[13px]px-2" style={{ color: "#777b86" }}>
+          <label className="flex items-center gap-1.5 text-xs lg:text-[13px]   px-2" style={{ color: "#777b86" }}>
             Max rows
             <input
               type="number"
@@ -112,7 +112,7 @@ const { bookings, loadedDays, loadingMore, reachedCap, loadMore } = useAdminIncr
               max={50}
               value={maxVisibleRooms}
               onChange={(e) => setMaxVisibleRooms(Math.max(1, Math.min(50, Number(e.target.value) || 1)))}
-              className="w-12 h-7 border rounded-full px-2 text-xs lg:text-[13px]outline-none"
+              className="w-12 h-7 border rounded-full px-2 text-xs lg:text-[13px]   outline-none"
               style={{ borderColor: "#e8e6e3" }}
             />
           </label>
@@ -120,7 +120,7 @@ const { bookings, loadedDays, loadingMore, reachedCap, loadMore } = useAdminIncr
             <button onClick={goPrevious} className="w-7 h-7 flex items-center justify-center rounded-full border hover:bg-[#f2f0ed]" style={{ borderColor: "#e8e6e3" }}>
               <ChevronLeft size={14} />
             </button>
-            <button onClick={goToday} className="h-7 px-3 text-xs lg:text-[13px]rounded-full border hover:bg-[#f2f0ed]" style={{ borderColor: "#e8e6e3", color: "#17191c" }}>
+            <button onClick={goToday} className="h-7 px-3 text-xs lg:text-[13px]   rounded-full border hover:bg-[#f2f0ed]" style={{ borderColor: "#e8e6e3", color: "#17191c" }}>
               Today
             </button>
             <button onClick={goNext} className="w-7 h-7 flex items-center justify-center rounded-full border hover:bg-[#f2f0ed]" style={{ borderColor: "#e8e6e3" }}>
@@ -133,7 +133,7 @@ const { bookings, loadedDays, loadingMore, reachedCap, loadMore } = useAdminIncr
       <div className="flex">
         {/* Frozen room column, own independent scroll, capped at listMaxHeight */}
         <div className="shrink-0 border-r" style={{ width: ROOM_COL_WIDTH, borderColor: "#e8e6e3" }}>
-          <div className="h-9 border-b flex items-center px-3 text-xs lg:text-[13px]" style={{ borderColor: "#e8e6e3", color: "#a3a6af" }}>
+          <div className="h-9 border-b flex items-center px-3 text-xs lg:text-[13px]   " style={{ borderColor: "#e8e6e3", color: "#a3a6af" }}>
             Room
           </div>
           <div ref={roomColRef} className="overflow-hidden" style={needsRoomScroll ? { maxHeight: listMaxHeight } : undefined}>
@@ -149,7 +149,7 @@ const { bookings, loadedDays, loadingMore, reachedCap, loadMore } = useAdminIncr
                   <div className="w-12 h-12 rounded shrink-0" style={{ backgroundColor: "#f2f0ed" }} />
                 )}
                 <div className="min-w-0">
-                  <p className="text-xs lg:text-[13px]  truncate" style={{ color: "#17191c" }}>{row.roomTypeName}</p>
+                  <p className="text-xs lg:text-[13px]     truncate" style={{ color: "#17191c" }}>{row.roomTypeName}</p>
                   {row.quantity !== undefined && row.laneCount > row.quantity && (
                     <p className="text-[10px]" style={{ color: "#dc2626" }}>⚠ {row.laneCount} over capacity</p>
                   )}
@@ -185,8 +185,8 @@ const { bookings, loadedDays, loadingMore, reachedCap, loadMore } = useAdminIncr
               bookings.length === 0 ? (
                 <div className="flex flex-col items-center justify-center gap-2 p-16 text-center" style={{ width: totalWidth }}>
                   <CalendarX2 size={22} style={{ color: "#d1d1d1" }} />
-                  <p className="text-xs lg:text-[13px]" style={{ color: "#17191c" }}>No bookings yet</p>
-                  <p className="text-xs lg:text-[13px]max-w-xs" style={{ color: "#a3a6af" }}>
+                  <p className="text-xs lg:text-[13px]   " style={{ color: "#17191c" }}>No bookings yet</p>
+                  <p className="text-xs lg:text-[13px]   max-w-xs" style={{ color: "#a3a6af" }}>
                     Bookings will show up here on this timeline once guests start reserving your rooms.
                   </p>
                 </div>

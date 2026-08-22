@@ -37,12 +37,12 @@ export default function SellerSection({ tenantId }: Props) {
           <Avatar src={tenant.avatarUrl} name={tenant.name} size={60} />
           <div className="min-w-0">
             <p
-              className="text-xs lg:text-[13px]lg:text-lg bold truncate"
+              className="text-xs lg:text-[13px]   lg:text-lg bold truncate"
               style={{ color: "#171717" }}
             >
               {tenant.name}
             </p>
-            <p className="text-xs lg:text-[13px]text-[#666]">
+            <p className="text-xs lg:text-[13px]   text-[#666]">
               Hosting since {hostSince}
               {location && ` · ${location}`}
             </p>
@@ -50,7 +50,7 @@ export default function SellerSection({ tenantId }: Props) {
         </div>
 
         
-          <p className="text-xs lg:text-[13px]text-[#444] leading-relaxed">{tenant.bio ?? dummyBio}</p>
+          <p className="text-xs lg:text-[13px]   text-[#444] leading-relaxed">{tenant.bio ?? dummyBio}</p>
         
 
         {/* <div
@@ -60,31 +60,31 @@ export default function SellerSection({ tenantId }: Props) {
           <div className="flex flex-col items-center gap-1 pt-3">
             <div className="flex items-center gap-1">
               <Star size={14} className="fill-[#F5A623] text-[#F5A623]" />
-              <span className="text-xs lg:text-[13px]" style={{ color: "#171717" }}>
+              <span className="text-xs lg:text-[13px]   " style={{ color: "#171717" }}>
                 {stats.avgRating.toFixed(1)}
               </span>
             </div>
-            <span className="text-xs lg:text-[13px]text-[#777]">
+            <span className="text-xs lg:text-[13px]   text-[#777]">
               {stats.totalReviews} reviews
             </span>
           </div>
           <div className="flex flex-col items-center gap-1 pt-3">
             <div className="flex items-center gap-1">
               <Calendar size={14} style={{ color: "#171717" }} />
-              <span className="text-xs lg:text-[13px]" style={{ color: "#171717" }}>
+              <span className="text-xs lg:text-[13px]   " style={{ color: "#171717" }}>
                 {stats.totalBookings}
               </span>
             </div>
-            <span className="text-xs lg:text-[13px]text-[#777]">Bookings hosted</span>
+            <span className="text-xs lg:text-[13px]   text-[#777]">Bookings hosted</span>
           </div>
           <div className="flex flex-col items-center gap-1 pt-3">
             <div className="flex items-center gap-1">
               <Home size={14} style={{ color: "#171717" }} />
-              <span className="text-xs lg:text-[13px]" style={{ color: "#171717" }}>
+              <span className="text-xs lg:text-[13px]   " style={{ color: "#171717" }}>
                 {properties.length}
               </span>
             </div>
-            <span className="text-xs lg:text-[13px]text-[#777]">
+            <span className="text-xs lg:text-[13px]   text-[#777]">
               {properties.length === 1 ? "Property" : "Properties"}
             </span>
           </div>

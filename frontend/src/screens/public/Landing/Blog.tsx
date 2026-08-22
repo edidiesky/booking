@@ -33,7 +33,7 @@ const Blog = () => {
       <div className="max-w-screen-xl mx-auto flex flex-col gap-20">
         <div className="flex flex-col items-start md:items-center md:justify-center w-full gap-4">
           <div className="flex flex-col md:items-center md:justify-center gap-4">
-            <h4 className="text-xs lg:text-[13px]md:text-lg text-[var(--primary)]">
+            <h4 className="text-xs lg:text-[13px]   md:text-lg text-[var(--primary)]">
               Passionate – Dedicated – Professional
             </h4>
             <h3 className="text-4xl md:text-4xl capitalize family2 text-[var(--dark-1)]">
@@ -63,7 +63,7 @@ const Blog = () => {
                   <LazyImage src={blog?.image} />
                 </div>
                 <div className="py-8 border-b border-dotted px-4 flex flex-col gap-4">
-                  <h5 className="text-xs lg:text-[13px]  font-normal">
+                  <h5 className="text-xs lg:text-[13px]     font-normal">
                     <AnimateTextWord>Categories: </AnimateTextWord>
                     <span className="text-[var(--primary)]">
                       <AnimateTextWord> Luxury Living</AnimateTextWord>

@@ -498,4 +498,82 @@ export const bookingRepository = {
       platformFee: Number(r.platform_fee),
     }));
   },
+
+  async getPropertyPerformance(
+    propertyId: string,
+    tenantId: string,
+    days: number,
+  ): Promise<
+    {
+      day: string;
+      salesCount: number;
+      revenueNgn: number;
+      avgOrderValueNgn: number;
+    }[]
+  > {
+    const rows = await query<{
+      day: string;
+      sales_count: string;
+      revenue: string;
+      avg_order_value: string;
+    }>(
+      `WITH days AS (
+       SELECT generate_series(
+         date_trunc('day', now() - ($3 || ' days')::interval),
+         date_trunc('day', now()),
+         '1 day'::interval
+       ) AS day
+     )
+     SELECT days.day,
+            COUNT(b.id) AS sales_count,
+            COALESCE(SUM(b.total_amount_ngn), 0) AS revenue,
+            COALESCE(AVG(b.total_amount_ngn), 0) AS avg_order_value
+     FROM days
+     LEFT JOIN bookings b
+       ON date_trunc('day', b.created_at) = days.day
+       AND b.property_id = $1
+       AND b.tenant_id = $2
+       AND b.status IN ('confirmed', 'checked_in', 'checked_out')
+     GROUP BY days.day
+     ORDER BY days.day ASC`,
+      [propertyId, tenantId, days],
+    );
+    return rows.map((r) => ({
+      day: r.day,
+      salesCount: Number(r.sales_count),
+      revenueNgn: Number(r.revenue),
+      avgOrderValueNgn: Number(r.avg_order_value),
+    }));
+  },
+
+  async getPropertySaleComparison(
+    tenantId: string,
+    propertyId: string,
+  ): Promise<
+    {
+      propertyId: string;
+      propertyName: string;
+      salesCount: number;
+      isCurrent: boolean;
+    }[]
+  > {
+    return query(
+      `SELECT p.id AS property_id, p.name AS property_name,
+            COUNT(b.id) FILTER (WHERE b.status IN ('confirmed', 'checked_in', 'checked_out')) AS sales_count
+     FROM properties p
+     LEFT JOIN bookings b ON b.property_id = p.id
+     WHERE p.tenant_id = $1
+     GROUP BY p.id, p.name
+     ORDER BY sales_count DESC
+     LIMIT 10`,
+      [tenantId],
+    ).then((rows) =>
+      rows.map((r: any) => ({
+        propertyId: r.property_id,
+        propertyName: r.property_name,
+        salesCount: Number(r.sales_count),
+        isCurrent: r.property_id === propertyId,
+      })),
+    );
+  },
 };

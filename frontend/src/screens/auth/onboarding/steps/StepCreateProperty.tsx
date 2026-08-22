@@ -72,7 +72,7 @@ export default function StepCreateProperty({ onSubmit, isLoading }: Props) {
 
       <button
         type="submit" disabled={isLoading}
-        className="w-full h-12 rounded-full flex items-center justify-center text-xs lg:text-[13px]transition-opacity hover:opacity-80 disabled:opacity-50"
+        className="w-full h-12 rounded-full flex items-center justify-center text-xs lg:text-[13px]   transition-opacity hover:opacity-80 disabled:opacity-50"
         style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
       >
         {isLoading ? "Creating account..." : "Launch my property"}

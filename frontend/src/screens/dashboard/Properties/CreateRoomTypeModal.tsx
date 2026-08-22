@@ -97,7 +97,7 @@ function ImageSection({ images, onChange }: ImageSectionProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-xs lg:text-[13px]  text-[#17191c]">Room Photos</span>
+      <span className="text-xs lg:text-[13px]     text-[#17191c]">Room Photos</span>
 
       {hasAny ? (
         <div className="grid grid-cols-4 gap-3">
@@ -167,7 +167,7 @@ function ImageSection({ images, onChange }: ImageSectionProps) {
             className="aspect-square border-2 border-dashed border-[#e8e6e3] flex flex-col items-center justify-center gap-1 hover:border-[#17191c] hover:bg-[#fafaf9] transition-colors"
           >
             <ImagePlus size={18} className="text-[#a3a6af]" />
-            <span className="text-xs lg:text-[13px]  text-[#a3a6af]">Add</span>
+            <span className="text-xs lg:text-[13px]     text-[#a3a6af]">Add</span>
           </button>
         </div>
       ) : (
@@ -181,10 +181,10 @@ function ImageSection({ images, onChange }: ImageSectionProps) {
           className="border-2 border-dashed border-[#e8e6e3] h-[130px] flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[#17191c] hover:bg-[#fafaf9] transition-colors"
         >
           <Upload size={20} className="text-[#a3a6af]" />
-          <p className="text-xs lg:text-[13px]  text-[#777b86]">
+          <p className="text-xs lg:text-[13px]     text-[#777b86]">
             Drag & drop or <span className="text-[#17191c]">browse</span>
           </p>
-          <p className="text-xs lg:text-[13px]  text-[#a3a6af]">PNG, JPG, WebP</p>
+          <p className="text-xs lg:text-[13px]     text-[#a3a6af]">PNG, JPG, WebP</p>
         </div>
       )}
 
@@ -222,12 +222,12 @@ function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs lg:text-[13px]  text-[#17191c]">{label}</span>
+      <span className="text-xs lg:text-[13px]     text-[#17191c]">{label}</span>
       <div className=" py-2 px-2 flex flex-wrap gap-2 min-h-[45px] focus-within:border-[#17191c] transition-colors">
         {tags.map((tag, i) => (
           <span
             key={i}
-            className="inline-flex items-center gap-1 px-4 rounded-full bold py-1 bg-[#f2f0ed] text-xs lg:text-[13px]  text-[#17191c]"
+            className="inline-flex items-center gap-1 px-4 rounded-full bold py-1 bg-[#f2f0ed] text-xs lg:text-[13px]     text-[#17191c]"
           >
             {tag}
             <button
@@ -254,7 +254,7 @@ function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
           placeholder={tags.length === 0 ? placeholder : ""}
         />
       </div>
-      <p className="text-xs lg:text-[13px]  text-[#a3a6af]">Press Enter or comma to add</p>
+      <p className="text-xs lg:text-[13px]     text-[#a3a6af]">Press Enter or comma to add</p>
     </div>
   );
 }
@@ -368,10 +368,10 @@ export default function CreateRoomTypeModal({
         {/* header */}
         <div className="border-b border-[#e8e6e3] flex items-center justify-between px-8 h-[72px] shrink-0">
           <div>
-            <h4 className="text-xs lg:text-[13px]  text-[#17191c]">
+            <h4 className="text-xs lg:text-[13px]     text-[#17191c]">
               {isEdit ? "Edit Room Type" : "Add Room Type"}
             </h4>
-            <p className="text-xs lg:text-[13px]  text-[#777b86] mt-0.5">
+            <p className="text-xs lg:text-[13px]     text-[#777b86] mt-0.5">
               {isEdit
                 ? "Update pricing, capacity, or availability for this room type."
                 : "Define a room category, pricing, and availability for this property."}
@@ -431,14 +431,14 @@ export default function CreateRoomTypeModal({
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs lg:text-[13px]  text-[#17191c]">Status</label>
+                <label className="text-xs lg:text-[13px]     text-[#17191c]">Status</label>
                 <Select
                   value={form.status}
                   onValueChange={(v) =>
                     setField("status", v as "active" | "inactive")
                   }
                 >
-                  <SelectTrigger className="h-[42px] border border-[#e8e6e3] px-3 text-xs lg:text-[13px]outline-none focus:border-[#17191c] transition-colors bg-white text-[#17191c] w-full rounded-none shadow-none focus:ring-0">
+                  <SelectTrigger className="h-[42px] border border-[#e8e6e3] px-3 text-xs lg:text-[13px]   outline-none focus:border-[#17191c] transition-colors bg-white text-[#17191c] w-full rounded-none shadow-none focus:ring-0">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-[#e8e6e3] shadow-sm rounded-xl">
@@ -449,7 +449,7 @@ export default function CreateRoomTypeModal({
                       <SelectItem
                         key={opt.value}
                         value={opt.value}
-                        className="text-xs lg:text-[13px]  text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] focus:bg-[#f2f0ed] focus:text-[#17191c]"
+                        className="text-xs lg:text-[13px]     text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] focus:bg-[#f2f0ed] focus:text-[#17191c]"
                       >
                         {opt.label}
                       </SelectItem>
@@ -475,12 +475,12 @@ export default function CreateRoomTypeModal({
               />
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs lg:text-[13px]  text-[#17191c]">Description</label>
+                <label className="text-xs lg:text-[13px]     text-[#17191c]">Description</label>
                 <textarea
                   value={form.description}
                   onChange={(e) => setField("description", e.target.value)}
                   rows={4}
-                  className="border border-[#e8e6e3] px-3 py-2.5 text-xs lg:text-[13px]outline-none resize-none focus:border-[#17191c] transition-colors"
+                  className="border border-[#e8e6e3] px-3 py-2.5 text-xs lg:text-[13px]   outline-none resize-none focus:border-[#17191c] transition-colors"
                   placeholder="Describe this room type, inclusions, and guest experience..."
                 />
               </div>
@@ -492,14 +492,14 @@ export default function CreateRoomTypeModal({
         <div className="border-t border-[#e8e6e3] bg-white h-[68px] flex items-center justify-between px-8 shrink-0">
           <button
             onClick={onClose}
-            className="text-xs lg:text-[13px]  text-[#4c4c4c] hover:text-[#17191c] transition-colors"
+            className="text-xs lg:text-[13px]     text-[#4c4c4c] hover:text-[#17191c] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={isBusy}
-            className="bg-[#17191c] text-white text-xs lg:text-[13px]rounded-full px-6 h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="bg-[#17191c] text-white text-xs lg:text-[13px]   rounded-full px-6 h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {isBusy ? "Saving..." : "Save room type"}
           </button>
@@ -508,4 +508,3 @@ export default function CreateRoomTypeModal({
     </div>
   );
 }
-''
