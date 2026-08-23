@@ -7,7 +7,6 @@ and a signal for when you've actually understood it versus just copy-pasted a
 tutorial. Ordered roughly crawl → walk → run, but pick based on what you want
 to be interview-ready on soonest.
 
----
 
 ## 1. PostgreSQL sharding / partitioning
 
