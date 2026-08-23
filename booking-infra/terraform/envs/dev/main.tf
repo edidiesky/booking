@@ -20,6 +20,39 @@ module "networking" {
   }
 }
 
+module "eks" {
+  source = "../../modules/eks"
+
+  project     = "booking"
+  environment = "dev"
+  aws_region  = "us-east-1"
+
+  vpc_id             = module.networking.vpc_id
+  private_subnet_ids = module.networking.private_subnet_ids
+  eks_nodes_sg_id    = module.networking.eks_nodes_sg_id
+
+  cluster_version = "1.33"
+
+  node_groups = {
+    general = {
+      instance_types = ["t3.medium"]
+      min_size       = 2
+      max_size       = 4
+      desired_size   = 2
+      labels = {
+        role = "general"
+      }
+      taints = {}
+    }
+  }
+
+  tags = {
+    Project     = "booking"
+    Environment = "dev"
+    ManagedBy   = "terraform"
+  }
+}
+
 output "vpc_id" {
   value = module.networking.vpc_id
 }
@@ -30,4 +63,20 @@ output "private_subnet_ids" {
 
 output "public_subnet_ids" {
   value = module.networking.public_subnet_ids
+}
+
+output "cluster_name" {
+  value = module.eks.cluster_name
+}
+
+output "cluster_endpoint" {
+  value = module.eks.cluster_endpoint
+}
+
+output "alb_controller_role_arn" {
+  value = module.eks.alb_controller_role_arn
+}
+
+output "external_secrets_role_arn" {
+  value = module.eks.external_secrets_role_arn
 }
