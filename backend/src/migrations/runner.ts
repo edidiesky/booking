@@ -37,7 +37,9 @@ export async function runMigrations(): Promise<void> {
   const client = await pool.connect();
 
   try {
-    await client.query("SELECT pg_advisory_lock($1)", [MIGRATIONS_ADVISORY_LOCK_KEY]);
+    await client.query("SELECT pg_advisory_lock($1)", [
+      MIGRATIONS_ADVISORY_LOCK_KEY,
+    ]);
 
     await ensureMigrationsTable();
     const appliedRows = await client.query<{ filename: string }>(
@@ -100,7 +102,27 @@ export async function runMigrations(): Promise<void> {
       totalMigrations: all.length,
     });
   } finally {
-    await client.query("SELECT pg_advisory_unlock($1)", [MIGRATIONS_ADVISORY_LOCK_KEY]);
+    await client.query("SELECT pg_advisory_unlock($1)", [
+      MIGRATIONS_ADVISORY_LOCK_KEY,
+    ]);
     client.release();
   }
+}
+
+if (require.main === module) {
+  runMigrations()
+    .then(() => {
+      logger.info("migration_runner_exit", {
+        event: "migration_runner_exit",
+        status: "success",
+      });
+      process.exit(0);
+    })
+    .catch((err) => {
+      logger.error("migration_runner_failed", {
+        event: "migration_runner_failed",
+        error: err instanceof Error ? err.message : String(err),
+      });
+      process.exit(1);
+    });
 }
