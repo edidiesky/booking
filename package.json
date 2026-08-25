@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npm run build -w @booking/shared && npm run build --workspaces --if-present",
     "build:shared": "npm run build -w @booking/shared",
-    "docker:up": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml up -d",
+    "docker:up": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.ymldocker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml up -d",
     "docker:up:build": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml up -d --build",
     "docker:down": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml down",
     "docker:down:clean": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml down -v",
