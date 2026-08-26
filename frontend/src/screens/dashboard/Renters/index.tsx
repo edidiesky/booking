@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {  Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import RowActionsMenu from "@/components/common/RowActionsMenu";
 import RenterDetailsModal from "./RenterDetailsModal";
 import { useRenters } from "./hooks/useRenters";
 import { formatDate } from "@/utils/formatDate";
 import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/common/EmptyState";
 
 export default function DashboardRenters() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -49,9 +50,13 @@ export default function DashboardRenters() {
               key={label as string}
               className="border border-[#e8e6e3] rounded-xl p-5 flex flex-col gap-5"
             >
-              <p className="text-xs lg:text-[13px]     uppercase text-[#a3a6af]">{label}</p>
+              <p className="text-xs lg:text-[13px]     uppercase text-[#a3a6af]">
+                {label}
+              </p>
               <p className="text-xl lg:text-4xl bold text-[#17191c]">{value}</p>
-              <p className="text-xs lg:text-[13px]     medium text-[#a3a6af]">{sub}</p>
+              <p className="text-xs lg:text-[13px]     medium text-[#a3a6af]">
+                {sub}
+              </p>
             </div>
           ))}
         </div>
@@ -93,7 +98,10 @@ export default function DashboardRenters() {
                     colSpan={5}
                     className="px-5 py-10 text-center text-xs lg:text-[13px]     text-[#a3a6af]"
                   >
-                    No tenants found.
+                    <EmptyState
+                      title="Tenants"
+                      description="No recent tenants yet"
+                    />
                   </td>
                 </tr>
               ) : (
@@ -104,10 +112,10 @@ export default function DashboardRenters() {
                     className="border-b border-[#f2f0ed] last:border-0 hover:bg-[#fafaf9] transition-colors cursor-pointer"
                   >
                     <td className="px-5 py-3">
-                      <p className="bold text-[#17191c]">
-                        {r.full_name}
+                      <p className="bold text-[#17191c]">{r.full_name}</p>
+                      <p className="text-xs lg:text-[13px]     text-[#777b86]">
+                        {r.email}
                       </p>
-                      <p className="text-xs lg:text-[13px]     text-[#777b86]">{r.email}</p>
                     </td>
                     <td className="px-5 py-3 text-[#4c4c4c]">
                       {r.phone ?? "—"}
