@@ -12,6 +12,7 @@ const DashboardProperties = lazy(
 const DashboardBookings = lazy(() => import("@/screens/dashboard/Bookings"));
 const DashboardPayments = lazy(() => import("@/screens/dashboard/Payment"));
 const DashboardEscrow = lazy(() => import("@/screens/dashboard/Escrow"));
+const DashboardMessages = lazy(() => import("@/screens/dashboard/Messages"));
 const DashboardRoles = lazy(() => import("@/screens/dashboard/Roles"));
 const DashboardCalendar = lazy(() => import("@/screens/dashboard/calendar"));
 const DashboardAccount = lazy(() => import("@/screens/dashboard/account"));
@@ -44,7 +45,8 @@ export const dashboardRoutes: RouteObject[] = [
     ),
     children: [
       { index: true, element: s(<DashboardHome />) },
-      { path: "properties", element: s(<DashboardProperties />) },
+      { path: "properties", element: s(<DashboardProperties />) }, // DashboardMessages
+      { path: "messages", element: s(<DashboardMessages />) }, // DashboardMessages
       { path: "bookings", element: s(<DashboardBookings />) },
       { path: "payments", element: s(<DashboardPayments />) },
       { path: "escrow", element: s(<DashboardEscrow />) },
