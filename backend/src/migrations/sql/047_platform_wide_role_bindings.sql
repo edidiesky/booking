@@ -11,9 +11,6 @@ ALTER TABLE user_permissions DROP CONSTRAINT IF EXISTS uq_user_permission;
 CREATE UNIQUE INDEX IF NOT EXISTS uq_user_permissions_tenant_scoped ON user_permissions(user_id, tenant_id, permission_id) WHERE tenant_id IS NOT NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS uq_user_permissions_platform_wide ON user_permissions(user_id, permission_id)            WHERE tenant_id IS NULL;
 
--- Backfill: bind every existing platform:admin user to the already-seeded
--- 'platform:admin' role. Requires seedService.seedAll() to have run first,
--- confirm with: SELECT slug FROM roles WHERE slug = 'platform:admin';
 DO $$
 DECLARE
   v_role_id UUID;
