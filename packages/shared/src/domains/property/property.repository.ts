@@ -360,6 +360,15 @@ export const propertyRepository = {
         $1::uuid[], $2::uuid[], $3::text[], $4::text[], $5::int[],
         $6::numeric[], $7::text[][], $8::text[][], $9::int[], $10::text[]
       )
+      ON CONFLICT (property_id, name) DO UPDATE SET
+        description    = EXCLUDED.description,
+        max_occupancy  = EXCLUDED.max_occupancy,
+        base_price_ngn = EXCLUDED.base_price_ngn,
+        images         = EXCLUDED.images,
+        amenities      = EXCLUDED.amenities,
+        quantity       = EXCLUDED.quantity,
+        status         = EXCLUDED.status,
+        updated_at     = now()
       RETURNING *`;
     const params = [
       rows.map((r) => r.propertyId),

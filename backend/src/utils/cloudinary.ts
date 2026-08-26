@@ -59,8 +59,8 @@ export async function deleteFromCloudinary(publicId: string): Promise<boolean> {
       invalidate: true,
     });
     return result.result === "ok" || result.result === "not found";
-  } catch (error: any) {
-    logger.error("Cloudinary delete failed", { error: error.message, publicId });
+  } catch (error) {
+    logger.error("Cloudinary delete failed", { error: error instanceof Error ? error.message: String(error), publicId });
     return false;
   }
 }
