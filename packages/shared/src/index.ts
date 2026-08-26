@@ -16,12 +16,13 @@ export type { OutboxEventType, OutboxEvent } from "./domains/outbox/outbox.repos
 
 export * from "./messaging/publisher";
 
-export { jobRepository } from "./infra/jobs/job.repository";
-export { jobService }    from "./infra/jobs/job.service";
-export type { JobProgress, JobState } from "./infra/jobs/job.types";
-
 export { requestContext } from "./context/requestContext";
 
 export { default as logger } from "./utils/logger";
 export { AppError }          from "./utils/AppError";
 export * from "./utils/metrics";
+export { jobRepository } from "./infra/jobs/job.repository";
+export { jobService }    from "./infra/jobs/job.service";
+export type { JobProgress, JobState } from "./infra/jobs/job.types";
+export { checkpointRepository } from "./infra/checkpoints/checkpoint.repository";
+export type { JobCheckpoint, CheckpointStatus } from "./infra/checkpoints/checkpoint.repository";
