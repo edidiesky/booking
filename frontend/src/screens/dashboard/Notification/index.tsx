@@ -17,19 +17,45 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
+import { EmptyState } from "@/components/common/EmptyState";
 
-const TYPE_CONFIG: Record<SellerNotificationType, { icon: typeof CreditCard; color: string; bg: string; label: string }> = {
-  booking_confirmed:   { icon: CreditCard, color: "#166534", bg: "#dcfce7", label: "Payment" },
-  booking_checked_in:  { icon: LogIn,      color: "#1e40af", bg: "#dbeafe", label: "Check-in" },
-  booking_checked_out: { icon: LogOut,     color: "#5b21b6", bg: "#ede9fe", label: "Check-out" },
+const TYPE_CONFIG: Record<
+  SellerNotificationType,
+  { icon: typeof CreditCard; color: string; bg: string; label: string }
+> = {
+  booking_confirmed: {
+    icon: CreditCard,
+    color: "#166534",
+    bg: "#dcfce7",
+    label: "Payment",
+  },
+  booking_checked_in: {
+    icon: LogIn,
+    color: "#1e40af",
+    bg: "#dbeafe",
+    label: "Check-in",
+  },
+  booking_checked_out: {
+    icon: LogOut,
+    color: "#5b21b6",
+    bg: "#ede9fe",
+    label: "Check-out",
+  },
 };
 
-
-function getPageWindow(current: number, total: number): (number | "ellipsis")[] {
+function getPageWindow(
+  current: number,
+  total: number,
+): (number | "ellipsis")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
   const pages: (number | "ellipsis")[] = [1];
   if (current > 3) pages.push("ellipsis");
-  for (let p = Math.max(2, current - 1); p <= Math.min(total - 1, current + 1); p++) pages.push(p);
+  for (
+    let p = Math.max(2, current - 1);
+    p <= Math.min(total - 1, current + 1);
+    p++
+  )
+    pages.push(p);
   if (current < total - 2) pages.push("ellipsis");
   pages.push(total);
   return pages;
@@ -37,13 +63,15 @@ function getPageWindow(current: number, total: number): (number | "ellipsis")[] 
 
 export default function DashboardNotifications() {
   const [page, setPage] = useState(1);
-  const { data, isLoading, isFetching } = useListSellerNotificationsQuery({ page });
-  const [markRead]    = useMarkNotificationReadMutation();
+  const { data, isLoading, isFetching } = useListSellerNotificationsQuery({
+    page,
+  });
+  const [markRead] = useMarkNotificationReadMutation();
   const [markAllRead] = useMarkAllNotificationsReadMutation();
 
   const notifications = data?.data.notifications ?? [];
-  const unreadCount   = data?.data.unreadCount ?? 0;
-  const totalPages    = data?.data.totalPages ?? 1;
+  const unreadCount = data?.data.unreadCount ?? 0;
+  const totalPages = data?.data.totalPages ?? 1;
 
   return (
     <motion.div
@@ -69,30 +97,67 @@ export default function DashboardNotifications() {
         }
       />
 
-      <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#e8e6e3" }}>
+      <div
+        className="border rounded-xl overflow-hidden"
+        style={{ borderColor: "#e8e6e3" }}
+      >
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b" style={{ borderColor: "#e8e6e3" }}>
-              <th className="px-5 py-3 text-left font-normal" style={{ color: "#a3a6af" }}>Type</th>
-              <th className="px-5 py-3 text-left font-normal" style={{ color: "#a3a6af" }}>Title</th>
-              <th className="px-5 py-3 text-left font-normal" style={{ color: "#a3a6af" }}>Details</th>
-              <th className="px-5 py-3 text-left font-normal whitespace-nowrap" style={{ color: "#a3a6af" }}>Date</th>
+              <th
+                className="px-5 py-3 text-left font-normal"
+                style={{ color: "#a3a6af" }}
+              >
+                Type
+              </th>
+              <th
+                className="px-5 py-3 text-left font-normal"
+                style={{ color: "#a3a6af" }}
+              >
+                Title
+              </th>
+              <th
+                className="px-5 py-3 text-left font-normal"
+                style={{ color: "#a3a6af" }}
+              >
+                Details
+              </th>
+              <th
+                className="px-5 py-3 text-left font-normal whitespace-nowrap"
+                style={{ color: "#a3a6af" }}
+              >
+                Date
+              </th>
               <th className="px-5 py-3" />
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               Array.from({ length: 6 }).map((_, i) => (
-                <tr key={i} className="border-b last:border-0" style={{ borderColor: "#f2f0ed" }}>
+                <tr
+                  key={i}
+                  className="border-b last:border-0"
+                  style={{ borderColor: "#f2f0ed" }}
+                >
                   <td colSpan={5} className="px-5 py-4">
-                    <div className="h-4 rounded animate-pulse w-3/4" style={{ backgroundColor: "#f2f0ed" }} />
+                    <div
+                      className="h-4 rounded animate-pulse w-3/4"
+                      style={{ backgroundColor: "#f2f0ed" }}
+                    />
                   </td>
                 </tr>
               ))
             ) : notifications.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-10 text-center" style={{ color: "#a3a6af" }}>
-                  Nothing here yet.
+                <td
+                  colSpan={5}
+                  className="px-5 py-10 text-center"
+                  style={{ color: "#000" }}
+                >
+                  <EmptyState
+                    title="Notifications"
+                    description={`No notifications found`}
+                  />
                 </td>
               </tr>
             ) : (
@@ -103,20 +168,33 @@ export default function DashboardNotifications() {
                     key={n.id}
                     onClick={() => !n.is_read && markRead(n.id)}
                     className="border-b last:border-0 cursor-pointer transition-colors hover:bg-[#fafaf9]"
-                    style={{ borderColor: "#f2f0ed", backgroundColor: n.is_read ? "transparent" : "#f8f7ff" }}
+                    style={{
+                      borderColor: "#f2f0ed",
+                      backgroundColor: n.is_read ? "transparent" : "#f8f7ff",
+                    }}
                   >
                     <td className="px-5 py-3">
-                      <span>
-                          {cfg.label}
-                        </span>
+                      <span>{cfg.label}</span>
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
-                        <span className="bold" style={{ color: "#17191c" }}>{n.title}</span>
+                        <span className="bold" style={{ color: "#17191c" }}>
+                          {n.title}
+                        </span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 max-w-[420px] truncate" style={{ color: "#666" }}>{n.body}</td>
-                    <td className="px-5 py-3 whitespace-nowrap" style={{ color: "#a3a6af" }}>{formatDateTime(n.created_at)}</td>
+                    <td
+                      className="px-5 py-3 max-w-[420px] truncate"
+                      style={{ color: "#666" }}
+                    >
+                      {n.body}
+                    </td>
+                    <td
+                      className="px-5 py-3 whitespace-nowrap"
+                      style={{ color: "#a3a6af" }}
+                    >
+                      {formatDateTime(n.created_at)}
+                    </td>
                     <td className="px-5 py-3" />
                   </tr>
                 );
@@ -132,7 +210,10 @@ export default function DashboardNotifications() {
             <PaginationItem>
               <PaginationPrevious
                 href="#"
-                onClick={(e) => { e.preventDefault(); if (page > 1) setPage(page - 1); }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (page > 1) setPage(page - 1);
+                }}
                 className={page === 1 ? "pointer-events-none opacity-40" : ""}
               />
             </PaginationItem>
@@ -140,11 +221,20 @@ export default function DashboardNotifications() {
             {getPageWindow(page, totalPages).map((p, i) =>
               p === "ellipsis" ? (
                 <PaginationItem key={`e-${i}`}>
-                  <span className="px-2 text-xs" style={{ color: "#a3a6af" }}>...</span>
+                  <span className="px-2 text-xs" style={{ color: "#a3a6af" }}>
+                    ...
+                  </span>
                 </PaginationItem>
               ) : (
                 <PaginationItem key={p}>
-                  <PaginationLink href="#" isActive={p === page} onClick={(e) => { e.preventDefault(); setPage(p); }}>
+                  <PaginationLink
+                    href="#"
+                    isActive={p === page}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage(p);
+                    }}
+                  >
                     {p}
                   </PaginationLink>
                 </PaginationItem>
@@ -154,8 +244,15 @@ export default function DashboardNotifications() {
             <PaginationItem>
               <PaginationNext
                 href="#"
-                onClick={(e) => { e.preventDefault(); if (page < totalPages) setPage(page + 1); }}
-                className={page === totalPages || isFetching ? "pointer-events-none opacity-40" : ""}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (page < totalPages) setPage(page + 1);
+                }}
+                className={
+                  page === totalPages || isFetching
+                    ? "pointer-events-none opacity-40"
+                    : ""
+                }
               />
             </PaginationItem>
           </PaginationContent>
