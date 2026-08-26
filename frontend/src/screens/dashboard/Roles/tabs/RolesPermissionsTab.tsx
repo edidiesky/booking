@@ -5,6 +5,7 @@ import SettingsLayout from "@/components/dashboard/common/SettingsLayout";
 import CreateRoleModal from "../CreateRoleModal";
 import RoleDetailPanel from "../RoleDetailPanel";
 import { useListTenantRolesQuery } from "@/redux/services/roleApi";
+import { EmptyState } from "@/components/common/EmptyState";
 
 type RoleScope = "system" | "custom";
 
@@ -19,7 +20,7 @@ export default function RolesPermissionsTab() {
   const { data: tenantRoles, isLoading } = useListTenantRolesQuery();
 
   const systemRoles = tenantRoles?.data.filter((r) => r.isSystem) ?? [];
-  const customRoles  = tenantRoles?.data.filter((r) => !r.isSystem) ?? [];
+  const customRoles = tenantRoles?.data.filter((r) => !r.isSystem) ?? [];
   const visibleRoles = scope === "system" ? systemRoles : customRoles;
 
   // Reset the selected role whenever the scope tab changes, or if the
@@ -34,7 +35,7 @@ export default function RolesPermissionsTab() {
 
   const scopeTabs: { key: RoleScope; label: string; count: number }[] = [
     { key: "system", label: "System Roles", count: systemRoles.length },
-    { key: "custom", label: "Custom Roles",  count: customRoles.length },
+    { key: "custom", label: "Custom Roles", count: customRoles.length },
   ];
 
   return (
@@ -46,7 +47,10 @@ export default function RolesPermissionsTab() {
           <button
             onClick={() => setShowCreateRole(true)}
             className="flex items-center gap-2 h-9 px-4 rounded-full text-xs lg:text-[13px]   transition-opacity hover:opacity-80 shrink-0"
-            style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+            style={{
+              backgroundColor: "var(--color-ink)",
+              color: "var(--color-canvas)",
+            }}
           >
             <Plus size={14} />
             Create Custom Role
@@ -61,8 +65,12 @@ export default function RolesPermissionsTab() {
             onClick={() => setScope(t.key)}
             className="h-8 px-4 rounded-full text-xs lg:text-[13px]     transition-colors"
             style={{
-              backgroundColor: scope === t.key ? "var(--color-ink)" : "transparent",
-              color: scope === t.key ? "var(--color-canvas)" : "var(--color-muted-stone)",
+              backgroundColor:
+                scope === t.key ? "var(--color-ink)" : "transparent",
+              color:
+                scope === t.key
+                  ? "var(--color-canvas)"
+                  : "var(--color-muted-stone)",
               border: scope === t.key ? "none" : "1px solid #e8e6e3",
             }}
           >
@@ -72,12 +80,23 @@ export default function RolesPermissionsTab() {
       </div>
 
       {isLoading ? (
-        <div className="h-[60vh] rounded-2xl animate-pulse" style={{ backgroundColor: "#f2f0ed" }} />
+        <div
+          className="h-[60vh] rounded-2xl animate-pulse"
+          style={{ backgroundColor: "#f2f0ed" }}
+        />
       ) : visibleRoles.length === 0 ? (
-        <div className="rounded-xl border p-10 text-center text-xs" style={{ borderColor: "#e8e6e3", color: "var(--color-muted-stone)" }}>
-          {scope === "custom"
-            ? 'No custom roles yet. Click "Create Custom Role" to add one.'
-            : "No system roles found."}
+        <div
+          className="rounded-xl border p-10 text-center text-xs"
+          style={{ borderColor: "#e8e6e3", color: "var(--color-muted-stone)" }}
+        >
+          <EmptyState
+            title="Roles"
+            description={
+              scope === "custom"
+                ? 'No custom roles yet. Click "Create Custom Role" to add one.'
+                : "No system roles found."
+            }
+          />
         </div>
       ) : (
         <SettingsLayout
@@ -87,8 +106,14 @@ export default function RolesPermissionsTab() {
           onSelect={(key) => setActiveRoleId(key || null)}
           panelTitle={visibleRoles.find((r) => r.id === activeRoleId)?.name}
           groups={[
-            { title: scope === "system" ? "System Roles" : "Custom Roles",
-              items: visibleRoles.map((r) => ({ key: r.id, label: r.name, icon: Shield })) },
+            {
+              title: scope === "system" ? "System Roles" : "Custom Roles",
+              items: visibleRoles.map((r) => ({
+                key: r.id,
+                label: r.name,
+                icon: Shield,
+              })),
+            },
           ]}
         >
           {activeRoleId && <RoleDetailPanel roleId={activeRoleId} />}
