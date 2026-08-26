@@ -25,3 +25,26 @@ export { requestContext } from "./context/requestContext";
 export { default as logger } from "./utils/logger";
 export { AppError }          from "./utils/AppError";
 export * from "./utils/metrics";
+
+export { rateLimitRepository } from "./domains/rate-limit/rate-limit.repository";
+export { createRateLimitService } from "./domains/rate-limit/rate-limit.service";
+export type { RateLimitService } from "./domains/rate-limit/rate-limit.service";
+export { RateLimitEngine } from "./domains/rate-limit/engine";
+export { RulesSyncPubSub } from "./domains/rate-limit/rules-sync";
+export type { RulesSyncMessage } from "./domains/rate-limit/rules-sync";
+export { LimiterFactory } from "./domains/rate-limit/algorithms/limiter-factory";
+export type { Limiter } from "./domains/rate-limit/algorithms/limiter-factory";
+export { TokenBucketLimiter } from "./domains/rate-limit/algorithms/token-bucket.algorithm";
+export { SlidingWindowLimiter } from "./domains/rate-limit/algorithms/sliding-window.algorithm";
+export { resolveTier } from "./domains/rate-limit/types";
+export type {
+  UserType as RateLimitUserType,
+  Tier as RateLimitTier,
+  IdType,
+  Algorithm as RateLimitAlgorithm,
+  RateLimitRuleRow,
+  RateLimitRule,
+  RateLimitResult,
+  CreateRuleInput,
+  UpdateRuleInput,
+} from "./domains/rate-limit/types";
