@@ -54,17 +54,6 @@ export const propertyService = {
   ) {
     const { outboxRepository, requestContext } =
       await import("@booking/shared");
-
-    // Reuses the request's existing RLS-scoped transaction
-    // (beginTenantScopedTransaction already opened one, for any
-    // authenticated tenant-scoped request), rather than opening a
-    // second, separate one via withTransaction. That matters concretely
-    // for properties specifically: it's RLS-protected, a fresh pool
-    // connection from withTransaction would have no
-    // app.current_tenant_id set and the INSERT would be rejected by the
-    // policy. Falls back to withTransaction only for callers with no
-    // active request context (a script, a test), where there's nothing
-    // to reuse.
     const existingClient = requestContext.get()?.dbClient;
 
     if (existingClient) {
@@ -144,27 +133,41 @@ export const propertyService = {
 
     let roomType!: RoomType;
 
-    await withTransaction(async (client) => {
-      roomType = await propertyRepository.createRoomType(
-        { propertyId: property.id, tenantId, ...body },
-        client,
-      );
+    try {
+      await withTransaction(async (client) => {
+        roomType = await propertyRepository.createRoomType(
+          { propertyId: property.id, tenantId, ...body },
+          client,
+        );
 
-      const startDate = new Date();
-      const endDate = new Date();
-      endDate.setDate(endDate.getDate() + SEED_WINDOW_DAYS);
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + SEED_WINDOW_DAYS);
 
-      await availabilityRepository.seedCalendar(
-        {
-          roomTypeId: roomType.id,
-          tenantId,
-          startDate: startDate.toISOString().split("T")[0],
-          endDate: endDate.toISOString().split("T")[0],
-          totalRooms: roomType.quantity,
-        },
-        client,
+        await availabilityRepository.seedCalendar(
+          {
+            roomTypeId: roomType.id,
+            tenantId,
+            startDate: startDate.toISOString().split("T")[0],
+            endDate: endDate.toISOString().split("T")[0],
+            totalRooms: roomType.quantity,
+          },
+          client,
       );
-    });
+      });
+    } catch (err) {
+      // Migration 049 added a unique index on room_types(property_id, name).
+      // Before that migration, a duplicate name here would have silently
+      // succeeded. Map it to a clean 409 instead of letting the raw
+      // Postgres error (23505) propagate to the client.
+      const pgErr = err as { code?: string; constraint?: string };
+      if (pgErr.code === "23505" && pgErr.constraint === "uq_room_types_property_name") {
+        throw AppError.conflict(
+          "A room type with this name already exists for this property.",
+        );
+      }
+      throw err;
+    }
 
     return roomType;
   },
