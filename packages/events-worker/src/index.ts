@@ -27,7 +27,7 @@ async function main(): Promise<void> {
   await startSseFanoutWorker(connection);
   startMetricsServer();
 
-  logger.info("events_worker_process_started", { event: "events_worker_process_started" });
+  logger.info("events_worker_process_stard", { event: "events_worker_process_started" });
 }
 
-main().catch((err) => { logger.error("events_worker_fatal", { error: (err as Error).message }); process.exit(1); });
+main().catch((err) => { logger.error("events_worker_fat", { error: (err as Error).message }); process.exit(1); });

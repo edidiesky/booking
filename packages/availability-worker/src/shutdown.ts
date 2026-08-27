@@ -9,7 +9,7 @@ export function registerGracefulShutdown(): void {
 
     logger.info("availability_worker_shutdown_initiated", { event: "availability_worker_shutdown_initiated", signal });
     const timeout = setTimeout(() => {
-      logger.error("availability_worker_shutdown_timeout", { event: "availability_worker_shutdown_timeout" });
+      logger.error("availability_worker_shutdown_timeout", { event: "availability_worker_shutdow" });
       process.exit(1);
     }, 10_000);
 

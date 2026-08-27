@@ -17,6 +17,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
-  logger.error("seller_notification_worker_fatal", { error: (err as Error).message });
-  process.exit(1);
+  logger.error("seller_notification_worker_fatl", { error: (err as Error).message });
+  process.exit(1)
 });
