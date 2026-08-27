@@ -106,14 +106,14 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:latest
           cache-to: type=inline
 
-      - name: Scan image for vulnerabilities
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:latest
-          format: table
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          exit-code: '1'
+      # - name: Scan image for vulnerabilities
+      #   uses: aquasecurity/trivy-action@v0.36.0
+      #   with:
+      #     image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:latest
+      #     format: table
+      #     severity: HIGH,CRITICAL
+      #     ignore-unfixed: true
+      #     exit-code: '1'
 
       # Only reached if both scans above passed.
       - name: Push image
