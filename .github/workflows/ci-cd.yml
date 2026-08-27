@@ -106,13 +106,8 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:latest
           cache-to: type=inline
 
-      # Real vulnerability gate: fails the job (exit-code: '1') on any
-      # HIGH or CRITICAL finding, before the image is ever pushed.
-      # unfixed-only: true, don't fail the pipeline on a CVE with no
-      # available fix yet, that's a real, unactionable finding that
-      # would otherwise block every deploy indefinitely.
       - name: Scan image for vulnerabilities
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:latest
           format: table
