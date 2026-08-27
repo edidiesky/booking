@@ -46,10 +46,7 @@
 # COPY backend/package.json backend/package-lock.json ./
 # RUN npm ci --only=production && npm cache clean --force
 
-# RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx && \
-    apk upgrade --no-cache
-
-COPY --from=builder /app/backend/dist ./dist
+# COPY --from=builder /app/backend/dist ./dist
 # COPY backend/src/assets ./assets
 
 # USER eddy-booking
