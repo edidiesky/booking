@@ -46,6 +46,7 @@ RUN addgroup -g 1001 eddy-booking && \
 
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx && \
     apk upgrade --no-cache
+    
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder   /app/packages/shared/dist ./node_modules/@booking/shared/dist
 COPY --from=builder   /app/packages/shared/package.json ./node_modules/@booking/shared/package.json

@@ -15,8 +15,8 @@ campaign-worker:
   - 'packages/campaign-worker/**'
 csv-room-import-worker:
   - 'packages/csv-room-import-worker/**'
-events-worker:
-  - 'packages/events-worker/**'
+# events-worker:
+#   - 'packages/events-worker/**'
 property-search-worker:
   - 'packages/property-search-worker/**'
 seller-notification-worker:

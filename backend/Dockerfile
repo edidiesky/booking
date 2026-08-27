@@ -104,8 +104,6 @@ COPY --from=builder /app/packages/shared/dist         /app/packages/shared/dist
 WORKDIR /app/packages/shared
 RUN npm install --omit=dev
 
-
-
 WORKDIR /app/backend
 COPY backend/package.json backend/package-lock.json ./
 RUN npm ci --only=production && npm cache clean --force

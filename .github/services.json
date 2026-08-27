@@ -8,7 +8,6 @@
     { "name": "booking-expiry-worker",        "context": ".", "dockerfile": "packages/booking-expiry-worker/Dockerfile",       "compose_service": "booking-expiry-worker" },
     { "name": "campaign-worker",              "context": ".", "dockerfile": "packages/campaign-worker/Dockerfile",             "compose_service": "campaign-worker" },
     { "name": "csv-room-import-worker",       "context": ".", "dockerfile": "packages/csv-room-import-worker/Dockerfile",      "compose_service": "csv-room-import-worker" },
-    { "name": "events-worker",                "context": ".", "dockerfile": "packages/events-worker/Dockerfile",               "compose_service": null },
     { "name": "property-search-worker",       "context": ".", "dockerfile": "packages/property-search-worker/Dockerfile",      "compose_service": "property-search-worker" },
     { "name": "seller-notification-worker",   "context": ".", "dockerfile": "packages/seller-notification-worker/Dockerfile",  "compose_service": "seller-notification-worker" }
   ]
