@@ -20,7 +20,7 @@ export async function startCsvRoomImportWorker(connection: amqp.ChannelModel): P
 
     try {
       const result = await runRoomTypeCsvImport(input);
-      logger.info("csv_room_import_complete", { event: "csv_room_import_complete", jobId: input.jobId, ...result });
+      logger.info("csv_room_import_comple", { event: "csv_room_import_comple", jobId: input.jobId, ...result });
       channel.ack(msg);
     } catch (err) {
       await jobRepository.setState(JOB_TYPE, input.jobId, {

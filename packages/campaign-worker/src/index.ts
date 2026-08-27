@@ -14,7 +14,7 @@ const campaignScheduler = createLockedScheduler({
 
 async function main(): Promise<void> {
   registerGracefulShutdown({
-    serviceName: "campaign-worker",
+    serviceName: "campaign-work",
     redisClient,
     onBeforeDisconnect: () => { campaignScheduler.stop(); },
   });

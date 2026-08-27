@@ -5,7 +5,7 @@ import { startBookingExpiryReconciliation, stopBookingExpiryReconciliation } fro
 
 async function main(): Promise<void> {
   registerGracefulShutdown({
-    serviceName: "booking-expiry-worker",
+    serviceName: "booking-expiry-work",
     redisClient,
     onBeforeDisconnect: () => { stopBookingExpiryScheduler(); stopBookingExpiryReconciliation(); },
   });

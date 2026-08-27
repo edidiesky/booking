@@ -6,7 +6,7 @@ async function main(): Promise<void> {
   await connectDB();
   await connectRabbitMQ();
   await startAuditWorker(getRabbitMQConnection());
-  logger.info("audit_worker_process_started", { event: "audit_worker_process_started" });
+  logger.info("audit_worker_process_start", { event: "audit_worker_process_start" });
 }
 
 main().catch((err) => {
