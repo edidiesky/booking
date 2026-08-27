@@ -1,0 +1,178 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  detect-changes:
+    needs: secret-scan
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build-matrix.outputs.matrix }}
+      has_changes: ${{ steps.build-matrix.outputs.has_changes }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: .github/filters.yml
+
+      - name: Build dynamic matrix
+        id: build-matrix
+        env:
+          FILTER_OUTPUTS: ${{ toJson(steps.filter.outputs) }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+
+          filter_outputs = json.loads(os.environ["FILTER_OUTPUTS"])
+          with open(".github/services.json") as f:
+              services = json.load(f)["services"]
+
+          shared_changed = filter_outputs.get("shared") == "true"
+
+          if shared_changed:
+              changed = services
+          else:
+              changed = [s for s in services if filter_outputs.get(s["name"]) == "true"]
+
+          matrix = {"include": [
+              {
+                  "name": s["name"],
+                  "context": s["context"],
+                  "dockerfile": s["dockerfile"],
+                  "compose_service": s["compose_service"] or "",
+              }
+              for s in changed
+          ]}
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write(f"matrix={json.dumps(matrix)}\n")
+              out.write(f"has_changes={'true' if changed else 'false'}\n")
+
+          print("Changed services:", [s["name"] for s in changed])
+          if shared_changed:
+              print("packages/shared changed, rebuilding ALL services")
+          PY
+
+  build-and-push:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}
+          tags: |
+            type=sha,format=short,prefix=v
+            type=raw,value=latest
+
+      # Build only
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: false
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:latest
+          cache-to: type=inline
+
+      # Real vulnerability gate: fails the job (exit-code: '1') on any
+      # HIGH or CRITICAL finding, before the image is ever pushed.
+      # unfixed-only: true, don't fail the pipeline on a CVE with no
+      # available fix yet, that's a real, unactionable finding that
+      # would otherwise block every deploy indefinitely.
+      - name: Scan image for vulnerabilities
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.name }}:latest
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+
+      # Only reached if both scans above passed.
+      - name: Push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      # TODO (explicit, not silent): test stage goes here
+
+  deploy:
+    needs: [detect-changes, build-and-push]
+    runs-on: self-hosted
+    if: |
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.detect-changes.outputs.has_changes == 'true'
+    steps:
+      - name: Deploy changed services with a compose entry
+        env:
+          MATRIX: ${{ needs.detect-changes.outputs.matrix }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          cd /path/to/deployed/repo
+          
+          DEPLOYABLE=$(echo "$MATRIX" | jq -r '.include[] | select(.compose_service != "") | .compose_service')
+          IMAGE_NAMES=$(echo "$MATRIX" | jq -r '.include[] | select(.compose_service != "") | .name')
+
+          if [ -z "$DEPLOYABLE" ]; then
+            echo "No changed services have a compose entry, nothing to deploy."
+            exit 0
+          fi
+
+          for name in $IMAGE_NAMES; do
+            docker pull "${DOCKERHUB_USERNAME}/${name}:latest"
+          done
+
+          # shellcheck disable=SC2086
+          docker compose -f docker-compose.prod.yml up -d --force-recreate $DEPLOYABLE
+
+          sleep 20
+          docker ps --format "table {{.Names}}\t{{.Status}}"
+
+      - name: Verify no containers crashed
+        run: |
+          CRASHED=$(docker ps -a --format "{{.Names}}\t{{.Status}}" | \
+            grep "Exited\|Restarting" | \
+            grep -v "vault\|loki\|grafana\|promtail\|prometheus\|redis-exporter" || true)
+          if [ -n "$CRASHED" ]; then
+            echo "Crashed containers:"
+            echo "$CRASHED"
+            exit 1
+          fi
+          echo "All deployed containers running"

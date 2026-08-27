@@ -1,0 +1,25 @@
+
+backend:
+  - 'backend/**'
+frontend:
+  - 'frontend/**'
+gateway:
+  - 'gateway/**'
+audit-worker:
+  - 'packages/audit-worker/**'
+availability-worker:
+  - 'packages/availability-worker/**'
+booking-expiry-worker:
+  - 'packages/booking-expiry-worker/**'
+campaign-worker:
+  - 'packages/campaign-worker/**'
+csv-room-import-worker:
+  - 'packages/csv-room-import-worker/**'
+events-worker:
+  - 'packages/events-worker/**'
+property-search-worker:
+  - 'packages/property-search-worker/**'
+seller-notification-worker:
+  - 'packages/seller-notification-worker/**'
+shared:
+  - 'packages/shared/**'

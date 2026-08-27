@@ -1,0 +1,15 @@
+{
+  "services": [
+    { "name": "backend",                      "context": "backend",                              "dockerfile": "backend/Dockerfile",                              "compose_service": "booking" },
+    { "name": "frontend",                     "context": "frontend",                             "dockerfile": "frontend/Dockerfile",                             "compose_service": null },
+    { "name": "gateway",                      "context": "gateway",                              "dockerfile": "gateway/Dockerfile",                              "compose_service": "gateway" },
+    { "name": "audit-worker",                 "context": "packages/audit-worker",                "dockerfile": "packages/audit-worker/Dockerfile",                "compose_service": "audit-worker" },
+    { "name": "availability-worker",          "context": "packages/availability-worker",         "dockerfile": "packages/availability-worker/Dockerfile",         "compose_service": "availability-worker" },
+    { "name": "booking-expiry-worker",        "context": "packages/booking-expiry-worker",       "dockerfile": "packages/booking-expiry-worker/Dockerfile",       "compose_service": "booking-expiry-worker" },
+    { "name": "campaign-worker",              "context": "packages/campaign-worker",             "dockerfile": "packages/campaign-worker/Dockerfile",             "compose_service": "campaign-worker" },
+    { "name": "csv-room-import-worker",       "context": "packages/csv-room-import-worker",      "dockerfile": "packages/csv-room-import-worker/Dockerfile",      "compose_service": "csv-room-import-worker" },
+    { "name": "events-worker",                "context": "packages/events-worker",               "dockerfile": "packages/events-worker/Dockerfile",               "compose_service": null },
+    { "name": "property-search-worker",       "context": "packages/property-search-worker",      "dockerfile": "packages/property-search-worker/Dockerfile",      "compose_service": "property-search-worker" },
+    { "name": "seller-notification-worker",   "context": "packages/seller-notification-worker",  "dockerfile": "packages/seller-notification-worker/Dockerfile",  "compose_service": "seller-notification-worker" }
+  ]
+}
