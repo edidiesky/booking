@@ -26,6 +26,7 @@ async function lockSweepTick(): Promise<void> {
   }
 }
 
+
 async function reconciliationTick(): Promise<void> {
   const drifted = await query<{
     room_type_id: string;
@@ -55,8 +56,8 @@ async function reconciliationTick(): Promise<void> {
   driftDetectedGauge.set(drifted.length);
   if (drifted.length === 0) return;
 
-  logger.warn("availability_drift_repaired", {
-    event: "availability_drift_repaired",
+  logger.warn("availability_drift_repair", {
+    event: "availability_drift_repair",
     count: drifted.length,
     sample: drifted.slice(0, 5),
   });

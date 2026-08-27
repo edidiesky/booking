@@ -38,6 +38,7 @@ import jobRoutes from "./domains/jobs/job.routes";
 import invitationRoutes from "./domains/invitation/invitation.routes";
 import redisClient from "./config/redis";
 import { logger, query } from "@booking/shared";
+// import propertySearchRoutes from "./domains/property-search/propertySearch.routes";
 const app = express();
 
 if (!process.env.WEB_ORIGIN) throw new Error("WEB_ORIGIN env var not set.");
