@@ -1,14 +1,15 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
-import { Mail, Lock, ShieldCheck } from "lucide-react";
+import { Mail, Lock } from "lucide-react";
 import AuthLayout from "@/components/common/AuthLayout";
 import GoogleAuthButton from "@/components/common/GoogleAuthButton";
 import { Input } from "@/components/ui/input";
 import { loginSchema, type LoginFormData } from "./schema/login.schema";
 import { useLogin } from "./hooks/useLogin";
 import TwoFactorStep from "./TwoFactorStep";
+import StepConfirmOtp from "../onboarding/steps/StepConfirmOtp";
 
 export default function Login() {
   const {
@@ -23,8 +24,6 @@ export default function Login() {
   } = useLogin();
 
   const fieldsRef = useRef<HTMLDivElement>(null);
-  const [emailOtpCode, setEmailOtpCode] = useState("");
-
   const {
     register,
     handleSubmit,
@@ -67,60 +66,19 @@ export default function Login() {
   }
 
   //  Email OTP (normal users) 
-  if (loginStep.step === "email_otp" && emailForOtp) {
+ if (loginStep.step === "email_otp" && emailForOtp) {
     return (
       <AuthLayout>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void handleVerifyEmailOtp(emailOtpCode.trim());
-          }}
-          className="flex flex-col gap-8"
-        >
-          <div className="flex flex-col gap-2">
-            <h1
-              className="text-[32px] leading-[1.1]"
-              style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
-            >
-              Check your email
-            </h1>
-            <p
-              className="text-xs lg:text-[13px]"
-              style={{ color: "var(--color-muted-stone)" }}
-            >
-              We sent a 6-digit code to{" "}
-              <strong style={{ color: "var(--color-ink)" }}>{emailForOtp}</strong>.
-              Enter it below to finish signing in.
-            </p>
-          </div>
-
-          <Input
-            label="Verification code"
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            placeholder="123456"
-            icon={<ShieldCheck size={15} />}
-            value={emailOtpCode}
-            onChange={(e) =>
-              setEmailOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))
-            }
-            maxLength={6}
-            autoFocus
-          />
-
-          <button
-            type="submit"
-            disabled={isLoading || emailOtpCode.length < 6}
-            className="w-full h-12 flex items-center justify-center text-xs lg:text-sm rounded-full transition-opacity hover:opacity-80 disabled:opacity-50"
-            style={{
-              backgroundColor: "var(--color-vivid)",
-              color: "var(--color-vivid-foreground)",
+        <div className="flex flex-col gap-8">
+          <StepConfirmOtp
+            email={emailForOtp}
+            onSubmit={handleVerifyEmailOtp}
+            onResend={() => {
+              
             }}
-          >
-            {isLoading ? "Verifying..." : "Verify and sign in"}
-          </button>
-
+            isLoading={isLoading}
+            isResending={false}
+          />
           <button
             type="button"
             onClick={clearChallenge}
@@ -129,7 +87,7 @@ export default function Login() {
           >
             Back to sign in
           </button>
-        </form>
+        </div>
       </AuthLayout>
     );
   }
