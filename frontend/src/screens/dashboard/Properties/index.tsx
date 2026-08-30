@@ -14,6 +14,7 @@ import { PROPERTY_URL } from "@/constants/api";
 import ImportRoomTypesModal from "./ImportRoomTypesModal";
 import Title from "@/components/dashboard/common/Title";
 import PropertyPerformanceModal from "./PropertyPerformanceModal";
+import { EmptyState } from "@/components/common/EmptyState";
 
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
@@ -29,7 +30,9 @@ export default function DashboardProperties() {
   const [modalOpen, setModalOpen] = useState(false);
   const [performancemodalopen, setPerformanceModalOpen] = useState(false);
   const [editPropertyId, setEditPropertyId] = useState<string | null>(null);
-  const [performanceDetail, sePerformanceDetail] = useState<Property | null>(null);
+  const [performanceDetail, sePerformanceDetail] = useState<Property | null>(
+    null,
+  );
   const [roomTypeId, setRoomTypeId] = useState<string | null>(null);
   const [showImportPicker, setShowImportPicker] = useState(false);
   const [importPropertyId, setImportPropertyId] = useState<string | null>(null);
@@ -60,7 +63,7 @@ export default function DashboardProperties() {
     sePerformanceDetail(null);
   };
 
-    const handlePropertyPerformanceModalOpen = (property:Property) => {
+  const handlePropertyPerformanceModalOpen = (property: Property) => {
     setPerformanceModalOpen(true);
     sePerformanceDetail(property);
   };
@@ -78,8 +81,8 @@ export default function DashboardProperties() {
 
   return (
     <>
-    {/* performancemodalOpen */}
-    <AnimatePresence>
+      {/* performancemodalOpen */}
+      <AnimatePresence>
         {performancemodalopen && performanceDetail && (
           <PropertyPerformanceModal
             property={performanceDetail}
@@ -247,8 +250,11 @@ export default function DashboardProperties() {
                     colSpan={6}
                     className="px-5 py-10 text-center text-xs lg:text-[13px]     text-[#a3a6af]"
                   >
-                    No properties found. Click "Add Property" to create your
-                    first listing.
+                    <EmptyState
+                      title="Properties"
+                      description={`No properties found. Click "Add Property" to create your
+                    first listing.`}
+                    />
                   </td>
                 </tr>
               ) : (
@@ -261,7 +267,9 @@ export default function DashboardProperties() {
                       navigate(`/dashboard/properties/${id}`)
                     }
                     onEditProperty={handleOpenEdit}
-                    onPropertyPerformanceModalOpen={handlePropertyPerformanceModalOpen}
+                    onPropertyPerformanceModalOpen={
+                      handlePropertyPerformanceModalOpen
+                    }
                     onDeleteProperty={(property) =>
                       setDeleteTarget({ id: property.id, name: property.name })
                     }

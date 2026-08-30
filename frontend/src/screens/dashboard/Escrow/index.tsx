@@ -4,6 +4,7 @@ import EscrowTableRow from "./EscrowTableRow";
 import { useTenantEscrow } from "./hooks/useTenantEscrow";
 import { formatCurrency } from "@/utils/formatCurrency";
 import StatsOverview from "@/components/dashboard/common/StatsOverview";
+import { EmptyState } from "@/components/common/EmptyState";
 
 const HEADERS = [
   "Booking Ref",
@@ -106,7 +107,10 @@ export default function DashboardEscrow() {
                   className="px-5 py-12 text-center text-xs"
                   style={{ color: "var(--color-hint-of-grey)" }}
                 >
-                  No escrow records found.
+                  <EmptyState
+                    title="Escrow"
+                    description="No escrow records found."
+                  />
                 </td>
               </tr>
             ) : (

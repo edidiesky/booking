@@ -3,6 +3,7 @@ import {  useNavigate }        from "react-router-dom";
 import {
   LuLayoutDashboard, LuBell, LuBuilding, LuCalendar, LuClipboardList,
   LuCreditCard, LuVault, LuUserRound, LuUsers, LuShieldCheck, LuHistory,
+  LuMessageSquare,
 } from "react-icons/lu";
 import { selectCurrentUser, clearCredentials } from "@/redux/slices/authSlice";
 import { useLogoutMutation }                 from "@/redux/services/authApi";
@@ -17,6 +18,7 @@ export const NAV_GROUPS = [
     label: "Overview",
     items: [
       { icon: LuLayoutDashboard, text: "Dashboard",      path: "",              tour: "nav-dashboard"     },
+      { icon: LuMessageSquare,   text: "Messages",       path: "messages",      tour: "nav-messages"      },
       { icon: LuBell,            text: "Notifications",  path: "notifications", tour: "nav-notifications" },
     ],
   },

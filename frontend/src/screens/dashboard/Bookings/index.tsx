@@ -23,6 +23,7 @@ import {
 import { STATUS_MAP } from "@/components/common/StatusBadge";
 import MultiSelectDropdown from "@/components/dashboard/common/gant/MultiSelectDropdown";
 import DateRangeDropdown from "@/components/common/filters/DateRangeDropdown";
+import { EmptyState } from "@/components/common/EmptyState";
 const STATUS_OPTIONS: { label: string; value: BookingStatus | "" }[] = [
   { label: "All statuses", value: "" },
   { label: "Pending Payment", value: "pending_payment" },
@@ -98,7 +99,7 @@ export default function DashboardBookings() {
     (stats?.confirmedCount ?? 0) +
       (stats?.checkedInCount ?? 0) +
       (stats?.cancelledCount ?? 0) || 1;
-const PEAK_AMT = 1000000
+  const PEAK_AMT = 1000000;
   return (
     <>
       <AnimatePresence>
@@ -174,7 +175,8 @@ const PEAK_AMT = 1000000
               value: formatCurrency(stats?.currentMonthRevenueNgn ?? 0),
               color: "#5b21b6",
               bg: "#ede9fe",
-              fillPercent: ((stats?.currentMonthRevenueNgn ?? 0) / PEAK_AMT) * 100,
+              fillPercent:
+                ((stats?.currentMonthRevenueNgn ?? 0) / PEAK_AMT) * 100,
               // no fillPercent, genuinely nothing to divide revenue by here
             },
           ]}
@@ -252,7 +254,10 @@ const PEAK_AMT = 1000000
                     colSpan={7}
                     className="px-5 py-10 text-center text-xs lg:text-[13px]     text-[#a3a6af]"
                   >
-                    No bookings found{search ? ` for "${search}"` : ""}
+                    <EmptyState
+                      title="Bookings"
+                      description="No recent bookings yet"
+                    />
                   </td>
                 </tr>
               ) : (

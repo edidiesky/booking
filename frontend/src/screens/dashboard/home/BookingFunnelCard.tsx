@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/common/EmptyState";
 import StatusBadge from "@/components/common/StatusBadge";
 import { PaymentSummary } from "@/types/api";
 
@@ -9,8 +10,8 @@ function fmtNaira(amount: number | string): string {
   const n = typeof amount === "string" ? Number(amount) : amount;
   if (!Number.isFinite(n)) return "₦0";
   return new Intl.NumberFormat("en-NG", {
-    style:                 "currency",
-  currency:              "NGN",
+    style: "currency",
+    currency: "NGN",
     minimumFractionDigits: 0,
   }).format(n);
 }
@@ -39,36 +40,65 @@ export default function RecentTransactionsCard({ recentTransactions }: Props) {
       </div>
 
       {recent.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-8 gap-2 px-5">
-          <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>No recent transactions yet</p>
-        </div>
+        <EmptyState
+          title="Transactions"
+          description="No recent transactions yet"
+        />
       ) : (
         <div className="flex flex-col divide-y divide-[var(--color-fog)]">
-          {recent.map(({ id, booking_ref, amount_ngn, gateway, transaction_id, status, guest_first_name, guest_last_name}) => {
-            const name = payerName(guest_first_name, guest_last_name);
-            return (
-              // TODO: wrap with your router's Link to the payment/booking detail view
-              <div key={id} className="flex cursor-pointer hover:bg-[#f2f0ed58] transition-all items-center gap-3 px-5 py-3.5">
+          {recent.map(
+            ({
+              id,
+              booking_ref,
+              amount_ngn,
+              gateway,
+              transaction_id,
+              status,
+              guest_first_name,
+              guest_last_name,
+            }) => {
+              const name = payerName(guest_first_name, guest_last_name);
+              return (
+                // TODO: wrap with your router's Link to the payment/booking detail view
                 <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 text-xs lg:text-[13px]   "
-                  style={{ backgroundColor: "var(--color-fog)", color: "var(--color-ink)" }}
+                  key={id}
+                  className="flex cursor-pointer hover:bg-[#f2f0ed58] transition-all items-center gap-3 px-5 py-3.5"
                 >
-                  {initialsFromName(guest_first_name , guest_last_name, booking_ref)}
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 text-xs lg:text-[13px]   "
+                    style={{
+                      backgroundColor: "var(--color-fog)",
+                      color: "var(--color-ink)",
+                    }}
+                  >
+                    {initialsFromName(
+                      guest_first_name,
+                      guest_last_name,
+                      booking_ref,
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className="text-xs lg:text-[13px]     truncate"
+                      style={{ color: "var(--color-ink)" }}
+                    >
+                      {name} &middot; {fmtNaira(amount_ngn)} via{" "}
+                      <span className="capitalize">{gateway}</span>
+                    </p>
+                    <p
+                      className="text-xs lg:text-[13px]     medium mt-0.5 truncate"
+                      style={{ color: "var(--color-muted-stone)" }}
+                    >
+                      {transaction_id ?? booking_ref}
+                    </p>
+                  </div>
+                  <span className="text-xs lg:text-[13px]     medium shrink-0">
+                    <StatusBadge status={status} />
+                  </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs lg:text-[13px]     truncate" style={{ color: "var(--color-ink)" }}>
-                    {name} &middot; {fmtNaira(amount_ngn )} via <span className="capitalize">{gateway}</span>
-                  </p>
-                  <p className="text-xs lg:text-[13px]     medium mt-0.5 truncate" style={{ color: "var(--color-muted-stone)" }}>
-                    {transaction_id ?? booking_ref}
-                  </p>
-                </div>
-                <span className="text-xs lg:text-[13px]     medium shrink-0">
-                  <StatusBadge status={status} />
-                </span>
-              </div>
-            );
-          })}
+              );
+            },
+          )}
         </div>
       )}
     </div>

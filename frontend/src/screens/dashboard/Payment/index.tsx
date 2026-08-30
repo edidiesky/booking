@@ -15,6 +15,7 @@ import PaymentTableRow from "./PaymentTableRow";
 import PaymentDetailsModal from "./PaymentDetailsModal";
 import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { EmptyState } from "@/components/common/EmptyState";
 
 const ROWS_PER_PAGE = 10;
 
@@ -212,7 +213,10 @@ export default function DashboardPayments() {
                     colSpan={6}
                     className="px-5 py-10 text-center text-xs lg:text-[13px]     text-[#a3a6af]"
                   >
-                    No payments found
+                    <EmptyState
+                      title="Payment"
+                      description="No payments found"
+                    />
                   </td>
                 </tr>
               )}
