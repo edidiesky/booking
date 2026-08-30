@@ -43,7 +43,6 @@ export const rtkQueryErrorMiddleware: Middleware = () => (next) => (action) => {
     }
 
     const { status, data } = payload;
-    console.log("Error message", data)
     const endpointName = meta?.arg?.endpointName;
 
     switch (status) {
@@ -58,10 +57,10 @@ export const rtkQueryErrorMiddleware: Middleware = () => (next) => (action) => {
         break;
 
       case 401:
+        // handled by baseQueryWithReauth (refresh / redirect) — no toast here
         break;
 
       case 403:
-        // silenced - uncomment if you want global 403 toasts
         break;
 
       case 404:
@@ -139,14 +138,6 @@ export const rtkQueryErrorMiddleware: Middleware = () => (next) => (action) => {
         }
         break;
     }
-
-    showToast(
-          extractMessage(
-            data,
-            "Invalid request. Please check your input and try again.",
-          ),
-          "error",
-        );
   }
 
   return next(action);

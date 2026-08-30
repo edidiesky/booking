@@ -23,7 +23,7 @@ export default function ProductShortDescription({
   // const sizeList = ["L", "XL", "M", "S"];
 
   const sanitizedValue = sanitizeHtml(data?.description, {
-        allowedTags: ["p", "b", "i", "u", "a", "ul", "ol", "li", "h1", "h2"],
+        allowedTags: ["p", "b", "i", "u", "a", "ul", "ol", "li", "h1", "h2", "br"],
         allowedAttributes: {
           a: ["href"],
         },

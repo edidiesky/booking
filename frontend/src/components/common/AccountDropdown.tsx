@@ -50,19 +50,24 @@ export default function AccountDropdown({
     .filter(Boolean)
     .join(" ");
 
-  const handleSignOut = async () => {
-    try {
-      if (refreshToken) await logout({ refreshToken }).unwrap();
-    } catch {
-      /* errorMiddleware, proceed to clear regardless */
+const handleSignOut = async () => {
+  try {
+    if (refreshToken) {
+      await logout({ refreshToken }).unwrap();
     }
+  } catch {
+    // still clear local session even if the API call fails
+  } finally {
     dispatch(clearCredentials());
     dispatch(apiSlice.util.resetApiState());
+
     localStorage.removeItem("auth:refreshToken");
     localStorage.removeItem("auth:accessToken");
-    navigate("/");
+
+    navigate("/login", { replace: true });
     showToast("Signed out successfully.", "success");
-  };
+  }
+};
 
   const groups = items.reduce<Record<number, AccountDropdownItem[]>>(
     (acc, item) => {

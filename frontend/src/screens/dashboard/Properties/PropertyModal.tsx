@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import sanitizeHtml from "sanitize-html";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { X } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +14,7 @@ import {
 import { ChartSelect } from "@/components/common/charts/Chartselect";
 import LocationPicker from "@/components/common/LocationPicker";
 import { geocodeAddress } from "@/hooks/useGeocodeAddress";
+import RichTextEditor from "@/components/common/RichTextEditor";
 
 const schema = z.object({
   name: z.string().min(3, "Min 3 characters"),
@@ -35,21 +33,6 @@ const PROPERTY_TYPE_OPTIONS = [
   { label: "Hotel", value: "hotel" },
   { label: "Guesthouse", value: "guesthouse" },
 ];
-
-const QUILL_MODULES = {
-  toolbar: [
-    [{ header: [1, 2, false] }],
-    ["bold", "italic", "underline"],
-    ["link"],
-    [{ list: "ordered" }, { list: "bullet" }],
-  ],
-};
-
-const SANITIZE_CONFIG = {
-  allowedTags: ["p", "b", "i", "u", "a", "ul", "ol", "li", "h1", "h2"],
-  allowedAttributes: { a: ["href"] },
-  disallowedTagsMode: "discard" as const,
-};
 
 interface TagInputProps {
   label: string;
@@ -259,7 +242,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
         {/* header */}
         <div className="border-b flex items-center justify-between px-8 h-[72px] shrink-0">
           <div>
-            <h4 className="text-xs lg:text-[13px]     text-[#17191c]">
+            <h4 className="text-base     text-[#17191c]">
               {isEdit ? "Edit Property" : "Create Property"}
             </h4>
             <p className="text-xs lg:text-[13px]     text-[#777b86] mt-0.5">
@@ -345,27 +328,21 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                 </div>
 
                 {/* description */}
+                {/* description */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs lg:text-[13px] text-[#17191c]">
                     Description
                   </label>
-                  <div className="border border-[#e8e6e3] h-[220px] focus-within:border-[#17191c] transition-colors">
-                    <Controller
-                      name="description"
-                      control={control}
-                      render={({ field }) => (
-                        <ReactQuill
-                          value={field.value ?? ""}
-                          onChange={(html) =>
-                            field.onChange(sanitizeHtml(html, SANITIZE_CONFIG))
-                          }
-                          placeholder="Describe your property, nearby landmarks, access instructions..."
-                          modules={QUILL_MODULES}
-                          className="w-full h-[178px] text-xs lg:text-[13px]"
-                        />
-                      )}
-                    />
-                  </div>
+                  <Controller
+                    name="description"
+                    control={control}
+                    render={({ field }) => (
+                      <RichTextEditor
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
                 </div>
 
                 {/* address */}

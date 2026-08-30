@@ -8,6 +8,7 @@ import { Mutex } from "async-mutex";
 import type { RootState } from "@/redux/store";
 import { setCredentials, clearCredentials } from "@/redux/slices/authSlice";
 import { AUTH_URL } from "@/constants/api";
+import { showToast } from "@/components/common/Toast";
 const refreshMutex = new Mutex();
 
 const rawBaseQuery = fetchBaseQuery({
@@ -56,11 +57,12 @@ export const baseQueryWithReauth: BaseQueryFn<
   try {
     const storedRefreshToken = (api.getState() as RootState).auth.refreshToken;
 
-    if (!storedRefreshToken) {
-      api.dispatch(clearCredentials());
-      redirectToLogin();
-      return result;
-    }
+  if (!storedRefreshToken) {
+    api.dispatch(clearCredentials());
+    showToast("Session expired. Please log in again.", "error");
+    redirectToLogin();
+    return result;
+  }
 
     const refreshResult = await rawBaseQuery(
       {
