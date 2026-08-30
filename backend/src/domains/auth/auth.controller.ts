@@ -103,3 +103,17 @@ export const GoogleOAuthHandler = asyncHandler(async (req: Request, res: Respons
   res.status(200).json({ success: true, message: "Login successful.", data: result });
 });
 
+export const VerifyLoginEmailOtpHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const result = await authService.verifyLoginEmailOtp(
+      req.body.email,
+      req.body.code,
+    );
+    res.status(200).json({
+      success: true,
+      message: "Login successful.",
+      data: result,
+    });
+  },
+);
+

@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import sanitizeHtml from "sanitize-html";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { X, Upload, Trash2, ImagePlus, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { showToast } from "@/components/common/Toast";
@@ -19,6 +22,21 @@ import {
   uploadImageToCloudinary,
   type UploadProgress,
 } from "@/redux/services/cloudinaryAPI";
+const SANITIZE_CONFIG = {
+  allowedTags: ["p", "b", "i", "u", "a", "ul", "ol", "li", "h1", "h2"],
+  allowedAttributes: { a: ["href"] },
+  disallowedTagsMode: "discard" as const,
+};
+
+
+const QUILL_MODULES = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline"],
+    ["link"],
+    [{ list: "ordered" }, { list: "bullet" }],
+  ],
+};
 
 //  types
 interface FormState {
@@ -97,7 +115,9 @@ function ImageSection({ images, onChange }: ImageSectionProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-xs lg:text-[13px]     text-[#17191c]">Room Photos</span>
+      <span className="text-xs lg:text-[13px]     text-[#17191c]">
+        Room Photos
+      </span>
 
       {hasAny ? (
         <div className="grid grid-cols-4 gap-3">
@@ -167,7 +187,9 @@ function ImageSection({ images, onChange }: ImageSectionProps) {
             className="aspect-square border-2 border-dashed border-[#e8e6e3] flex flex-col items-center justify-center gap-1 hover:border-[#17191c] hover:bg-[#fafaf9] transition-colors"
           >
             <ImagePlus size={18} className="text-[#a3a6af]" />
-            <span className="text-xs lg:text-[13px]     text-[#a3a6af]">Add</span>
+            <span className="text-xs lg:text-[13px]     text-[#a3a6af]">
+              Add
+            </span>
           </button>
         </div>
       ) : (
@@ -184,7 +206,9 @@ function ImageSection({ images, onChange }: ImageSectionProps) {
           <p className="text-xs lg:text-[13px]     text-[#777b86]">
             Drag & drop or <span className="text-[#17191c]">browse</span>
           </p>
-          <p className="text-xs lg:text-[13px]     text-[#a3a6af]">PNG, JPG, WebP</p>
+          <p className="text-xs lg:text-[13px]     text-[#a3a6af]">
+            PNG, JPG, WebP
+          </p>
         </div>
       )}
 
@@ -254,7 +278,9 @@ function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
           placeholder={tags.length === 0 ? placeholder : ""}
         />
       </div>
-      <p className="text-xs lg:text-[13px]     text-[#a3a6af]">Press Enter or comma to add</p>
+      <p className="text-xs lg:text-[13px]     text-[#a3a6af]">
+        Press Enter or comma to add
+      </p>
     </div>
   );
 }
@@ -285,9 +311,11 @@ export default function CreateRoomTypeModal({
   const { data: detailData, isLoading: loadingDetail } =
     useGetRoomTypeDetailQuery(roomTypeId ?? "", { skip: !isEdit || !isOpen });
 
-  const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
-    setForm((prev) => ({ ...prev, [key]: value }));
+const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+  setForm((prev) => ({ ...prev, [key]: value }));
 
+const handleDescription = (html: string) =>
+  setField("description", sanitizeHtml(html, SANITIZE_CONFIG));
   useEffect(() => {
     if (!isOpen) {
       setForm(EMPTY);
@@ -354,7 +382,7 @@ export default function CreateRoomTypeModal({
 
   const isBusy = isCreating || isUpdating;
 
-  console.log("loadingDetail:", loadingDetail)
+  console.log("loadingDetail:", loadingDetail);
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm p-4 flex items-center justify-end z-50">
@@ -431,7 +459,9 @@ export default function CreateRoomTypeModal({
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs lg:text-[13px]     text-[#17191c]">Status</label>
+                <label className="text-xs lg:text-[13px]     text-[#17191c]">
+                  Status
+                </label>
                 <Select
                   value={form.status}
                   onValueChange={(v) =>
@@ -475,14 +505,18 @@ export default function CreateRoomTypeModal({
               />
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs lg:text-[13px]     text-[#17191c]">Description</label>
-                <textarea
-                  value={form.description}
-                  onChange={(e) => setField("description", e.target.value)}
-                  rows={4}
-                  className="border border-[#e8e6e3] px-3 py-2.5 text-xs lg:text-[13px]   outline-none resize-none focus:border-[#17191c] transition-colors"
-                  placeholder="Describe this room type, inclusions, and guest experience..."
-                />
+                <label className="text-xs lg:text-[13px] text-[#17191c]">
+                  Description
+                </label>
+                <div className="border border-[#e8e6e3] h-[220px] focus-within:border-[#17191c] transition-colors">
+                  <ReactQuill
+                    value={form.description}
+                    onChange={handleDescription}
+                    placeholder="Describe this room type, inclusions, and guest experience..."
+                    modules={QUILL_MODULES}
+                    className="w-full h-[178px] text-xs lg:text-[13px]"
+                  />
+                </div>
               </div>
             </motion.div>
           </AnimatePresence>

@@ -2,11 +2,23 @@ import { useState } from "react";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useNavigate, useLocation } from "react-router-dom";
 import { setCredentials } from "@/redux/slices/authSlice";
-import { useLoginMutation } from "@/redux/services/authApi";
+import {
+  useLoginMutation,
+  useVerifyLoginEmailOtpMutation,
+} from "@/redux/services/authApi";
 import { tenantApi } from "@/redux/services/tenantApi";
 import { showToast } from "@/components/common/Toast";
 import type { LoginFormData } from "../schema/login.schema";
 import type { User, AuthTokens } from "@/types/api";
+
+type LoginStep =
+  | { step: "password" }
+  | { step: "email_otp"; email: string }
+  | { step: "totp"; challengeToken: string };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
 
 export function useLogin() {
   const dispatch = useAppDispatch();
@@ -14,8 +26,13 @@ export function useLogin() {
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from ?? "/";
 
-  const [login, { isLoading }] = useLoginMutation();
-  const [challengeToken, setChallengeToken] = useState<string | null>(null);
+  const [login, { isLoading: isLoginLoading }] = useLoginMutation();
+  const [verifyEmailOtp, { isLoading: isOtpLoading }] =
+    useVerifyLoginEmailOtpMutation();
+
+  const [loginStep, setLoginStep] = useState<LoginStep>({ step: "password" });
+
+  const clearChallenge = () => setLoginStep({ step: "password" });
 
   const finishLogin = async (result: AuthTokens) => {
     const user: User = result.data.user as unknown as User;
@@ -69,8 +86,25 @@ export function useLogin() {
         password: data.password,
       }).unwrap();
 
-      if ("twoFactorRequired" in result.data) {
-        setChallengeToken(result.data.challengeToken);
+      const payload = (isRecord(result) && isRecord(result.data)
+        ? result.data
+        : result) as Record<string, unknown>;
+
+      // Normal user → email OTP
+      if (payload.emailOtpRequired === true && typeof payload.email === "string") {
+        setLoginStep({ step: "email_otp", email: payload.email });
+        return;
+      }
+
+      // Authenticator already enabled → TOTP
+      if (
+        payload.twoFactorRequired === true &&
+        typeof payload.challengeToken === "string"
+      ) {
+        setLoginStep({
+          step: "totp",
+          challengeToken: payload.challengeToken,
+        });
         return;
       }
 
@@ -80,5 +114,29 @@ export function useLogin() {
     }
   };
 
-  return { handleLogin, isLoading, challengeToken, finishLogin };
+  const handleVerifyEmailOtp = async (code: string) => {
+    if (loginStep.step !== "email_otp") return;
+
+    try {
+      const result = await verifyEmailOtp({
+        email: loginStep.email,
+        code,
+      }).unwrap();
+      await finishLogin(result as AuthTokens);
+    } catch {
+      /* handled by rtkQueryErrorMiddleware */
+    }
+  };
+
+  return {
+    handleLogin,
+    handleVerifyEmailOtp,
+    isLoading: isLoginLoading || isOtpLoading,
+    loginStep,
+    challengeToken:
+      loginStep.step === "totp" ? loginStep.challengeToken : null,
+    emailForOtp: loginStep.step === "email_otp" ? loginStep.email : null,
+    finishLogin,
+    clearChallenge,
+  };
 }

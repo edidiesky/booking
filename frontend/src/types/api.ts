@@ -97,6 +97,11 @@ export interface RegisterHostPayload {
   platformFeePct?: number;
 }
 
+export type LoginStep =
+  | { step: "password" }
+  | { step: "email_otp"; email: string }
+  | { step: "totp"; challengeToken: string };
+
 export interface LoginPayload {
   email:    string;
   password: string;

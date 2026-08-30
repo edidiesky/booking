@@ -168,6 +168,16 @@ export const authApi = apiSlice.injectEndpoints({
         body,
       }),
     }),
+    verifyLoginEmailOtp: builder.mutation<
+      AuthTokens,
+      { email: string; code: string }
+    >({
+      query: (body) => ({
+        url: `${AUTH_URL}/login/verify-email-otp`,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -186,5 +196,6 @@ export const {
   useChangePasswordMutation,
   useVerifyTwoFactorLoginMutation,
   useGoogleOAuthLoginMutation,
-  useDisableTwoFactorMutation
+  useDisableTwoFactorMutation,
+  useVerifyLoginEmailOtpMutation,
 } = authApi;

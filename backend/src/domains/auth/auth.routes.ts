@@ -19,6 +19,7 @@ import {
   DisableTwoFactorHandler,
   VerifyTwoFactorLoginHandler,
   GoogleOAuthHandler,
+  VerifyLoginEmailOtpHandler,
 } from "./auth.controller";
 import {
   initiateSchema,
@@ -32,6 +33,7 @@ import {
   disableTwoFactorSchema,
   verifyTwoFactorLoginSchema,
   oauthGoogleSchema,
+  verifyLoginEmailOtpSchema,
 } from "./auth.validator";
 
 const router = Router();
@@ -41,6 +43,11 @@ router.post("/onboarding/confirm",   validate(confirmEmailSchema),   ConfirmEmai
 router.post("/onboarding/resend",    validate(resendOtpSchema),      ResendOtpHandler);
 router.post("/register/guest",       validate(registerGuestSchema),  RegisterGuestHandler);
 router.post("/register/host",        validate(registerHostSchema),   RegisterHostHandler);
+router.post(
+  "/login/verify-email-otp",
+  validate(verifyLoginEmailOtpSchema),
+  VerifyLoginEmailOtpHandler,
+);
 router.post("/login",                validate(loginSchema),          LoginHandler);
 router.post("/refresh",              validate(refreshSchema),        RefreshTokenHandler);
 router.post("/logout",               authenticate,                   LogoutHandler);

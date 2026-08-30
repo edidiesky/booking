@@ -55,7 +55,7 @@ export default function PropertyDetail() {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="flex flex-col lg:pt-20 min-h-screen"
+      className="flex flex-col min-h-screen"
     >
       <Header />
 

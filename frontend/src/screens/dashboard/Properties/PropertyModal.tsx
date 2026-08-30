@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import sanitizeHtml from "sanitize-html";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { X } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,12 +30,26 @@ const schema = z.object({
   checkOutTime: z.string().optional(),
 });
 
-
 const PROPERTY_TYPE_OPTIONS = [
   { label: "Shortlet", value: "shortlet" },
   { label: "Hotel", value: "hotel" },
   { label: "Guesthouse", value: "guesthouse" },
 ];
+
+const QUILL_MODULES = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline"],
+    ["link"],
+    [{ list: "ordered" }, { list: "bullet" }],
+  ],
+};
+
+const SANITIZE_CONFIG = {
+  allowedTags: ["p", "b", "i", "u", "a", "ul", "ol", "li", "h1", "h2"],
+  allowedAttributes: { a: ["href"] },
+  disallowedTagsMode: "discard" as const,
+};
 
 interface TagInputProps {
   label: string;
@@ -86,7 +103,9 @@ function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
           placeholder={tags.length === 0 ? placeholder : ""}
         />
       </div>
-      <p className="text-xs lg:text-[13px]     text-[#a3a6af]">Press Enter or comma to add</p>
+      <p className="text-xs lg:text-[13px]     text-[#a3a6af]">
+        Press Enter or comma to add
+      </p>
     </div>
   );
 }
@@ -119,7 +138,6 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
 
   const [createProperty, { isLoading: creating }] = useCreatePropertyMutation();
   const [updateProperty, { isLoading: updating }] = useUpdatePropertyMutation();
-
   const {
     register,
     handleSubmit,
@@ -328,13 +346,26 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
 
                 {/* description */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs lg:text-[13px]     text-[#17191c]">Description</label>
-                  <textarea
-                    {...register("description")}
-                    rows={4}
-                    className="border border-[#e8e6e3] px-3 py-2.5 text-xs lg:text-[13px]   outline-none resize-none focus:border-[#17191c] transition-colors"
-                    placeholder="Describe your property, nearby landmarks, access instructions..."
-                  />
+                  <label className="text-xs lg:text-[13px] text-[#17191c]">
+                    Description
+                  </label>
+                  <div className="border border-[#e8e6e3] h-[220px] focus-within:border-[#17191c] transition-colors">
+                    <Controller
+                      name="description"
+                      control={control}
+                      render={({ field }) => (
+                        <ReactQuill
+                          value={field.value ?? ""}
+                          onChange={(html) =>
+                            field.onChange(sanitizeHtml(html, SANITIZE_CONFIG))
+                          }
+                          placeholder="Describe your property, nearby landmarks, access instructions..."
+                          modules={QUILL_MODULES}
+                          className="w-full h-[178px] text-xs lg:text-[13px]"
+                        />
+                      )}
+                    />
+                  </div>
                 </div>
 
                 {/* address */}
@@ -379,13 +410,20 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                   <div className="mt-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-xs lg:text-[13px]     text-[#a3a6af]">
-                        {geocoding ? "Locating..." : latitude ? "Drag the pin if this isn't quite right." : "Fill in the address above to locate this property, or place the pin manually."}
+                        {geocoding
+                          ? "Locating..."
+                          : latitude
+                            ? "Drag the pin if this isn't quite right."
+                            : "Fill in the address above to locate this property, or place the pin manually."}
                       </span>
                     </div>
                     <LocationPicker
                       latitude={latitude}
                       longitude={longitude}
-                      onChange={(lat, lng) => { setLatitude(lat); setLongitude(lng); }}
+                      onChange={(lat, lng) => {
+                        setLatitude(lat);
+                        setLongitude(lng);
+                      }}
                     />
                   </div>
                 </div>

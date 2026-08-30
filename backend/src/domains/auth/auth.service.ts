@@ -96,7 +96,7 @@ export interface AuthTokens {
   };
 }
 
-export const authService = {
+export class AuthService {
   async initiateOnboarding(
     input: InitiateOnboardingInput,
   ): Promise<{ message: string; debug?: string }> {
@@ -145,7 +145,7 @@ export const authService = {
       message: "OTP sent to your email. Please verify to continue.",
       ...(isDev ? { debug: token } : {}),
     };
-  },
+  }
 
   async confirmEmail(input: ConfirmEmailInput): Promise<void> {
     const email = input.email.toLowerCase().trim();
@@ -178,7 +178,7 @@ export const authService = {
       email,
       requestId: requestContext.get()?.requestId,
     });
-  },
+  }
 
   async registerGuest(input: RegisterGuestInput): Promise<AuthTokens> {
     const email = input.email.toLowerCase().trim();
@@ -219,11 +219,11 @@ export const authService = {
 
       await userRepository.updateById(
         userId,
-        { status: "active", is_email_verified: true },
+      { status: "active", is_email_verified: true },
         client,
       );
       await profileRepository.create(
-        { userId, displayName: `${input.firstName} ${input.lastName}`.trim() },
+      { userId, displayName: `${input.firstName} ${input.lastName}`.trim() },
         client,
       );
     });
@@ -253,13 +253,13 @@ export const authService = {
       requestId: requestContext.get()?.requestId,
     });
 
-    return authService._buildTokens(
+    return this._buildTokens(
       userId,
       "guest",
       `${input.firstName} ${input.lastName}`,
       undefined,
     );
-  },
+  }
 
   async registerHost(input: RegisterHostInput): Promise<AuthTokens> {
     const email = input.email.toLowerCase().trim();
@@ -317,11 +317,11 @@ export const authService = {
 
       await userRepository.updateById(
         userId,
-        { status: "active", is_email_verified: true, tenant_id: tenantId },
+      { status: "active", is_email_verified: true, tenant_id: tenantId },
         client,
       );
       await profileRepository.create(
-        { userId, displayName: `${input.firstName} ${input.lastName}`.trim() },
+      { userId, displayName: `${input.firstName} ${input.lastName}`.trim() },
         client,
       );
     });
@@ -354,53 +354,13 @@ export const authService = {
       requestId: requestContext.get()?.requestId,
     });
 
-    return authService._buildTokens(
+    return this._buildTokens(
       userId,
       "host:admin",
       `${input.firstName} ${input.lastName}`,
       tenantId,
     );
-  },
-
-  // async login(input: LoginInput): Promise<AuthTokens> {
-  //   const email = input.email.toLowerCase().trim();
-  //   const user = await userRepository.findByEmail(email);
-
-  //   if (!user) throw AppError.unauthorized("Invalid email or password.");
-  //   if (!(await bcrypt.compare(input.password, user.password_hash)))
-  //     throw AppError.unauthorized("Invalid email or password.");
-  //   if (user.status === "suspended")
-  //     throw AppError.forbidden(
-  //       "Your account has been suspended. Contact support.",
-  //     );
-  //   if (user.status === "inactive")
-  //     throw AppError.forbidden("Your account is inactive.");
-  //   if (!user.is_email_verified)
-  //     throw AppError.forbidden("Please verify your email before logging in.");
-
-  //   await userRepository.updateById(user.id, { last_active_at: new Date() });
-  //   await auditRepository.log({
-  //     action: "login",
-  //     resource: "user",
-  //     resourceId: user.id,
-  //     userId: user.id,
-  //   });
-
-  //   logger.info("user_logged_in", {
-  //     event: "user_logged_in",
-  //     userId: user.id,
-  //     userType: user.user_type,
-  //     requestId: requestContext.get()?.requestId,
-  //   });
-
-  //   const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-  //   return authService._buildTokens(
-  //     user.id,
-  //     user.user_type,
-  //     name,
-  //     user.tenant_id,
-  //   );
-  // },
+  }
 
   async refreshToken(
     token: string,
@@ -432,7 +392,7 @@ export const authService = {
     );
 
     return { accessToken, refreshToken: newRefreshToken };
-  },
+  }
 
   async logout(
     userId: string,
@@ -466,7 +426,7 @@ export const authService = {
       userId,
       requestId: requestContext.get()?.requestId,
     });
-  },
+  }
 
   async resendOtp(email: string): Promise<{ message: string; debug?: string }> {
     const normalised = email.toLowerCase().trim();
@@ -510,7 +470,7 @@ export const authService = {
       message: "New OTP sent to your email.",
       ...(isDev ? { debug: token } : {}),
     };
-  },
+  }
 
   async _buildTokens(
     userId: string,
@@ -540,9 +500,9 @@ export const authService = {
         lastName: user?.last_name,
         userType,
         tenantId,
-      },
+    },
     };
-  },
+  }
 
   async changePassword(userId: string, body: unknown) {
     const schema = Joi.object({
@@ -574,7 +534,7 @@ export const authService = {
 
     logger.info("password_changed", { event: "password_changed", userId });
     return { message: "Password changed." };
-  },
+  }
 
   // Logged-out
   async requestPasswordReset(email: string) {
@@ -619,7 +579,7 @@ export const authService = {
     return {
       message: "If that email is registered, a reset link has been sent.",
     };
-  },
+  }
 
   async confirmPasswordReset(body: unknown) {
     const schema = Joi.object({
@@ -653,25 +613,70 @@ export const authService = {
     });
     return {
       message: "Password reset. You can now sign in with your new password.",
-    };
-  },
+    };  
+  }
   async login(
     input: LoginInput,
-  ): Promise<AuthTokens | { twoFactorRequired: true; challengeToken: string }> {
+  ): Promise<
+    | AuthTokens
+    | { twoFactorRequired: true; challengeToken: string; method: "totp" }
+    | { emailOtpRequired: true; email: string; method: "email" }
+  > {
     const email = input.email.toLowerCase().trim();
     const user = await userRepository.findByEmail(email);
 
-    if (!user) throw AppError.unauthorized("Invalid email or password.");
-    if (!(await bcrypt.compare(input.password, user.password_hash)))
+    if (!user) {
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+      newValue: { outcome: "failed", reason: "unknown_email", email },
+      });
       throw AppError.unauthorized("Invalid email or password.");
-    if (user.status === "suspended")
+    }
+
+    if (!(await bcrypt.compare(input.password, user.password_hash))) {
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+        resourceId: user.id,
+        userId: user.id,
+      newValue: { outcome: "failed", reason: "invalid_password" },
+      });
+      throw AppError.unauthorized("Invalid email or password.");
+    }
+
+    if (user.status === "suspended") {
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+        resourceId: user.id,
+        userId: user.id,
+      newValue: { outcome: "blocked", reason: "suspended" },
+      });
       throw AppError.forbidden(
         "Your account has been suspended. Contact support.",
       );
-    if (user.status === "inactive")
+    }
+    if (user.status === "inactive") {
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+        resourceId: user.id,
+        userId: user.id,
+      newValue: { outcome: "blocked", reason: "inactive" },
+      });
       throw AppError.forbidden("Your account is inactive.");
-    if (!user.is_email_verified)
+    }
+    if (!user.is_email_verified) {
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+        resourceId: user.id,
+        userId: user.id,
+      newValue: { outcome: "blocked", reason: "email_unverified" },
+      });
       throw AppError.forbidden("Please verify your email before logging in.");
+    }
 
     if (user.two_factor_enabled) {
       const challengeToken = nanoid(32);
@@ -681,35 +686,144 @@ export const authService = {
         "EX",
         TWO_FACTOR_CHALLENGE_TTL_SEC,
       );
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+        resourceId: user.id,
+        userId: user.id,
+      newValue: { outcome: "2fa_challenge_issued" },
+      });
       logger.info("two_factor_challenge_issued", {
         event: "two_factor_challenge_issued",
         userId: user.id,
       });
-      return { twoFactorRequired: true, challengeToken };
+      return { twoFactorRequired: true, challengeToken, method: "totp" };
     }
 
-    await userRepository.updateById(user.id, { last_active_at: new Date() });
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    await redisClient.set(
+      `login-otp:${user.email}`,
+      JSON.stringify({ userId: user.id, otpHash: await bcrypt.hash(otp, 10) }),
+      "EX",
+      10 * 60, // 10 minutes
+    );
+
+    await publishNotifyAuthOtp({
+      notificationId: uuid(),
+      email: user.email,
+      otp,
+      firstName: user.first_name?.trim() || "there",
+    });
     await auditRepository.log({
       action: "login",
       resource: "user",
       resourceId: user.id,
       userId: user.id,
+    newValue: { outcome: "email_otp_issued" },
     });
-    logger.info("user_logged_in", {
-      event: "user_logged_in",
+
+    return {
+      emailOtpRequired: true,
+      email: user.email,
+      method: "email",
+    };
+  }
+
+  async verifyLoginEmailOtp(email: string, code: string): Promise<AuthTokens> {
+    const normalizedEmail = email.toLowerCase().trim();
+    const key = `login-otp:${normalizedEmail}`;
+    const raw = await redisClient.get(key);
+
+    if (!raw) {
+      throw AppError.badRequest("Code expired. Please sign in again.");
+    }
+
+    let parsed: { userId: string; otpHash: string };
+    try {
+      parsed = JSON.parse(raw) as { userId: string; otpHash: string };
+    } catch {
+      await redisClient.del(key);
+      throw AppError.badRequest("Code expired. Please sign in again.");
+    }
+
+    const { userId, otpHash } = parsed;
+
+    if (!(await bcrypt.compare(code, otpHash))) {
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+        resourceId: userId,
+        userId,
+      newValue: { outcome: "failed", reason: "invalid_email_otp" },
+      });
+      throw AppError.badRequest("Invalid code.");
+    }
+
+    await redisClient.del(key);
+
+    const user = await userRepository.findById(userId);
+    if (!user) throw AppError.notFound("User.");
+
+    if (user.status === "suspended") {
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+        resourceId: user.id,
+        userId: user.id,
+      newValue: { outcome: "blocked", reason: "suspended" },
+      });
+      throw AppError.forbidden(
+        "Your account has been suspended. Contact support.",
+      );
+    }
+
+    if (user.status === "inactive") {
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+        resourceId: user.id,
+        userId: user.id,
+      newValue: { outcome: "blocked", reason: "inactive" },
+      });
+      throw AppError.forbidden("Your account is inactive.");
+    }
+
+    if (!user.is_email_verified) {
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+        resourceId: user.id,
+        userId: user.id,
+      newValue: { outcome: "blocked", reason: "email_unverified" },
+      });
+      throw AppError.forbidden("Please verify your email before logging in.");
+    }
+
+    await userRepository.updateById(user.id, { last_active_at: new Date() });
+
+    await auditRepository.log({
+      action: "login",
+      resource: "user",
+      resourceId: user.id,
+      userId: user.id,
+    newValue: { outcome: "success", via: "email_otp" },
+    });
+
+    logger.info("user_logged_in_email_otp", {
+      event: "user_logged_in_email_otp",
       userId: user.id,
       userType: user.user_type,
       requestId: requestContext.get()?.requestId,
     });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    return authService._buildTokens(
+    return this._buildTokens(
       user.id,
       user.user_type,
       name,
       user.tenant_id,
     );
-  },
+  }
 
   async verifyTwoFactorLogin(
     challengeToken: string,
@@ -749,7 +863,16 @@ export const authService = {
       }
     }
 
-    if (!isValid) throw AppError.badRequest("Invalid or expired code.");
+    if (!isValid) {
+      await auditRepository.log({
+        action: "login",
+        resource: "user",
+        resourceId: user.id,
+        userId: user.id,
+      newValue: { outcome: "failed", reason: "invalid_2fa_code" },
+      });
+      throw AppError.badRequest("Invalid or expired code.");
+    }
 
     await redisClient.del(twoFactorChallengeKey(challengeToken));
     await userRepository.updateById(user.id, { last_active_at: new Date() });
@@ -758,7 +881,10 @@ export const authService = {
       resource: "user",
       resourceId: user.id,
       userId: user.id,
-      newValue: { via: consumedBackupCode ? "backup_code" : "totp" },
+      newValue: {
+        outcome: "success",
+        vi: consumedBackupCode ? "backup_code" : "totp",
+      },
     });
     logger.info("user_logged_in_2fa", {
       event: "user_logged_in_2fa",
@@ -767,13 +893,14 @@ export const authService = {
     });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    return authService._buildTokens(
+    return this._buildTokens(
       user.id,
       user.user_type,
       name,
       user.tenant_id,
     );
-  },
+  }
+
   async disableTwoFactor(userId: string, password: string) {
     const user = await userRepository.findByIdWithSecrets(userId);
     if (!user) throw AppError.notFound("User.");
@@ -799,7 +926,8 @@ export const authService = {
     });
 
     return { message: "Two-factor authentication disabled." };
-  },
+  }
+
   async verifyAndEnableTwoFactor(userId: string, token: string) {
     const user = await userRepository.findByIdWithSecrets(userId);
     if (!user) throw AppError.notFound("User.");
@@ -817,7 +945,7 @@ export const authService = {
         "Invalid code. Check your authenticator app and try again.",
       );
 
-    const backupCodes = Array.from({ length: 8 }, () => nanoid(10));
+  const backupCodes = Array.from({ length: 8 }, () => nanoid(10));
     const hashedCodes = await Promise.all(
       backupCodes.map((c) => bcrypt.hash(c, 10)),
     );
@@ -836,7 +964,7 @@ export const authService = {
     logger.info("two_factor_enabled", { event: "two_factor_enabled", userId });
 
     return { message: "Two-factor authentication enabled.", backupCodes };
-  },
+  }
   async setupTwoFactor(userId: string) {
     const user = await userRepository.findByIdWithSecrets(userId);
     if (!user) throw AppError.notFound("User.");
@@ -854,7 +982,7 @@ export const authService = {
     const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl);
 
     return { secret, qrCodeDataUrl };
-  },
+  }
   async loginWithGoogle(
     code: string,
     codeVerifier: string,
@@ -923,7 +1051,7 @@ export const authService = {
       resource: "user",
       resourceId: user.id,
       userId: user.id,
-      newValue: { via: "google_oauth" },
+    newValue: { via: "google_oauth" },
     });
     logger.info("user_logged_in_google", {
       event: "user_logged_in_google",
@@ -931,13 +1059,14 @@ export const authService = {
     });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    return authService._buildTokens(
+    return this._buildTokens(
       user.id,
       user.user_type,
       name,
       user.tenant_id,
     );
-  },
+  }
 };
 
 
+export const authService = new AuthService()
