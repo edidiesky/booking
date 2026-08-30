@@ -2,7 +2,7 @@ import sanitizeHtml from "sanitize-html";
 import type { Property } from "@/types/api";
 
 const SANITIZE_CONFIG = {
-  allowedTags: ["p", "b", "i", "u", "a", "ul", "ol", "li", "h1", "h2", "br"],
+  allowedTags: ["p", "b", "i", "u", "strong", "em", "s", "a", "ul", "ol", "li", "h1", "h2", "br", "blockquote"],
   allowedAttributes: { a: ["href"] },
   disallowedTagsMode: "discard" as const,
 };
@@ -23,7 +23,7 @@ export default function PropertyDescription({ property }: Props) {
       </h3>
       {sanitized ? (
         <div
-          className="max-w-[700px] leading-[1.8] text-[#4c4c4c] font-normal prose prose-sm max-w-none"
+          className="max-w-[700px] leading-[1.8] text-[#4c4c4c] font-normal prose prose-sm max-w-none whitespace-pre-line"
           dangerouslySetInnerHTML={{ __html: sanitized }}
         />
       ) : (

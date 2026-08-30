@@ -125,7 +125,7 @@ export const properties = [
       country: "Nigeria",
       zipCode: "930105",
     },
-    amenities: ["WiFi", "Garden", "Breakfast Included", "Fireplace", "Parking"],
+    amenities: ["WiFi", "Garden", "Breakfast Included", "Fireplace", "Fireplace"],
     images: [
       "https://cdn.staycloud.io/properties/hillcrest-garden/view.jpg",
       "https://cdn.staycloud.io/properties/hillcrest-garden/room.jpg",

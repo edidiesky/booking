@@ -390,7 +390,7 @@ ETE 11: Refined 3 Bedroom Family High-Rise Home
 
 Open for short and long stays
 
-📍 Ikate, Lekki
+📍 Ikate, Plateau
 
 Price: 320k per night · Caution: 90k
 
@@ -426,3 +426,5 @@ FEATURES
 • Board & card games
 
 • 24/7 guest support
+
+
