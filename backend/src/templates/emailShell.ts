@@ -13,9 +13,46 @@ export const EMAIL_TOKENS = {
 const GOOGLE_FONTS_LINK =
   `<link rel="preconnect" href="https://fonts.googleapis.com">` +
   `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>` +
-  `<style type="text/css">
-      @import url("https://fonts.mailersend.com/css?family=Inter:400,600,700");
-    </style>`;
+  ` <style type="text/css">
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600')
+</style>
+    <!--[if mso]>
+      <style type="text/css">
+        body {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+        td {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+        td * {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+        td p {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+        td a {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+        td span {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+        td div {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+        td ul li {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+        td ol li {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+        td blockquote {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+        th * {
+          font-family: Arial, Helvetica, sans-serif!important !important;
+        }
+      </style>
+    <![endif]-->`;
 
 export interface EmailInfoRow {
   label: string;
