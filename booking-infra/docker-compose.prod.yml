@@ -1,0 +1,158 @@
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: rabbitmq
+    networks:
+      - app-tier
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    env_file:
+      - ./.env.production
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 1m30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  redis:
+    image: redis:7.0-alpine
+    container_name: redis
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    command: redis-server /etc/redis/redis.conf --save ""
+    volumes:
+      - redis-data:/data
+      - ./_infra/redis/redis.conf:/etc/redis/redis.conf:ro
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "$REDIS_PASSWORD", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  booking:
+    image: eddyscript/backend:latest
+    container_name: booking
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    ports:
+      - "4000:4000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  booking-expiry-worker:
+    image: eddyscript/booking-expiry-worker:latest
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  campaign-worker:
+    image: eddyscript/campaign-worker:latest
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  audit-worker:
+    image: eddyscript/audit-worker:latest
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  seller-notification-worker:
+    image: eddyscript/seller-notification-worker:latest
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  csv-room-import-worker:
+    image: eddyscript/csv-room-import-worker:latest
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  availability-worker:
+    image: eddyscript/availability-worker:latest
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  property-search-worker:
+    image: eddyscript/property-search-worker:latest
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis-data:
+  rabbitmq_data:

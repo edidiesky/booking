@@ -53,8 +53,6 @@ services:
     container_name: pgbouncer
     networks:
       - app-tier
-    environment:
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
     volumes:
       - ./pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
       - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro

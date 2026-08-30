@@ -35,3 +35,4 @@ export class ResendEmailProvider implements IEmailProvider {
     logger.info("resend_email_sent", { to, subject });
   }
 }
+

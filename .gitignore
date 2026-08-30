@@ -14,7 +14,6 @@ yarn-debug.log*
 yarn-error.log*
 temp_key
 temp_key.pub
-docker-compose.prod.yml
 run_production.sh
 k8s
 vault.sh
