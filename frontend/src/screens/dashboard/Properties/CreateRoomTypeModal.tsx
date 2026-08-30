@@ -376,7 +376,7 @@ const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
         {/* header */}
         <div className="border-b border-[#e8e6e3] flex items-center justify-between px-8 h-[72px] shrink-0">
           <div>
-            <h4 className="text-xs lg:text-[13px]     text-[#17191c]">
+            <h4 className="text-xs lg:text-base  text-[#17191c]">
               {isEdit ? "Edit Room Type" : "Add Room Type"}
             </h4>
             <p className="text-xs lg:text-[13px]     text-[#777b86] mt-0.5">

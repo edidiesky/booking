@@ -11,6 +11,7 @@ interface Props {
   property: Property;
 }
 
+
 export default function PropertyDescription({ property }: Props) {
   const sanitized = property.description
     ? sanitizeHtml(property.description, SANITIZE_CONFIG)
@@ -23,7 +24,7 @@ export default function PropertyDescription({ property }: Props) {
       </h3>
       {sanitized ? (
         <div
-          className="max-w-[700px] leading-[1.8] text-[#4c4c4c] font-normal prose prose-sm max-w-none whitespace-pre-line"
+          className="max-w-[700px] leading-[1.8] text-[#4c4c4c] font-normal prose prose-sm whitespace-pre-line"
           dangerouslySetInnerHTML={{ __html: sanitized }}
         />
       ) : (
