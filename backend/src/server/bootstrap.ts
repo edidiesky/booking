@@ -1,16 +1,40 @@
 import logger        from "../utils/logger";
 import redisClient   from "../config/redis";
-import { connectDB } from "@booking/shared";
+import { connectDB, connectRedis, getRabbitMQConnection, createLockedScheduler } from "@booking/shared";
 import { connectRabbitMQ }         from "../messaging/connection";
 import { startOutboxPoller }       from "../messaging/outboxPoller";
 import { startSseFanoutWorker }    from "../messaging/workers/sseFanoutWorker";
 import { startNotificationWorker } from "../messaging/workers/notificationWorker";
 import { startWebhookRetryWorker } from "../messaging/workers/webhookRetryWorker";
+// import { startSocketServer }       from "../realtime/socketServer";
 import { serverHealthGauge, trackError } from "../utils/metrics";
 import { seedService } from "../domains/role/seed.service";
 import { runMigrations } from "../migrations/runner";
-// import { bootstrapPropertyIndex } from "../config/elasticSearch";
-// import { startPopularPropertiesScheduler } from "../domains/property-search/popularProperties.service";
+import type { Server as HttpServer } from "http";
+
+import { lockSweepScheduler, reconciliationScheduler } from "@booking/availability-worker/dist/scheduler";
+import { runCampaignWorkerTick } from "@booking/campaign-worker/dist/campaignWorker";
+import { startCsvRoomImportWorker } from "@booking/csv-room-import-worker/dist/workers/csvRoomImportWorker";
+import { startSellerNotificationWorker } from "@booking/seller-notification-worker/dist/worker";
+import { startAuditWorker } from "@booking/audit-worker/dist/auditWorker";
+import {
+  startBookingExpiryScheduler,
+  stopBookingExpiryScheduler,
+} from "@booking/booking-expiry-worker/dist/scheduler";
+import {
+  startBookingExpiryReconciliation,
+  stopBookingExpiryReconciliation,
+} from "@booking/booking-expiry-worker/dist/reconciliation";
+
+const CAMPAIGN_TICK_MS = 3_000;
+
+export const campaignScheduler = createLockedScheduler({
+  lockKey:     "lock:campaign-worker:tick",
+  lockTtlSec:  60,
+  tickMs:      CAMPAIGN_TICK_MS,
+  serviceName: "campaign-worker",
+  onTick:      runCampaignWorkerTick,
+});
 
 interface InitStep {
   name: string;
@@ -30,19 +54,35 @@ async function runStep(step: InitStep): Promise<void> {
   }
 }
 
-export async function bootstrapServer(): Promise<void> {
+export async function bootstrapServer(httpServer: HttpServer): Promise<void> {
   const steps: InitStep[] = [
     { name: "postgres",             fn: connectDB },
     { name: "redis",                fn: async () => { await redisClient.ping(); } },
     { name: "rabbitmq",             fn: connectRabbitMQ },
     { name: "migrations",           fn: runMigrations },
-    // { name: "elasticsearch_index",  fn: bootstrapPropertyIndex },
-    // { name: "popular_properties_scheduler", fn: async () => { startPopularPropertiesScheduler(); } },
     { name: "outbox_poller",        fn: async () => { startOutboxPoller(); } },
     { name: "seed_rbac",            fn: async () => { await seedService.seedAll(); } },
     { name: "sse_fanout_worker",    fn: startSseFanoutWorker },
     { name: "notification_worker",  fn: startNotificationWorker },
     { name: "webhook_retry_worker", fn: async () => { startWebhookRetryWorker(); } },
+
+    { name: "availability_worker",  fn: async () => {
+        await connectRedis();
+        lockSweepScheduler.start();
+        reconciliationScheduler.start();
+      },
+    },
+    { name: "campaign_worker",      fn: async () => { campaignScheduler.start(); } },
+    { name: "booking_expiry_worker", fn: async () => {
+        startBookingExpiryScheduler();
+        startBookingExpiryReconciliation();
+      },
+    },
+    { name: "csv_room_import_worker",       fn: async () => { await startCsvRoomImportWorker(getRabbitMQConnection()); } },
+    { name: "seller_notification_worker",   fn: async () => { await startSellerNotificationWorker(getRabbitMQConnection()); } },
+    { name: "audit_worker",                 fn: async () => { await startAuditWorker(getRabbitMQConnection()); } },
+
+    // { name: "socket_server",        fn: async () => { await startSocketServer(httpServer); } },
   ];
 
   const start = process.hrtime.bigint();
@@ -55,3 +95,10 @@ export async function bootstrapServer(): Promise<void> {
 
   logger.info("bootstrap_complete", { event: "bootstrap_complete", totalMs: totalMs.toFixed(2), steps: steps.length });
 }
+
+export {
+  lockSweepScheduler,
+  reconciliationScheduler,
+  stopBookingExpiryScheduler,
+  stopBookingExpiryReconciliation,
+};

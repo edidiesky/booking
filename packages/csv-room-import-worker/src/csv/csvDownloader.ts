@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import { logger } from "@booking/shared";
 
 export async function downloadCsv(fileUrl: string, jobId: string): Promise<string> {

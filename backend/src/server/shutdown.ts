@@ -5,8 +5,17 @@ import redisClient               from "../config/redis";
 import { disconnectRabbitMQ }    from "../messaging/connection";
 import { stopOutboxPoller }      from "../messaging/outboxPoller";
 import { stopWebhookRetryWorker } from "../messaging/workers/webhookRetryWorker";
+// import { stopSocketServer }      from "../realtime/socketServer";
 import { serverHealthGauge }     from "../utils/metrics";
 import logger from "../utils/logger";
+
+import {
+  lockSweepScheduler,
+  reconciliationScheduler,
+  campaignScheduler,
+  stopBookingExpiryScheduler,
+  stopBookingExpiryReconciliation,
+} from "./bootstrap";
 
 export function registerShutdownHooks(server: http.Server): void {
   const shutdown = async (signal: string): Promise<void> => {
@@ -15,8 +24,16 @@ export function registerShutdownHooks(server: http.Server): void {
 
     server.close(async () => {
       try {
+        // await stopSocketServer();
         stopOutboxPoller();
         stopWebhookRetryWorker();
+
+        lockSweepScheduler.stop();
+        reconciliationScheduler.stop();
+        campaignScheduler.stop();
+        stopBookingExpiryScheduler();
+        stopBookingExpiryReconciliation();
+
         await disconnectRabbitMQ();
         await disconnectDB();
         await redisClient.quit();

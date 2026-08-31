@@ -54,20 +54,42 @@
 # EXPOSE 4000
 
 # CMD ["node", "dist/server.js"]
-
 # Build stage
+
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 RUN addgroup -g 1001 eddy-booking && \
     adduser -S eddy-booking -u 1001 -G eddy-booking
 
-# Root workspace files needed to resolve packages/shared as a workspace member
 COPY package.json package-lock.json tsconfig.base.json ./
 COPY packages/shared ./packages/shared
 
 RUN npm ci --workspace=@booking/shared --include-workspace-root
 RUN npm run build -w @booking/shared
+
+COPY packages/availability-worker         ./packages/availability-worker
+COPY packages/campaign-worker             ./packages/campaign-worker
+COPY packages/csv-room-import-worker      ./packages/csv-room-import-worker
+COPY packages/seller-notification-worker  ./packages/seller-notification-worker
+COPY packages/audit-worker                ./packages/audit-worker
+COPY packages/booking-expiry-worker       ./packages/booking-expiry-worker
+
+RUN npm ci \
+  --workspace=@booking/availability-worker \
+  --workspace=@booking/campaign-worker \
+  --workspace=@booking/csv-room-import-worker \
+  --workspace=@booking/seller-notification-worker \
+  --workspace=@booking/audit-worker \
+  --workspace=@booking/booking-expiry-worker \
+  --include-workspace-root
+
+RUN npm run build -w @booking/availability-worker && \
+    npm run build -w @booking/campaign-worker && \
+    npm run build -w @booking/csv-room-import-worker && \
+    npm run build -w @booking/seller-notification-worker && \
+    npm run build -w @booking/audit-worker && \
+    npm run build -w @booking/booking-expiry-worker
 
 WORKDIR /app/backend
 COPY backend/package.json backend/package-lock.json ./
@@ -103,6 +125,24 @@ COPY --from=builder /app/packages/shared/package.json /app/packages/shared/packa
 COPY --from=builder /app/packages/shared/dist         /app/packages/shared/dist
 WORKDIR /app/packages/shared
 RUN npm install --omit=dev
+
+WORKDIR /app
+COPY --from=builder /app/packages/availability-worker/package.json ./packages/availability-worker/package.json
+COPY --from=builder /app/packages/availability-worker/dist         ./packages/availability-worker/dist
+COPY --from=builder /app/packages/campaign-worker/package.json     ./packages/campaign-worker/package.json
+COPY --from=builder /app/packages/campaign-worker/dist             ./packages/campaign-worker/dist
+COPY --from=builder /app/packages/csv-room-import-worker/package.json ./packages/csv-room-import-worker/package.json
+COPY --from=builder /app/packages/csv-room-import-worker/dist         ./packages/csv-room-import-worker/dist
+COPY --from=builder /app/packages/seller-notification-worker/package.json ./packages/seller-notification-worker/package.json
+COPY --from=builder /app/packages/seller-notification-worker/dist         ./packages/seller-notification-worker/dist
+COPY --from=builder /app/packages/audit-worker/package.json        ./packages/audit-worker/package.json
+COPY --from=builder /app/packages/audit-worker/dist                ./packages/audit-worker/dist
+COPY --from=builder /app/packages/booking-expiry-worker/package.json ./packages/booking-expiry-worker/package.json
+COPY --from=builder /app/packages/booking-expiry-worker/dist         ./packages/booking-expiry-worker/dist
+
+RUN for pkg in availability-worker campaign-worker csv-room-import-worker seller-notification-worker audit-worker booking-expiry-worker; do \
+      cd /app/packages/$pkg && npm install --omit=dev && cd /app; \
+    done
 
 WORKDIR /app/backend
 COPY backend/package.json backend/package-lock.json ./

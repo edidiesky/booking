@@ -9,7 +9,7 @@ const PORT   = process.env.PORT ?? 4000;
 const server = http.createServer(app);
 
 async function start(): Promise<void> {
-  await bootstrapServer();
+  await bootstrapServer(server);
   await new Promise<void>((resolve) => server.listen(PORT, () => resolve()));
   registerShutdownHooks(server);
   logger.info("server_started", { event: "server_started", service: "booking-platform", port: PORT, env: process.env.NODE_ENV });
