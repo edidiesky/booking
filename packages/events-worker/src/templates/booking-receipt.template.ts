@@ -61,7 +61,7 @@ export function buildBookingReceiptHtml(data: BookingReceiptData): string {
   .meta-row { display:flex; gap:32px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid #e5e5e5; }
   .meta-label { display:block; font-size:11px; color:#888; text-transform:uppercase; }
   .meta-value { display:block; font-size:14px; font-weight:500; margin-top:4px; }
-  .stay-block { margin-bottom:24px; padding:16px; background:#fafafa; border-radius:8px; }
+  .stay-block { margin-bottom:24px; padding:16px; background:#fafafa; border-radius:100px; }
   .stay-row { display:flex; justify-content:space-between; margin-bottom:8px; }
   .due-row { display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-top:2px solid #1a1a1a; border-bottom:2px solid #1a1a1a; margin:24px 0; }
   .due-amount { font-size:20px; font-weight:700; }

@@ -108,7 +108,7 @@ export default function Onboarding() {
           className="mt-6 text-xs lg:text-[13px]   transition-opacity hover:opacity-60 flex items-center gap-1"
           style={{ color: "var(--color-muted-stone)" }}
         >
-          ← Back
+          Back
         </button>
       ) : (
         <button
@@ -116,7 +116,7 @@ export default function Onboarding() {
           className="mt-6 text-xs lg:text-[13px]   transition-opacity hover:opacity-60 flex items-center gap-1"
           style={{ color: "var(--color-muted-stone)" }}
         >
-          ← Change account type
+          Change account type
         </button>
       )}
     </AuthLayout>

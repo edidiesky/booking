@@ -38,7 +38,7 @@ export default function ResetPassword() {
   if (sent) {
     return (
       <AuthLayout>
-        <div className="flex flex-col gap-6 w-[80%]">
+        <div className="flex flex-col gap-6 w-[90%]">
           <div className="flex flex-col gap-3">
             <div
               className="w-12 h-12 flex items-center justify-center"
@@ -52,11 +52,11 @@ export default function ResetPassword() {
             >
               Check your inbox
             </h1>
-            <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
-              We sent a password reset link to{" "}
-              <span className="" style={{ color: "var(--color-ink)" }}>
+            <p className="text-sm lg:text-sm" style={{ color: "var(--color-muted-stone)" }}>
+              If the email {" "}
+              <span className="font-bold" style={{ color: "var(--color-ink)" }}>
                 {submittedEmail}
-              </span>
+              </span> exists, we will send a password reset link to it
               . The link expires in 15 minutes.
             </p>
           </div>
@@ -65,10 +65,10 @@ export default function ResetPassword() {
             className="p-4 flex flex-col gap-2"
             style={{ backgroundColor: "var(--color-fog)" }}
           >
-            <p className="text-xs lg:text-[13px]     uppercase " style={{ color: "var(--color-muted-stone)" }}>
+            <p className="text-sm lg:text-[13px]     uppercase " style={{ color: "var(--color-muted-stone)" }}>
               Didn't receive it?
             </p>
-            <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
+            <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
               Check your spam folder or{" "}
               <button
                 onClick={() => setSent(false)}
@@ -77,7 +77,6 @@ export default function ResetPassword() {
               >
                 try a different email address
               </button>
-              .
             </p>
           </div>
 
@@ -86,7 +85,7 @@ export default function ResetPassword() {
             className="text-xs lg:text-[13px]   transition-opacity hover:opacity-60"
             style={{ color: "var(--color-muted-stone)" }}
           >
-            ← Back to sign in
+            Back to sign in
           </Link>
         </div>
       </AuthLayout>
@@ -95,7 +94,7 @@ export default function ResetPassword() {
 
   return (
     <AuthLayout>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 w-[80%]">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 w-[90%]">
         <div className="flex flex-col gap-3">
           <h1
             className="text-[32px]  "
@@ -120,7 +119,7 @@ export default function ResetPassword() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-80 disabled:opacity-50"
+          className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-90 disabled:opacity-50"
           style={{
               backgroundColor: "var(--color-vivid)",
               color: "var(--color-vivid-foreground)",

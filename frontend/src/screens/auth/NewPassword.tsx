@@ -54,7 +54,7 @@ export default function NewPassword() {
   if (done) {
     return (
       <AuthLayout>
-        <div className="flex flex-col gap-6 w-[80%]">
+        <div className="flex flex-col gap-6 w-[90%]">
           <div className="flex flex-col gap-3">
             <div
               className="w-12 h-12 flex items-center justify-center"
@@ -79,7 +79,7 @@ export default function NewPassword() {
 
           <button
             onClick={() => navigate("/login")}
-            className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-80"
+            className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-90"
             style={{
               backgroundColor: "var(--color-vivid)",
               color: "var(--color-vivid-foreground)",
@@ -95,7 +95,7 @@ export default function NewPassword() {
   if (!token) {
     return (
       <AuthLayout>
-        <div className="flex flex-col gap-6 w-[80%]">
+        <div className="flex flex-col gap-6 w-[90%]">
           <h1
             className="text-[32px]  "
             style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
@@ -121,7 +121,7 @@ export default function NewPassword() {
     <AuthLayout>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-8 w-[80%]"
+        className="flex flex-col gap-8 w-[90%]"
       >
         <div className="flex flex-col gap-3">
           <h1
@@ -175,7 +175,7 @@ export default function NewPassword() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-80 disabled:opacity-50"
+          className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-90 disabled:opacity-50"
           style={{
               backgroundColor: "var(--color-vivid)",
               color: "var(--color-vivid-foreground)",

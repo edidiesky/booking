@@ -84,7 +84,7 @@ function renderInfoTable(rows: EmailInfoRow[]): string {
     </tr>`,
     )
     .join("");
-  return `<table width="100%" cellpadding="0" cellspacing="0" style="background:${EMAIL_TOKENS.fog};border-radius:8px;margin:0 0 32px;text-align:left;overflow:hidden">${cells}</table>`;
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="background:${EMAIL_TOKENS.fog};border-radius:100px;margin:0 0 32px;text-align:left;overflow:hidden">${cells}</table>`;
 }
 
 function renderCta(cta?: EmailCta): string {

@@ -24,7 +24,7 @@ export function useDashboardTour() {
       showProgress:     true,
       showButtons:      ["next", "previous", "close"],
       nextBtnText:      "Next →",
-      prevBtnText:      "← Back",
+      prevBtnText:      "Back",
       doneBtnText:      "Got it!",
       progressText:     "{{current}} / {{total}}",
       overlayOpacity:   0.55,

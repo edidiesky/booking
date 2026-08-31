@@ -726,6 +726,7 @@ export class AuthService {
       method: "email",
     };
   }
+  
 
   async verifyLoginEmailOtp(email: string, code: string): Promise<AuthTokens> {
     const normalizedEmail = email.toLowerCase().trim();

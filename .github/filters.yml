@@ -3,8 +3,8 @@ backend:
   - 'backend/**'
 # frontend:
 #   - 'frontend/**'
-gateway:
-  - 'gateway/**'
+# gateway:
+#   - 'gateway/**'
 audit-worker:
   - 'packages/audit-worker/**'
 availability-worker:
@@ -23,3 +23,6 @@ seller-notification-worker:
   - 'packages/seller-notification-worker/**'
 shared:
   - 'packages/shared/**'
+
+
+# { "name": "gateway",                      "context": ".", "dockerfile": "gateway/Dockerfile",                              "compose_service": "gateway" },

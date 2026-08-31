@@ -1,7 +1,7 @@
 {
   "services": [
     { "name": "backend",                      "context": ".", "dockerfile": "backend/Dockerfile",                              "compose_service": "booking" },
-    { "name": "gateway",                      "context": ".", "dockerfile": "gateway/Dockerfile",                              "compose_service": "gateway" },
+ 
     { "name": "audit-worker",                 "context": ".", "dockerfile": "packages/audit-worker/Dockerfile",                "compose_service": "audit-worker" },
     { "name": "availability-worker",          "context": ".", "dockerfile": "packages/availability-worker/Dockerfile",         "compose_service": "availability-worker" },
     { "name": "booking-expiry-worker",        "context": ".", "dockerfile": "packages/booking-expiry-worker/Dockerfile",       "compose_service": "booking-expiry-worker" },
