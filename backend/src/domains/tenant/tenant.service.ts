@@ -1,11 +1,17 @@
 import { tenantRepository } from "./tenant.repository";
-import { query, AppError } from "@booking/shared";
+import {
+  query,
+  AppError,
+  withTransaction,
+  requestContext,
+} from "@booking/shared";
 import { reviewRepository } from "../review/review.repository";
 import { CancellationPolicyTier } from "../../types";
 import { escrowRepository } from "../escrow/escrow.repository";
 import { propertyRepository } from "../property/property.repository";
 import { bookingRepository } from "../booking/booking.repository";
 import { auditRepository } from "../audit/audit.repository";
+import { auditEventRepository } from "../audit/auditEvent.repository";
 export const tenantService = {
   async getMyTenant(tenantId: string) {
     const tenant = await tenantRepository.findById(tenantId);
@@ -15,13 +21,29 @@ export const tenantService = {
 
   async updateSettings(
     tenantId: string,
+    actorUserId: string,
     body: { timezone?: string; currency?: string; locale?: string },
   ) {
-    return tenantRepository.updateSettings(tenantId, body);
+    const updated = await tenantRepository.updateSettings(tenantId, body);
+    const client = requestContext.get()?.dbClient;
+    const payload = {
+      tenantId,
+      actor: { type: "user" as const, id: actorUserId },
+      action: "tenant.settings_updated",
+      targetType: "tenant",
+      targetId: tenantId,
+      after: body,
+      outcome: "allowed" as const,
+      requestId: requestContext.get()?.requestId,
+    };
+    if (client) await auditEventRepository.record(payload, client);
+    else await withTransaction((c) => auditEventRepository.record(payload, c));
+    return updated;
   },
 
   async updateProfile(
     tenantId: string,
+    actorUserId: string,
     body: {
       bio?: string;
       avatarUrl?: string;
@@ -30,30 +52,98 @@ export const tenantService = {
       country?: string;
     },
   ) {
-    return tenantRepository.updateProfile(tenantId, body);
+    const updated = await tenantRepository.updateProfile(tenantId, body);
+    const client = requestContext.get()?.dbClient;
+    const payload = {
+      tenantId,
+      actor: { type: "user" as const, id: actorUserId },
+      action: "tenant.profile_updated",
+      targetType: "tenant",
+      targetId: tenantId,
+      after: body,
+      outcome: "allowed" as const,
+      requestId: requestContext.get()?.requestId,
+    };
+    if (client) await auditEventRepository.record(payload, client);
+    else await withTransaction((c) => auditEventRepository.record(payload, c));
+    return updated;
   },
 
   async updateCancellationPolicy(
     tenantId: string,
+    actorUserId: string,
     policy: CancellationPolicyTier[],
   ) {
-    return tenantRepository.updateCancellationPolicy(tenantId, policy);
+    const updated = await tenantRepository.updateCancellationPolicy(
+      tenantId,
+      policy,
+    );
+    const client = requestContext.get()?.dbClient;
+    const payload = {
+      tenantId,
+      actor: { type: "user" as const, id: actorUserId },
+      action: "tenant.cancellation_policy_updated",
+      targetType: "tenant",
+      targetId: tenantId,
+      after: { policy },
+      outcome: "allowed" as const,
+      requestId: requestContext.get()?.requestId,
+    };
+    if (client) await auditEventRepository.record(payload, client);
+    else await withTransaction((c) => auditEventRepository.record(payload, c));
+    return updated;
   },
 
   async listAll(page: number, limit: number) {
     return tenantRepository.listAll(page, limit);
   },
 
-  async suspend(tenantId: string) {
-    const updated = await tenantRepository.updateStatus(tenantId, "suspended");
-    if (!updated) throw AppError.notFound("Tenant not found.");
-    return updated;
+  async suspend(tenantId: string, actorUserId: string) {
+    return withTransaction(async (client) => {
+      const updated = await tenantRepository.updateStatus(
+        tenantId,
+        "suspended",
+        client,
+      );
+      if (!updated) throw AppError.notFound("Tenant not found.");
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: { type: "user", id: actorUserId },
+          action: "tenant.suspended",
+          targetType: "tenant",
+          targetId: tenantId,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+      return updated;
+    });
   },
 
-  async activate(tenantId: string) {
-    const updated = await tenantRepository.updateStatus(tenantId, "active");
-    if (!updated) throw AppError.notFound("Tenant not found.");
-    return updated;
+  async activate(tenantId: string, actorUserId: string) {
+    return withTransaction(async (client) => {
+      const updated = await tenantRepository.updateStatus(
+        tenantId,
+        "active",
+        client,
+      );
+      if (!updated) throw AppError.notFound("Tenant not found.");
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: { type: "user", id: actorUserId },
+          action: "tenant.activated",
+          targetType: "tenant",
+          targetId: tenantId,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+      return updated;
+    });
   },
 
   /**
@@ -245,6 +335,7 @@ export const tenantService = {
       },
     };
   },
+
   async getAdminDetail(tenantId: string) {
     const tenant = await tenantRepository.findById(tenantId);
     if (!tenant) throw AppError.notFound("Tenant not found.");

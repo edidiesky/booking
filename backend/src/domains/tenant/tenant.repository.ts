@@ -57,14 +57,6 @@ export const tenantRepository = {
       : await queryOne<Tenant>(sql, params);
     return row!;
   },
-
-  async updateStatus(id: string, status: TenantStatus): Promise<Tenant | null> {
-    return queryOne<Tenant>(
-      `UPDATE tenants SET status = $1, updated_at = now() WHERE id = $2 RETURNING *`,
-      [status, id],
-    );
-  },
-
   async updateSettings(
     id: string,
     settings: Partial<TenantSettings>,
@@ -130,6 +122,11 @@ export const tenantRepository = {
       `SELECT * FROM tenants ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
       [limit, offset],
     );
+  },
+  async updateStatus(id: string, status: TenantStatus, client?: PoolClient): Promise<Tenant | null> {
+    const sql = `UPDATE tenants SET status = $1, updated_at = now() WHERE id = $2 RETURNING *`;
+    if (client) return (await client.query<Tenant>(sql, [status, id])).rows[0] ?? null;
+    return queryOne<Tenant>(sql, [status, id]);
   },
   async countAllByStatus(): Promise<{
     active: number;
