@@ -7,36 +7,45 @@ import redisClient from "../../config/redis";
 import { AppError } from "../../utils/AppError";
 import logger from "../../utils/logger";
 import { requestContext } from "../../context/requestContext";
+import { withTransaction } from "@booking/shared";
+import { auditEventRepository } from "../audit/auditEvent.repository";
 
 const OTP_TTL_SEC = 10 * 60;
 const MAX_OTP_ATTEMPTS = 5;
 
-function ctx() { return requestContext.get() ?? {}; }
+function ctx() {
+  return requestContext.get() ?? {};
+}
 
 function otpKey(userId: string, purpose: string): string {
   return `otp:${userId}:${purpose}`;
 }
 
 function generateOtp(): string {
-  // 6-digit numeric OTP, crypto.randomInt is not modulo-biased unlike
-  // Math.random() % 10 chains.
   return crypto.randomInt(0, 1_000_000).toString().padStart(6, "0");
 }
 
 const setPinSchema = Joi.object({
-  pin: Joi.string().pattern(/^\d{4,6}$/).required().messages({
-    "string.pattern.base": "PIN must be 4-6 digits.",
-  }),
+  pin: Joi.string()
+    .pattern(/^\d{4,6}$/)
+    .required()
+    .messages({
+      "string.pattern.base": "PIN must be 4-6 digits.",
+    }),
 });
 
 const changePinSchema = Joi.object({
   currentPin: Joi.string().required(),
-  newPin:     Joi.string().pattern(/^\d{4,6}$/).required(),
+  newPin: Joi.string()
+    .pattern(/^\d{4,6}$/)
+    .required(),
 });
 
 const resetPinSchema = Joi.object({
   password: Joi.string().required(),
-  newPin:   Joi.string().pattern(/^\d{4,6}$/).required(),
+  newPin: Joi.string()
+    .pattern(/^\d{4,6}$/)
+    .required(),
 });
 
 const verifyOtpSchema = Joi.object({
@@ -53,7 +62,8 @@ export const securityService = {
       twoFactorEnabled: user.two_factor_enabled,
       loginWithPinEnabled: user.login_with_pin_enabled,
       countryCode: user.country_code ?? null,
-      hasPin: (await userRepository.findByIdWithSecrets(userId))?.pin_hash != null,
+      hasPin:
+        (await userRepository.findByIdWithSecrets(userId))?.pin_hash != null,
     };
   },
 
@@ -65,10 +75,25 @@ export const securityService = {
 
     const user = await userRepository.findByIdWithSecrets(userId);
     if (!user) throw AppError.notFound("User.");
-    if (user.pin_hash) throw AppError.badRequest("PIN already set, use change-pin instead.");
+    if (user.pin_hash)
+      throw AppError.badRequest("PIN already set, use change-pin instead.");
 
     const pinHash = await bcrypt.hash(pin, 10);
-    await userRepository.updateById(userId, { pin_hash: pinHash });
+    await withTransaction(async (client) => {
+      await userRepository.updateById(userId, { pin_hash: pinHash }, client);
+      await auditEventRepository.record(
+        {
+          tenantId: user.tenant_id!,
+          actor: { type: "user", id: userId, email: user.email },
+          action: "auth.pin_set",
+          targetType: "user",
+          targetId: userId,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+    });
 
     logger.info("pin_set", { event: "pin_set", userId, ...ctx() });
     return { message: "PIN set." };
@@ -78,7 +103,10 @@ export const securityService = {
   async changePin(userId: string, body: unknown) {
     const { error, value } = changePinSchema.validate(body);
     if (error) throw AppError.badRequest(error.details[0].message);
-    const { currentPin, newPin } = value as { currentPin: string; newPin: string };
+    const { currentPin, newPin } = value as {
+      currentPin: string;
+      newPin: string;
+    };
 
     const user = await userRepository.findByIdWithSecrets(userId);
     if (!user?.pin_hash) throw AppError.badRequest("No PIN set yet.");
@@ -87,15 +115,27 @@ export const securityService = {
     }
 
     const pinHash = await bcrypt.hash(newPin, 10);
-    await userRepository.updateById(userId, { pin_hash: pinHash });
+    await withTransaction(async (client) => {
+      await userRepository.updateById(userId, { pin_hash: pinHash }, client);
+      await auditEventRepository.record(
+        {
+          tenantId: user.tenant_id!,
+          actor: { type: "user", id: userId, email: user.email },
+          action: "auth.pin_changed",
+          targetType: "user",
+          targetId: userId,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+    });
 
     logger.info("pin_changed", { event: "pin_changed", userId, ...ctx() });
     return { message: "PIN changed." };
   },
 
-  // Password-gated reset, matches the reference's "Reset PIN" screen
-  // (enter account password, no OTP round trip needed since the password
-  // itself is already the stronger factor here).
+  // Password-gated reset
   async resetPin(userId: string, body: unknown) {
     const { error, value } = resetPinSchema.validate(body);
     if (error) throw AppError.badRequest(error.details[0].message);
@@ -108,7 +148,21 @@ export const securityService = {
     }
 
     const pinHash = await bcrypt.hash(newPin, 10);
-    await userRepository.updateById(userId, { pin_hash: pinHash });
+    await withTransaction(async (client) => {
+      await userRepository.updateById(userId, { pin_hash: pinHash }, client);
+      await auditEventRepository.record(
+        {
+          tenantId: user.tenant_id!,
+          actor: { type: "user", id: userId, email: user.email },
+          action: "auth.pin_reset",
+          targetType: "user",
+          targetId: userId,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+    });
 
     logger.info("pin_reset", { event: "pin_reset", userId, ...ctx() });
     return { message: "PIN reset." };
@@ -126,11 +180,21 @@ export const securityService = {
   // so a pending email-verify OTP and a pending 2FA-disable OTP for the
   // same user don't collide, each purpose gets its own slot with its own
   // TTL and attempt counter.
-  async requestOtp(userId: string, purpose: "email_verify" | "phone_verify" | "two_factor_enable" | "two_factor_disable") {
+  async requestOtp(
+    userId: string,
+    purpose:
+      | "email_verify"
+      | "phone_verify"
+      | "two_factor_enable"
+      | "two_factor_disable",
+  ) {
     const user = await userRepository.findByIdWithSecrets(userId);
     if (!user) throw AppError.notFound("User.");
 
-    if ((purpose === "phone_verify" || purpose === "two_factor_disable") && !user.phone) {
+    if (
+      (purpose === "phone_verify" || purpose === "two_factor_disable") &&
+      !user.phone
+    ) {
       throw AppError.badRequest("No phone number on file.");
     }
 
@@ -157,8 +221,16 @@ export const securityService = {
       await dispatcher.sendEmail(user.email, subject, `<p>${body}</p>`);
     }
 
-    logger.info("otp_requested", { event: "otp_requested", userId, purpose, ...ctx() });
-    return { message: "Verification code sent.", expiresInSeconds: OTP_TTL_SEC };
+    logger.info("otp_requested", {
+      event: "otp_requested",
+      userId,
+      purpose,
+      ...ctx(),
+    });
+    return {
+      message: "Verification code sent.",
+      expiresInSeconds: OTP_TTL_SEC,
+    };
   },
 
   async verifyOtp(userId: string, purpose: string, body: unknown) {
@@ -169,13 +241,20 @@ export const securityService = {
     const key = otpKey(userId, purpose);
     const raw = await redisClient.get(key);
     if (!raw) {
-      throw AppError.badRequest("No pending verification for this action, request a new code.");
+      throw AppError.badRequest(
+        "No pending verification for this action, request a new code.",
+      );
     }
 
-    const { codeHash, attempts } = JSON.parse(raw) as { codeHash: string; attempts: number };
+    const { codeHash, attempts } = JSON.parse(raw) as {
+      codeHash: string;
+      attempts: number;
+    };
     if (attempts >= MAX_OTP_ATTEMPTS) {
       await redisClient.del(key);
-      throw AppError.tooManyRequests("Too many incorrect attempts, request a new code.");
+      throw AppError.tooManyRequests(
+        "Too many incorrect attempts, request a new code.",
+      );
     }
 
     const valid = await bcrypt.compare(code, codeHash);
@@ -194,24 +273,78 @@ export const securityService = {
 
     await redisClient.del(key);
 
-    switch (purpose) {
-      case "email_verify":
-        await userRepository.updateById(userId, { is_email_verified: true });
-        break;
-      case "phone_verify":
-        await userRepository.updateById(userId, { is_phone_verified: true });
-        break;
-      case "two_factor_enable":
-        await userRepository.updateById(userId, { two_factor_enabled: true });
-        break;
-      case "two_factor_disable":
-        await userRepository.updateById(userId, { two_factor_enabled: false });
-        break;
-      default:
-        throw AppError.badRequest("Unknown verification purpose.");
+    const actionByPurpose: Record<string, string> = {
+      email_verify: "auth.email_verified",
+      phone_verify: "auth.phone_verified",
+      two_factor_enable: "auth.mfa_enabled",
+      two_factor_disable: "auth.mfa_disabled",
+    };
+
+    const user = await userRepository.findByIdWithSecrets(userId);
+    if (!user) throw AppError.notFound("User.");
+
+
+    const applyUpdate = async (client?: import("pg").PoolClient) => {
+      switch (purpose) {
+        case "email_verify":
+          await userRepository.updateById(
+            userId,
+            { is_email_verified: true },
+            client,
+          );
+          break;
+        case "phone_verify":
+          await userRepository.updateById(
+            userId,
+            { is_phone_verified: true },
+            client,
+          );
+          break;
+        case "two_factor_enable":
+          await userRepository.updateById(
+            userId,
+            { two_factor_enabled: true },
+            client,
+          );
+          break;
+        case "two_factor_disable":
+          await userRepository.updateById(
+            userId,
+            { two_factor_enabled: false },
+            client,
+          );
+          break;
+        default:
+          throw AppError.badRequest("Unknown verification purpose.");
+      }
+    };
+
+    if (user.tenant_id) {
+      await withTransaction(async (client) => {
+        await applyUpdate(client);
+        await auditEventRepository.record(
+          {
+            tenantId: user.tenant_id!,
+            actor: { type: "user", id: userId, email: user.email },
+            action: actionByPurpose[purpose] ?? `auth.verified_${purpose}`,
+            targetType: "user",
+            targetId: userId,
+            outcome: "allowed",
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        );
+      });
+    } else {
+      await applyUpdate();
     }
 
-    logger.info("otp_verified", { event: "otp_verified", userId, purpose, ...ctx() });
+    logger.info("otp_verified", {
+      event: "otp_verified",
+      userId,
+      purpose,
+      ...ctx(),
+    });
     return { message: "Verified." };
   },
 
@@ -220,21 +353,37 @@ export const securityService = {
     const user = await userRepository.findByIdWithSecrets(userId);
     if (!user) throw AppError.notFound("User.");
     if (enabled && !user.pin_hash) {
-      throw AppError.badRequest("Set a transaction PIN before enabling PIN login.");
+      throw AppError.badRequest(
+        "Set a transaction PIN before enabling PIN login.",
+      );
     }
-    await userRepository.updateById(userId, { login_with_pin_enabled: enabled });
-    logger.info("login_with_pin_toggled", { event: "login_with_pin_toggled", userId, enabled, ...ctx() });
+    await userRepository.updateById(userId, {
+      login_with_pin_enabled: enabled,
+    });
+    logger.info("login_with_pin_toggled", {
+      event: "login_with_pin_toggled",
+      userId,
+      enabled,
+      ...ctx(),
+    });
     return { message: enabled ? "PIN login enabled." : "PIN login disabled." };
   },
 
   async setCountry(userId: string, body: unknown) {
-    const schema = Joi.object({ countryCode: Joi.string().length(2).uppercase().required() });
+    const schema = Joi.object({
+      countryCode: Joi.string().length(2).uppercase().required(),
+    });
     const { error, value } = schema.validate(body);
     if (error) throw AppError.badRequest(error.details[0].message);
     const { countryCode } = value as { countryCode: string };
 
     await userRepository.updateById(userId, { country_code: countryCode });
-    logger.info("country_changed", { event: "country_changed", userId, countryCode, ...ctx() });
+    logger.info("country_changed", {
+      event: "country_changed",
+      userId,
+      countryCode,
+      ...ctx(),
+    });
     return { message: "Location updated." };
   },
 };
