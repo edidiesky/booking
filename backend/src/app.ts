@@ -39,7 +39,7 @@ import jobRoutes from "./domains/jobs/job.routes";
 import invitationRoutes from "./domains/invitation/invitation.routes";
 import redisClient from "./config/redis";
 import { logger, query } from "@booking/shared";
-// import propertySearchRoutes from "./domains/property-search/propertySearch.routes";
+import propertySearchRoutes from "./domains/property-search/propertySearch.routes";
 // import discoveryRoutes from "./domains/property-search/discovery.routes";
 const app = express();
 
@@ -95,7 +95,7 @@ app.use("/api/v1/renters", tenantMiddleware, rlsMiddleware, renterRoutes);
 app.use("/api/v1/sse", tenantMiddleware, rlsMiddleware, sseRouter);
 app.use("/api/v1/tenants", tenantMiddleware, rlsMiddleware, tenantRoutes);
 app.use("/api/v1/properties", tenantMiddleware, rlsMiddleware, propertyRoutes);
-// app.use("/api/v1/properties-search", propertySearchRoutes);
+app.use("/api/v1/properties-search", propertySearchRoutes);
 // app.use("/api/v1/properties-discovery", discoveryRoutes);
 app.use("/api/v1/bookings", tenantMiddleware, rlsMiddleware, bookingRoutes);
 app.use("/api/v1/payments", tenantMiddleware, rlsMiddleware, paymentRoutes);
