@@ -21,6 +21,9 @@ import {
 import { authenticator } from "otplib";
 import QRCode from "qrcode";
 import { OAuth2Client } from "google-auth-library";
+import { auditEventRepository } from "../audit/auditEvent.repository";
+import { roleRepository } from "../role/role.repository";
+import { userRoleRepository } from "../user-role/user-role.repository";
 
 const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -53,6 +56,7 @@ function signAccessToken(payload: JWTPayload): string {
     expiresIn: JWT_EXPIRY_SEC,
     issuer: "booking-platform",
     audience: "booking-client",
+    jwtid: nanoid(),
   });
 }
 
@@ -219,11 +223,27 @@ export class AuthService {
 
       await userRepository.updateById(
         userId,
-      { status: "active", is_email_verified: true },
+        { status: "active", is_email_verified: true },
         client,
       );
       await profileRepository.create(
-      { userId, displayName: `${input.firstName} ${input.lastName}`.trim() },
+        { userId, displayName: `${input.firstName} ${input.lastName}`.trim() },
+        client,
+      );
+      const guestRole = await roleRepository.findBySlug("guest");
+      if (!guestRole) {
+        throw AppError.internal(
+          "guest system role is not seeded. Registration cannot proceed.",
+        );
+      }
+      await userRoleRepository.assign(
+        {
+          userId,
+          tenantId: null,
+          roleId: guestRole.id,
+          assignedBy: userId,
+          reason: "Initial registration",
+        },
         client,
       );
     });
@@ -317,11 +337,45 @@ export class AuthService {
 
       await userRepository.updateById(
         userId,
-      { status: "active", is_email_verified: true, tenant_id: tenantId },
+        { status: "active", is_email_verified: true, tenant_id: tenantId },
         client,
       );
       await profileRepository.create(
-      { userId, displayName: `${input.firstName} ${input.lastName}`.trim() },
+        { userId, displayName: `${input.firstName} ${input.lastName}`.trim() },
+        client,
+      );
+      const hostRole = await roleRepository.findBySlug("host:admin");
+      if (!hostRole) {
+        throw AppError.internal(
+          "host:admin system role is not seeded. Registration cannot proceed.",
+        );
+      }
+      await userRoleRepository.assign(
+        {
+          userId,
+          tenantId,
+          roleId: hostRole.id,
+          assignedBy: userId,
+          reason: "Initial registration",
+        },
+        client,
+      );
+
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: {
+            type: "user",
+            id: userId,
+            email,
+            name: `${input.firstName} ${input.lastName}`.trim(),
+          },
+          action: "tenant.registered",
+          targetType: "tenant",
+          targetId: tenantId,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
         client,
       );
     });
@@ -334,7 +388,6 @@ export class AuthService {
       userId,
     });
 
-    // Publish host welcome notification after successful registration
     void Promise.allSettled([
       publishNotifyAuthRegistered({
         notificationId: uuid(),
@@ -400,15 +453,24 @@ export class AuthService {
     refreshToken?: string,
   ): Promise<void> {
     let ttl = JWT_EXPIRY_SEC;
+    let jti: string | undefined;
     try {
-      const decoded = jwt.decode(accessToken) as { exp?: number } | null;
+      const decoded = jwt.decode(accessToken) as {
+        exp?: number;
+        jti?: string;
+      } | null;
       if (decoded?.exp)
         ttl = Math.max(0, decoded.exp - Math.floor(Date.now() / 1000));
+      jti = decoded?.jti;
     } catch {
       /**/
     }
 
-    await redisClient.set(blocklistKey(userId), "1", "EX", ttl);
+    if (jti) {
+      await redisClient.set(blocklistKey(jti), "1", "EX", ttl);
+    } else {
+      await redisClient.set(blocklistKey(userId), "1", "EX", ttl);
+    }
 
     if (refreshToken) {
       await redisClient.del(refreshKey(refreshToken));
@@ -500,7 +562,7 @@ export class AuthService {
         lastName: user?.last_name,
         userType,
         tenantId,
-    },
+      },
     };
   }
 
@@ -566,7 +628,7 @@ export class AuthService {
         notificationId: uuid(),
         email: user.email,
         firstName: user.first_name,
-        resetUrl
+        resetUrl,
       }),
     ]);
 
@@ -592,8 +654,35 @@ export class AuthService {
     if (!userId)
       throw AppError.badRequest("This reset link is invalid or has expired.");
 
+    const user = await userRepository.findById(userId);
     const newHash = await bcrypt.hash(password, 12);
-    await userRepository.updatePasswordHash(userId, newHash);
+    if (user?.tenant_id) {
+      // Guest users have no tenant_id, same structural limit as every
+      // other audit call site in this file, guarded rather than
+      // silently attempted and failing the NOT NULL constraint.
+      await withTransaction(async (client) => {
+        await userRepository.updatePasswordHash(userId, newHash, client);
+        await auditEventRepository.record(
+          {
+            tenantId: user.tenant_id!,
+            actor: {
+              type: "user",
+              id: userId,
+              email: user.email,
+              name: [user.first_name, user.last_name].filter(Boolean).join(" "),
+            },
+            action: "auth.password_reset_confirmed",
+            targetType: "user",
+            targetId: userId,
+            outcome: "allowed",
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        );
+      });
+    } else {
+      await userRepository.updatePasswordHash(userId, newHash);
+    }
     await redisClient.del(passwordResetKey(token));
 
     await redisClient.set(blocklistKey(userId), "1", "EX", JWT_EXPIRY_SEC);
@@ -611,7 +700,7 @@ export class AuthService {
     });
     return {
       message: "Password reset. You can now sign in with your new password.",
-    };  
+    };
   }
   async login(
     input: LoginInput,
@@ -627,52 +716,67 @@ export class AuthService {
       await auditRepository.log({
         action: "login",
         resource: "user",
-      newValue: { outcome: "failed", reason: "unknown_email", email },
+        newValue: { outcome: "failed", reason: "unknown_email", email },
       });
       throw AppError.unauthorized("Invalid email or password.");
     }
 
+    const denyLogin = async (
+      reason: string,
+      error: AppError,
+    ): Promise<never> => {
+      await withTransaction((client) =>
+        auditEventRepository.record(
+          {
+            tenantId: user.tenant_id,
+            actor: {
+              type: "user",
+              id: user.id,
+              email: user.email,
+              name: [user.first_name, user.last_name].filter(Boolean).join(" "),
+            },
+            action: "auth.login_failed",
+            targetType: "user",
+            targetId: user.id,
+            outcome: "denied",
+            denialReason: reason,
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        ),
+      );
+      throw error;
+    };
+
     if (!(await bcrypt.compare(input.password, user.password_hash))) {
-      await auditRepository.log({
-        action: "login",
-        resource: "user",
-        resourceId: user.id,
-        userId: user.id,
-      newValue: { outcome: "failed", reason: "invalid_password" },
-      });
+      await denyLogin(
+        "incorrect_password",
+        AppError.unauthorized("Invalid email or password."),
+      );
       throw AppError.unauthorized("Invalid email or password.");
     }
 
     if (user.status === "suspended") {
-      await auditRepository.log({
-        action: "login",
-        resource: "user",
-        resourceId: user.id,
-        userId: user.id,
-      newValue: { outcome: "blocked", reason: "suspended" },
-      });
+      await denyLogin(
+        "account_suspended",
+        AppError.forbidden("Your account has been suspended. Contact support."),
+      );
       throw AppError.forbidden(
         "Your account has been suspended. Contact support.",
       );
     }
     if (user.status === "inactive") {
-      await auditRepository.log({
-        action: "login",
-        resource: "user",
-        resourceId: user.id,
-        userId: user.id,
-      newValue: { outcome: "blocked", reason: "inactive" },
-      });
+      await denyLogin(
+        "account_inactive",
+        AppError.forbidden("Your account is inactive."),
+      );
       throw AppError.forbidden("Your account is inactive.");
     }
     if (!user.is_email_verified) {
-      await auditRepository.log({
-        action: "login",
-        resource: "user",
-        resourceId: user.id,
-        userId: user.id,
-      newValue: { outcome: "blocked", reason: "email_unverified" },
-      });
+      await denyLogin(
+        "email_not_verified",
+        AppError.forbidden("Please verify your email before logging in."),
+      );
       throw AppError.forbidden("Please verify your email before logging in.");
     }
 
@@ -689,7 +793,7 @@ export class AuthService {
         resource: "user",
         resourceId: user.id,
         userId: user.id,
-      newValue: { outcome: "2fa_challenge_issued" },
+        newValue: { outcome: "2fa_challenge_issued" },
       });
       logger.info("two_factor_challenge_issued", {
         event: "two_factor_challenge_issued",
@@ -717,7 +821,7 @@ export class AuthService {
       resource: "user",
       resourceId: user.id,
       userId: user.id,
-    newValue: { outcome: "email_otp_issued" },
+      newValue: { outcome: "email_otp_issued" },
     });
 
     return {
@@ -726,7 +830,6 @@ export class AuthService {
       method: "email",
     };
   }
-  
 
   async verifyLoginEmailOtp(email: string, code: string): Promise<AuthTokens> {
     const normalizedEmail = email.toLowerCase().trim();
@@ -753,7 +856,7 @@ export class AuthService {
         resource: "user",
         resourceId: userId,
         userId,
-      newValue: { outcome: "failed", reason: "invalid_email_otp" },
+        newValue: { outcome: "failed", reason: "invalid_email_otp" },
       });
       throw AppError.badRequest("Invalid code.");
     }
@@ -769,7 +872,7 @@ export class AuthService {
         resource: "user",
         resourceId: user.id,
         userId: user.id,
-      newValue: { outcome: "blocked", reason: "suspended" },
+        newValue: { outcome: "blocked", reason: "suspended" },
       });
       throw AppError.forbidden(
         "Your account has been suspended. Contact support.",
@@ -782,7 +885,7 @@ export class AuthService {
         resource: "user",
         resourceId: user.id,
         userId: user.id,
-      newValue: { outcome: "blocked", reason: "inactive" },
+        newValue: { outcome: "blocked", reason: "inactive" },
       });
       throw AppError.forbidden("Your account is inactive.");
     }
@@ -793,19 +896,41 @@ export class AuthService {
         resource: "user",
         resourceId: user.id,
         userId: user.id,
-      newValue: { outcome: "blocked", reason: "email_unverified" },
+        newValue: { outcome: "blocked", reason: "email_unverified" },
       });
       throw AppError.forbidden("Please verify your email before logging in.");
     }
-
-    await userRepository.updateById(user.id, { last_active_at: new Date() });
+    await withTransaction(async (client) => {
+      await userRepository.updateById(
+        user.id,
+        { last_active_at: new Date() },
+        client,
+      );
+      await auditEventRepository.record(
+        {
+          tenantId: user.tenant_id,
+          actor: {
+            type: "user",
+            id: user.id,
+            email: user.email,
+            name: [user.first_name, user.last_name].filter(Boolean).join(" "),
+          },
+          action: "auth.login_succeeded",
+          targetType: "user",
+          targetId: user.id,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+    });
 
     await auditRepository.log({
       action: "login",
       resource: "user",
       resourceId: user.id,
       userId: user.id,
-    newValue: { outcome: "success", via: "email_otp" },
+      newValue: { outcome: "success", via: "email_otp" },
     });
 
     logger.info("user_logged_in_email_otp", {
@@ -816,12 +941,7 @@ export class AuthService {
     });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    return this._buildTokens(
-      user.id,
-      user.user_type,
-      name,
-      user.tenant_id,
-    );
+    return this._buildTokens(user.id, user.user_type, name, user.tenant_id);
   }
 
   async verifyTwoFactorLogin(
@@ -868,13 +988,37 @@ export class AuthService {
         resource: "user",
         resourceId: user.id,
         userId: user.id,
-      newValue: { outcome: "failed", reason: "invalid_2fa_code" },
+        newValue: { outcome: "failed", reason: "invalid_2fa_code" },
       });
       throw AppError.badRequest("Invalid or expired code.");
     }
 
     await redisClient.del(twoFactorChallengeKey(challengeToken));
-    await userRepository.updateById(user.id, { last_active_at: new Date() });
+    await withTransaction(async (client) => {
+      await userRepository.updateById(
+        user.id,
+        { last_active_at: new Date() },
+        client,
+      );
+      auditEventRepository.record(
+        {
+          tenantId: user.tenant_id,
+          actor: {
+            type: "user",
+            id: user.id,
+            email: user.email,
+            name: [user.first_name, user.last_name].filter(Boolean).join(" "),
+          },
+          action: "auth.login_succeeded",
+          targetType: "user",
+          targetId: user.id,
+          outcome: "allowed",
+          metadata: { via: consumedBackupCode ? "backup_code" : "totp" },
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+    });
     await auditRepository.log({
       action: "login",
       resource: "user",
@@ -892,12 +1036,7 @@ export class AuthService {
     });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    return this._buildTokens(
-      user.id,
-      user.user_type,
-      name,
-      user.tenant_id,
-    );
+    return this._buildTokens(user.id, user.user_type, name, user.tenant_id);
   }
 
   async disableTwoFactor(userId: string, password: string) {
@@ -944,16 +1083,35 @@ export class AuthService {
         "Invalid code. Check your authenticator app and try again.",
       );
 
-  const backupCodes = Array.from({ length: 8 }, () => nanoid(10));
+    const backupCodes = Array.from({ length: 8 }, () => nanoid(10));
     const hashedCodes = await Promise.all(
       backupCodes.map((c) => bcrypt.hash(c, 10)),
     );
 
-    await userRepository.updateById(userId, {
-      two_factor_enabled: true,
-      two_factor_backup_codes: hashedCodes,
+    await withTransaction(async (client) => {
+      await userRepository.updateById(
+        userId,
+        { two_factor_enabled: true, two_factor_backup_codes: hashedCodes },
+        client,
+      );
+      await auditEventRepository.record(
+        {
+          tenantId: user.tenant_id,
+          actor: {
+            type: "user",
+            id: userId,
+            email: user.email,
+            name: [user.first_name, user.last_name].filter(Boolean).join(" "),
+          },
+          action: "auth.mfa_enabled",
+          targetType: "user",
+          targetId: userId,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
     });
-
     await auditRepository.log({
       action: "updated",
       resource: "two_factor_enabled",
@@ -1050,7 +1208,7 @@ export class AuthService {
       resource: "user",
       resourceId: user.id,
       userId: user.id,
-    newValue: { via: "google_oauth" },
+      newValue: { via: "google_oauth" },
     });
     logger.info("user_logged_in_google", {
       event: "user_logged_in_google",
@@ -1058,14 +1216,8 @@ export class AuthService {
     });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    return this._buildTokens(
-      user.id,
-      user.user_type,
-      name,
-      user.tenant_id,
-    );
+    return this._buildTokens(user.id, user.user_type, name, user.tenant_id);
   }
-};
+}
 
-
-export const authService = new AuthService()
+export const authService = new AuthService();

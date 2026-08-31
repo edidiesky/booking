@@ -146,14 +146,23 @@ export const userRepository = {
     return queryOne<UserWithoutHash>(sql, values);
   },
 
-  // Deliberately separate from updateById: password_hash isn't in that
-  // method's allowlist, so a caller can't accidentally overwrite it via a
-  // generic partial-update call, this is the one explicit path for it.
-  async updatePasswordHash(id: string, passwordHash: string): Promise<void> {
-    await query(
-      `UPDATE users SET password_hash = $1, updated_at = now() WHERE id = $2`,
-      [passwordHash, id],
-    );
+  
+  async updatePasswordHash(
+    id: string,
+    passwordHash: string,
+    client?: PoolClient,
+  ): Promise<void> {
+    if (client) {
+      await client.query(
+        `UPDATE users SET password_hash = $1, updated_at = now() WHERE id = $2`,
+        [passwordHash, id],
+      );
+    } else {
+      await query(
+        `UPDATE users SET password_hash = $1, updated_at = now() WHERE id = $2`,
+        [passwordHash, id],
+      );
+    }
   },
 
   async emailExists(email: string): Promise<boolean> {
