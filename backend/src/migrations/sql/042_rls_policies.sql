@@ -1,26 +1,4 @@
-/* Tenant row-level security. Only applied to tables confirmed (by
-     directly reading each one's own CREATE TABLE block, not assumed) to
-     have a real tenant_id column. Deliberately NOT applied to
-     booking_locks, campaign_templates, campaign_recipients, renters,
-     user_notifications, favorites, none of them have a direct tenant_id
-     column, they're tenant-scoped only transitively through a parent
-     record. Protecting those correctly needs either denormalizing
-     tenant_id onto them directly or JOIN-based policies, real follow-up
-     work, not silently skipped, explicitly not done here.
-
-     Every policy requires app.current_tenant_id to be set for the
-     session (via beginTenantScopedTransaction in rlsMiddleware.ts /
-     requireTenantMember), current_setting(..., true) returns NULL
-     rather than erroring if unset, which means any query running
-     without that context (a bug, a missed middleware, a future code
-     path) sees zero rows rather than crashing, fails closed, not open.
-
-     roles and campaigns both allow tenant_id IS NULL through
-     unconditionally: system roles (is_system = true, tenant_id NULL)
-     must stay visible to every tenant, they're not any one tenant's
-     data. Same reasoning for campaigns with a NULL tenant_id, if that's
-     genuinely a platform-wide campaign concept and not a data-quality
-     gap, worth confirming which it actually is before relying on this. */
+/* Tenant row-level security. */
 
 ALTER TABLE properties            ENABLE ROW LEVEL SECURITY;
    ALTER TABLE properties            FORCE  ROW LEVEL SECURITY;

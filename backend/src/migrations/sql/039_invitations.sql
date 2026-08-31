@@ -1,5 +1,5 @@
-/* Team invitations. A real table, not a Redis token like password
-     reset, hosts need to see pending/expired/revoked invites, not just
+/* Team invitations. It is a table, and not a Redis token like password
+     reset, due to hosts need to see pending/expired/revoked invites, not just
      redeem a one-shot link. The role is fixed at invite time, the
      invitee can't choose it, that's the whole point: the link IS the
      authorization to join with that specific role, not a self-signup

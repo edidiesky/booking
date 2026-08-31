@@ -2,3 +2,4 @@
 
 ALTER TABLE invitations ADD COLUMN IF NOT EXISTS code_hash VARCHAR(100);
    ALTER TABLE invitations DROP COLUMN IF EXISTS token;
+

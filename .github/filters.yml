@@ -1,8 +1,8 @@
 
 backend:
   - 'backend/**'
-frontend:
-  - 'frontend/**'
+# frontend:
+#   - 'frontend/**'
 gateway:
   - 'gateway/**'
 audit-worker:

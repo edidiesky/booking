@@ -1,5 +1,4 @@
 /* 013 outbox */
-
 CREATE TABLE IF NOT EXISTS outbox_events (
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     event_type   VARCHAR(100)  NOT NULL,
@@ -13,3 +12,4 @@ CREATE TABLE IF NOT EXISTS outbox_events (
   );
   CREATE INDEX IF NOT EXISTS idx_outbox_status  ON outbox_events(status, created_at);
   CREATE INDEX IF NOT EXISTS idx_outbox_retry   ON outbox_events(status, retry_count);
+
