@@ -43,7 +43,7 @@ export default function Login() {
     });
   };
 
-  //  Authenticator (2FA enabled) 
+  //  Authenticator (2FA enabled)
   if (loginStep.step === "totp" && challengeToken) {
     return (
       <AuthLayout>
@@ -65,17 +65,15 @@ export default function Login() {
     );
   }
 
-  //  Email OTP (normal users) 
- if (loginStep.step === "email_otp" && emailForOtp) {
+  //  Email OTP (normal users)
+  if (loginStep.step === "email_otp" && emailForOtp) {
     return (
       <AuthLayout>
         <div className="flex flex-col gap-8">
           <StepConfirmOtp
             email={emailForOtp}
             onSubmit={handleVerifyEmailOtp}
-            onResend={() => {
-              
-            }}
+            onResend={() => {}}
             isLoading={isLoading}
             isResending={false}
           />
@@ -92,7 +90,7 @@ export default function Login() {
     );
   }
 
-  //  Password step 
+  //  Password step
   return (
     <AuthLayout>
       <div className="flex flex-col gap-8">
@@ -147,6 +145,15 @@ export default function Login() {
               error={errors.password?.message}
               {...register("password")}
             />
+          </div>
+          <div className="flex justify-end -mt-2">
+            <Link
+              to="/reset-password"
+              className="text-xs underline underline-offset-4 transition-opacity hover:opacity-60"
+              style={{ color: "var(--color-muted-stone)" }}
+            >
+              Forgot password? Click here!
+            </Link>
           </div>
 
           <button

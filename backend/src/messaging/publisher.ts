@@ -102,6 +102,14 @@ export interface NotifyAuthOtpPayload {
   otp: string;
 }
 
+export interface NotifyAuthPasswordRequestResetPayload {
+  notificationId: string;
+  email: string;
+  firstName?: string;
+  resetUrl: string;
+}
+
+
 export interface NotifyAuthRegisteredPayload {
   notificationId: string;
   email: string;
@@ -198,6 +206,12 @@ export function publishNotifyPaymentFailed(p: NotifyPaymentPayload): void {
 export function publishNotifyAuthOtp(p: NotifyAuthOtpPayload): void {
   publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_AUTH_OTP, p);
 }
+
+export function publishNotifyAuthPasswordRequestResetPayload(p: NotifyAuthPasswordRequestResetPayload): void {
+  publish(EXCHANGES.NOTIFICATION, ROUTING_KEYS.NOTIFY_AUTH_REQUEST_PASSQWORD_RESET, p);
+}
+
+// 
 export function publishNotifyAuthRegistered(
   p: NotifyAuthRegisteredPayload,
 ): void {

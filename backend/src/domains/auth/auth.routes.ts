@@ -61,3 +61,4 @@ router.post("/2fa/disable",       authenticate, validate(disableTwoFactorSchema)
 router.post("/2fa/verify-login",  validate(verifyTwoFactorLoginSchema), VerifyTwoFactorLoginHandler);
 
 export default router;
+

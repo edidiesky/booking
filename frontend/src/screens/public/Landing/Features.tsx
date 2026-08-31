@@ -26,7 +26,7 @@ export default function Features() {
         <div className="flex flex-col gap-3 mb-14">
           <p className="text-xs lg:text-[13px]     uppercase bold"
              style={{ color: "var(--color-hint-of-grey)" }}>
-            Why Booking Platform
+            Why Bukking Platform
           </p>
           <h2 className="text-3xl lg:text-4xl bold"
               style={{ color: "var(--color-ink)", letterSpacing: "-0.3px" }}>

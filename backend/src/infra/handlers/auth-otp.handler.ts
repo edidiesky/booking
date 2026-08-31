@@ -25,7 +25,7 @@ export class AuthOtpHandler extends BaseNotificationHandler {
     await getDispatcher().sendEmail(e.email, subject, html);
 
     if (e.phone) {
-      await getDispatcher().sendSms(e.phone, `Your Booking Platform code: ${e.otp}. Expires in 15 minutes. Do not share.`);
+      await getDispatcher().sendSms(e.phone, `Your Bukking Platform code: ${e.otp}. Expires in 15 minutes. Do not share.`);
     }
 
     await notificationRepository.markSent(notification.id);

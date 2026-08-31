@@ -15,7 +15,7 @@ export function authRegisteredTemplate(p: {
   supportUrl:  string;
 }): { subject: string; html: string } {
   return {
-    subject: "Welcome to the Booking Platform — Account Created",
+    subject: "Welcome to the Bukking Platform — Account Created",
     html:    compiled({ ...p, year: new Date().getFullYear() }),
   };
 }

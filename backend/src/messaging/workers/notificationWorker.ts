@@ -16,6 +16,7 @@ import { trackError } from "../../utils/metrics";
 import { bookingReceiptHandler } from "../../infra/handlers/booking-receipt.handler";
 import { hostStatementHandler } from "../../infra/handlers/host-statement.handler";
 import { rentalsRecordUpsertedHandle } from "../../infra/handlers/renter.upsert.requested.handler";
+import { authPasswordRequestReset } from "../../infra/handlers/auth-password-reset-request.handler";
 
 const HANDLER_MAP: Record<string, BaseNotificationHandler> = {
   [ROUTING_KEYS.NOTIFY_BOOKING_CONFIRMED]: bookingConfirmedHandler,
@@ -24,7 +25,8 @@ const HANDLER_MAP: Record<string, BaseNotificationHandler> = {
   [ROUTING_KEYS.NOTIFY_BOOKING_CHECKED_OUT]: bookingCheckoutHandler,
   [ROUTING_KEYS.NOTIFY_PAYMENT_CONFIRMED]: paymentConfirmedHandler,
   [ROUTING_KEYS.NOTIFY_PAYMENT_FAILED]: paymentFailedHandler,
-  [ROUTING_KEYS.NOTIFY_AUTH_OTP]: authOtpHandler,
+  [ROUTING_KEYS.NOTIFY_AUTH_OTP]: authOtpHandler, // authPasswordRequestReset
+  [ROUTING_KEYS.NOTIFY_AUTH_REQUEST_PASSQWORD_RESET]: authPasswordRequestReset, // authPasswordRequestReset
   [ROUTING_KEYS.NOTIFY_AUTH_REGISTERED]: authRegisteredHandler,
   [ROUTING_KEYS.BOOKING_RECEIPT_REQUESTED]: bookingReceiptHandler,
   [ROUTING_KEYS.HOST_STATEMENT_REQUESTED]: hostStatementHandler,
@@ -58,6 +60,10 @@ const NOTIFY_QUEUES: Record<string, { queue: string; exchange: string }> = {
   },
   [ROUTING_KEYS.NOTIFY_AUTH_OTP]: {
     queue: "notify.q.auth.otp",
+    exchange: EXCHANGES.NOTIFICATION,
+  },
+   [ROUTING_KEYS.NOTIFY_AUTH_REQUEST_PASSQWORD_RESET]: {
+    queue: "notify.q.auth.password.reset.request",
     exchange: EXCHANGES.NOTIFICATION,
   },
   [ROUTING_KEYS.NOTIFY_AUTH_REGISTERED]: {

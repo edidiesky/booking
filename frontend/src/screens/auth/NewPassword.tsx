@@ -69,7 +69,7 @@ export default function NewPassword() {
               Password updated
             </h1>
             <p
-              className="text-xs"
+              className="text-sm lg:text-base"
               style={{ color: "var(--color-muted-stone)" }}
             >
               Your password has been changed successfully. You can now sign in
@@ -79,10 +79,10 @@ export default function NewPassword() {
 
           <button
             onClick={() => navigate("/login")}
-            className="w-full h-12 flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-80"
+            className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-80"
             style={{
-              backgroundColor: "var(--color-ink)",
-              color: "var(--color-canvas)",
+              backgroundColor: "var(--color-vivid)",
+              color: "var(--color-vivid-foreground)",
             }}
           >
             Sign in
@@ -125,12 +125,12 @@ export default function NewPassword() {
       >
         <div className="flex flex-col gap-3">
           <h1
-            className="text-xl  "
+            className="text-xl lg:text-2xl"
             style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
           >
             Set new password
           </h1>
-          <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
+          <p className="text-sm lg:text-base" style={{ color: "var(--color-muted-stone)" }}>
             Choose a strong password to secure your account.
           </p>
         </div>
@@ -175,11 +175,11 @@ export default function NewPassword() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-80 disabled:opacity-50"
+          className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-80 disabled:opacity-50"
           style={{
-            backgroundColor: "var(--color-ink)",
-            color: "var(--color-canvas)",
-          }}
+              backgroundColor: "var(--color-vivid)",
+              color: "var(--color-vivid-foreground)",
+            }}
         >
           {isLoading ? "Updating..." : "Update password"}
         </button>

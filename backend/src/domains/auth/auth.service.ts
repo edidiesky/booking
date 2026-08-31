@@ -13,9 +13,9 @@ import logger from "../../utils/logger";
 import { requestContext } from "../../context/requestContext";
 import { JWTPayload, UserType } from "../../types";
 import { withTransaction } from "@booking/shared";
-import { getDispatcher } from "../../infra/providers/notification.dispatcher";
 import {
   publishNotifyAuthOtp,
+  publishNotifyAuthPasswordRequestResetPayload,
   publishNotifyAuthRegistered,
 } from "../../messaging/publisher";
 import { authenticator } from "otplib";
@@ -536,15 +536,13 @@ export class AuthService {
     return { message: "Password changed." };
   }
 
-  // Logged-out
+  // request password reset
   async requestPasswordReset(email: string) {
     const schema = Joi.object({ email: Joi.string().email().required() });
     const { error, value } = schema.validate({ email });
     if (error) throw AppError.badRequest(error.details[0].message);
 
     const user = await userRepository.findByEmail(value.email as string);
-    // Always respond the same way whether or not the email exists, don't
-    // let this endpoint be used to enumerate registered emails.
     if (!user) {
       logger.info("password_reset_requested_unknown_email", {
         event: "password_reset_requested_unknown_email",
@@ -553,7 +551,6 @@ export class AuthService {
         message: "If that email is registered, a reset link has been sent.",
       };
     }
-
     const token = nanoid(32);
     await redisClient.set(
       passwordResetKey(token),
@@ -561,16 +558,17 @@ export class AuthService {
       "EX",
       PASSWORD_RESET_TTL_SEC,
     );
+    // authPasswordRequestResetTemplate
 
     const resetUrl = `${process.env.WEB_ORIGIN}/reset-password/${token}`;
-    const dispatcher = getDispatcher();
-    await dispatcher.sendEmail(
-      user.email,
-      "Reset your password",
-      `<p>We received a request to reset your password. This link expires in 15 minutes.</p>
-       <p><a href="${resetUrl}">${resetUrl}</a></p>
-       <p>If you didn't request this, you can safely ignore this email.</p>`,
-    );
+    void Promise.allSettled([
+      publishNotifyAuthPasswordRequestResetPayload({
+        notificationId: uuid(),
+        email: user.email,
+        firstName: user.first_name,
+        resetUrl
+      }),
+    ]);
 
     logger.info("password_reset_requested", {
       event: "password_reset_requested",
@@ -976,7 +974,7 @@ export class AuthService {
 
     const otpauthUrl = authenticator.keyuri(
       user.email,
-      "Booking Platform",
+      "Bukking Platform",
       secret,
     );
     const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl);

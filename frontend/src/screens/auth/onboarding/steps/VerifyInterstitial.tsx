@@ -40,7 +40,7 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
           </p>
           {[
             "Open your email inbox",
-            "Find the email from Booking Platform",
+            "Find the email from Bukking Platform",
             "Click the button below and enter the 6-digit code",
           ].map((step, i) => (
             <div key={step} className="flex items-start gap-3">

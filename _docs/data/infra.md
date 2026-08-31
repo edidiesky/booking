@@ -79,7 +79,7 @@ booking-infra/
 │   ├── namespace.yaml
 │   ├── prometheus/
 │   │   ├── values.yaml            # kube-prometheus-stack Helm values
-│   │   └── prometheusrule.yaml    # Booking platform alert rules
+│   │   └── prometheusrule.yaml    # Bukking Platform alert rules
 │   ├── grafana/
 │   │   ├── datasources.yaml       # Prometheus + Loki datasources
 │   │   └── dashboards/

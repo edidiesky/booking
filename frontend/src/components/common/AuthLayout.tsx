@@ -131,7 +131,7 @@ export default function AuthLayout({
           )}
         </div>
         <p className="text-xs" style={{ color: "#9ca3af" }}>
-          © {new Date().getFullYear()} Booking Platform
+          © {new Date().getFullYear()} Bukking Platform
         </p>
       </div>
 

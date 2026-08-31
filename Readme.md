@@ -1,4 +1,4 @@
-# Booking Platform
+# Bukking Platform
 
 Multi-tenant booking marketplace for shortlets, hotels, and guesthouses.
 Node.js and TypeScript throughout, PostgreSQL with row-level security,

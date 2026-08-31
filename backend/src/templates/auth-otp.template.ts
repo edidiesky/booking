@@ -11,7 +11,7 @@ export function authOtpTemplate(p: {
   otp:    string;
 }): { subject: string; html: string } {
   return {
-    subject: "Welcome to the Booking Platform — OTP Sent",
+    subject: "Welcome to the Bukking Platform — OTP Sent",
     html:    compiled({ ...p, year: new Date().getFullYear() }),
   };
 }

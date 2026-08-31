@@ -120,8 +120,11 @@ export default function ResetPassword() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-80 disabled:opacity-50"
-          style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+          className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-xs lg:text-[13px]     transition-opacity hover:opacity-80 disabled:opacity-50"
+          style={{
+              backgroundColor: "var(--color-vivid)",
+              color: "var(--color-vivid-foreground)",
+            }}
         >
           {isLoading ? "Sending..." : "Send reset link"}
         </button>
