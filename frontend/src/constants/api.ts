@@ -21,3 +21,4 @@ export const INVOICE_URL      = `${BASE}/api/v1/invoices`;
 export const SELLER_NOTIFICATION_URL = `${BASE}/api/v1/seller-notifications`;
 export const FAVORITE_URL = `${BASE}/api/v1/favorites`;
 export const JOB_URL = `${BASE}/api/v1/jobs`;
+export const AUDIT_EVENT_URL  = `${BASE}/api/v1/audit-events`;

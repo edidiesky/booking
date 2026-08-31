@@ -36,6 +36,7 @@ export const ROUTING_KEYS = {
   PROPERTY_UPDATED: "property.updated",
   PROPERTY_DELETED: "property.deleted",
   RENTERS_RECORED_UPSERTED: "renter.upsert.requested",
+  NOTIFY_INVITATION: "notify.invitation",
 } as const;
 
 

@@ -21,12 +21,12 @@ export function authenticate(
     return;
   }
 
-  let decoded: { user: JWTPayload };
+  let decoded: { user: JWTPayload; jti?: string };
   try {
     decoded = jwt.verify(token, process.env.JWT_SECRET!, {
       issuer: "booking-platform",
       audience: "booking-client",
-    }) as { user: JWTPayload };
+    }) as { user: JWTPayload; jti?: string };
   } catch {
     res
       .status(401)
@@ -38,15 +38,13 @@ export function authenticate(
   }
 
   redisClient
-    .get(`blocklist:${decoded.user.userId}`)
+    .get(`blocklist:${decoded.jti ?? decoded.user.userId}`)
     .then((blocked) => {
       if (blocked) {
-        res
-          .status(401)
-          .json({
-            success: false,
-            message: "Session expired. Please log in again.",
-          });
+        res.status(401).json({
+          success: false,
+          message: "Session expired. Please log in again.",
+        });
         return;
       }
       req.user = decoded.user;
@@ -69,11 +67,21 @@ export function authorize(...roles: UserType[]) {
     if (!req.user) {
       res
         .status(401)
-        .json({ success: false, message: "Authentication required. Please kindly register if you do not have an account or you can login." });
+        .json({
+          success: false,
+          message:
+            "Authentication required. Please kindly register if you do not have an account or you can login.",
+        });
       return;
     }
     if (!roles.includes(req.user.userType)) {
-      res.status(403).json({ success: false, message: "Access denied.  Please kindly register if you do not have an account or you can login" });
+      res
+        .status(403)
+        .json({
+          success: false,
+          message:
+            "Access denied.  Please kindly register if you do not have an account or you can login",
+        });
       return;
     }
     next();
@@ -104,7 +112,9 @@ export async function requireTenantMember(
   const tenantId = req.user.tenantId ?? req.tenantId;
 
   if (!tenantId) {
-    res.status(400).json({ success: false, message: "Tenant context required." });
+    res
+      .status(400)
+      .json({ success: false, message: "Tenant context required." });
     return;
   }
 
@@ -112,7 +122,9 @@ export async function requireTenantMember(
     req.user.userType !== "platform:admin" &&
     req.user.tenantId !== tenantId
   ) {
-    res.status(403).json({ success: false, message: "Access denied to this tenant." });
+    res
+      .status(403)
+      .json({ success: false, message: "Access denied to this tenant." });
     return;
   }
 
@@ -124,7 +136,10 @@ export async function requireTenantMember(
   // that touches tenant-scoped data, so this activates RLS everywhere
   // it needs to without adding a new middleware call to every route file.
   const ok = await beginTenantScopedTransaction(req, res, tenantId);
-  if (!ok) { next(new Error("Failed to establish tenant-scoped database session.")); return; }
+  if (!ok) {
+    next(new Error("Failed to establish tenant-scoped database session."));
+    return;
+  }
 
   next();
 }

@@ -46,6 +46,18 @@ export interface BookingEventPayload {
   reason?: string;
 }
 
+
+export interface NotifyInvitationPayload {
+  notificationId: string;
+  email: string;
+  tenantId: string;
+  tenantName: string;
+  roleName: string;
+  code: string;
+  iconUrl?: string;
+  signupUrl?: string;
+}
+
 export interface PaymentEventPayload {
   bookingId: string;
   tenantId: string;
@@ -295,4 +307,34 @@ export function publishRentalsRecordUpserted(
   p: RentalsRecordUpsertedPayload,
 ): void {
   publish(EXCHANGES.BOOKING, ROUTING_KEYS.RENTERS_RECORED_UPSERTED, p);
+}
+
+
+export function publishNotifyInvitation(p: NotifyInvitationPayload): void {
+  try {
+    const channel = getRabbitMQChannel();
+    const ctx = requestContext.get();
+    channel.publish(
+      EXCHANGES.NOTIFICATION,
+      ROUTING_KEYS.NOTIFY_INVITATION,
+      Buffer.from(JSON.stringify(p)),
+      {
+        persistent: true,
+        contentType: "application/json",
+        timestamp: Date.now(),
+        appId: "booking-platform",
+        headers: {
+          "x-request-id": ctx?.requestId ?? "",
+          "x-tenant-id": ctx?.tenantId ?? p.tenantId ?? "",
+        },
+      },
+    );
+  } catch (err) {
+    logger.error("publish_failed", {
+      event: "publish_failed",
+      exchange: EXCHANGES.NOTIFICATION,
+      routingKey: ROUTING_KEYS.NOTIFY_INVITATION,
+      error: (err as Error).message,
+    });
+  }
 }

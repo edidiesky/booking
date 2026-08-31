@@ -13,7 +13,7 @@ export interface AuditLogEntry {
   resource_id?: string;
   old_value?: Record<string, unknown>;
   new_value?: Record<string, unknown>;
-  ip_address?: string;
+  ip_address?: string; 
   user_agent?: string;
   request_id?: string;
   created_at: Date;
@@ -151,4 +151,5 @@ async countAll(): Promise<number> {
   const row = await queryOne<{ count: string }>(`SELECT COUNT(*) AS count FROM audit_logs`);
   return parseInt(row?.count ?? "0", 10);
 },
+
 };

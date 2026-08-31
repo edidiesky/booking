@@ -17,6 +17,7 @@ import { bookingReceiptHandler } from "../../infra/handlers/booking-receipt.hand
 import { hostStatementHandler } from "../../infra/handlers/host-statement.handler";
 import { rentalsRecordUpsertedHandle } from "../../infra/handlers/renter.upsert.requested.handler";
 import { authPasswordRequestReset } from "../../infra/handlers/auth-password-reset-request.handler";
+import { invitationHandler } from "../../infra/handlers/invitation.handler";
 
 const HANDLER_MAP: Record<string, BaseNotificationHandler> = {
   [ROUTING_KEYS.NOTIFY_BOOKING_CONFIRMED]: bookingConfirmedHandler,
@@ -31,6 +32,7 @@ const HANDLER_MAP: Record<string, BaseNotificationHandler> = {
   [ROUTING_KEYS.BOOKING_RECEIPT_REQUESTED]: bookingReceiptHandler,
   [ROUTING_KEYS.HOST_STATEMENT_REQUESTED]: hostStatementHandler,
   [ROUTING_KEYS.RENTERS_RECORED_UPSERTED]: rentalsRecordUpsertedHandle,
+  [ROUTING_KEYS.NOTIFY_INVITATION]: invitationHandler,
 };
 
 const NOTIFY_QUEUES: Record<string, { queue: string; exchange: string }> = {
@@ -38,6 +40,11 @@ const NOTIFY_QUEUES: Record<string, { queue: string; exchange: string }> = {
     queue: "notify.q.booking.confirmed",
     exchange: EXCHANGES.NOTIFICATION,
   },
+  [ROUTING_KEYS.NOTIFY_INVITATION]: {
+     queue: "notify.q.invitation",
+     exchange: EXCHANGES.NOTIFICATION,
+   },
+  
   [ROUTING_KEYS.NOTIFY_BOOKING_CANCELLED]: {
     queue: "notify.q.booking.cancelled",
     exchange: EXCHANGES.NOTIFICATION,

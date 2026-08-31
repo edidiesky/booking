@@ -4,9 +4,9 @@ export type NotificationType =
   | "booking_checked_in" | "booking_checked_out"
   | "payment_confirmed" | "payment_failed"
   | "auth_otp" | "auth_registered"
-  | "escrow_released" | "escrow_refunded";
+  | "escrow_released" | "escrow_refunded" | "invitation";
 
-export type NotificationChannel = "email" | "sms" | "email_and_sms";
+export type NotificationChannel = "email" | "sms" | "email_and_sms" ;
 export type NotificationStatus  = "pending" | "sent" | "failed" | "skipped";
 
 export interface Notification {

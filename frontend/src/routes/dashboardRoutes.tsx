@@ -19,6 +19,7 @@ const DashboardAccount = lazy(() => import("@/screens/dashboard/account"));
 const DashboardNotifications = lazy(
   () => import("@/screens/dashboard/Notification"),
 );
+const DashboardAudit = lazy(() => import("@/screens/dashboard/Audit"));
 const DashboardActivity = lazy(() => import("@/screens/dashboard/Activity"));
 const PropertyDetail = lazy(
   () => import("@/screens/dashboard/Properties/PropertyDetail"),
@@ -57,6 +58,7 @@ export const dashboardRoutes: RouteObject[] = [
       { path: "activity", element: s(<DashboardActivity />) },
       { path: "properties/:propertyId", element: s(<PropertyDetail />) },
       { path: "renters", element: s(<DashboardRenters />) },
+      { path: "audit", element: s(<DashboardAudit />) },
     ],
   },
   {

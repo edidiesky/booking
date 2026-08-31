@@ -1,75 +1,135 @@
-import { useDispatch, useSelector }          from "react-redux";
-import {  useNavigate }        from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
-  LuLayoutDashboard, LuBell, LuBuilding, LuCalendar, LuClipboardList,
-  LuCreditCard, LuVault, LuUserRound, LuUsers, LuShieldCheck, LuHistory,
+  LuLayoutDashboard,
+  LuBell,
+  LuBuilding,
+  LuCalendar,
+  LuClipboardList,
+  LuCreditCard,
+  LuVault,
+  LuUserRound,
+  LuUsers,
+  LuShieldCheck,
+  LuHistory,
+  LuScrollText,
   // LuMessageSquare,
 } from "react-icons/lu";
 import { selectCurrentUser, clearCredentials } from "@/redux/slices/authSlice";
-import { useLogoutMutation }                 from "@/redux/services/authApi";
-import { selectRefreshToken }                from "@/redux/slices/authSlice";
-import toast                                 from "react-hot-toast";
-import NavGroup                              from "./NavGroup";
-import SidebarFooter                         from "./SidebarFooter";
+import { useLogoutMutation } from "@/redux/services/authApi";
+import { selectRefreshToken } from "@/redux/slices/authSlice";
+import toast from "react-hot-toast";
+import NavGroup from "./NavGroup";
+import SidebarFooter from "./SidebarFooter";
 import { apiSlice } from "@/redux/services/apiSlice";
 
 export const NAV_GROUPS = [
   {
     label: "Overview",
     items: [
-      { icon: LuLayoutDashboard, text: "Dashboard",      path: "",              tour: "nav-dashboard"     },
+      {
+        icon: LuLayoutDashboard,
+        text: "Dashboard",
+        path: "",
+        tour: "nav-dashboard",
+      },
       // { icon: LuMessageSquare,   text: "Messages",       path: "messages",      tour: "nav-messages"      },
-      { icon: LuBell,            text: "Notifications",  path: "notifications", tour: "nav-notifications" },
+      {
+        icon: LuBell,
+        text: "Notifications",
+        path: "notifications",
+        tour: "nav-notifications",
+      },
     ],
   },
   {
     label: "Property",
     items: [
-      { icon: LuBuilding,        text: "Properties", path: "properties", tour: "nav-properties" },
-      { icon: LuClipboardList,   text: "Bookings",   path: "bookings",   tour: "nav-bookings"   },
-      { icon: LuCalendar,        text: "Calendar",   path: "calendar",   tour: "nav-calendar"   },
-      { icon: LuUserRound,       text: "Tenants",    path: "renters",    tour: "nav-renters"    },
+      {
+        icon: LuBuilding,
+        text: "Properties",
+        path: "properties",
+        tour: "nav-properties",
+      },
+      {
+        icon: LuClipboardList,
+        text: "Bookings",
+        path: "bookings",
+        tour: "nav-bookings",
+      },
+      {
+        icon: LuCalendar,
+        text: "Calendar",
+        path: "calendar",
+        tour: "nav-calendar",
+      },
+      {
+        icon: LuUserRound,
+        text: "Tenants",
+        path: "renters",
+        tour: "nav-renters",
+      },
     ],
   },
   {
     label: "Finance",
     items: [
-      { icon: LuCreditCard, text: "Payments", path: "payments", tour: "nav-payments" },
-      { icon: LuVault,      text: "Escrow",   path: "escrow",   tour: "nav-escrow"   },
+      {
+        icon: LuCreditCard,
+        text: "Payments",
+        path: "payments",
+        tour: "nav-payments",
+      },
+      { icon: LuVault, text: "Escrow", path: "escrow", tour: "nav-escrow" },
     ],
   },
   {
     label: "Team",
     items: [
-      { icon: LuUsers,       text: "Roles",    path: "roles",    tour: "nav-roles"    },
-      { icon: LuHistory,     text: "Activity", path: "activity", tour: "nav-activity" },
-      { icon: LuShieldCheck, text: "Account",  path: "account",  tour: "nav-account"  },
+      { icon: LuUsers, text: "Roles", path: "roles", tour: "nav-roles" },
+      {
+        icon: LuShieldCheck,
+        text: "Account",
+        path: "account",
+        tour: "nav-account",
+      },
+      {
+        icon: LuHistory,
+        text: "Activity",
+        path: "activity",
+        tour: "nav-activity",
+      },
+      {
+        icon: LuScrollText,
+        text: "Audit Log",
+        path: "audit",
+        tour: "nav-audit",
+      },
     ],
   },
 ];
 
 export default function Sidebar() {
-  const dispatch      = useDispatch();
-  const navigate      = useNavigate();
-  const currentUser   = useSelector(selectCurrentUser);
-  const refreshToken  = useSelector(selectRefreshToken);
-  const [logout]      = useLogoutMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const currentUser = useSelector(selectCurrentUser);
+  const refreshToken = useSelector(selectRefreshToken);
+  const [logout] = useLogoutMutation();
 
-
-const handleSignOut = async () => {
-  try {
-    if (refreshToken) await logout({ refreshToken }).unwrap();
-  } catch {
-    /* */
-  } finally {
-    dispatch(apiSlice.util.resetApiState());
-    dispatch(clearCredentials());
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    navigate("/");
-    toast.success("Signed out successfully.");
-  }
-};
+  const handleSignOut = async () => {
+    try {
+      if (refreshToken) await logout({ refreshToken }).unwrap();
+    } catch {
+      /* */
+    } finally {
+      dispatch(apiSlice.util.resetApiState());
+      dispatch(clearCredentials());
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/");
+      toast.success("Signed out successfully.");
+    }
+  };
 
   return (
     <aside
