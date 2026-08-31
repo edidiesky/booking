@@ -11,21 +11,23 @@ import {
   PropertyType,
   RoomStatus,
 } from "../../types";
-import { query, withTransaction } from "@booking/shared";
+import { query, requestContext, withTransaction } from "@booking/shared";
 import { auditRepository } from "../audit/audit.repository";
+import { auditEventRepository } from "../audit/auditEvent.repository";
 const SEED_WINDOW_DAYS = 365;
-export const propertyService = {
+
+export class PropertyService {
   async listPublicProperties(page: number, limit: number) {
     return propertyRepository.listPublicPropertiesWithRoomTypes(page, limit);
-  },
+  }
 
   async searchProperties(filters: PropertySearchFilters) {
     return propertyRepository.searchPublicProperties(filters);
-  },
+  }
 
   async listTenantProperties(tenantId: string, page: number, limit: number) {
     return propertyRepository.listProperties(tenantId, page, limit);
-  },
+  }
 
   async getPropertyById(propertyId: string, tenantId?: string) {
     const property = await propertyRepository.findPropertyById(
@@ -35,7 +37,7 @@ export const propertyService = {
     if (!property) throw AppError.notFound("Property not found.");
     const roomTypes = await propertyRepository.listRoomTypes(property.id);
     return { ...property, roomTypes };
-  },
+  }
 
   async createProperty(
     tenantId: string,
@@ -55,18 +57,8 @@ export const propertyService = {
     const { outboxRepository, requestContext } =
       await import("@booking/shared");
 
-    // Reuses the request's existing RLS-scoped transaction
-    // (beginTenantScopedTransaction already opened one, for any
-    // authenticated tenant-scoped request), rather than opening a
-    // second, separate one via withTransaction. That matters concretely
-    // for properties specifically: it's RLS-protected, a fresh pool
-    // connection from withTransaction would have no
-    // app.current_tenant_id set and the INSERT would be rejected by the
-    // policy. Falls back to withTransaction only for callers with no
-    // active request context (a script, a test), where there's nothing
-    // to reuse.
     const existingClient = requestContext.get()?.dbClient;
-
+    const actorId = requestContext.get()?.userId;
     if (existingClient) {
       const property = await propertyRepository.createProperty(
         { tenantId, ...body },
@@ -85,6 +77,18 @@ export const propertyService = {
           latitude: property.latitude,
           longitude: property.longitude,
           createdAt: property.created_at,
+        },
+        existingClient,
+      );
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: actorId ? { type: "user", id: actorId } : { type: "system" },
+          action: "property.created",
+          targetType: "property",
+          targetId: property.id,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
         },
         existingClient,
       );
@@ -112,16 +116,21 @@ export const propertyService = {
         },
         client,
       );
-      await auditRepository.log({
-        action: "created",
-        resource: "property",
-        resourceId: property.id,
-        tenantId,
-        newValue: { name: property.name, status: property.status },
-      });
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: actorId ? { type: "user", id: actorId } : { type: "system" },
+          action: "property.created",
+          targetType: "property",
+          targetId: property.id,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
       return property;
     });
-  },
+  }
 
   async createRoomType(
     tenantId: string,
@@ -164,10 +173,23 @@ export const propertyService = {
         },
         client,
       );
+      await auditEventRepository.record(
+          {
+            tenantId,
+            actor: requestContext.get()?.userId ? { type: "user", id: requestContext.get()!.userId! } : { type: "system" },
+            action: "property.room_type_created",
+            targetType: "room_type",
+            targetId: roomType.id,
+            metadata: { propertyId: property.id, name: body.name },
+            outcome: "allowed",
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        );
     });
 
     return roomType;
-  },
+  }
 
   async seedCalendar(
     tenantId: string,
@@ -188,7 +210,7 @@ export const propertyService = {
       endDate,
       totalRooms: roomType.quantity,
     });
-  },
+  }
 
   async setDateBlock(
     tenantId: string,
@@ -216,7 +238,7 @@ export const propertyService = {
         endDate,
       });
     }
-  },
+  }
 
   async getAvailability(roomTypeId: string, checkIn: string, checkOut: string) {
     return availabilityRepository.getAvailability(
@@ -224,7 +246,7 @@ export const propertyService = {
       checkIn,
       checkOut,
     );
-  },
+  }
 
   // property.service.ts, corrected
   async getRoomTypeDetail(roomTypeId: string, tenantId: string) {
@@ -251,7 +273,7 @@ export const propertyService = {
     );
 
     return { roomType, occupant: occupant[0] ?? null };
-  },
+  }
   // property.service.ts, add this method to the exported object
 
   async getPropertyDetail(propertyId: string, tenantId: string) {
@@ -289,7 +311,7 @@ export const propertyService = {
         revenue,
       },
     };
-  },
+  }
 
   async updateRoomType(
     tenantId: string,
@@ -333,7 +355,7 @@ export const propertyService = {
     });
 
     return updated;
-  },
+  }
   async updateProperty(
     tenantId: string,
     propertyId: string,
@@ -353,6 +375,25 @@ export const propertyService = {
       tenantId,
     );
     if (!existing) throw AppError.notFound("Property not found.");
+
+    const existingClient = requestContext.get()?.dbClient;
+    const actorId = requestContext.get()?.userId;
+    const auditPayload = {
+      tenantId,
+      actor: actorId ? ({ type: "user" as const, id: actorId }) : ({ type: "system" as const }),
+      action: "property.room_type_updated",
+      targetType: "room_type",
+      targetId: propertyId,
+      before: { name: existing.name, status: existing.status },
+      after: body,
+      outcome: "allowed" as const,
+      requestId: requestContext.get()?.requestId,
+    };
+    if (existingClient) {
+      await auditEventRepository.record(auditPayload, existingClient);
+    } else {
+      await withTransaction((client) => auditEventRepository.record(auditPayload, client));
+    }
 
     const updated = await propertyRepository.updateProperty(
       propertyId,
@@ -384,6 +425,6 @@ export const propertyService = {
     });
 
     return updated;
-  },
-  
-};
+  }
+}
+export const propertyService = new PropertyService();
