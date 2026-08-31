@@ -28,6 +28,7 @@ import {
   publishNotifyBookingCheckedIn,
   publishNotifyBookingCheckedOut,
 } from "../../messaging/publisher";
+import { auditEventRepository } from "../audit/auditEvent.repository";
 
 export interface InitiateBookingInput {
   propertyId: string;
@@ -159,7 +160,7 @@ async function resolveNotificationContext(booking: Booking): Promise<{
   };
 }
 
-// Single source of truth for legal booking status transitions.
+//  status transitions.
 const BOOKING_STATUS_TRANSITIONS: Record<BookingStatus, BookingStatus[]> = {
   pending_payment: ["confirmed", "cancelled"],
   confirmed: ["checked_in", "cancelled"],
@@ -169,7 +170,7 @@ const BOOKING_STATUS_TRANSITIONS: Record<BookingStatus, BookingStatus[]> = {
   refunded: [],
 };
 
-export const bookingService = {
+export class BookingService {
   async initiateBooking(input: InitiateBookingInput): Promise<BookingDto> {
     const {
       propertyId,
@@ -311,7 +312,7 @@ export const bookingService = {
     });
 
     return toDto(booking, sessionId);
-  },
+  }
 
   async confirmBookingByPayment(
     bookingId: string,
@@ -405,6 +406,21 @@ export const bookingService = {
         },
         client,
       );
+       await auditEventRepository.record(
+        {
+          tenantId: booking.tenant_id,
+          actor: { type: "system" },
+          action: "booking.confirmed",
+          targetType: "booking",
+          targetId: bookingId,
+          affectedUserId: booking.guest_user_id,
+          affectedUserEmail: guest.email,
+          outcome: "allowed",
+          metadata: { transactionId },
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
     });
 
     availabilityBroadcaster.publish(booking.room_type_id, {
@@ -482,7 +498,7 @@ export const bookingService = {
       tenantId: booking.tenant_id,
     });
     return confirmed;
-  },
+  }
 
   async cancelBooking(
     bookingId: string,
@@ -548,6 +564,21 @@ export const bookingService = {
           checkOut: booking.check_out,
           totalAmount: Number(booking.total_amount_ngn),
           reason,
+        },
+        client,
+      );
+      await auditEventRepository.record(
+        {
+          tenantId: booking.tenant_id,
+          actor: requestingUserId === "system"
+            ? { type: "system" }
+            : { type: "user", id: requestingUserId },
+          action: "booking.cancelled",
+          targetType: "booking",
+          targetId: bookingId,
+          outcome: "allowed",
+          metadata: { reason: reason ?? null, refundAmount },
+          requestId: requestContext.get()?.requestId,
         },
         client,
       );
@@ -619,7 +650,7 @@ export const bookingService = {
       requestingUserId,
     });
     return toDto(cancelled);
-  },
+  }
 
   async checkIn(bookingId: string, hostUserId: string): Promise<BookingDto> {
     const booking = await bookingRepository.findById(bookingId);
@@ -647,6 +678,19 @@ export const bookingService = {
           checkIn: booking.check_in,
           checkOut: booking.check_out,
           totalAmount: Number(booking.total_amount_ngn),
+        },
+        client,
+      );
+      await auditEventRepository.record(
+        {
+          tenantId: booking.tenant_id,
+          actor: { type: "user", id: hostUserId },
+          action: "booking.checked_in",
+          targetType: "booking",
+          targetId: bookingId,
+          affectedUserId: booking.guest_user_id,
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
         },
         client,
       );
@@ -699,7 +743,7 @@ export const bookingService = {
       hostUserId,
     });
     return toDto(updated);
-  },
+  }
 
   async checkOut(bookingId: string, hostUserId: string): Promise<BookingDto> {
     const booking = await bookingRepository.findById(bookingId);
@@ -748,6 +792,20 @@ export const bookingService = {
         },
         client,
       );
+      await auditEventRepository.record(
+        {
+          tenantId: booking.tenant_id,
+          actor: { type: "user", id: hostUserId },
+          action: "booking.checked_out",
+          targetType: "booking",
+          targetId: bookingId,
+          affectedUserId: booking.guest_user_id,
+          outcome: "allowed",
+          metadata: { hostPayoutNgn: Number(booking.host_payout_ngn) },
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
       return b;
     });
 
@@ -793,7 +851,7 @@ export const bookingService = {
       hostUserId,
     });
     return toDto(updated);
-  },
+  }
 
   async getBookingById(id: string): Promise<BookingDto> {
     const b = await bookingRepository.findById(id);
@@ -810,7 +868,7 @@ export const bookingService = {
       propertyCity: property?.address?.city,
       roomTypeName: roomType?.name,
     });
-  },
+  }
 
   async getGuestBookings(
     guestUserId: string,
@@ -820,7 +878,8 @@ export const bookingService = {
     return (await bookingRepository.listByGuest(guestUserId, page, limit)).map(
       (b) => toDto(b),
     );
-  },
+  }
+
   async getTenantBookings(
     tenantId: string,
     opts: { status?: BookingStatus; page?: number; limit?: number } = {},
@@ -833,11 +892,11 @@ export const bookingService = {
         opts.limit,
       )
     ).map((b) => toDto(b));
-  },
+  }
 
   async getTenantBookingStats(tenantId: string) {
     return bookingRepository.getStatsForTenant(tenantId);
-  },
+  }
 
   async transitionStatus(
     tenantId: string,
@@ -888,6 +947,20 @@ export const bookingService = {
         },
         client,
       );
+       await auditEventRepository.record(
+        {
+          tenantId,
+          actor: { type: "user", id: actorUserId },
+          action: "booking.status_transitioned",
+          targetType: "booking",
+          targetId: bookingId,
+          outcome: "allowed",
+          before: { status: booking.status },
+          after: { status: targetStatus },
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
 
       return b;
     });
@@ -900,7 +973,7 @@ export const bookingService = {
     });
 
     return toDto(updated);
-  },
+  }
 
   async getPropertyPerformance(
     propertyId: string,
@@ -916,5 +989,7 @@ export const bookingService = {
       bookingRepository.getPropertySaleComparison(tenantId, propertyId),
     ]);
     return { trend, comparison };
-  },
+  }
 };
+
+export const bookingService = new BookingService()
