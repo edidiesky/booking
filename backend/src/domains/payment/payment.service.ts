@@ -24,6 +24,7 @@ import {
   idempotencyRepository,
 } from "../idempotency/idempotency.repository";
 import { requestCoalescer } from "../../utils/requestCoalescer";
+import { auditEventRepository } from "../audit/auditEvent.repository";
 
 export interface InitializePaymentInput {
   bookingId: string;
@@ -107,10 +108,31 @@ async function runPaymentInitLogic(
     const { transactionId, success, message, redirectUrl } = gatewayResult;
 
     if (!success || !transactionId) {
-      await paymentRepository.updateStatus({
-        id: paymentRowId,
-        status: "failed",
-        metadata: { failureReason: message ?? "Gateway rejected the request." },
+      await withTransaction(async (client) => {
+        await paymentRepository.updateStatus(
+          {
+            id: paymentRowId,
+            status: "failed",
+            metadata: {
+              failureReason: message ?? "Gateway rejected the request.",
+            },
+          },
+          client,
+        );
+        auditEventRepository.record(
+          {
+            tenantId: booking.tenant_id,
+            actor: { type: "user", id: guestUserId },
+            action: "payment.initiation_failed",
+            targetType: "payment",
+            targetId: paymentRowId,
+            outcome: "denied",
+            denialReason: "gateway_call_failed",
+            metadata: { gateway},
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        );
       });
       trackError("payment_init_failed", "payment_service", "high");
       throw AppError.badRequest(
@@ -139,6 +161,19 @@ async function runPaymentInitLogic(
           amountNgn: Number(booking.total_amount_ngn),
           transactionId,
           gateway,
+        },
+        client,
+      );
+      await auditEventRepository.record(
+        {
+          tenantId: booking.tenant_id,
+          actor: { type: "user", id: guestUserId },
+          action: "payment.initiated",
+          targetType: "payment",
+          targetId: paymentRowId,
+          outcome: "allowed",
+          metadata: { gateway, transactionId, amountNgn: Number(booking.total_amount_ngn) },
+          requestId: requestContext.get()?.requestId,
         },
         client,
       );
@@ -181,10 +216,13 @@ export const paymentService = {
   async initializePayment(
     input: InitializePaymentInput,
   ): Promise<InitializePaymentResult> {
-    const { bookingId, guestUserId, gateway, callbackUrl, phone, email } = input;
+    const { bookingId, guestUserId, gateway, callbackUrl, phone, email } =
+      input;
     if (!email || email.trim().length === 0) {
-    throw AppError.badRequest("A valid guest email is required to initialize payment.");
-  }
+      throw AppError.badRequest(
+        "A valid guest email is required to initialize payment.",
+      );
+    }
 
     const booking = await bookingRepository.findById(bookingId);
     if (!booking) throw AppError.notFound("Booking not found.");
@@ -287,6 +325,25 @@ export const paymentService = {
         client,
       );
 
+      await auditEventRepository.record(
+        {
+          tenantId: payment.tenant_id,
+          actor: { type: "system" },
+          action: "payment.webhook_rejected",
+          targetType: "payment",
+          targetId: payment.id,
+          affectedUserId: payment.guest_user_id,
+          outcome: "denied",
+          denialReason: "amount_mismatch",
+          metadata: {
+            gateway: data.gateway, transactionId: data.transactionId,
+            receivedAmount: data.amount, expectedAmount: Number(payment.amount_ngn),
+          },
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+
       webhookProcessedCounter.inc({
         gateway: data.gateway,
         status: "amount_mismatch",
@@ -340,6 +397,21 @@ export const paymentService = {
             metadata: data.metadata,
           },
         },
+      },
+      client,
+    );
+
+    await auditEventRepository.record(
+      {
+        tenantId: payment.tenant_id,
+        actor: { type: "system" },
+        action: "payment.confirmed",
+        targetType: "payment",
+        targetId: payment.id,
+        affectedUserId: payment.guest_user_id,
+        outcome: "allowed",
+        metadata: { gateway: data.gateway, transactionId: data.transactionId, amountNgn: Number(payment.amount_ngn) },
+        requestId: requestContext.get()?.requestId,
       },
       client,
     );
@@ -441,6 +513,23 @@ export const paymentService = {
       client,
     );
 
+
+    await auditEventRepository.record(
+      {
+        tenantId: payment.tenant_id,
+        actor: { type: "system" },
+        action: "payment.failed",
+        targetType: "payment",
+        targetId: payment.id,
+        affectedUserId: payment.guest_user_id,
+        outcome: "denied",
+        denialReason: (data.metadata["gateway_response"] as string) ?? "gateway_reported_failure",
+        metadata: { gateway: data.gateway, transactionId: data.transactionId },
+        requestId: requestContext.get()?.requestId,
+      },
+      client,
+    );
+    
     webhookProcessedCounter.inc({ gateway: data.gateway, status: "failed" });
 
     // Notify guest of failed payment
