@@ -28,64 +28,50 @@ const WEEKDAYS = [
   "Saturday",
 ];
 
-/** Soft pastel chips — similar to the reference cards */
+/** Soft pastel chips — matched to the first screenshot */
 const CARD_PALETTE = [
   {
     bg: "#FFEDD5",
     border: "#FDBA74",
     text: "#9A3412",
-    pillBg: "#F97316",
-    pillText: "#FFFFFF",
     iconBg: "#FED7AA",
-  }, // orange
+  }, // soft orange
   {
     bg: "#FEF9C3",
     border: "#FDE047",
     text: "#854D0E",
-    pillBg: "#EAB308",
-    pillText: "#FFFFFF",
     iconBg: "#FEF08A",
-  }, // yellow
+  }, // soft yellow
   {
     bg: "#F3E8FF",
     border: "#D8B4FE",
     text: "#6B21A8",
-    pillBg: "#A855F7",
-    pillText: "#FFFFFF",
     iconBg: "#E9D5FF",
-  }, // purple
-  {
-    bg: "#E0E7FF",
-    border: "#A5B4FC",
-    text: "#3730A3",
-    pillBg: "#6366F1",
-    pillText: "#FFFFFF",
-    iconBg: "#C7D2FE",
-  }, // indigo
+  }, // soft purple
   {
     bg: "#DCFCE7",
     border: "#86EFAC",
     text: "#166534",
-    pillBg: "#22C55E",
-    pillText: "#FFFFFF",
     iconBg: "#BBF7D0",
-  }, // green
+  }, // soft green
   {
     bg: "#E0F2FE",
     border: "#7DD3FC",
     text: "#075985",
-    pillBg: "#0EA5E9",
-    pillText: "#FFFFFF",
     iconBg: "#BAE6FD",
-  }, // sky
+  }, // soft sky
   {
     bg: "#FCE7F3",
     border: "#F9A8D4",
     text: "#9D174D",
-    pillBg: "#EC4899",
-    pillText: "#FFFFFF",
     iconBg: "#FBCFE8",
-  }, // pink
+  }, // soft pink
+  {
+    bg: "#E0E7FF",
+    border: "#A5B4FC",
+    text: "#3730A3",
+    iconBg: "#C7D2FE",
+  }, // soft indigo
 ];
 
 function cardStyleFor(id: string) {
@@ -102,6 +88,28 @@ function statusLabel(status: string): string {
   if (status === "checked_out") return "Done";
   if (status === "cancelled") return "Cancelled";
   return status.replace(/_/g, " ");
+}
+
+/** Status pill colors taken from the reference screenshot */
+function statusPillStyle(status: string): { bg: string; text: string } {
+  if (status === "checked_in") {
+    // "Ongoing" – dark text on warm yellow
+    return { bg: "#FACC15", text: "#422006" };
+  }
+  if (status === "confirmed") {
+    // "Booked" – green
+    return { bg: "#22C55E", text: "#FFFFFF" };
+  }
+  if (status === "pending_payment") {
+    return { bg: "#F97316", text: "#FFFFFF" };
+  }
+  if (status === "checked_out") {
+    return { bg: "#94A3B8", text: "#FFFFFF" };
+  }
+  if (status === "cancelled") {
+    return { bg: "#EF4444", text: "#FFFFFF" };
+  }
+  return { bg: "#E5E7EB", text: "#374151" };
 }
 
 function parseDay(value: string): Date {
@@ -139,7 +147,7 @@ export default function BookingCalendarMonth({
     );
   }, [safeBookings, search]);
 
-  // Full weeks including days outside the current month (default calendar grid)
+  // Full weeks including days outside the current month
   const days = useMemo(() => {
     const start = startOfWeek(startOfMonth(monthCursor), { weekStartsOn: 0 });
     const end = endOfWeek(endOfMonth(monthCursor), { weekStartsOn: 0 });
@@ -186,7 +194,7 @@ export default function BookingCalendarMonth({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search guest or property"
-                className="pl-8 h-9 text-xs"
+                className="pl-8 h-9 text-xs rounded-full border-[#e8e6e3]"
               />
             </div>
             {onAddBooking && (
@@ -278,11 +286,11 @@ export default function BookingCalendarMonth({
                   "hover:bg-[#f5f8ff]",
                 ].join(" ")}
               >
-                {/* Day number highlight */}
-                <div className="flex items-center justify-between px-0.5">
+                {/* Day number */}
+                <div className="flex items-center justify-between px-0.5 mb-0.5">
                   <span
                     className={[
-                      "text-xs w-7 h-7 flex items-center justify-center rounded-full",
+                      "text-xs w-6 h-6 flex items-center justify-center rounded-full",
                       today
                         ? "bg-[#17191c] text-white font-semibold"
                         : selected
@@ -301,7 +309,7 @@ export default function BookingCalendarMonth({
                   )}
                 </div>
 
-                {/* Booking cards */}
+                {/* Booking cards – matched to reference layout & radius */}
                 <div className="flex flex-col gap-1 flex-1 min-h-0">
                   {dayBookings.slice(0, 2).map((b) => {
                     const palette = cardStyleFor(b.bookingId ?? b.bookingRef);
@@ -313,6 +321,7 @@ export default function BookingCalendarMonth({
                       parseDay(b.checkOut),
                       "d MMM",
                     )}`;
+                    const pill = statusPillStyle(b.status);
 
                     return (
                       <button
@@ -322,7 +331,7 @@ export default function BookingCalendarMonth({
                           e.stopPropagation();
                           onSelectBooking?.(b);
                         }}
-                        className="w-full text-left rounded-xl px-1.5 py-1.5 border transition-shadow hover:shadow-sm"
+                        className="w-full text-left px-2 py-1.5 border transition-shadow hover:shadow-sm"
                         style={{
                           backgroundColor: palette.bg,
                           borderColor: palette.border,
@@ -330,31 +339,37 @@ export default function BookingCalendarMonth({
                         }}
                       >
                         <div className="flex items-start gap-1.5">
+                          {/* Icon – small rounded square like the reference */}
                           <span
-                            className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-0.5"
+                            className="w-5 h-5 rounded-md flex items-center justify-center shrink-0 mt-0.5"
                             style={{ backgroundColor: palette.iconBg }}
                           >
                             <Building2
-                              size={9}
+                              size={11}
+                              strokeWidth={2.2}
                               style={{ color: palette.text }}
                             />
                           </span>
+
                           <div className="min-w-0 flex-1">
-                            <p className="text-[10px] font-semibold truncate leading-tight">
+                            {/* Property name */}
+                            <p className="text-sm font-semibold truncate leading-tight">
                               {b.propertyName ?? "Property"}
                             </p>
-                            <p className="text-[10px] truncate opacity-90 leading-tight">
+                            {/* Guest name */}
+                            <p className="text-[10px] truncate opacity-90 leading-tight mt-0.5">
                               {guest}
                             </p>
-                            <div className="flex items-center justify-between gap-1 mt-1">
+                            {/* Date range + status pill */}
+                            <div className="flex items-center justify-between gap-1 mt-1.5">
                               <span className="text-[9px] opacity-80 truncate">
                                 {range}
                               </span>
                               <span
-                                className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
+                                className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 leading-none"
                                 style={{
-                                  backgroundColor: palette.pillBg,
-                                  color: palette.pillText,
+                                  backgroundColor: pill.bg,
+                                  color: pill.text,
                                 }}
                               >
                                 {statusLabel(b.status)}
@@ -380,8 +395,8 @@ export default function BookingCalendarMonth({
         <div className="flex flex-wrap gap-4 px-5 py-3 border-t border-[#e8e6e3] bg-[#fafaf9]">
           <LegendDot color="#17191c" label="Today" />
           <LegendDot color="#1a56ff" label="Selected day" />
-          <LegendDot color="#86EFAC" label="Booked / confirmed" />
-          <LegendDot color="#FDBA74" label="Ongoing (checked in)" />
+          <LegendDot color="#22C55E" label="Booked" />
+          <LegendDot color="#FACC15" label="Ongoing" />
         </div>
       </div>
     </div>
