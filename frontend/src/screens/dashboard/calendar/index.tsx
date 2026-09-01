@@ -27,14 +27,22 @@ export default function DashboardCalendar() {
             <button
               type="button"
               onClick={() => setView("month")}
-              className={"flex p-3 text-sm rounded-full border bg-gray-300"}
+              className="px-4 h-8 text-xs lg:text-[13px] rounded-full transition-colors"
+              style={{
+                backgroundColor: view === "month" ? "#17191c" : "transparent",
+                color: view === "month" ? "#fff" : "#777b86",
+              }}
             >
               Month
             </button>
             <button
               type="button"
               onClick={() => setView("gantt")}
-              className={"flex p-3 text-sm rounded-full border bg-dark"}
+              className="px-4 h-8 text-xs lg:text-[13px] rounded-full transition-colors"
+              style={{
+                backgroundColor: view === "gantt" ? "#17191c" : "transparent",
+                color: view === "gantt" ? "#fff" : "#777b86",
+              }}
             >
               Timeline
             </button>

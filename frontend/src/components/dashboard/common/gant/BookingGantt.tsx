@@ -15,7 +15,7 @@ export default function BookingGantt({ onSelectBooking }: Props) {
   const [windowStart, setWindowStart] = useState(() => new Date());
   const [maxVisibleRooms, setMaxVisibleRooms] = useState(8);
   const [roomTypeFilter, setRoomTypeFilter] = useState<Set<string> | null>(null);
-
+  const stableHeight = maxVisibleRooms * MIN_ROOM_ROW_HEIGHT;
   const config = VIEW_CONFIG[view];
   const { bookings, loadedDays, loadingMore, reachedCap, loadMore } = useIncrementalBookingWindow({
     windowStart, chunkSizeDays: config.chunkSizeDays, capDays: config.capDays,
@@ -186,8 +186,8 @@ export default function BookingGantt({ onSelectBooking }: Props) {
           <div
             ref={bodyRef}
             onScroll={handleBodyScroll}
-            className={`overflow-x-auto ${needsRoomScroll ? "overflow-y-auto" : "overflow-y-hidden"}`}
-            style={needsRoomScroll ? { maxHeight: listMaxHeight } : undefined}
+            className="overflow-x-auto overflow-y-auto"
+            style={{ height: stableHeight }}
           >
             {rows.length === 0 ? (
               bookings.length === 0 ? (
