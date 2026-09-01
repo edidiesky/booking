@@ -25,8 +25,8 @@ export default function AuditLogFilters({ filters, onChange }: Props) {
     onChange({ ...filters, [key]: value || undefined, page: 1 });
   }
 
-  const outcomeSet = new Set(filters.outcome ? [filters.outcome] : []);
-  const actorTypeSet = new Set(filters.actorType ? [filters.actorType] : []);
+  const outcomeSet = new Set<string>(filters.outcome ? [filters.outcome] : []);
+  const actorTypeSet = new Set<string>(filters.actorType ? [filters.actorType] : []);
 
   const dateRange: DateRange = {
     start: filters.occurredAfter ? new Date(filters.occurredAfter) : null,
