@@ -121,12 +121,10 @@ RUN apk add --no-cache \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-COPY --from=builder /app/packages/shared/package.json /app/packages/shared/package.json
-COPY --from=builder /app/packages/shared/dist         /app/packages/shared/dist
-WORKDIR /app/packages/shared
-RUN npm install --omit=dev
-
 WORKDIR /app
+COPY --from=builder /app/package.json /app/package-lock.json ./
+COPY --from=builder /app/packages/shared/package.json ./packages/shared/package.json
+COPY --from=builder /app/packages/shared/dist         ./packages/shared/dist
 COPY --from=builder /app/packages/availability-worker/package.json ./packages/availability-worker/package.json
 COPY --from=builder /app/packages/availability-worker/dist         ./packages/availability-worker/dist
 COPY --from=builder /app/packages/campaign-worker/package.json     ./packages/campaign-worker/package.json
@@ -140,9 +138,16 @@ COPY --from=builder /app/packages/audit-worker/dist                ./packages/au
 COPY --from=builder /app/packages/booking-expiry-worker/package.json ./packages/booking-expiry-worker/package.json
 COPY --from=builder /app/packages/booking-expiry-worker/dist         ./packages/booking-expiry-worker/dist
 
-RUN for pkg in availability-worker campaign-worker csv-room-import-worker seller-notification-worker audit-worker booking-expiry-worker; do \
-      cd /app/packages/$pkg && npm install --omit=dev && cd /app; \
-    done
+
+RUN npm install --omit=dev \
+  --workspace=@booking/shared \
+  --workspace=@booking/availability-worker \
+  --workspace=@booking/campaign-worker \
+  --workspace=@booking/csv-room-import-worker \
+  --workspace=@booking/seller-notification-worker \
+  --workspace=@booking/audit-worker \
+  --workspace=@booking/booking-expiry-worker \
+  --include-workspace-root
 
 WORKDIR /app/backend
 COPY backend/package.json backend/package-lock.json ./
