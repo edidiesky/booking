@@ -318,7 +318,7 @@ export default function BookingCalendarMonth({
                             className="shrink-0 mt-0.5"
                           >
                             <Building2
-                              size={16}
+                              size={18}
                               strokeWidth={2.2}
                               style={{ color: palette.text }}
                             />
@@ -335,7 +335,7 @@ export default function BookingCalendarMonth({
                         </div>
 
                         {/* Date + status at the bottom of the card */}
-                        <div className="flex items-center justify-between gap-1 mt-1">
+                        <div className="flex w-full flex-wrap items-center justify-between gap-1 mt-1">
                           <span className="text-[11px] opacity-80 truncate">
                             {range}
                           </span>
