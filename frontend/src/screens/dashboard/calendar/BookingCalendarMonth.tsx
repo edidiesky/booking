@@ -325,10 +325,10 @@ export default function BookingCalendarMonth({
                           </span>
 
                           <div className="flex-col w-full gap-2 flex flex-1 overflow-hidden">
-                            <p className="text-[12px] font-semibold truncate leading-tight">
+                            <p className="text-[12px] font-semibold break-words leading-tight">
                               {b.propertyName ?? "Property"}
                             </p>
-                            <p className="text-[12px] font-semibold truncate opacity-90 leading-tight">
+                            <p className="text-[12px] font-semibold break-words opacity-90 leading-tight">
                               {guest}
                             </p>
                           </div>
