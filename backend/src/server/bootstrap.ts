@@ -1,7 +1,7 @@
 import logger        from "../utils/logger";
 import redisClient   from "../config/redis";
-import { connectDB, connectRedis, getRabbitMQConnection, createLockedScheduler } from "@booking/shared";
-import { connectRabbitMQ }         from "../messaging/connection";
+import { connectDB, connectRedis, createLockedScheduler } from "@booking/shared";
+import { connectRabbitMQ, getRabbitMQConnection } from "../messaging/connection";
 import { startOutboxPoller }       from "../messaging/outboxPoller";
 import { startSseFanoutWorker }    from "../messaging/workers/sseFanoutWorker";
 import { startNotificationWorker } from "../messaging/workers/notificationWorker";
@@ -10,7 +10,6 @@ import { startWebhookRetryWorker } from "../messaging/workers/webhookRetryWorker
 import { serverHealthGauge, trackError } from "../utils/metrics";
 import { seedService } from "../domains/role/seed.service";
 import { runMigrations } from "../migrations/runner";
-import type { Server as HttpServer } from "http";
 
 import { lockSweepScheduler, reconciliationScheduler } from "@booking/availability-worker/dist/scheduler";
 import { runCampaignWorkerTick } from "@booking/campaign-worker/dist/campaignWorker";
@@ -54,7 +53,7 @@ async function runStep(step: InitStep): Promise<void> {
   }
 }
 
-export async function bootstrapServer(httpServer: HttpServer): Promise<void> {
+export async function bootstrapServer(): Promise<void> {
   const steps: InitStep[] = [
     { name: "postgres",             fn: connectDB },
     { name: "redis",                fn: async () => { await redisClient.ping(); } },
