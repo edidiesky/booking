@@ -305,7 +305,7 @@ export default function BookingCalendarMonth({
                           e.stopPropagation();
                           onSelectBooking?.(b);
                         }}
-                        className="w-full flex-1 text-left rounded-xl px-2 py-1.5 border transition-shadow hover:shadow-sm flex flex-col justify-between min-h-0"
+                        className="w-full flex-1 text-left rounded-xl px-2 py-1.5 border transition-shadow hover:shadow-sm flex flex-col items-center justify-center min-h-0"
                         style={{
                           backgroundColor: palette.bg,
                           borderColor: palette.border,
@@ -324,7 +324,7 @@ export default function BookingCalendarMonth({
                             />
                           </span>
 
-                          <div className="min-w-0 flex-col gap-1 flex-1 overflow-hidden">
+                          <div className="min-w-0 flex-col gap-2 flex flex-1 overflow-hidden">
                             <p className="text-[12px] font-semibold truncate leading-tight">
                               {b.propertyName ?? "Property"}
                             </p>
@@ -336,11 +336,11 @@ export default function BookingCalendarMonth({
 
                         {/* Date + status at the bottom of the card */}
                         <div className="flex items-center justify-between gap-1 mt-1">
-                          <span className="text-[9px] opacity-80 truncate">
+                          <span className="text-[11px] opacity-80 truncate">
                             {range}
                           </span>
                           <span
-                            className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 leading-none"
+                            className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 leading-none"
                             style={{
                               backgroundColor: pill.bg,
                               color: pill.text,
