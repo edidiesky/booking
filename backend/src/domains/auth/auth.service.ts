@@ -906,37 +906,25 @@ export class AuthService {
         { last_active_at: new Date() },
         client,
       );
+
       if (user.tenant_id) {
-        await withTransaction(async (client) => {
-          await userRepository.updateById(
-            user.id,
-            { last_active_at: new Date() },
-            client,
-          );
-          await auditEventRepository.record(
-            {
-              tenantId: user.tenant_id,
-              actor: {
-                type: "user",
-                id: user.id,
-                email: user.email,
-                name: [user.first_name, user.last_name]
-                  .filter(Boolean)
-                  .join(" "),
-              },
-              action: "auth.login_succeeded",
-              targetType: "user",
-              targetId: user.id,
-              outcome: "allowed",
-              requestId: requestContext.get()?.requestId,
+        await auditEventRepository.record(
+          {
+            tenantId: user.tenant_id,
+            actor: {
+              type: "user",
+              id: user.id,
+              email: user.email,
+              name: [user.first_name, user.last_name].filter(Boolean).join(" "),
             },
-            client,
-          );
-        });
-      } else {
-        await userRepository.updateById(user.id, {
-          last_active_at: new Date(),
-        });
+            action: "auth.login_succeeded",
+            targetType: "user",
+            targetId: user.id,
+            outcome: "allowed",
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        );
       }
     });
 
@@ -1103,46 +1091,37 @@ export class AuthService {
       backupCodes.map((c) => bcrypt.hash(c, 10)),
     );
 
-    await withTransaction(async (client) => {
-      await userRepository.updateById(
-        userId,
-        { two_factor_enabled: true, two_factor_backup_codes: hashedCodes },
-        client,
-      );
-      if (user.tenant_id) {
-        await withTransaction(async (client) => {
-          await userRepository.updateById(
-            userId,
-            { two_factor_enabled: true, two_factor_backup_codes: hashedCodes },
-            client,
-          );
-          await auditEventRepository.record(
-            {
-              tenantId: user.tenant_id!,
-              actor: {
-                type: "user",
-                id: userId,
-                email: user.email,
-                name: [user.first_name, user.last_name]
-                  .filter(Boolean)
-                  .join(" "),
-              },
-              action: "auth.mfa_enabled",
-              targetType: "user",
-              targetId: userId,
-              outcome: "allowed",
-              requestId: requestContext.get()?.requestId,
+    if (user.tenant_id) {
+      await withTransaction(async (client) => {
+        await userRepository.updateById(
+          userId,
+          { two_factor_enabled: true, two_factor_backup_codes: hashedCodes },
+          client,
+        );
+        await auditEventRepository.record(
+          {
+            tenantId: user.tenant_id!,
+            actor: {
+              type: "user",
+              id: userId,
+              email: user.email,
+              name: [user.first_name, user.last_name].filter(Boolean).join(" "),
             },
-            client,
-          );
-        });
-      } else {
-        await userRepository.updateById(userId, {
-          two_factor_enabled: true,
-          two_factor_backup_codes: hashedCodes,
-        });
-      }
-    });
+            action: "auth.mfa_enabled",
+            targetType: "user",
+            targetId: userId,
+            outcome: "allowed",
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        );
+      });
+    } else {
+      await userRepository.updateById(userId, {
+        two_factor_enabled: true,
+        two_factor_backup_codes: hashedCodes,
+      });
+    }
     await auditRepository.log({
       action: "updated",
       resource: "two_factor_enabled",
