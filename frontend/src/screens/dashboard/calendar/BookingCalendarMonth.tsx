@@ -93,12 +93,10 @@ function statusLabel(status: string): string {
 /** Status pill colors taken from the reference screenshot */
 function statusPillStyle(status: string): { bg: string; text: string } {
   if (status === "checked_in") {
-    // "Ongoing" – dark text on warm yellow
-    return { bg: "#FACC15", text: "#422006" };
+    return { bg: "#FACC15", text: "#422006" }; // Ongoing
   }
   if (status === "confirmed") {
-    // "Booked" – green
-    return { bg: "#22C55E", text: "#FFFFFF" };
+    return { bg: "#22C55E", text: "#FFFFFF" }; // Booked
   }
   if (status === "pending_payment") {
     return { bg: "#F97316", text: "#FFFFFF" };
@@ -147,7 +145,6 @@ export default function BookingCalendarMonth({
     );
   }, [safeBookings, search]);
 
-  // Full weeks including days outside the current month
   const days = useMemo(() => {
     const start = startOfWeek(startOfMonth(monthCursor), { weekStartsOn: 0 });
     const end = endOfWeek(endOfMonth(monthCursor), { weekStartsOn: 0 });
@@ -257,7 +254,7 @@ export default function BookingCalendarMonth({
           ))}
         </div>
 
-        {/* Day grid */}
+        {/* Day grid – no day numbers, cards fill the cell */}
         <div className="grid grid-cols-7">
           {days.map((day) => {
             const key = format(day, "yyyy-MM-dd");
@@ -277,8 +274,8 @@ export default function BookingCalendarMonth({
                   if (e.key === "Enter" || e.key === " ") setSelectedDay(key);
                 }}
                 className={[
-                  "min-h-[9.5rem] border-b border-r border-[#f2f0ed] p-1.5 flex flex-col gap-1 overflow-hidden last:border-r-0 transition-colors",
-                  !inMonth ? "bg-[#f7f6f4] text-[#c4c2be]" : "",
+                  "min-h-[8.5rem] border-b border-r border-[#f2f0ed] p-1 flex flex-col gap-1 overflow-hidden last:border-r-0 transition-colors",
+                  !inMonth ? "bg-[#f7f6f4]" : "",
                   inMonth && weekend ? "bg-[#fcfbfa]" : "",
                   inMonth && !weekend ? "bg-white" : "",
                   today ? "ring-2 ring-inset ring-[#17191c]/15" : "",
@@ -286,32 +283,9 @@ export default function BookingCalendarMonth({
                   "hover:bg-[#f5f8ff]",
                 ].join(" ")}
               >
-                {/* Day number */}
-                <div className="flex items-center justify-between px-0.5 mb-0.5">
-                  <span
-                    className={[
-                      "text-xs w-6 h-6 flex items-center justify-center rounded-full",
-                      today
-                        ? "bg-[#17191c] text-white font-semibold"
-                        : selected
-                          ? "bg-[#1a56ff] text-white font-medium"
-                          : inMonth
-                            ? "text-[#52525b] font-medium"
-                            : "text-[#c4c2be]",
-                    ].join(" ")}
-                  >
-                    {format(day, "d")}
-                  </span>
-                  {dayBookings.length > 0 && inMonth && (
-                    <span className="text-[10px] text-[#a3a6af]">
-                      {dayBookings.length}
-                    </span>
-                  )}
-                </div>
-
-                {/* Booking cards – matched to reference layout & radius */}
-                <div className="flex flex-col gap-1 flex-1 min-h-0">
-                  {dayBookings.slice(0, 2).map((b) => {
+                {/* Booking cards – fill full height & width */}
+                <div className="flex flex-col gap-1 flex-1 min-h-0 h-full">
+                  {dayBookings.slice(0, 3).map((b) => {
                     const palette = cardStyleFor(b.bookingId ?? b.bookingRef);
                     const guest =
                       [b.guestFirstName, b.guestLastName]
@@ -331,15 +305,15 @@ export default function BookingCalendarMonth({
                           e.stopPropagation();
                           onSelectBooking?.(b);
                         }}
-                        className="w-full text-left px-2 py-1.5 border transition-shadow hover:shadow-sm"
+                        className="w-full flex-1 text-left rounded-xl px-2 py-1.5 border transition-shadow hover:shadow-sm flex flex-col justify-between min-h-0"
                         style={{
                           backgroundColor: palette.bg,
                           borderColor: palette.border,
                           color: palette.text,
                         }}
                       >
-                        <div className="flex items-start gap-1.5">
-                          {/* Icon – small rounded square like the reference */}
+                        <div className="flex items-start gap-1.5 min-h-0">
+                          {/* Icon */}
                           <span
                             className="w-5 h-5 rounded-md flex items-center justify-center shrink-0 mt-0.5"
                             style={{ backgroundColor: palette.iconBg }}
@@ -351,38 +325,38 @@ export default function BookingCalendarMonth({
                             />
                           </span>
 
-                          <div className="min-w-0 flex-1">
-                            {/* Property name */}
-                            <p className="text-sm font-semibold truncate leading-tight">
+                          <div className="min-w-0 flex-1 overflow-hidden">
+                            <p className="text-[11px] font-semibold truncate leading-tight">
                               {b.propertyName ?? "Property"}
                             </p>
-                            {/* Guest name */}
                             <p className="text-[10px] truncate opacity-90 leading-tight mt-0.5">
                               {guest}
                             </p>
-                            {/* Date range + status pill */}
-                            <div className="flex items-center justify-between gap-1 mt-1.5">
-                              <span className="text-[9px] opacity-80 truncate">
-                                {range}
-                              </span>
-                              <span
-                                className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 leading-none"
-                                style={{
-                                  backgroundColor: pill.bg,
-                                  color: pill.text,
-                                }}
-                              >
-                                {statusLabel(b.status)}
-                              </span>
-                            </div>
                           </div>
+                        </div>
+
+                        {/* Date + status at the bottom of the card */}
+                        <div className="flex items-center justify-between gap-1 mt-1">
+                          <span className="text-[9px] opacity-80 truncate">
+                            {range}
+                          </span>
+                          <span
+                            className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 leading-none"
+                            style={{
+                              backgroundColor: pill.bg,
+                              color: pill.text,
+                            }}
+                          >
+                            {statusLabel(b.status)}
+                          </span>
                         </div>
                       </button>
                     );
                   })}
-                  {dayBookings.length > 2 && (
-                    <span className="text-[10px] text-[#a3a6af] px-1">
-                      +{dayBookings.length - 2} more
+
+                  {dayBookings.length > 3 && (
+                    <span className="text-[10px] text-[#a3a6af] px-1 shrink-0">
+                      +{dayBookings.length - 3} more
                     </span>
                   )}
                 </div>
