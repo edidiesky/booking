@@ -3,13 +3,6 @@ import { permissionResolver } from "../domains/permission/permission.resolver";
 import logger from "../utils/logger";
 import { requestContext } from "../context/requestContext";
 
-/**
- * ABAC middleware - checks resolved permissions from Redis cache or DB.
- * Usage: requirePermission("booking", "create")
- *
- * Falls through to next() on platform:admin (superuser bypass).
- * Denies with 403 if user lacks the required permission.
- */
 export function requirePermission(resource: string, action: string) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     if (!req.user) {

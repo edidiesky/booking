@@ -14,6 +14,8 @@ import logger from "../../utils/logger";
 import { v4 } from "uuid";
 import { publishNotifyInvitation } from "../../messaging/publisher";
 import { auditEventRepository } from "../audit/auditEvent.repository";
+import { userRoleRepository } from "../user-role/user-role.repository";
+import { UserType } from "../../types";
 
 const INVITE_TTL_SEC = 24 * 60 * 60; // 24h
 const MAX_ATTEMPTS = 5;
@@ -103,9 +105,16 @@ export const invitationService = {
     });
 
     const notificationId = v4();
-    const signupUrl = process.env.FRONTEND_URL
-      ? `${process.env.FRONTEND_URL.replace(/\/$/, "")}/onboarding?email=${encodeURIComponent(normalizedEmail)}`
-      : undefined;
+    const frontendBase = (
+      process.env.FRONTEND_URL ||
+      process.env.APP_URL ||
+      "http://localhost:5173"
+    ).replace(/\/$/, "");
+
+    const signupUrl =
+      `${frontendBase}/accept-invite` +
+      `?email=${encodeURIComponent(normalizedEmail)}` +
+      `&code=${encodeURIComponent(code)}`;
 
     publishNotifyInvitation({
       notificationId,
@@ -198,7 +207,10 @@ export const invitationService = {
       );
       throw AppError.unauthorized("Incorrect invitation code.");
     }
+    const role = await roleRepository.findById(state.roleId);
+    if (!role) throw AppError.badRequest("Invitation role is no longer valid.");
 
+    const userType = role.slug as UserType;
     let userId!: string;
 
     await withTransaction(async (client) => {
@@ -220,17 +232,23 @@ export const invitationService = {
           {
             email: normalizedEmail,
             passwordHash,
-            userType: "host:staff",
+            userType,
             firstName: firstName.trim(),
             lastName: lastName.trim(),
             phone,
+            tenantId: state.tenantId,
           },
           client,
         );
         userId = user.id;
-        await userRepository.updateById(
-          userId,
-          { status: "active", is_email_verified: true },
+        await userRoleRepository.assign(
+          {
+            userId,
+            tenantId: state.tenantId,
+            roleId: state.roleId,
+            assignedBy: state.invitedBy,
+            reason: "Accepted team invitation",
+          },
           client,
         );
         await profileRepository.create(
@@ -238,14 +256,6 @@ export const invitationService = {
           client,
         );
       }
-
-      await client.query(
-        `INSERT INTO user_roles (user_id, tenant_id, role_id, assigned_by, reason)
-         VALUES ($1, $2, $3, 'invitation', 'Accepted team invitation')
-         ON CONFLICT (user_id, tenant_id) DO UPDATE SET role_id = EXCLUDED.role_id, is_active = true, updated_at = now()`,
-        [userId, state.tenantId, state.roleId],
-      );
-
       await auditEventRepository.record(
         {
           tenantId: state.tenantId,
@@ -286,7 +296,7 @@ export const invitationService = {
 
     return authService._buildTokens(
       userId,
-      "host:staff",
+      userType,
       `${firstName} ${lastName}`.trim(),
       state.tenantId,
     );

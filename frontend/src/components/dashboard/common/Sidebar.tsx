@@ -11,17 +11,17 @@ import {
   LuUserRound,
   LuUsers,
   LuShieldCheck,
-  LuHistory,
   LuScrollText,
   // LuMessageSquare,
 } from "react-icons/lu";
-import { selectCurrentUser, clearCredentials } from "@/redux/slices/authSlice";
+import {  clearCredentials } from "@/redux/slices/authSlice";
 import { useLogoutMutation } from "@/redux/services/authApi";
 import { selectRefreshToken } from "@/redux/slices/authSlice";
 import toast from "react-hot-toast";
 import NavGroup from "./NavGroup";
-import SidebarFooter from "./SidebarFooter";
+// import SidebarFooter from "./SidebarFooter";
 import { apiSlice } from "@/redux/services/apiSlice";
+import WorkspaceDropdown from "@/components/common/WorkspaceDropdown";
 
 export const NAV_GROUPS = [
   {
@@ -93,12 +93,12 @@ export const NAV_GROUPS = [
         path: "account",
         tour: "nav-account",
       },
-      {
-        icon: LuHistory,
-        text: "Activity",
-        path: "activity",
-        tour: "nav-activity",
-      },
+      // {
+      //   icon: LuHistory,
+      //   text: "Activity",
+      //   path: "activity",
+      //   tour: "nav-activity",
+      // },
       {
         icon: LuScrollText,
         text: "Audit Log",
@@ -112,7 +112,6 @@ export const NAV_GROUPS = [
 export default function Sidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const currentUser = useSelector(selectCurrentUser);
   const refreshToken = useSelector(selectRefreshToken);
   const [logout] = useLogoutMutation();
 
@@ -136,13 +135,16 @@ export default function Sidebar() {
       className="hidden lg:flex flex-col w-[220px] h-screen shrink-0 border-r"
       style={{ backgroundColor: "var(--color-canvas)", borderColor: "#ebebeb" }}
     >
-      <nav className="flex-1 overflow-y-auto py-12 px-3">
+      <div className="px-3 pt-4 pb-2 border-b" style={{ borderColor: "#ebebeb" }}>
+        <WorkspaceDropdown onSignOut={handleSignOut} />
+      </div>
+      <nav className="flex-1 overflow-y-auto py-4 px-3">
         {NAV_GROUPS.map((group) => (
           <NavGroup key={group.label} group={group} />
         ))}
       </nav>
 
-      <SidebarFooter currentUser={currentUser} onSignOut={handleSignOut} />
+      {/* <SidebarFooter currentUser={currentUser} onSignOut={handleSignOut} /> */}
     </aside>
   );
 }

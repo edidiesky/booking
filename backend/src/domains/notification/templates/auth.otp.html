@@ -22,45 +22,84 @@
         <td align="center" style="padding:40px 16px;">
           <table width="560" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;max-width:560px;width:100%;">
 
+            <!-- Logo -->
             <tr>
               <td align="left" style="padding:48px 48px 0;">
                 <span style="font-size:20px;font-weight:700;color:#1a56ff;letter-spacing:-0.4px;line-height:1;">Booking</span>
               </td>
             </tr>
+
+            <!-- Divider -->
             <tr>
               <td style="padding:28px 48px 0;">
-                <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
-                  <td style="border-top:1px solid #eef0f3;font-size:0;line-height:0;">&nbsp;</td>
-                </tr></table>
+                <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                  <tr>
+                    <td style="border-top:1px solid #eef0f3;font-size:0;line-height:0;">&nbsp;</td>
+                  </tr>
+                </table>
               </td>
             </tr>
 
+            <!-- Icon -->
             <tr>
               <td align="center" style="padding:40px 48px 0;">
-                <img src="{{iconUrl}}" width="72" height="72" alt="" style="display:block;border:0;outline:none;width:72px;height:72px;" />
+                {{#if iconUrl}}
+                <img
+                  src="{{iconUrl}}"
+                  width="72"
+                  height="72"
+                  alt=""
+                  style="display:block;border:0;outline:none;width:72px;height:72px;"
+                />
+                {{else}}
+                <div style="display:block;width:72px;height:72px;"></div>
+                {{/if}}
               </td>
             </tr>
 
+            <!-- Title (Handlebars HTML — set by authOtpTemplate) -->
             <tr>
               <td style="padding:28px 48px 0;">
-                <h1 style="margin:0;font-size:32px;line-height:40px;font-weight:700;color:#0f172a;letter-spacing:-0.6px;">Your login<br />OTP</h1>
+                <h1 style="margin:0;font-size:32px;line-height:40px;font-weight:700;color:#0f172a;letter-spacing:-0.6px;">
+                  {{#if titleHtml}}
+                    {{{titleHtml}}}
+                  {{else}}
+                    Your verification<br />code
+                  {{/if}}
+                </h1>
               </td>
             </tr>
 
+            <!-- Divider -->
             <tr>
               <td style="padding:28px 48px 0;">
-                <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
-                  <td style="border-top:1px solid #eef0f3;font-size:0;line-height:0;">&nbsp;</td>
-                </tr></table>
+                <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                  <tr>
+                    <td style="border-top:1px solid #eef0f3;font-size:0;line-height:0;">&nbsp;</td>
+                  </tr>
+                </table>
               </td>
             </tr>
 
+            <!-- Body -->
             <tr>
               <td style="padding:28px 48px 0;">
-                <p style="margin:0;font-size:15px;line-height:26px;color:#64748b;">Use the one-time password below to complete your login.<br />This code expires in <strong style="color:#0f172a;">15 minutes</strong>.</p>
+                <p style="margin:0;font-size:15px;line-height:26px;color:#64748b;">
+                  {{#if firstName}}Hi {{firstName}},<br /><br />{{/if}}
+                  {{#if bodyText}}
+                    {{bodyText}}
+                  {{else}}
+                    Use the one-time password below to continue.
+                  {{/if}}
+                  <br />
+                  This code expires in
+                  <strong style="color:#0f172a;">{{#if expiresMinutes}}{{expiresMinutes}}{{else}}10{{/if}} minutes</strong>.
+                  Do not share it with anyone.
+                </p>
               </td>
             </tr>
 
+            <!-- OTP -->
             <tr>
               <td align="center" style="padding:32px 48px 0;">
                 <table cellpadding="0" cellspacing="0" role="presentation" style="background:#f8fafc;">
@@ -73,17 +112,23 @@
               </td>
             </tr>
 
+            <!-- Note -->
             <tr>
               <td style="padding:36px 48px 48px;">
-                <p style="margin:0;font-size:13px;line-height:22px;color:#94a3b8;">If you did not request this, your account may be at risk.</p>
+                <p style="margin:0;font-size:13px;line-height:22px;color:#94a3b8;">
+                  If you did not request this, you can ignore this email.
+                </p>
               </td>
             </tr>
 
           </table>
+
           <table width="560" cellpadding="0" cellspacing="0" role="presentation" style="max-width:560px;width:100%;">
             <tr>
               <td align="center" style="padding:28px 16px 8px;">
-                <p style="margin:0;font-size:12px;line-height:18px;color:#94a3b8;">&copy; {{year}} Booking. All rights reserved.</p>
+                <p style="margin:0;font-size:12px;line-height:18px;color:#94a3b8;">
+                  &copy; {{year}} Booking. All rights reserved.
+                </p>
               </td>
             </tr>
           </table>

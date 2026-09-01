@@ -61,6 +61,13 @@ export const rtkQueryErrorMiddleware: Middleware = () => (next) => (action) => {
         break;
 
       case 403:
+        showToast(
+          extractMessage(
+            data,
+            "You don't have permission to perform this action.",
+          ),
+          "error",
+        );
         break;
 
       case 404:

@@ -75,6 +75,17 @@ export interface EscrowEventPayload {
   refundAmountNgn?: number;
 }
 
+export interface NotifyAuthOtpPayload {
+  notificationId: string;
+  email: string;
+  firstName: string;
+  otp: string;
+  phone?: string;
+  purpose?: string;
+  expiresMinutes?: number;
+  iconUrl?: string;
+}
+
 export interface NotifyBookingPayload {
 notificationId: string;
   guestEmail: string;

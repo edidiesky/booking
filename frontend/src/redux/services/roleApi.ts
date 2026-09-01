@@ -1,29 +1,64 @@
-import { apiSlice }  from "./apiSlice";
-import { ROLE_URL }  from "@/constants/api";
+import { apiSlice } from "./apiSlice";
+import { ROLE_URL } from "@/constants/api";
 import type {
-  RoleListResponse, UserRoleAssignment, Role, RoleDetail, RoleDetailResponse,
-  AssignRolePayload, GrantPermissionPayload, CreateCustomRolePayload,
+  RoleListResponse,
+  UserRoleAssignment,
+  Role,
+  RoleDetail,
+  RoleDetailResponse,
+  AssignRolePayload,
+  GrantPermissionPayload,
+  CreateCustomRolePayload,
   UpdateRolePermissionsPayload,
-  UserPermissionOverride, ResolvedPermissions,
+  UserPermissionOverride,
+  ResolvedPermissions,
   ApiSuccessResponse,
 } from "@/types/api";
 
-interface UserRoleResponse       { success: boolean; data: UserRoleAssignment;       }
-interface UserRoleListResponse   { success: boolean; data: UserRoleAssignment[];     }
-interface PermOverrideResponse   { success: boolean; data: UserPermissionOverride;   }
-interface PermOverrideListResp   { success: boolean; data: UserPermissionOverride[]; }
-interface ResolvedPermsResponse  { success: boolean; data: ResolvedPermissions;      }
+interface UserRoleResponse {
+  success: boolean;
+  data: UserRoleAssignment;
+}
+interface UserRoleListResponse {
+  success: boolean;
+  data: UserRoleAssignment[];
+}
+interface PermOverrideResponse {
+  success: boolean;
+  data: UserPermissionOverride;
+}
+interface PermOverrideListResp {
+  success: boolean;
+  data: UserPermissionOverride[];
+}
+interface ResolvedPermsResponse {
+  success: boolean;
+  data: ResolvedPermissions;
+}
 
 interface RawRole {
-  id: string; name: string; slug: string; description: string;
-  is_system: boolean; tenant_id: string | null;
-  created_at: string; updated_at: string;
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  is_system: boolean;
+  tenant_id: string | null;
+  created_at: string;
+  updated_at: string;
 }
 interface RawPermission {
-  id: string; resource: string; action: string; description?: string; category: string;
+  id: string;
+  resource: string;
+  action: string;
+  description?: string;
+  category: string;
 }
 interface RawRoleMember {
-  user_id: string; first_name?: string; last_name?: string; email?: string; assigned_at: string;
+  user_id: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  assigned_at: string;
 }
 interface RawRoleDetail {
   role: RawRole;
@@ -34,9 +69,14 @@ interface RawRoleDetail {
 
 function toRole(raw: RawRole): Role {
   return {
-    id: raw.id, name: raw.name, slug: raw.slug, description: raw.description,
-    isSystem: raw.is_system, tenantId: raw.tenant_id,
-    createdAt: raw.created_at, updatedAt: raw.updated_at,
+    id: raw.id,
+    name: raw.name,
+    slug: raw.slug,
+    description: raw.description,
+    isSystem: raw.is_system,
+    tenantId: raw.tenant_id,
+    createdAt: raw.created_at,
+    updatedAt: raw.updated_at,
   };
 }
 
@@ -46,18 +86,62 @@ function toRoleDetail(raw: RawRoleDetail): RoleDetail {
     includedPermissions: raw.includedPermissions,
     availablePermissions: raw.availablePermissions,
     members: raw.members.map((m) => ({
-      userId: m.user_id, firstName: m.first_name, lastName: m.last_name,
-      email: m.email, assignedAt: m.assigned_at,
+      userId: m.user_id,
+      firstName: m.first_name,
+      lastName: m.last_name,
+      email: m.email,
+      assignedAt: m.assigned_at,
     })),
   };
 }
 
 export const roleApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getTenantRoles: builder.query<UserRoleListResponse, void>({
+      query: () => ({ url: `${ROLE_URL}/tenant` }),
+      transformResponse: (r: {
+        success: boolean;
+        data: Array<Record<string, unknown>>;
+      }) => ({
+        success: r.success,
+        data: (r.data ?? []).map((raw) => ({
+          id: String(raw.id ?? ""),
+          userId: String(raw.user_id ?? raw.userId ?? ""),
+          tenantId: String(raw.tenant_id ?? raw.tenantId ?? ""),
+          roleId: String(raw.role_id ?? raw.roleId ?? ""),
+          roleName: String(raw.role_name ?? raw.roleName ?? ""),
+          roleSlug: String(raw.role_slug ?? raw.roleSlug ?? ""),
+          assignedBy: String(raw.assigned_by ?? raw.assignedBy ?? ""),
+          assignedAt: String(raw.assigned_at ?? raw.assignedAt ?? ""),
+          reason: (raw.reason as string | undefined) ?? undefined,
+          isActive: Boolean(raw.is_active ?? raw.isActive ?? true),
+          firstName:
+            (raw.first_name as string | undefined) ??
+            (raw.firstName as string | undefined),
+          lastName:
+            (raw.last_name as string | undefined) ??
+            (raw.lastName as string | undefined),
+          email: (raw.email as string | undefined) ?? undefined,
+          twoFactorEnabled: Boolean(
+            raw.two_factor_enabled ?? raw.twoFactorEnabled ?? false,
+          ),
+          lastActiveAt:
+            (raw.last_active_at as string | null | undefined) ??
+            (raw.lastActiveAt as string | null | undefined) ??
+            null,
+          profileImage:
+            (raw.profile_image as string | null | undefined) ??
+            (raw.profileImage as string | null | undefined) ??
+            null,
+        })),
+      }),
+      providesTags: ["Role"],
+    }),
     listRoles: builder.query<RoleListResponse, void>({
       query: () => ({ url: ROLE_URL }),
       transformResponse: (r: { success: boolean; data: RawRole[] }) => ({
-        success: r.success, data: r.data.map(toRole),
+        success: r.success,
+        data: r.data.map(toRole),
       }),
       providesTags: ["Role"],
     }),
@@ -65,7 +149,8 @@ export const roleApi = apiSlice.injectEndpoints({
     listTenantRoles: builder.query<RoleListResponse, void>({
       query: () => ({ url: `${ROLE_URL}/tenant/list` }),
       transformResponse: (r: { success: boolean; data: RawRole[] }) => ({
-        success: r.success, data: r.data.map(toRole),
+        success: r.success,
+        data: r.data.map(toRole),
       }),
       providesTags: ["Role"],
     }),
@@ -73,34 +158,45 @@ export const roleApi = apiSlice.injectEndpoints({
     getRoleDetail: builder.query<RoleDetailResponse, string>({
       query: (roleId) => ({ url: `${ROLE_URL}/tenant/roles/${roleId}` }),
       transformResponse: (r: { success: boolean; data: RawRoleDetail }) => ({
-        success: r.success, data: toRoleDetail(r.data),
+        success: r.success,
+        data: toRoleDetail(r.data),
       }),
       providesTags: (_r, _e, roleId) => [{ type: "Role", id: roleId }],
     }),
 
-    createCustomRole: builder.mutation<RoleDetailResponse, CreateCustomRolePayload>({
-      query: (body) => ({ url: `${ROLE_URL}/tenant/roles`, method: "POST", body }),
+    createCustomRole: builder.mutation<
+      RoleDetailResponse,
+      CreateCustomRolePayload
+    >({
+      query: (body) => ({
+        url: `${ROLE_URL}/tenant/roles`,
+        method: "POST",
+        body,
+      }),
       transformResponse: (r: { success: boolean; data: RawRoleDetail }) => ({
-        success: r.success, data: toRoleDetail(r.data),
+        success: r.success,
+        data: toRoleDetail(r.data),
       }),
       invalidatesTags: ["Role"],
     }),
 
-    updateRolePermissions: builder.mutation<RoleDetailResponse, UpdateRolePermissionsPayload>({
+    updateRolePermissions: builder.mutation<
+      RoleDetailResponse,
+      UpdateRolePermissionsPayload
+    >({
       query: ({ roleId, permissionIds }) => ({
         url: `${ROLE_URL}/tenant/roles/${roleId}/permissions`,
         method: "PATCH",
         body: { permissionIds },
       }),
       transformResponse: (r: { success: boolean; data: RawRoleDetail }) => ({
-        success: r.success, data: toRoleDetail(r.data),
+        success: r.success,
+        data: toRoleDetail(r.data),
       }),
-      invalidatesTags: (_r, _e, { roleId }) => [{ type: "Role", id: roleId }, "Role"],
-    }),
-
-    getTenantRoles: builder.query<UserRoleListResponse, void>({
-      query: () => ({ url: `${ROLE_URL}/tenant` }),
-      providesTags: ["Role"],
+      invalidatesTags: (_r, _e, { roleId }) => [
+        { type: "Role", id: roleId },
+        "Role",
+      ],
     }),
 
     getUserRole: builder.query<UserRoleResponse, string>({
@@ -109,26 +205,45 @@ export const roleApi = apiSlice.injectEndpoints({
     }),
 
     assignRole: builder.mutation<ApiSuccessResponse, AssignRolePayload>({
-      query: (body) => ({ url: `${ROLE_URL}/tenant/assign`, method: "POST", body }),
+      query: (body) => ({
+        url: `${ROLE_URL}/tenant/assign`,
+        method: "POST",
+        body,
+      }),
       invalidatesTags: ["Role"],
     }),
 
     revokeRole: builder.mutation<ApiSuccessResponse, string>({
-      query: (userId) => ({ url: `${ROLE_URL}/tenant/users/${userId}/revoke`, method: "DELETE" }),
+      query: (userId) => ({
+        url: `${ROLE_URL}/tenant/users/${userId}/revoke`,
+        method: "DELETE",
+      }),
       invalidatesTags: ["Role"],
     }),
 
-    grantUserPermission: builder.mutation<PermOverrideResponse, GrantPermissionPayload>({
-      query: (body) => ({ url: `${ROLE_URL}/tenant/users/permissions`, method: "POST", body }),
+    grantUserPermission: builder.mutation<
+      PermOverrideResponse,
+      GrantPermissionPayload
+    >({
+      query: (body) => ({
+        url: `${ROLE_URL}/tenant/users/permissions`,
+        method: "POST",
+        body,
+      }),
       invalidatesTags: ["Permission"],
     }),
 
     getUserPermissions: builder.query<PermOverrideListResp, string>({
-      query: (userId) => ({ url: `${ROLE_URL}/tenant/users/${userId}/permissions` }),
+      query: (userId) => ({
+        url: `${ROLE_URL}/tenant/users/${userId}/permissions`,
+      }),
       providesTags: (_r, _e, userId) => [{ type: "Permission", id: userId }],
     }),
 
-    revokeUserPermission: builder.mutation<ApiSuccessResponse, { userId: string; permissionId: string }>({
+    revokeUserPermission: builder.mutation<
+      ApiSuccessResponse,
+      { userId: string; permissionId: string }
+    >({
       query: ({ userId, permissionId }) => ({
         url: `${ROLE_URL}/tenant/users/${userId}/permissions/${permissionId}`,
         method: "DELETE",
@@ -137,8 +252,12 @@ export const roleApi = apiSlice.injectEndpoints({
     }),
 
     getResolvedPermissions: builder.query<ResolvedPermsResponse, string>({
-      query: (userId) => ({ url: `${ROLE_URL}/tenant/users/${userId}/permissions/resolved` }),
-      providesTags: (_r, _e, userId) => [{ type: "Permission", id: `resolved-${userId}` }],
+      query: (userId) => ({
+        url: `${ROLE_URL}/tenant/users/${userId}/permissions/resolved`,
+      }),
+      providesTags: (_r, _e, userId) => [
+        { type: "Permission", id: `resolved-${userId}` },
+      ],
     }),
   }),
 });

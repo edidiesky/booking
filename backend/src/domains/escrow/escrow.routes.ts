@@ -3,6 +3,7 @@ import { Request, Response, Router } from "express";
 import { escrowRepository }  from "./escrow.repository";
 import { authenticate, requireTenantMember } from "../../middleware/auth.middleware";
 import { AppError }          from "../../utils/AppError";
+import { requirePermission } from "../../middleware/require-permission.middleware";
 
 const GetTenantEscrowHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
@@ -69,9 +70,32 @@ const ExportTenantEscrowHandler = asyncHandler(async (req: Request, res: Respons
 
 const router = Router();
 
-router.get("/",                     authenticate, requireTenantMember, GetTenantEscrowHandler);
-router.get("/export",               authenticate, requireTenantMember, ExportTenantEscrowHandler);
-router.get("/stats",                authenticate, requireTenantMember, GetTenantEscrowStatsHandler);
-router.get("/booking/:bookingId",   authenticate, requireTenantMember, GetEscrowByBookingHandler);
-
+router.get(
+  "/",
+  authenticate,
+  requireTenantMember,
+  requirePermission("escrow", "read"),
+  GetTenantEscrowHandler,
+);
+router.get(
+  "/stats",
+  authenticate,
+  requireTenantMember,
+  requirePermission("escrow", "read"),
+  GetTenantEscrowStatsHandler,
+);
+router.get(
+  "/export",
+  authenticate,
+  requireTenantMember,
+  requirePermission("report", "export"),
+  ExportTenantEscrowHandler,
+);
+router.get(
+  "/booking/:bookingId",
+  authenticate,
+  requireTenantMember,
+  requirePermission("escrow", "read"),
+  GetEscrowByBookingHandler,
+);
 export default router;

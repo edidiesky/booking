@@ -24,6 +24,7 @@ import { STATUS_MAP } from "@/components/common/StatusBadge";
 import MultiSelectDropdown from "@/components/dashboard/common/gant/MultiSelectDropdown";
 import DateRangeDropdown from "@/components/common/filters/DateRangeDropdown";
 import { EmptyState } from "@/components/common/EmptyState";
+import Title from "@/components/dashboard/common/Title";
 const STATUS_OPTIONS: { label: string; value: BookingStatus | "" }[] = [
   { label: "All statuses", value: "" },
   { label: "Pending Payment", value: "pending_payment" },
@@ -129,20 +130,11 @@ export default function DashboardBookings() {
         transition={{ duration: 0.4 }}
         className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
       >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h4 className="text-lg lg:text-xl bold  text-[#17191c]">
-              Bookings
-            </h4>
-            <p className="text-xs lg:text-[13px]     text-[#64645f] mt-1 max-w-[420px] bold">
-              Manage guest reservations. Click a row to view details and take
-              actions.
-            </p>
-          </div>
-          <span className="text-xs lg:text-[13px]     text-[#a3a6af] mt-2">
-            {bookings.length} total
-          </span>
-        </div>
+        <Title
+          title={`Bookings`}
+          description=" Manage guest reservations. Click a row to view details and take
+              actions."
+        />
 
         <StatsOverview
           isLoading={isStatsLoading}

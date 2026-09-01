@@ -17,6 +17,7 @@ import {
   GetPublicTenantProfileHandler,
   GetAdminTenantDetailHandler,
 } from "./tenant.controller";
+import { requirePermission } from "../../middleware/require-permission.middleware";
 
 const updateSettingsSchema = Joi.object({
   timezone: Joi.string().optional(),
@@ -52,6 +53,7 @@ router.patch(
   "/me/settings",
   authenticate,
   requireTenantMember,
+  requirePermission("tenant", "update"),
   validate(updateSettingsSchema),
   UpdateTenantSettingsHandler,
 );
@@ -59,6 +61,7 @@ router.patch(
   "/me/profile",
   authenticate,
   requireTenantMember,
+  requirePermission("tenant", "update"),
   validate(updateProfileSchema),
   UpdateTenantProfileHandler,
 );
@@ -66,6 +69,7 @@ router.patch(
   "/me/policy",
   authenticate,
   requireTenantMember,
+  requirePermission("tenant", "update"),
   validate(cancellationPolicySchema),
   UpdateCancellationPolicyHandler,
 );

@@ -9,6 +9,8 @@ import logger from "../../utils/logger";
 import { requestContext } from "../../context/requestContext";
 import { withTransaction } from "@booking/shared";
 import { auditEventRepository } from "../audit/auditEvent.repository";
+import { v4 } from "uuid";
+import { publishNotifyAuthOtp } from "../../messaging/publisher";
 
 const OTP_TTL_SEC = 10 * 60;
 const MAX_OTP_ATTEMPTS = 5;
@@ -208,17 +210,24 @@ export const securityService = {
       OTP_TTL_SEC,
     );
 
-    const dispatcher = getDispatcher();
-    const subject = "Your verification code";
-    const body = `Your verification code is ${code}. It expires in 10 minutes. Do not share this code with anyone.`;
+    const firstName =
+      user.first_name?.trim() || user.email.split("@")[0] || "there";
 
-    // Prefer SMS for phone-flows, email otherwise, falling back to email
-    // if SMS isn't configured (getDispatcher already logs and no-ops if
-    // Twilio isn't set up, rather than throwing).
     if (purpose === "phone_verify" && user.phone) {
-      await dispatcher.sendSms(user.phone, body);
+      const dispatcher = getDispatcher();
+      await dispatcher.sendSms(
+        user.phone,
+        `Your verification code is ${code}. It expires in 10 minutes. Do not share this code with anyone.`,
+      );
     } else {
-      await dispatcher.sendEmail(user.email, subject, `<p>${body}</p>`);
+      publishNotifyAuthOtp({
+        notificationId: v4(),
+        email: user.email,
+        firstName,
+        otp: code,
+        purpose,
+        expiresMinutes: Math.floor(OTP_TTL_SEC / 60),
+      });
     }
 
     logger.info("otp_requested", {
@@ -232,7 +241,6 @@ export const securityService = {
       expiresInSeconds: OTP_TTL_SEC,
     };
   },
-
   async verifyOtp(userId: string, purpose: string, body: unknown) {
     const { error, value } = verifyOtpSchema.validate(body);
     if (error) throw AppError.badRequest(error.details[0].message);
@@ -300,13 +308,13 @@ export const securityService = {
             client,
           );
           break;
-        case "two_factor_enable":
-          await userRepository.updateById(
-            userId,
-            { two_factor_enabled: true },
-            client,
-          );
-          break;
+        // case "two_factor_enable":
+        //   await userRepository.updateById(
+        //     userId,
+        //     { two_factor_enabled: true },
+        //     client,
+        //   );
+        //   break;
         case "two_factor_disable":
           await userRepository.updateById(
             userId,

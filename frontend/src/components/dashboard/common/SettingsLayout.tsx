@@ -42,7 +42,7 @@ export default function SettingsLayout({
         <div className="flex items-center justify-between gap-3 px-5 py-5">
           <div className="flex items-center gap-3 min-w-0">
             <span
-              className="w-11 h-11 rounded-full flex items-center justify-center text-xs lg:text-[13px]   lg:text-lg bold shrink-0"
+              className="w-11 h-11 rounded-full flex items-center justify-center text-xs lg:text-lg bold shrink-0"
               style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
             >
               {headerName.charAt(0).toUpperCase()}
@@ -98,7 +98,7 @@ export default function SettingsLayout({
         style={{ maxHeight: "calc(100vh - 2rem)" }}
       >
         {panelTitle && (
-          <div className="flex items-center gap-3 px-6 justify-center shrink-0" style={{ borderColor: "#f2f0ed" }}>
+          <div className="flex items-start gap-3 p-6 shrink-0" style={{ borderColor: "#f2f0ed" }}>
             <button onClick={() => onSelect("")} className="lg:hidden p-1 -ml-1 rounded-full hover:bg-[#f2f0ed]">
               <ChevronLeft size={18} />
             </button>

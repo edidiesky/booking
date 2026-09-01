@@ -34,37 +34,79 @@ export const userRoleRepository = {
     },
     client?: PoolClient,
   ): Promise<UserRole> {
-    const sql = data.tenantId
-      ? `INSERT INTO user_roles (user_id, tenant_id, role_id, assigned_by, reason)
+    const run = async <T>(sql: string, params: unknown[]) => {
+      if (client) {
+        const r = await client.query(sql, params);
+        return r.rows[0] as T;
+      }
+      return (await queryOne<T>(sql, params)) as T;
+    };
+
+    if (data.tenantId) {
+      const updated = await run<UserRole>(
+        `UPDATE user_roles
+       SET role_id = $3, assigned_by = $4, assigned_at = now(),
+           reason = $5, is_active = true, updated_at = now()
+       WHERE user_id = $1 AND tenant_id = $2
+       RETURNING *`,
+        [
+          data.userId,
+          data.tenantId,
+          data.roleId,
+          data.assignedBy,
+          data.reason ?? null,
+        ],
+      );
+      if (updated) {
+        logger.info("user_role_assigned", {
+          event: "user_role_assigned",
+          userId: data.userId,
+          tenantId: data.tenantId,
+          roleId: data.roleId,
+          ...ctx(),
+        });
+        return updated;
+      }
+      const inserted = await run<UserRole>(
+        `INSERT INTO user_roles (user_id, tenant_id, role_id, assigned_by, reason)
        VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (user_id, tenant_id) WHERE tenant_id IS NOT NULL DO UPDATE
-         SET role_id = EXCLUDED.role_id, assigned_by = EXCLUDED.assigned_by,
-             assigned_at = now(), reason = EXCLUDED.reason, is_active = true, updated_at = now()
-       RETURNING *`
-      : `INSERT INTO user_roles (user_id, tenant_id, role_id, assigned_by, reason)
-       VALUES ($1, NULL, $3, $4, $5)
-       ON CONFLICT (user_id) WHERE tenant_id IS NULL DO UPDATE
-         SET role_id = EXCLUDED.role_id, assigned_by = EXCLUDED.assigned_by,
-             assigned_at = now(), reason = EXCLUDED.reason, is_active = true, updated_at = now()
-       RETURNING *`;
-    const params = [
-      data.userId,
-      data.tenantId,
-      data.roleId,
-      data.assignedBy,
-      data.reason ?? null,
-    ];
-    const row = client
-      ? ((await client.query(sql, params)).rows[0] as UserRole)
-      : (await queryOne<UserRole>(sql, params))!;
-    logger.info("user_role_assigned", {
-      event: "user_role_assigned",
-      userId: data.userId,
-      tenantId: data.tenantId,
-      roleId: data.roleId,
-      ...ctx(),
-    });
-    return row;
+       RETURNING *`,
+        [
+          data.userId,
+          data.tenantId,
+          data.roleId,
+          data.assignedBy,
+          data.reason ?? null,
+        ],
+      );
+      logger.info("user_role_assigned", {
+        event: "user_role_assigned",
+        userId: data.userId,
+        tenantId: data.tenantId,
+        roleId: data.roleId,
+        ...ctx(),
+      });
+      return inserted!;
+    }
+
+    // platform-wide (tenant_id IS NULL)
+    const updated = await run<UserRole>(
+      `UPDATE user_roles
+     SET role_id = $2, assigned_by = $3, assigned_at = now(),
+         reason = $4, is_active = true, updated_at = now()
+     WHERE user_id = $1 AND tenant_id IS NULL
+     RETURNING *`,
+      [data.userId, data.roleId, data.assignedBy, data.reason ?? null],
+    );
+    if (updated) return updated;
+
+    const inserted = await run<UserRole>(
+      `INSERT INTO user_roles (user_id, tenant_id, role_id, assigned_by, reason)
+     VALUES ($1, NULL, $2, $3, $4)
+     RETURNING *`,
+      [data.userId, data.roleId, data.assignedBy, data.reason ?? null],
+    );
+    return inserted!;
   },
 
   // getRoleIdsByUserId: signature widens, and the WHERE clause needs
@@ -92,19 +134,6 @@ export const userRoleRepository = {
        JOIN roles r ON r.id = ur.role_id
        WHERE ur.user_id = $1 AND ur.tenant_id = $2 AND ur.is_active = true`,
       [userId, tenantId],
-    );
-  },
-
-  async findAllByTenant(tenantId: string): Promise<UserRole[]> {
-    return query<UserRole>(
-      `SELECT ur.*, r.name AS role_name, r.slug AS role_slug,
-              u.first_name, u.last_name, u.email
-       FROM user_roles ur
-       JOIN roles r ON r.id = ur.role_id
-       JOIN users u ON u.id  = ur.user_id
-       WHERE ur.tenant_id = $1 AND ur.is_active = true
-       ORDER BY ur.assigned_at DESC`,
-      [tenantId],
     );
   },
 
@@ -148,5 +177,29 @@ export const userRoleRepository = {
       tenantId,
       ...ctx(),
     });
+  },
+  async findAllByTenant(tenantId: string): Promise<
+    Array<
+      UserRole & {
+        first_name?: string;
+        last_name?: string;
+        email?: string;
+        two_factor_enabled?: boolean;
+        last_active_at?: Date | null;
+        profile_image?: string | null;
+      }
+    >
+  > {
+    return query(
+      `SELECT ur.*, r.name AS role_name, r.slug AS role_slug,
+            u.first_name, u.last_name, u.email,
+            u.two_factor_enabled, u.last_active_at, u.profile_image
+     FROM user_roles ur
+     JOIN roles r ON r.id = ur.role_id
+     JOIN users u ON u.id  = ur.user_id
+     WHERE ur.tenant_id = $1 AND ur.is_active = true
+     ORDER BY ur.assigned_at DESC`,
+      [tenantId],
+    );
   },
 };

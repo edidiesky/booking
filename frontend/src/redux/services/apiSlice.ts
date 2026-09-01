@@ -29,6 +29,7 @@ export const apiSlice = createApi({
     "Audit",
     "AuditEvent",
     "Notification",
+    "Invitation",
   ],
   endpoints: () => ({}),
 });

@@ -10,7 +10,10 @@ const MIGRATIONS_ADVISORY_LOCK_KEY = 8934221;
 
 const SQL_DIR = path.join(__dirname, "sql");
 
-const STANDALONE_MIGRATIONS = new Set(["038_audit_action_add_exported.sql"]);
+const STANDALONE_MIGRATIONS = new Set([
+  "038_audit_action_add_exported.sql",
+  "050_notification_type_add_invitation.sql",
+]);
 
 function loadMigrationFiles(): { filename: string; sql: string }[] {
   const files = fs
@@ -37,7 +40,9 @@ export async function runMigrations(): Promise<void> {
   const client = await pool.connect();
 
   try {
-    await client.query("SELECT pg_advisory_lock($1)", [MIGRATIONS_ADVISORY_LOCK_KEY]);
+    await client.query("SELECT pg_advisory_lock($1)", [
+      MIGRATIONS_ADVISORY_LOCK_KEY,
+    ]);
 
     await ensureMigrationsTable();
     const appliedRows = await client.query<{ filename: string }>(
@@ -100,7 +105,9 @@ export async function runMigrations(): Promise<void> {
       totalMigrations: all.length,
     });
   } finally {
-    await client.query("SELECT pg_advisory_unlock($1)", [MIGRATIONS_ADVISORY_LOCK_KEY]);
+    await client.query("SELECT pg_advisory_unlock($1)", [
+      MIGRATIONS_ADVISORY_LOCK_KEY,
+    ]);
     client.release();
   }
 }

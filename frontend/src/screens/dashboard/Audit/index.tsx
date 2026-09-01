@@ -1,37 +1,51 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useListAuditEventsQuery } from "@/redux/services/auditEventApi";
 import AuditLogTable from "./AuditLogTable";
 import AuditLogDetailModal from "./AuditLogDetailModal";
 import AuditLogFilters from "./AuditLogFilters";
 import type { AuditEvent, AuditEventFilters } from "./types";
+import Title from "@/components/dashboard/common/Title";
 
 export default function DashboardAudit() {
-  const [filters, setFilters] = useState<AuditEventFilters>({ page: 1, limit: 50 });
+  const [filters, setFilters] = useState<AuditEventFilters>({
+    page: 1,
+    limit: 50,
+  });
   const [selected, setSelected] = useState<AuditEvent | null>(null);
   const { data: events = [], isLoading } = useListAuditEventsQuery(filters);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="w-full p-6 lg:p-10 flex flex-col gap-6"
-    >
-      <div>
-        <h1 className="text-lg font-semibold">Audit log</h1>
-        <p className="text-xs text-muted-foreground mt-1">
-          Every action taken on this tenant, who did it, what changed, and whether it was allowed.
-        </p>
-      </div>
+    <>
+      <AnimatePresence>
+        {selected && (
+          <AuditLogDetailModal
+            event={selected}
+            onClose={() => setSelected(null)}
+          />
+        )}
+      </AnimatePresence>
 
-      <AuditLogFilters filters={filters} onChange={setFilters} />
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+      >
+        <Title
+          title={`Audit log`}
+          description="Every action taken on this tenant, who did it, what changed, and whether it was allowed."
+        />
 
-      <div className="border rounded-lg overflow-hidden">
-        <AuditLogTable events={events} isLoading={isLoading} onSelect={setSelected} />
-      </div>
+        <AuditLogFilters filters={filters} onChange={setFilters} />
 
-      <AuditLogDetailModal event={selected} onClose={() => setSelected(null)} />
-    </motion.div>
+        <AuditLogTable
+          events={events}
+          isLoading={isLoading}
+          search={filters.action ?? ""}
+          onSelect={setSelected}
+        />
+      </motion.div>
+    </>
   );
 }

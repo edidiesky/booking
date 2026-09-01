@@ -15,6 +15,17 @@ import type {
   LoginResponse,
 } from "@/types/api";
 
+type SetupTwoFactorResponse = {
+  success: boolean;
+  data: { secret: string; qrCodeDataUrl: string };
+};
+
+type VerifyEnableTwoFactorResponse = {
+  success: boolean;
+  message: string;
+  data: { backupCodes: string[] };
+};
+
 export const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     initiateOnboarding: builder.mutation<
@@ -63,7 +74,22 @@ export const authApi = apiSlice.injectEndpoints({
     }),
 
     login: builder.mutation<LoginResponse, LoginPayload>({
-      query: (body) => ({ url: `${AUTH_URL}/login`, method: "POST", body }),
+      query: (body) => ({
+        url: `${AUTH_URL}/login`,
+        method: "POST",
+        body,
+      }),
+    }),
+
+    verifyLoginEmailOtp: builder.mutation<
+      AuthTokens,
+      { email: string; code: string }
+    >({
+      query: (body) => ({
+        url: `${AUTH_URL}/login/verify-email-otp`,
+        method: "POST",
+        body,
+      }),
     }),
 
     verifyTwoFactorLogin: builder.mutation<
@@ -77,15 +103,15 @@ export const authApi = apiSlice.injectEndpoints({
       }),
     }),
 
-    setupTwoFactor: builder.mutation<
-      { success: boolean; data: { secret: string; qrCodeDataUrl: string } },
-      void
-    >({
-      query: () => ({ url: `${AUTH_URL}/2fa/setup`, method: "POST" }),
+    setupTwoFactor: builder.mutation<SetupTwoFactorResponse, void>({
+      query: () => ({
+        url: `${AUTH_URL}/2fa/setup`,
+        method: "POST",
+      }),
     }),
 
     verifyEnableTwoFactor: builder.mutation<
-      { success: boolean; message: string; data: { backupCodes: string[] } },
+      VerifyEnableTwoFactorResponse,
       { token: string }
     >({
       query: (body) => ({
@@ -120,12 +146,22 @@ export const authApi = apiSlice.injectEndpoints({
       Pick<AuthTokens["data"], "accessToken">,
       RefreshPayload
     >({
-      query: (body) => ({ url: `${AUTH_URL}/refresh`, method: "POST", body }),
+      query: (body) => ({
+        url: `${AUTH_URL}/refresh`,
+        method: "POST",
+        body,
+      }),
     }),
+
     logout: builder.mutation<ApiSuccessResponse, LogoutPayload>({
-      query: (body) => ({ url: `${AUTH_URL}/logout`, method: "POST", body }),
+      query: (body) => ({
+        url: `${AUTH_URL}/logout`,
+        method: "POST",
+        body,
+      }),
       invalidatesTags: ["Auth", "Booking", "Payment"],
     }),
+
     requestPasswordReset: builder.mutation<
       ApiSuccessResponse,
       { email: string }
@@ -158,22 +194,13 @@ export const authApi = apiSlice.injectEndpoints({
         body,
       }),
     }),
+
     googleOAuthLogin: builder.mutation<
       AuthTokens,
       { code: string; codeVerifier: string }
     >({
       query: (body) => ({
         url: `${AUTH_URL}/oauth/google`,
-        method: "POST",
-        body,
-      }),
-    }),
-    verifyLoginEmailOtp: builder.mutation<
-      AuthTokens,
-      { email: string; code: string }
-    >({
-      query: (body) => ({
-        url: `${AUTH_URL}/login/verify-email-otp`,
         method: "POST",
         body,
       }),
@@ -188,14 +215,16 @@ export const {
   useRegisterGuestMutation,
   useRegisterHostMutation,
   useLoginMutation,
+  useVerifyLoginEmailOtpMutation,
+  useVerifyTwoFactorLoginMutation,
+  useSetupTwoFactorMutation,
+  useVerifyEnableTwoFactorMutation,
+  useDisableTwoFactorMutation,
+  useGetMeQuery,
   useRefreshMutation,
   useLogoutMutation,
-  useGetMeQuery,
   useRequestPasswordResetMutation,
   useConfirmPasswordResetMutation,
   useChangePasswordMutation,
-  useVerifyTwoFactorLoginMutation,
   useGoogleOAuthLoginMutation,
-  useDisableTwoFactorMutation,
-  useVerifyLoginEmailOtpMutation,
 } = authApi;

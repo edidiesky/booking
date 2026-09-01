@@ -29,7 +29,7 @@ export default function Drawer({
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e6e3]">
           <div>
-            <p className="text-xs lg:text-[13px]     text-[#17191c]">{title}</p>
+            <p className="text-base  text-[#17191c]">{title}</p>
             {subtitle && (
               <p className="text-xs lg:text-[13px]     text-[#777b86] mt-0.5">{subtitle}</p>
             )}

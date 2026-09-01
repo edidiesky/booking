@@ -1,28 +1,80 @@
 import { useState } from "react";
-import { UserPlus, Trash2 } from "lucide-react";
-import Title from "@/components/dashboard/common/Title";
+import {
+  UserPlus,
+  ShieldCheck,
+  KeyRound,
+  UserCog,
+  Trash2,
+  Filter,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import AssignRoleModal from "../AssignRoleModal";
+import InviteMemberModal from "../InviteMemberModal";
 import { useRoles } from "../hooks/useRoles";
 import { EmptyState } from "@/components/common/EmptyState";
-
-const ROLE_COLORS: Record<string, { bg: string; color: string }> = {
-  "host:admin": { bg: "#dbeafe", color: "#1d4ed8" },
-  "host:staff": { bg: "#dcfce7", color: "#166534" },
-  "host:inspector": { bg: "#fef3c7", color: "#92400e" },
-};
+import RowActionsMenu from "@/components/common/RowActionsMenu";
+import type { UserRoleAssignment } from "@/types/api";
 
 const HEADERS = [
-  "User ID",
+  "",
+  "Name",
+  "Email",
   "Role",
-  "Assigned By",
-  "Assigned At",
-  "Status",
-  "Actions",
+  "Last Login",
+  "2FA Status",
+  "Action",
 ];
 
-export default function TeamManagementTab() {
+interface Props {
+  onManageRoles?: () => void;
+}
+
+function initials(first?: string, last?: string, email?: string) {
+  if (first || last) {
+    return `${(first?.[0] ?? "").toUpperCase()}${(last?.[0] ?? "").toUpperCase()}` || "?";
+  }
+  return (email?.[0] ?? "?").toUpperCase();
+}
+
+function avatarColor(seed: string) {
+  const palette = [
+    "#dbeafe",
+    "#fce7f3",
+    "#dcfce7",
+    "#fef3c7",
+    "#ede9fe",
+    "#ffedd5",
+  ];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash + seed.charCodeAt(i) * 17) % palette.length;
+  }
+  return palette[hash];
+}
+
+function TwoFactorBadge({ enabled }: { enabled?: boolean }) {
+  if (enabled) {
+    return (
+      <span className="inline-flex items-center gap-1.5 text-xs lg:text-[13px] font-medium text-green-700">
+        <CheckCircle2 size={14} className="text-green-600" />
+        Enabled
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1.5 text-xs lg:text-[13px] font-medium text-amber-700">
+      <AlertCircle size={14} className="text-amber-500" />
+      Disabled
+    </span>
+  );
+}
+
+export default function TeamManagementTab({ onManageRoles }: Props) {
   const [showAssign, setShowAssign] = useState(false);
+  const [showInvite, setShowInvite] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const {
     assignments,
@@ -33,37 +85,112 @@ export default function TeamManagementTab() {
     handleAssign,
     assigning,
     handleRevoke,
-    revoking,
+    handleInvite,
+    inviting,
   } = useRoles();
+
+  const allSelected =
+    assignments.length > 0 && selected.size === assignments.length;
+
+  const toggleAll = () => {
+    if (allSelected) setSelected(new Set());
+    else setSelected(new Set(assignments.map((a) => a.userId)));
+  };
+
+  const toggleOne = (userId: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(userId)) next.delete(userId);
+      else next.add(userId);
+      return next;
+    });
+  };
+
+  const rowActions = (a: UserRoleAssignment) => [
+    {
+      label: "Enforce 2FA",
+      icon: ShieldCheck,
+      onClick: () => {
+        /* reserved */
+      },
+    },
+    {
+      label: "Reset Password",
+      icon: KeyRound,
+      onClick: () => {
+        /* reserved */
+      },
+    },
+    {
+      label: "Change role",
+      icon: UserCog,
+      onClick: () => setShowAssign(true),
+      separator: true,
+    },
+    {
+      label: "Remove admin",
+      icon: Trash2,
+      onClick: () => handleRevoke(a.userId),
+      variant: "danger" as const,
+    },
+  ];
+
+  const displayName = (a: UserRoleAssignment) => {
+    const name = [a.firstName, a.lastName].filter(Boolean).join(" ").trim();
+    return name || a.email || a.userId;
+  };
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-start justify-between gap-4">
-        <Title
-          title="Team Management"
-          description="Assign roles to the people on your team."
-        />
-        <button
-          onClick={() => setShowAssign(true)}
-          className="flex items-center gap-2 h-9 px-4 rounded-full text-xs lg:text-[13px]   transition-opacity hover:opacity-80 shrink-0"
-          style={{
-            backgroundColor: "var(--color-ink)",
-            color: "var(--color-canvas)",
-          }}
-        >
-          <UserPlus size={14} />
-          Assign Role
-        </button>
-      </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <input
+            type="text"
+            placeholder="Search members"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-9 px-3 text-xs lg:text-[13px] border rounded-lg outline-none w-full sm:w-64"
+            style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
+          />
+          <button
+            type="button"
+            className="h-9 px-3 rounded-lg border text-xs lg:text-[13px] inline-flex items-center gap-1.5 shrink-0 hover:bg-[#fafaf9]"
+            style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
+          >
+            <Filter size={14} />
+            Filter
+          </button>
+        </div>
 
-      <input
-        type="text"
-        placeholder="Search by user ID or role..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="h-9 px-3 text-xs lg:text-[13px]     border rounded-lg outline-none w-64"
-        style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
-      />
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          <button
+            type="button"
+            className="h-9 px-3 rounded-lg border text-xs lg:text-[13px] inline-flex items-center gap-1.5 hover:bg-[#fafaf9]"
+            style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
+          >
+            <ShieldCheck size={14} />
+            Enforce 2FA
+          </button>
+          <button
+            type="button"
+            onClick={onManageRoles}
+            className="h-9 px-3 rounded-lg border text-xs lg:text-[13px] inline-flex items-center gap-1.5 hover:bg-[#fafaf9]"
+            style={{ borderColor: "var(--color-fog)", color: "var(--color-ink)" }}
+          >
+            <UserCog size={14} />
+            Manage roles
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowInvite(true)}
+            className="h-9 px-4 rounded-lg text-xs lg:text-[13px] text-white inline-flex items-center gap-1.5 transition-opacity hover:opacity-90"
+            style={{ backgroundColor: "#6d28d9" }}
+          >
+            <UserPlus size={14} />
+            Invite member
+          </button>
+        </div>
+      </div>
 
       <div
         className="border rounded-xl overflow-x-auto"
@@ -71,31 +198,38 @@ export default function TeamManagementTab() {
       >
         <table className="w-full text-xs">
           <thead>
-            <tr
-              className="border-b"
-              style={{ borderColor: "var(--color-fog)" }}
-            >
-              {HEADERS.map((h) => (
+            <tr className="border-b" style={{ borderColor: "var(--color-fog)" }}>
+              {HEADERS.map((h, i) => (
                 <th
-                  key={h}
-                  className="px-5 py-3 text-left text-xs lg:text-xsuppercase whitespace-nowrap"
+                  key={h || `h-${i}`}
+                  className="px-4 py-3 text-left text-xs font-medium whitespace-nowrap"
                   style={{ color: "var(--color-muted-stone)" }}
                 >
-                  {h}
+                  {i === 0 ? (
+                    <input
+                      type="checkbox"
+                      checked={allSelected}
+                      onChange={toggleAll}
+                      className="rounded border-gray-300"
+                      aria-label="Select all"
+                    />
+                  ) : (
+                    h
+                  )}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
-              Array.from({ length: 4 }).map((_, i) => (
+              Array.from({ length: 5 }).map((_, i) => (
                 <tr
                   key={i}
                   className="border-b"
                   style={{ borderColor: "var(--color-fog)" }}
                 >
-                  {HEADERS.map((h) => (
-                    <td key={h} className="px-5 py-4">
+                  {HEADERS.map((h, j) => (
+                    <td key={h || `s-${j}`} className="px-4 py-4">
                       <div
                         className="h-4 rounded animate-pulse"
                         style={{ backgroundColor: "#f2f0ed", width: "70%" }}
@@ -106,76 +240,85 @@ export default function TeamManagementTab() {
               ))
             ) : assignments.length === 0 ? (
               <tr>
-                <td
-                  colSpan={6}
-                  className="px-5 py-12 text-center text-xs"
-                  style={{ color: "var(--color-muted-stone)" }}
-                >
+                <td colSpan={HEADERS.length} className="px-5 py-12">
                   <EmptyState
-                    title="Teams"
-                    description={`No role assignments yet. Click "Assign Role" to add a team member.`}
+                    title="No team members"
+                    description='Invite a teammate with “Invite member” or assign a role to an existing user.'
                   />
                 </td>
               </tr>
             ) : (
               assignments.map((a) => {
-                const cfg = ROLE_COLORS[a.roleSlug] ?? {
-                  bg: "#f2f0ed",
-                  color: "#4c4c4c",
-                };
+                const name = displayName(a);
+                const seed = a.email || a.userId;
                 return (
                   <tr
                     key={a.id}
                     className="border-b last:border-0 transition-colors hover:bg-[#fafaf9]"
                     style={{ borderColor: "var(--color-fog)" }}
                   >
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selected.has(a.userId)}
+                        onChange={() => toggleOne(a.userId)}
+                        className="rounded border-gray-300"
+                        aria-label={`Select ${name}`}
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        {a.profileImage ? (
+                          <img
+                            src={a.profileImage}
+                            alt=""
+                            className="w-8 h-8 rounded-full object-cover shrink-0"
+                          />
+                        ) : (
+                          <div
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold shrink-0"
+                            style={{
+                              backgroundColor: avatarColor(seed),
+                              color: "#374151",
+                            }}
+                          >
+                            {initials(a.firstName, a.lastName, a.email)}
+                          </div>
+                        )}
+                        <span
+                          className="text-xs lg:text-[13px] font-medium truncate"
+                          style={{ color: "var(--color-ink)" }}
+                        >
+                          {name}
+                        </span>
+                      </div>
+                    </td>
                     <td
-                      className="px-5 py-3 text-xs lg:text-[13px]   font-mono"
+                      className="px-4 py-3 text-xs lg:text-[13px] whitespace-nowrap"
                       style={{ color: "var(--color-muted-stone)" }}
                     >
-                      {a.userId}
+                      {a.email ?? "—"}
                     </td>
-                    <td className="px-5 py-3">
+                    <td className="px-4 py-3">
                       <span
-                        className="text-xs lg:text-[13px]   px-2.5 py-1 rounded-full font-medium"
-                        style={{ backgroundColor: cfg.bg, color: cfg.color }}
+                        className="inline-flex items-center gap-1 text-xs lg:text-[13px]"
+                        style={{ color: "var(--color-ink)" }}
                       >
+                        <ShieldCheck size={13} className="text-[#777b86]" />
                         {a.roleName}
                       </span>
                     </td>
                     <td
-                      className="px-5 py-3 text-xs"
+                      className="px-4 py-3 text-xs lg:text-[13px] whitespace-nowrap"
                       style={{ color: "var(--color-muted-stone)" }}
                     >
-                      {a.assignedBy}
+                      {a.lastActiveAt ? formatDate(a.lastActiveAt) : "—"}
                     </td>
-                    <td
-                      className="px-5 py-3 text-xs lg:text-[13px]     whitespace-nowrap"
-                      style={{ color: "var(--color-muted-stone)" }}
-                    >
-                      {formatDate(a.assignedAt)}
+                    <td className="px-4 py-3">
+                      <TwoFactorBadge enabled={a.twoFactorEnabled} />
                     </td>
-                    <td className="px-5 py-3">
-                      <span
-                        className={`text-xs lg:text-[13px]   px-2.5 py-1 rounded-full font-medium ${
-                          a.isActive
-                            ? "bg-green-50 text-green-700"
-                            : "bg-red-50 text-red-700"
-                        }`}
-                      >
-                        {a.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3">
-                      <button
-                        onClick={() => handleRevoke(a.userId)}
-                        disabled={revoking}
-                        className="p-1.5 rounded-lg transition-opacity hover:opacity-70 disabled:opacity-30"
-                        style={{ color: "#dc2626" }}
-                        title="Revoke role"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                    <td className="px-4 py-3">
+                      <RowActionsMenu actions={rowActions(a)} />
                     </td>
                   </tr>
                 );
@@ -191,6 +334,15 @@ export default function TeamManagementTab() {
           onClose={() => setShowAssign(false)}
           onSubmit={handleAssign}
           isSaving={assigning}
+        />
+      )}
+
+      {showInvite && (
+        <InviteMemberModal
+          roles={roles}
+          onClose={() => setShowInvite(false)}
+          onSubmit={handleInvite}
+          isSaving={inviting}
         />
       )}
     </div>
