@@ -1,10 +1,5 @@
 import { useState, useMemo } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Building2,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Building2 } from "lucide-react";
 import {
   startOfMonth,
   endOfMonth,
@@ -23,22 +18,80 @@ import {
 import { Input } from "@/components/ui/input";
 import type { Booking } from "@/types/api";
 
-const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const WEEKDAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 /** Soft pastel chips — similar to the reference cards */
 const CARD_PALETTE = [
-  { bg: "#FFEDD5", border: "#FDBA74", text: "#9A3412", badgeBg: "#FED7AA", badgeText: "#C2410C" }, // orange
-  { bg: "#FEF9C3", border: "#FDE047", text: "#854D0E", badgeBg: "#FEF08A", badgeText: "#A16207" }, // yellow
-  { bg: "#F3E8FF", border: "#D8B4FE", text: "#6B21A8", badgeBg: "#E9D5FF", badgeText: "#7E22CE" }, // purple
-  { bg: "#E0E7FF", border: "#A5B4FC", text: "#3730A3", badgeBg: "#C7D2FE", badgeText: "#4338CA" }, // indigo
-  { bg: "#DCFCE7", border: "#86EFAC", text: "#166534", badgeBg: "#BBF7D0", badgeText: "#15803D" }, // green
-  { bg: "#E0F2FE", border: "#7DD3FC", text: "#075985", badgeBg: "#BAE6FD", badgeText: "#0369A1" }, // sky
-  { bg: "#FCE7F3", border: "#F9A8D4", text: "#9D174D", badgeBg: "#FBCFE8", badgeText: "#BE185D" }, // pink
+  {
+    bg: "#FFEDD5",
+    border: "#FDBA74",
+    text: "#9A3412",
+    pillBg: "#F97316",
+    pillText: "#FFFFFF",
+    iconBg: "#FED7AA",
+  }, // orange
+  {
+    bg: "#FEF9C3",
+    border: "#FDE047",
+    text: "#854D0E",
+    pillBg: "#EAB308",
+    pillText: "#FFFFFF",
+    iconBg: "#FEF08A",
+  }, // yellow
+  {
+    bg: "#F3E8FF",
+    border: "#D8B4FE",
+    text: "#6B21A8",
+    pillBg: "#A855F7",
+    pillText: "#FFFFFF",
+    iconBg: "#E9D5FF",
+  }, // purple
+  {
+    bg: "#E0E7FF",
+    border: "#A5B4FC",
+    text: "#3730A3",
+    pillBg: "#6366F1",
+    pillText: "#FFFFFF",
+    iconBg: "#C7D2FE",
+  }, // indigo
+  {
+    bg: "#DCFCE7",
+    border: "#86EFAC",
+    text: "#166534",
+    pillBg: "#22C55E",
+    pillText: "#FFFFFF",
+    iconBg: "#BBF7D0",
+  }, // green
+  {
+    bg: "#E0F2FE",
+    border: "#7DD3FC",
+    text: "#075985",
+    pillBg: "#0EA5E9",
+    pillText: "#FFFFFF",
+    iconBg: "#BAE6FD",
+  }, // sky
+  {
+    bg: "#FCE7F3",
+    border: "#F9A8D4",
+    text: "#9D174D",
+    pillBg: "#EC4899",
+    pillText: "#FFFFFF",
+    iconBg: "#FBCFE8",
+  }, // pink
 ];
 
 function cardStyleFor(id: string) {
   let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash + id.charCodeAt(i) * 17) % CARD_PALETTE.length;
+  for (let i = 0; i < id.length; i++)
+    hash = (hash + id.charCodeAt(i) * 17) % CARD_PALETTE.length;
   return CARD_PALETTE[hash]!;
 }
 
@@ -80,7 +133,9 @@ export default function BookingCalendarMonth({
       (b) =>
         b.bookingRef?.toLowerCase().includes(q) ||
         b.propertyName?.toLowerCase().includes(q) ||
-        `${b.guestFirstName ?? ""} ${b.guestLastName ?? ""}`.toLowerCase().includes(q),
+        `${b.guestFirstName ?? ""} ${b.guestLastName ?? ""}`
+          .toLowerCase()
+          .includes(q),
     );
   }, [safeBookings, search]);
 
@@ -113,7 +168,9 @@ export default function BookingCalendarMonth({
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-[#e8e6e3]">
           <div>
-            <h4 className="text-xl font-semibold text-[#17191c]">Accommodation</h4>
+            <h4 className="text-xl font-semibold text-[#17191c]">
+              Accommodation
+            </h4>
             <p className="text-xs text-[#a3a6af] mt-0.5">
               {format(startOfMonth(monthCursor), "MMM d")} –{" "}
               {format(endOfMonth(monthCursor), "MMM d, yyyy")}
@@ -249,8 +306,9 @@ export default function BookingCalendarMonth({
                   {dayBookings.slice(0, 2).map((b) => {
                     const palette = cardStyleFor(b.bookingId ?? b.bookingRef);
                     const guest =
-                      [b.guestFirstName, b.guestLastName].filter(Boolean).join(" ") ||
-                      b.bookingRef;
+                      [b.guestFirstName, b.guestLastName]
+                        .filter(Boolean)
+                        .join(" ") || b.bookingRef;
                     const range = `${format(parseDay(b.checkIn), "d MMM")} – ${format(
                       parseDay(b.checkOut),
                       "d MMM",
@@ -264,15 +322,23 @@ export default function BookingCalendarMonth({
                           e.stopPropagation();
                           onSelectBooking?.(b);
                         }}
-                        className="w-full text-left rounded-lg px-1.5 py-1 border transition-shadow hover:shadow-sm"
+                        className="w-full text-left rounded-xl px-1.5 py-1.5 border transition-shadow hover:shadow-sm"
                         style={{
                           backgroundColor: palette.bg,
                           borderColor: palette.border,
                           color: palette.text,
                         }}
                       >
-                        <div className="flex items-start gap-1">
-                          <Building2 size={11} className="mt-0.5 shrink-0 opacity-80" />
+                        <div className="flex items-start gap-1.5">
+                          <span
+                            className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-0.5"
+                            style={{ backgroundColor: palette.iconBg }}
+                          >
+                            <Building2
+                              size={9}
+                              style={{ color: palette.text }}
+                            />
+                          </span>
                           <div className="min-w-0 flex-1">
                             <p className="text-[10px] font-semibold truncate leading-tight">
                               {b.propertyName ?? "Property"}
@@ -280,15 +346,15 @@ export default function BookingCalendarMonth({
                             <p className="text-[10px] truncate opacity-90 leading-tight">
                               {guest}
                             </p>
-                            <div className="flex items-center justify-between gap-1 mt-0.5">
+                            <div className="flex items-center justify-between gap-1 mt-1">
                               <span className="text-[9px] opacity-80 truncate">
                                 {range}
                               </span>
                               <span
                                 className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
                                 style={{
-                                  backgroundColor: palette.badgeBg,
-                                  color: palette.badgeText,
+                                  backgroundColor: palette.pillBg,
+                                  color: palette.pillText,
                                 }}
                               >
                                 {statusLabel(b.status)}
@@ -325,7 +391,10 @@ export default function BookingCalendarMonth({
 function LegendDot({ color, label }: { color: string; label: string }) {
   return (
     <div className="flex items-center gap-1.5">
-      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+      <div
+        className="w-2.5 h-2.5 rounded-full"
+        style={{ backgroundColor: color }}
+      />
       <span className="text-xs text-[#777b86]">{label}</span>
     </div>
   );
