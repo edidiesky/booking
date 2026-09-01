@@ -305,20 +305,20 @@ export default function BookingCalendarMonth({
                           e.stopPropagation();
                           onSelectBooking?.(b);
                         }}
-                        className="w-full flex-1 text-left rounded-xl px-2 py-1.5 border transition-shadow hover:shadow-sm flex flex-col items-center justify-center min-h-0"
+                        className="w-full flex-1 text-left px-2 py-1.5 border transition-shadow hover:shadow-sm flex flex-col gap-3 items-center justify-center min-h-0"
                         style={{
                           backgroundColor: palette.bg,
                           borderColor: palette.border,
                           color: palette.text,
                         }}
                       >
-                        <div className="flex items-start gap-1.5 min-h-0">
+                        <div className="flex flex-col gap-1.5 min-h-0">
                           {/* Icon */}
                           <span
                             className="flex items-center justify-center shrink-0 mt-0.5"
                           >
                             <Building2
-                              size={13}
+                              size={16}
                               strokeWidth={2.2}
                               style={{ color: palette.text }}
                             />
