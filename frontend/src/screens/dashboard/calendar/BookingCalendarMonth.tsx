@@ -315,21 +315,20 @@ export default function BookingCalendarMonth({
                         <div className="flex items-start gap-1.5 min-h-0">
                           {/* Icon */}
                           <span
-                            className="w-5 h-5 rounded-md flex items-center justify-center shrink-0 mt-0.5"
-                            style={{ backgroundColor: palette.iconBg }}
+                            className="flex items-center justify-center shrink-0 mt-0.5"
                           >
                             <Building2
-                              size={11}
+                              size={13}
                               strokeWidth={2.2}
                               style={{ color: palette.text }}
                             />
                           </span>
 
-                          <div className="min-w-0 flex-1 overflow-hidden">
-                            <p className="text-[11px] font-semibold truncate leading-tight">
+                          <div className="min-w-0 flex-col gap-1 flex-1 overflow-hidden">
+                            <p className="text-[12px] font-semibold truncate leading-tight">
                               {b.propertyName ?? "Property"}
                             </p>
-                            <p className="text-[10px] truncate opacity-90 leading-tight mt-0.5">
+                            <p className="text-[12px] font-semibold truncate opacity-90 leading-tight">
                               {guest}
                             </p>
                           </div>
