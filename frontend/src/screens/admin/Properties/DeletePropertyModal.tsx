@@ -43,7 +43,7 @@ export default function DeletePropertyModal({ propertyId, propertyName, isOpen, 
           </div>
         </div>
 
-        <div className="w-full flex px-8 py-4 border-t border-[#e8e6e3] bg-white items-center justify-end gap-3">
+        <div className="w-full flex px-8 py-4 border-t rounded-b-2xl border-[#e8e6e3] bg-white items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
