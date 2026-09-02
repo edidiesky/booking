@@ -143,7 +143,7 @@ export default function About() {
           Everything you need
         </span>
         <h3
-          className="text-4xl lg:text-6xl mt-2 max-w-3xl"
+          className="text-4xl lg:text-5xl mt-2 max-w-3xl"
           style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
         >
           <AnimateTextWord type="bigtext">
@@ -175,7 +175,7 @@ export default function About() {
                 style={{ backgroundColor: card.color }}
               />
               <p
-                className="text-4xl lg:text-6xl  leading-none"
+                className="text-4xl lg:text-5xl  leading-none"
                 style={{ color: card.color }}
               >
                 {card.value}

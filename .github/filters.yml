@@ -25,4 +25,4 @@ shared:
   - 'packages/shared/**'
 
 
-# { "name": "gateway",                      "context": ".", "dockerfile": "gateway/Dockerfile",                              "compose_service": "gateway" },
+# { "name": "gateway",                      "context": ".", "dockerfile": "gateway/Dockerfile",                              "compose_service": "gateway" },  

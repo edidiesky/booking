@@ -14,13 +14,6 @@ import logger from "../utils/logger";
 // what makes RLS policies actually see the session variable instead of
 // silently filtering out everything on a fresh, unset connection.
 export async function beginTenantScopedTransaction(_req: Request, res: Response, tenantId: string): Promise<boolean> {
-  // Idempotent: if something upstream already set this up for the same
-  // request (subdomain-resolved tenantMiddleware running before an
-  // authenticated requireTenantMember, for instance), reuse it rather
-  // than checking out a second client, which would be wasteful and
-  // would silently overwrite the first client in context, leaving its
-  // transaction to finalize independently with nothing left routing
-  // queries through it.
   if (requestContext.get()?.dbClient) return true;
 
   const client = await checkoutClient();

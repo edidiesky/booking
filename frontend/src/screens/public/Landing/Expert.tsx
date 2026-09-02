@@ -62,7 +62,7 @@ export default function Expert() {
         <span className="text-base lg:text-xl uppercase" style={{ color: "var(--color-light-steel)" }}>
           Everything you need
         </span>
-        <h2 className="text-4xl lg:text-6xl mt-2 max-w-2xl" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
+        <h2 className="text-4xl lg:text-5xl mt-2 max-w-2xl" style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}>
           <AnimateTextWord type="bigtext">
             One platform. Every tool a real booking business needs.
           </AnimateTextWord>
