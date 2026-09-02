@@ -83,7 +83,7 @@ export default function Expert() {
                     >
                       <Icon size={14} /> {feature.tag}
                     </span>
-                    <h3 className="text-3xl lg:text-5xl leading-[1.4]" style={{ letterSpacing: "-0.66px" }}>
+                    <h3 className="text-3xl lg:text-4xl leading-[1.4]" style={{ letterSpacing: "-0.66px" }}>
                       {feature.title}
                     </h3>
                     <ul className="flex flex-col gap-3">
