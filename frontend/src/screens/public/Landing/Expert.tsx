@@ -71,7 +71,6 @@ export default function Expert() {
 
       <div ref={containerRef} className="card-stack mx-auto px-6 lg:px-8" style={{ maxWidth: "90rem" }}>
         {features.map((feature, i) => {
-          const Icon = feature.icon;
           return (
             <div key={i} className="card-stack__item shadow-sm bg-white border" style={{ color: feature.color }}>
               <div className="card-stack__item-inner">
@@ -79,9 +78,9 @@ export default function Expert() {
                   <div className="flex flex-col gap-6">
                     <span
                       className="text-base px-3 py-1.5 rounded-full w-fit flex items-center gap-2"
-                      style={{ backgroundColor: `${feature.color}14`, color: feature.color }}
+                      style={{ backgroundColor: `${feature.bg}`, color: feature.color }}
                     >
-                      <Icon size={14} /> {feature.tag}
+                      {feature.tag}
                     </span>
                     <h3 className="text-3xl lg:text-4xl leading-[1.4]" style={{ letterSpacing: "-0.66px" }}>
                       {feature.title}
