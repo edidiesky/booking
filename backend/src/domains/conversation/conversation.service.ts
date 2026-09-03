@@ -1,8 +1,5 @@
 import { withTransaction } from "@booking/shared";
-import {
-  conversationRepository,
-  type Conversation,
-} from "./conversation.repository";
+import { conversationRepository, type Conversation, type ConversationListRow } from "./conversation.repository";
 
 export const conversationService = {
   async startConversation(params: {
@@ -11,7 +8,7 @@ export const conversationService = {
     guestUserId: string;
     propertyId?: string;
     bookingId?: string;
-  }): Promise<Conversation> {
+  }): Promise<{ conversation: Conversation; wasCreated: boolean }> {
     return withTransaction((client) =>
       conversationRepository.findOrCreate(params, client),
     );
@@ -21,7 +18,7 @@ export const conversationService = {
     hostUserId: string,
     page: number,
     limit: number,
-  ): Promise<Conversation[]> {
+  ): Promise<ConversationListRow[]> {
     return conversationRepository.listForHost(hostUserId, page, limit);
   },
 
@@ -29,7 +26,7 @@ export const conversationService = {
     guestUserId: string,
     page: number,
     limit: number,
-  ): Promise<Conversation[]> {
+  ): Promise<ConversationListRow[]> {
     return conversationRepository.listForGuest(guestUserId, page, limit);
   },
 };

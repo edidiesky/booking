@@ -1,46 +1,99 @@
-import { useState, useCallback } from "react";
-import type { Conversation, ChatMessage } from "@/screens/dashboard/Messages/types";
-import { mockConversations, mockMessagesByConversation } from "@/mocks/messages";
+import { useCallback, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { selectCurrentUser, selectAccessToken } from "@/redux/slices/authSlice";
+import {
+  useListConversationsQuery,
+  useListMessagesQuery,
+  useMarkConversationReadMutation,
+} from "@/redux/services/messageApi";
+import { getSocket } from "@/lib/socketClient";
+import { apiSlice } from "@/redux/services/apiSlice";
+import type { ChatMessage } from "@/screens/dashboard/Messages/types";
 
-// Shape deliberately mirrors what useGetConversationsQuery() from a future
-// RTK Query messageApi.ts would return ({ data, isLoading }), so this hook
-// is swappable later without touching any component that consumes it.
 export function useConversations() {
-  const [conversations] = useState<Conversation[]>(mockConversations);
-  return { data: conversations, isLoading: false };
+  const currentUser = useSelector(selectCurrentUser);
+  const role = currentUser?.userType === "guest" ? "guest" : "host";
+  const { data, isLoading } = useListConversationsQuery(
+    { role, currentUserId: currentUser?.id ?? "" },
+    { skip: !currentUser },
+  );
+  return { data: data ?? [], isLoading };
 }
 
 export function useConversationMessages(conversationId: string | null) {
-  const [messagesByConversation, setMessagesByConversation] = useState(
-    mockMessagesByConversation,
-  );
+  const dispatch = useDispatch();
+  const currentUser = useSelector(selectCurrentUser);
+  const accessToken = useSelector(selectAccessToken);
+  const { data, isLoading } = useListMessagesQuery(conversationId!, {
+    skip: !conversationId,
+  });
+  const [markRead] = useMarkConversationReadMutation();
+  const joinedRef = useRef<string | null>(null);
 
-  const messages = conversationId
-    ? (messagesByConversation[conversationId] ?? [])
-    : [];
+  useEffect(() => {
+    if (!conversationId || !accessToken) return;
 
-  // Stand-in for a real send mutation. Optimistically appends locally;
-  // the real implementation posts to the backend and the message arrives
-  // back over the socket connection, this local-only version exists so
-  // the UI is demonstrable before that backend exists.
+    const socket = getSocket(accessToken);
+
+    if (joinedRef.current !== conversationId) {
+      socket.emit("join_conversation", conversationId);
+      joinedRef.current = conversationId;
+    }
+
+    const onNewMessage = (
+      message: ChatMessage & {
+        conversation_id?: string;
+        conversationId?: string;
+      },
+    ) => {
+      const belongsHere =
+        (message.conversationId ?? message.conversation_id) === conversationId;
+      if (!belongsHere) return;
+      dispatch(
+        apiSlice.util.invalidateTags([
+          { type: "Message", id: conversationId },
+          "Conversation",
+        ]),
+      );
+    };
+
+    const onRead = () => {
+      dispatch(
+        apiSlice.util.invalidateTags([{ type: "Message", id: conversationId }]),
+      );
+    };
+
+    socket.on("message:new", onNewMessage);
+    socket.on("message:read", onRead);
+
+    if (currentUser) markRead(conversationId).catch(() => {});
+
+    return () => {
+      socket.off("message:new", onNewMessage);
+      socket.off("message:read", onRead);
+    };
+  }, [conversationId, accessToken, currentUser, dispatch, markRead]);
+
   const sendMessage = useCallback(
     (body: string) => {
-      if (!conversationId || !body.trim()) return;
-      const optimistic: ChatMessage = {
-        id: `local-${Date.now()}`,
-        conversationId,
-        senderId: "me",
-        body,
-        sentAt: new Date().toISOString(),
-        status: "sending",
-      };
-      setMessagesByConversation((prev) => ({
-        ...prev,
-        [conversationId]: [...(prev[conversationId] ?? []), optimistic],
-      }));
+      if (!conversationId || !body.trim() || !accessToken) return;
+      const socket = getSocket(accessToken);
+      socket.emit("send_message", { conversationId, body }, () => {
+        dispatch(
+          apiSlice.util.invalidateTags([
+            { type: "Message", id: conversationId },
+            "Conversation",
+          ]),
+        );
+      });
     },
-    [conversationId],
+    [conversationId, accessToken, dispatch],
   );
 
-  return { data: messages, isLoading: false, sendMessage };
+  const emitTyping = useCallback(() => {
+    if (!conversationId || !accessToken) return;
+    getSocket(accessToken).emit("typing", conversationId);
+  }, [conversationId, accessToken]);
+
+  return { data: data ?? [], isLoading, sendMessage, emitTyping };
 }
