@@ -16,6 +16,7 @@ import {
   stopBookingExpiryScheduler,
   stopBookingExpiryReconciliation,
 } from "./bootstrap";
+import { stopSocketServer } from "../realtime/socketServer";
 
 export function registerShutdownHooks(server: http.Server): void {
   const shutdown = async (signal: string): Promise<void> => {
@@ -24,7 +25,7 @@ export function registerShutdownHooks(server: http.Server): void {
 
     server.close(async () => {
       try {
-        // await stopSocketServer();
+        await stopSocketServer();
         stopOutboxPoller();
         stopWebhookRetryWorker();
 

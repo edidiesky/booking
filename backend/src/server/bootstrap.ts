@@ -1,5 +1,6 @@
 import logger from "../utils/logger";
 import redisClient from "../config/redis";
+import http from 'http'
 import {
   connectDB,
   connectRedis,
@@ -13,7 +14,6 @@ import { startOutboxPoller } from "../messaging/outboxPoller";
 import { startSseFanoutWorker } from "../messaging/workers/sseFanoutWorker";
 import { startNotificationWorker } from "../messaging/workers/notificationWorker";
 import { startWebhookRetryWorker } from "../messaging/workers/webhookRetryWorker";
-// import { startSocketServer }       from "../realtime/socketServer";
 import { serverHealthGauge, trackError } from "../utils/metrics";
 import { seedService } from "../domains/role/seed.service";
 import { runMigrations } from "../migrations/runner";
@@ -34,6 +34,7 @@ import {
   startBookingExpiryReconciliation,
   stopBookingExpiryReconciliation,
 } from "@booking/booking-expiry-worker/dist/reconciliation";
+import { startSocketServer } from "../realtime/socketServer";
 
 const CAMPAIGN_TICK_MS = 3_000;
 
@@ -75,7 +76,7 @@ async function runStep(step: InitStep): Promise<void> {
   }
 }
 
-export async function bootstrapServer(): Promise<void> {
+export async function bootstrapServer(httpServer:http.Server): Promise<void> {
   const steps: InitStep[] = [
     { name: "postgres", fn: connectDB },
     {
@@ -147,7 +148,7 @@ export async function bootstrapServer(): Promise<void> {
       },
     },
 
-    // { name: "socket_server",        fn: async () => { await startSocketServer(httpServer); } },
+    { name: "socket_server",        fn: async () => { await startSocketServer(httpServer); } },
   ];
 
   const start = process.hrtime.bigint();

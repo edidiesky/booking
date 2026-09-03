@@ -40,6 +40,8 @@ import invitationRoutes from "./domains/invitation/invitation.routes";
 import redisClient from "./config/redis";
 import { logger, query } from "@booking/shared";
 import propertySearchRoutes from "./domains/property-search/propertySearch.routes";
+import conversationRoutes from "./domains/conversation/conversation.routes";
+import messageRoutes from "./domains/message/message.routes";
 // import discoveryRoutes from "./domains/property-search/discovery.routes";
 const app = express();
 
@@ -115,6 +117,8 @@ app.use("/api/v1/favorites", favoriteRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/invitations", invitationRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/conversations", tenantMiddleware, rlsMiddleware, conversationRoutes);
+app.use("/api/v1/conversations", tenantMiddleware, rlsMiddleware, messageRoutes);
 // adminRoutes
 
 app.use(NotFound);
