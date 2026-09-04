@@ -1,131 +1,355 @@
+/**
+ * Critical path unit tests
+ */
 import { describe, it, expect, jest, beforeEach } from "@jest/globals";
-import { PROPERTY_ID as _unused, TENANT_ID } from "../../setup/fixtures";
+import {
+  paymentService,
+  type InitializePaymentInput,
+  type InitializePaymentResult,
+} from "../../../domains/payment/payment.service";
+import {
+  paymentRepository,
+  type Payment,
+} from "../../../domains/payment/payment.repository";
+import {
+  bookingRepository,
+  type Booking,
+} from "../../../domains/booking/booking.repository";
+import {
+  idempotencyRepository,
+  IdempotencyConflictError,
+} from "../../../domains/idempotency/idempotency.repository";
+import type {
+  BookingStatus,
+  PaymentGateway,
+  PaymentStatus,
+} from "../../../types";
+import type { PoolClient } from "pg";
+import { expectAppError } from "../../helpers/expectAppError";
 
-jest.mock("@booking/shared", () => ({ query: jest.fn(), queryOne: jest.fn() }));
-jest.mock("../../utils/metrics", () => ({ trackError: jest.fn() }));
-jest.mock("../../context/requestContext", () => ({
-  requestContext: { get: jest.fn(() => undefined) },
+jest.mock("../../../domains/payment/payment.repository");
+jest.mock("../../../domains/booking/booking.repository");
+
+jest.mock("../../../domains/idempotency/idempotency.repository", () => {
+  class IdempotencyConflictError extends Error {
+    constructor(message: string) {
+      super(message);
+      this.name = "IdempotencyConflictError";
+    }
+  }
+  return {
+    IdempotencyConflictError,
+    idempotencyRepository: {
+      buildHash: jest.fn(() => "hash-1"),
+      claim: jest.fn(),
+      find: jest.fn(),
+      markCompleted: jest.fn().mockResolvedValue(undefined as never),
+      markFailed: jest.fn().mockResolvedValue(undefined as never),
+    },
+  };
+});
+
+jest.mock("../../../domains/outbox/outbox.repository", () => ({
+  outboxRepository: { create: jest.fn().mockResolvedValue(undefined as never) },
 }));
-jest.mock("../../utils/logger", () => ({
+jest.mock("../../../domains/audit/audit.repository", () => ({
+  auditRepository: { log: jest.fn().mockResolvedValue(undefined as never) },
+}));
+jest.mock("../../../domains/audit/auditEvent.repository", () => ({
+  auditEventRepository: {
+    record: jest.fn().mockResolvedValue(undefined as never),
+  },
+}));
+jest.mock("../../../domains/auth/auth.repository", () => ({
+  userRepository: { findById: jest.fn() },
+}));
+
+jest.mock("../../../strategies", () => ({
+  paymentStrategies: { getAdapter: jest.fn() },
+}));
+jest.mock("@booking/shared", () => ({
+  withTransaction: jest.fn(async (fn: (client: object) => Promise<unknown>) =>
+    fn({}),
+  ),
+}));
+jest.mock("../../../utils/requestCoalescer", () => ({
+  requestCoalescer: {
+    coalesce: jest.fn((_key: string, fn: () => Promise<unknown>) => fn()),
+  },
+}));
+jest.mock("../../../utils/metrics", () => ({
+  paymentInitializedCounter: { inc: jest.fn() },
+  webhookProcessedCounter: { inc: jest.fn() },
+  trackError: jest.fn(),
+}));
+jest.mock("../../../messaging/publisher", () => ({
+  publishNotifyPaymentConfirmed: jest
+    .fn()
+    .mockResolvedValue(undefined as never),
+  publishNotifyPaymentFailed: jest.fn().mockResolvedValue(undefined as never),
+}));
+jest.mock("../../../utils/logger", () => ({
   __esModule: true,
   default: { info: jest.fn(), error: jest.fn(), warn: jest.fn() },
 }));
+jest.mock("../../../context/requestContext", () => ({
+  requestContext: { get: jest.fn().mockReturnValue({ requestId: "req-1" }) },
+}));
+jest.mock("uuid", () => ({ v4: jest.fn(() => "uuid-1") }));
 
-import { query, queryOne } from "@booking/shared";
-import { trackError } from "../../../utils/metrics";
-import { paymentRepository } from "../../../domains/payment/payment.repository";
+const mockedPaymentRepo = paymentRepository as jest.Mocked<
+  typeof paymentRepository
+>;
+const mockedBookingRepo = bookingRepository as jest.Mocked<
+  typeof bookingRepository
+>;
+const mockedIdempotency = idempotencyRepository as jest.Mocked<
+  typeof idempotencyRepository
+>;
 
-const mockQuery      = query      as jest.MockedFunction<typeof query>;
-const mockQueryOne   = queryOne   as jest.MockedFunction<typeof queryOne>;
-const mockTrackError = trackError as jest.MockedFunction<typeof trackError>;
+interface GatewayProcessResult {
+  success: boolean;
+  transactionId: string;
+  redirectUrl: string;
+  message: string;
+}
 
-function makePaymentRow(overrides: Record<string, unknown> = {}) {
+interface GatewayAdapter {
+  process: (input: Record<string, unknown>) => Promise<GatewayProcessResult>;
+}
+
+const { paymentStrategies } = jest.requireMock("../../../strategies") as {
+  paymentStrategies: {
+    getAdapter: jest.MockedFunction<() => GatewayAdapter>;
+  };
+};
+
+function makeBooking(overrides: Partial<Booking> = {}): Booking {
   return {
-    id: "payment-1", booking_id: "booking-1", tenant_id: TENANT_ID,
-    guest_user_id: "guest-1", gateway: "paystack", amount_ngn: 50000,
-    status: "pending", idempotency_key: "idem-1", metadata: {},
-    created_at: new Date(), updated_at: new Date(),
+    id: "booking-1",
+    booking_ref: "BK-001",
+    tenant_id: "tenant-1",
+    property_id: "prop-1",
+    guest_email: "essien@gmail.com",
+    guestEmail: "essien@gmail.com",
+    room_type_id: "rt-1",
+    guest_user_id: "guest-1",
+    rooms_count: 1,
+    check_in: "2026-09-10",
+    check_out: "2026-09-12",
+    nights: 2,
+    guest_count: 2,
+    total_amount_ngn: 50000,
+    platform_fee_ngn: 5000,
+    host_payout_ngn: 45000,
+    status: "pending_payment" as BookingStatus,
+    metadata: {},
+    created_at: new Date(),
+    updated_at: new Date(),
+    receipt_url: "",
+    tenant_email: "host@test.com",
     ...overrides,
   };
 }
 
-describe("paymentRepository", () => {
-  beforeEach(() => {jest.clearAllMocks()});
+function makePayment(overrides: Partial<Payment> = {}): Payment {
+  return {
+    id: "payment-1",
+    booking_id: "booking-1",
+    tenant_id: "tenant-1",
+    guest_user_id: "guest-1",
+    gateway: "paystack" as PaymentGateway,
+    amount_ngn: 50000,
+    status: "pending" as PaymentStatus,
+    idempotency_key: "pay:booking-1:paystack",
+    metadata: {},
+    created_at: new Date(),
+    updated_at: new Date(),
+    ...overrides,
+  };
+}
 
-  describe("create", () => {
-    it("inserts with a stringified metadata JSON payload", async () => {
-      mockQueryOne.mockResolvedValue(makePaymentRow() as never);
+const validInput: InitializePaymentInput = {
+  bookingId: "booking-1",
+  guestUserId: "guest-1",
+  email: "guest@test.com",
+  gateway: "paystack",
+  callbackUrl: "https://app.test/callback",
+};
 
-      await paymentRepository.create({
-        bookingId: "booking-1", tenantId: TENANT_ID, guestUserId: "guest-1",
-        gateway: "paystack", amountNgn: 50000, idempotencyKey: "idem-1",
-        metadata: { foo: "bar" },
-      });
+describe("PaymentService – critical paths", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedIdempotency.claim.mockResolvedValue({ id: "claim-1" } as never);
+    mockedIdempotency.buildHash.mockReturnValue("hash-1");
+  });
 
-      const [, params] = mockQueryOne.mock.calls[0] as [string, unknown[]];
-      expect(params).toContain(JSON.stringify({ foo: "bar" }));
+  describe("initializePayment", () => {
+    it("rejects when email is missing", async () => {
+      await expectAppError(
+        paymentService.initializePayment({ ...validInput, email: "   " }),
+        400,
+        /email/i,
+      );
     });
 
-    it("defaults metadata to an empty object when not provided", async () => {
-      mockQueryOne.mockResolvedValue(makePaymentRow() as never);
-
-      await paymentRepository.create({
-        bookingId: "booking-1", tenantId: TENANT_ID, guestUserId: "guest-1",
-        gateway: "paystack", amountNgn: 50000, idempotencyKey: "idem-1",
-      });
-
-      const [, params] = mockQueryOne.mock.calls[0] as [string, unknown[]];
-      expect(params).toContain("{}");
+    it("rejects when booking does not exist", async () => {
+      mockedBookingRepo.findById.mockResolvedValue(null);
+      await expectAppError(paymentService.initializePayment(validInput), 404);
     });
 
-    it("uses the transaction client directly when provided, bypasses queryOne", async () => {
-      const mockClient = { query: jest.fn().mockResolvedValue({ rows: [makePaymentRow()] }) };
+    it("rejects when caller is not the booking guest", async () => {
+      mockedBookingRepo.findById.mockResolvedValue(
+        makeBooking({ guest_user_id: "other-guest" }),
+      );
+      await expectAppError(paymentService.initializePayment(validInput), 403);
+    });
 
-      await paymentRepository.create(
-        { bookingId: "booking-1", tenantId: TENANT_ID, guestUserId: "guest-1", gateway: "paystack", amountNgn: 50000, idempotencyKey: "idem-1" },
-        mockClient as never,
+    it("rejects when booking is not in pending_payment status", async () => {
+      mockedBookingRepo.findById.mockResolvedValue(
+        makeBooking({ status: "confirmed" }),
+      );
+      await expectAppError(
+        paymentService.initializePayment(validInput),
+        409,
+        /status/i,
+      );
+    });
+
+    it("rejects with conflict when idempotency claim is already in flight", async () => {
+      mockedBookingRepo.findById.mockResolvedValue(makeBooking());
+      mockedIdempotency.claim.mockRejectedValue(new IdempotencyConflictError());
+      await expectAppError(
+        paymentService.initializePayment(validInput),
+        409,
+        /already being processed/i,
+      );
+    });
+
+    it("returns cached result when idempotency claim is already completed", async () => {
+      mockedBookingRepo.findById.mockResolvedValue(makeBooking());
+      mockedIdempotency.claim.mockResolvedValue(null as never);
+      const cached: InitializePaymentResult = {
+        paymentId: "payment-1",
+        transactionId: "tx-cached",
+        redirectUrl: "https://pay.stack/redirect",
+        amountNgn: 50000,
+      };
+      mockedIdempotency.find.mockResolvedValue({
+        response_body: cached,
+      } as never);
+
+      const result = await paymentService.initializePayment(validInput);
+      expect(result).toEqual(cached);
+    });
+
+    it("creates payment, calls gateway, and returns redirect on success", async () => {
+      mockedBookingRepo.findById.mockResolvedValue(makeBooking());
+      mockedPaymentRepo.findByIdempotencyKey.mockResolvedValue(null);
+      mockedPaymentRepo.create.mockResolvedValue(makePayment());
+      mockedPaymentRepo.updateStatus.mockResolvedValue(
+        makePayment({ status: "pending", transaction_id: "tx-1" }),
       );
 
-      expect(mockClient.query).toHaveBeenCalled();
-      expect(mockQueryOne).not.toHaveBeenCalled();
+      const processMock = jest
+        .fn<(input: Record<string, unknown>) => Promise<GatewayProcessResult>>()
+        .mockResolvedValue({
+          success: true,
+          transactionId: "tx-1",
+          redirectUrl: "https://pay.stack/redirect",
+          message: "ok",
+        });
+
+      paymentStrategies.getAdapter.mockReturnValue({ process: processMock });
+
+      const result = await paymentService.initializePayment(validInput);
+
+      expect(result.paymentId).toBe("payment-1");
+      expect(result.transactionId).toBe("tx-1");
+      expect(result.redirectUrl).toBe("https://pay.stack/redirect");
+      expect(result.amountNgn).toBe(50000);
+      expect(mockedIdempotency.markCompleted).toHaveBeenCalled();
     });
 
-    it("tracks the failure and rethrows when the insert fails", async () => {
-      mockQueryOne.mockRejectedValue(new Error("connection reset"));
+    it("marks payment failed and throws when gateway is unavailable", async () => {
+      mockedBookingRepo.findById.mockResolvedValue(makeBooking());
+      mockedPaymentRepo.findByIdempotencyKey.mockResolvedValue(null);
+      mockedPaymentRepo.create.mockResolvedValue(makePayment());
+      mockedPaymentRepo.updateStatus.mockResolvedValue(
+        makePayment({ status: "failed" }),
+      );
 
-      await expect(
-        paymentRepository.create({ bookingId: "booking-1", tenantId: TENANT_ID, guestUserId: "guest-1", gateway: "paystack", amountNgn: 50000, idempotencyKey: "idem-1" }),
-      ).rejects.toThrow("connection reset");
+      const processMock = jest
+        .fn<(input: Record<string, unknown>) => Promise<GatewayProcessResult>>()
+        .mockRejectedValue(new Error("gateway down"));
 
-      expect(mockTrackError).toHaveBeenCalledWith("payment_create_failed", "payment_repository", "high");
-    });
-  });
+      paymentStrategies.getAdapter.mockReturnValue({ process: processMock });
 
-  describe("updateStatus", () => {
-    it("always includes status and updated_at, adds optional fields only when provided", async () => {
-      mockQueryOne.mockResolvedValue(makePaymentRow({ status: "success" }) as never);
+      await expectAppError(
+        paymentService.initializePayment(validInput),
+        400,
+        /unavailable/i,
+      );
 
-      await paymentRepository.updateStatus({ id: "payment-1", status: "success" });
-
-      const [sql, params] = mockQueryOne.mock.calls[0] as [string, unknown[]];
-      expect(sql).toContain("status = $1");
-      expect(sql).toContain("updated_at = now()");
-      expect(sql).not.toContain("transaction_id = $");
-      expect(params).toEqual(["success", "payment-1"]);
-    });
-
-    it("adds transactionId, channel, and paidAt as separate params when given", async () => {
-      mockQueryOne.mockResolvedValue(makePaymentRow({ status: "success" }) as never);
-      const paidAt = new Date();
-
-      await paymentRepository.updateStatus({
-        id: "payment-1", status: "success",
-        transactionId: "txn-123", channel: "card", paidAt,
-      });
-
-      const [sql, params] = mockQueryOne.mock.calls[0] as [string, unknown[]];
-      expect(sql).toContain("transaction_id = $2");
-      expect(sql).toContain("channel = $3");
-      expect(sql).toContain("paid_at = $4");
-      expect(params).toEqual(["success", "txn-123", "card", paidAt, "payment-1"]);
-    });
-
-    it("returns null when no payment matches the id", async () => {
-      mockQueryOne.mockResolvedValue(null);
-
-      const result = await paymentRepository.updateStatus({ id: "missing-id", status: "failed" });
-
-      expect(result).toBeNull();
+      expect(mockedPaymentRepo.updateStatus).toHaveBeenCalledWith(
+        expect.objectContaining({ status: "failed" }),
+      );
+      expect(mockedIdempotency.markFailed).toHaveBeenCalled();
     });
   });
 
-  describe("findByIdempotencyKey", () => {
-    it("is the idempotency check callers rely on before inserting a duplicate payment", async () => {
-      mockQueryOne.mockResolvedValue(makePaymentRow() as never);
+  describe("processWebhookSuccess", () => {
+    const mockClient = { query: jest.fn() } as unknown as PoolClient;
 
-      const result = await paymentRepository.findByIdempotencyKey("idem-1");
+    it("rejects when payment is not found for transactionId", async () => {
+      mockedPaymentRepo.findByTransactionId.mockResolvedValue(null);
+      await expectAppError(
+        paymentService.processWebhookSuccess(
+          {
+            transactionId: "tx-missing",
+            amount: 50000,
+            gateway: "paystack",
+            rawPayload: {},
+            metadata: {},
+          },
+          mockClient,
+        ),
+        404,
+      );
+    });
 
-      expect(result?.idempotency_key).toBe("idem-1");
+    it("marks payment failed when received amount is less than expected", async () => {
+      mockedPaymentRepo.findByTransactionId.mockResolvedValue(
+        makePayment({ amount_ngn: 50000, transaction_id: "tx-1" }),
+      );
+      mockedPaymentRepo.updateStatus.mockResolvedValue(
+        makePayment({ status: "failed" }),
+      );
+
+      await expectAppError(
+        paymentService.processWebhookSuccess(
+          {
+            transactionId: "tx-1",
+            amount: 40000,
+            gateway: "paystack",
+            rawPayload: {},
+            metadata: {},
+          },
+          mockClient,
+        ),
+        400,
+        /mismatch/i,
+      );
+
+      expect(mockedPaymentRepo.updateStatus).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: "failed",
+          metadata: expect.objectContaining({
+            failureReason: "Amount mismatch",
+          }),
+        }),
+        mockClient,
+      );
     });
   });
 });

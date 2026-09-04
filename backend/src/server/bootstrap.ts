@@ -1,6 +1,6 @@
 import logger from "../utils/logger";
 import redisClient from "../config/redis";
-import http from 'http'
+import http from "http";
 import {
   connectDB,
   connectRedis,
@@ -76,7 +76,7 @@ async function runStep(step: InitStep): Promise<void> {
   }
 }
 
-export async function bootstrapServer(httpServer:http.Server): Promise<void> {
+export async function bootstrapServer(httpServer: http.Server): Promise<void> {
   const steps: InitStep[] = [
     { name: "postgres", fn: connectDB },
     {
@@ -148,7 +148,12 @@ export async function bootstrapServer(httpServer:http.Server): Promise<void> {
       },
     },
 
-    { name: "socket_server",        fn: async () => { await startSocketServer(httpServer); } },
+    {
+      name: "socket_server",
+      fn: async () => {
+        await startSocketServer(httpServer);
+      },
+    },
   ];
 
   const start = process.hrtime.bigint();

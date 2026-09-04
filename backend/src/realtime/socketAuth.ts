@@ -7,6 +7,17 @@ import logger from "../utils/logger";
 export interface AuthenticatedSocket extends Socket {
   user: JWTPayload;
 }
+/**
+ * @ideas
+ * 1. retrieve token: socket.handshake.auth.token
+ * 2. verify the otekne via jwt.verify
+ * 3. check if the roken has been blocked via redis
+ * 4. set the socket.user  = decoded.user
+ * 5. next()
+ * @param socket 
+ * @param next 
+ * @returns 
+ */
 
 export async function socketAuthMiddleware(
   socket: Socket,

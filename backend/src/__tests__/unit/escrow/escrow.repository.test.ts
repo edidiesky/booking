@@ -1,17 +1,39 @@
+
 import { describe, it, expect, jest, beforeEach } from "@jest/globals";
+import {
+  escrowRepository,
+  type EscrowRecord,
+} from "../../../domains/escrow/escrow.repository";
+import type { EscrowStatus } from "../../../types";
+import type { PoolClient } from "pg";
 
 jest.mock("@booking/shared", () => ({
   query: jest.fn(),
   queryOne: jest.fn(),
 }));
+jest.mock("../../../messaging/publisher", () => ({
+  publishEscrowReleased: jest.fn(),
+  publishEscrowRefunded: jest.fn(),
+}));
+jest.mock("../../../utils/metrics", () => ({
+  escrowHeldGauge: { inc: jest.fn(), dec: jest.fn() },
+}));
+jest.mock("../../../utils/logger", () => ({
+  __esModule: true,
+  default: { info: jest.fn(), error: jest.fn(), warn: jest.fn() },
+}));
 
-import { query, queryOne } from "@booking/shared";
-import { escrowRepository } from "../../../domains/escrow/escrow.repository";
+const { publishEscrowReleased, publishEscrowRefunded } = jest.requireMock(
+  "../../../messaging/publisher",
+) as {
+  publishEscrowReleased: jest.Mock;
+  publishEscrowRefunded: jest.Mock;
+};
+const { escrowHeldGauge } = jest.requireMock("../../../utils/metrics") as {
+  escrowHeldGauge: { inc: jest.Mock; dec: jest.Mock };
+};
 
-const mockQuery = query as jest.MockedFunction<typeof query>;
-const mockQueryOne = queryOne as jest.MockedFunction<typeof queryOne>;
-
-function makeEscrowRow(overrides: Record<string, unknown> = {}) {
+function makeEscrow(overrides: Partial<EscrowRecord> = {}): EscrowRecord {
   return {
     id: "escrow-1",
     booking_id: "booking-1",
@@ -19,46 +41,95 @@ function makeEscrowRow(overrides: Record<string, unknown> = {}) {
     amount_ngn: 50000,
     platform_fee_ngn: 5000,
     host_payout_ngn: 45000,
-    status: "held",
+    status: "held" as EscrowStatus,
     held_at: new Date(),
     created_at: new Date(),
+    updated_at: new Date(),
     ...overrides,
   };
 }
 
-describe("escrowRepository", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+function makeClient(rows: Record<string, unknown>[] = []): PoolClient {
+  return {
+    query: jest.fn().mockResolvedValue({ rows } as never),
+  } as unknown as PoolClient;
+}
+
+describe("escrowRepository – money paths", () => {
+  beforeEach(() => {jest.clearAllMocks()});
+
+  it("create holds escrow and increments gauge", async () => {
+    const client = makeClient([makeEscrow()]);
+    const result = await escrowRepository.create(
+      {
+        bookingId: "booking-1",
+        tenantId: "tenant-1",
+        amountNgn: 50000,
+        platformFeeNgn: 5000,
+        hostPayoutNgn: 45000,
+      },
+      client,
+    );
+    expect(result.id).toBe("escrow-1");
+    expect(escrowHeldGauge.inc).toHaveBeenCalledWith(
+      { tenant_id: "tenant-1" },
+      45000,
+    );
   });
 
-  describe("getStatsForTenant", () => {
-    it("maps the aggregate row into the EscrowStats shape", async () => {
-      mockQueryOne.mockResolvedValue({
-        held_count: "3",
-        held_amount: 150000,
-        released_count: "1",
-        released_amount: 45000,
-        refunded_count: "0",
-        refunded_amount: 0,
-      } as never);
-
-      const result = await escrowRepository.getStatsForTenant("tenant-1");
-
-      expect(result.held.count).toBe(3);
-      expect(result.held.amountNgn).toBe(150000);
-    });
+  it("release transitions held → released", async () => {
+    const client = makeClient([
+      makeEscrow({ status: "released", released_at: new Date() }),
+    ]);
+    const result = await escrowRepository.release("booking-1", client);
+    expect(result?.status).toBe("released");
+    expect(publishEscrowReleased).toHaveBeenCalled();
+    expect(escrowHeldGauge.dec).toHaveBeenCalled();
   });
 
-  describe("listByTenant", () => {
-    it("passes tenantId, page, and offset through to the query", async () => {
-      mockQuery.mockResolvedValue([makeEscrowRow()] as never);
+  it("release returns null when nothing held", async () => {
+    const client = makeClient([]);
+    expect(await escrowRepository.release("booking-1", client)).toBeNull();
+  });
 
-      await escrowRepository.listByTenant("tenant-1", 2, 10);
-
-      expect(mockQuery).toHaveBeenCalledWith(
-        expect.stringContaining("FROM escrow_ledger"),
-        expect.arrayContaining(["tenant-1"]),
-      );
+  it("initiateRefund full → refunded", async () => {
+    const held = makeEscrow();
+    const refunded = makeEscrow({
+      status: "refunded",
+      refund_amount_ngn: 50000,
     });
+    const client = {
+      query: jest
+        .fn()
+        .mockResolvedValueOnce({ rows: [held] } as never)
+        .mockResolvedValueOnce({ rows: [refunded] } as never),
+    } as unknown as PoolClient;
+    const result = await escrowRepository.initiateRefund(
+      "booking-1",
+      50000,
+      client,
+    );
+    expect(result?.status).toBe("refunded");
+    expect(publishEscrowRefunded).toHaveBeenCalled();
+  });
+
+  it("initiateRefund partial → partially_refunded", async () => {
+    const held = makeEscrow();
+    const partial = makeEscrow({
+      status: "partially_refunded",
+      refund_amount_ngn: 20000,
+    });
+    const client = {
+      query: jest
+        .fn()
+        .mockResolvedValueOnce({ rows: [held] } as never)
+        .mockResolvedValueOnce({ rows: [partial] } as never),
+    } as unknown as PoolClient;
+    const result = await escrowRepository.initiateRefund(
+      "booking-1",
+      20000,
+      client,
+    );
+    expect(result?.status).toBe("partially_refunded");
   });
 });

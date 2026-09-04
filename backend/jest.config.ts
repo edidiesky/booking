@@ -1,13 +1,12 @@
 import type { Config } from "jest";
 
 const config: Config = {
-  preset:             "ts-jest",
-  testEnvironment:    "node",
-  rootDir:            ".",
-  moduleNameMapper:   { "^@/(.*)$": "<rootDir>/src/$1" },
-  globalSetup:        "./src/__tests__/setup/globalSetup.ts",
-  globalTeardown:     "./src/__tests__/setup/globalTeardown.ts",
-  setupFilesAfterEnv: ["./src/__tests__/setup/jest.setup.ts"],
+  preset: "ts-jest",
+  testEnvironment: "node",
+  rootDir: ".",
+  moduleNameMapper: { "^@/(.*)$": "<rootDir>/src/$1" },
+  // Unit tests must NOT load integration Testcontainers setup
+  setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup/jest.setup.ts"],
   testMatch: ["**/__tests__/unit/**/*.test.ts"],
   collectCoverageFrom: [
     "src/domains/**/*.ts",
@@ -17,10 +16,20 @@ const config: Config = {
   coverageThreshold: {
     global: { branches: 60, functions: 70, lines: 70 },
   },
-  testTimeout:        15000,
-  verbose:            true,
+  testTimeout: 15_000,
+  verbose: true,
+  clearMocks: true,
   transform: {
-    "^.+\\.tsx?$": ["ts-jest", { tsconfig: "./tsconfig.test.json" }],
+    "^.+\\.tsx?$": [
+      "ts-jest",
+      {
+        tsconfig: {
+          esModuleInterop: true,
+          strict: true,
+          skipLibCheck: true,
+        },
+      },
+    ],
   },
 };
 

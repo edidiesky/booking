@@ -15,7 +15,7 @@ import logger from "../utils/logger";
  * 2. the io is built from the SocketIOServer which depends on the http Server at startup and other options
  * 3. we made use of adapetrs to be able to broadcast to all clients irrespecutve of whihc process that are situated.
  * 4. client > server 1 > socket 1 > reids adapter > redis < server 2 < docket 2 < client 2 gets the message
- * 5. 
+ * 5.
  */
 let io: SocketIOServer | null = null;
 
@@ -27,8 +27,13 @@ export function getIO(): SocketIOServer {
   return io;
 }
 
-function emitError(socket: AuthenticatedSocket, eventType: string, err: unknown): void {
-  const message = err instanceof AppError ? err.message : "Something went wrong.";
+function emitError(
+  socket: AuthenticatedSocket,
+  eventType: string,
+  err: unknown,
+): void {
+  const message =
+    err instanceof AppError ? err.message : "Something went wrong.";
   socket.emit("error", { eventType, message });
   if (!(err instanceof AppError) || !err.isOperational) {
     logger.error("socket_handler_failed", {
@@ -61,26 +66,38 @@ export async function startSocketServer(httpServer: HttpServer): Promise<void> {
     socket.join(`user:${userId}`);
 
     logger.info("socket_connected", {
-      event: "socket_connected", userId, tenantId, socketId: socket.id,
+      event: "socket_connected",
+      userId,
+      tenantId,
+      socketId: socket.id,
     });
 
-    socket.on("join_conversation", async (conversationId: string, ack?: (ok: boolean) => void) => {
-      try {
-        const allowed = await withSocketScope(
-          { userId, tenantId, userType, eventType: "join_conversation" },
-          async () => {
-            const conversation = await conversationRepository.findById(conversationId);
-            return conversation ? conversationRepository.assertParticipant(conversation, userId) : false;
-          },
-        );
-        if (!allowed) { ack?.(false); return; }
-        socket.join(`conversation:${conversationId}`);
-        ack?.(true);
-      } catch (err) {
-        emitError(authed, "join_conversation", err);
-        ack?.(false);
-      }
-    });
+    socket.on(
+      "join_conversation",
+      async (conversationId: string, ack?: (ok: boolean) => void) => {
+        try {
+          const allowed = await withSocketScope(
+            { userId, tenantId, userType, eventType: "join_conversation" },
+            async () => {
+              const conversation =
+                await conversationRepository.findById(conversationId);
+              return conversation
+                ? conversationRepository.assertParticipant(conversation, userId)
+                : false;
+            },
+          );
+          if (!allowed) {
+            ack?.(false);
+            return;
+          }
+          socket.join(`conversation:${conversationId}`);
+          ack?.(true);
+        } catch (err) {
+          emitError(authed, "join_conversation", err);
+          ack?.(false);
+        }
+      },
+    );
 
     socket.on(
       "send_message",
@@ -117,12 +134,17 @@ export async function startSocketServer(httpServer: HttpServer): Promise<void> {
     });
 
     socket.on("typing", (conversationId: string) => {
-      socket.to(`conversation:${conversationId}`).emit("typing", { userId, conversationId });
+      socket
+        .to(`conversation:${conversationId}`)
+        .emit("typing", { userId, conversationId });
     });
 
     socket.on("disconnect", (reason) => {
       logger.info("socket_disconnected", {
-        event: "socket_disconnected", userId, socketId: socket.id, reason,
+        event: "socket_disconnected",
+        userId,
+        socketId: socket.id,
+        reason,
       });
     });
   });
@@ -135,6 +157,12 @@ export async function stopSocketServer(): Promise<void> {
     await new Promise<void>((resolve) => io!.close(() => resolve()));
     io = null;
   }
-  if (pubClient) { await pubClient.quit(); pubClient = null; }
-  if (subClient) { await subClient.quit(); subClient = null; }
+  if (pubClient) {
+    await pubClient.quit();
+    pubClient = null;
+  }
+  if (subClient) {
+    await subClient.quit();
+    subClient = null;
+  }
 }
