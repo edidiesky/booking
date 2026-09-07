@@ -147,9 +147,9 @@ function resolveAmenity(raw: string): {
 function AmenityChip({ raw }: { raw: string }) {
   const { label, Icon } = resolveAmenity(raw);
   return (
-    <span className="inline-flex items-center gap-1 text-sm text-[#777b86]">
+    <span className="inline-flex items-center gap-1 text-sm lg:text-base text-[#777b86]">
       {Icon ? (
-        <Icon size={16} className="shrink-0 text-[#a3a6af]" />
+        <Icon size={20} className="shrink-0 text-[#a3a6af]" />
       ) : (
         <span className="inline-block h-1 w-1 shrink-0 rounded-full bg-[#c4c6ce]" />
       )}
@@ -264,14 +264,14 @@ function SearchCard({
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-0.5">
           {rt?.bedrooms != null && (
-            <span className="inline-flex items-center gap-1 text-sm text-[#777b86]">
-              <BedDouble size={16} className="text-[#a3a6af]" />
+            <span className="inline-flex items-center gap-1 text-sm lg:text-base text-[#777b86]">
+              <BedDouble size={20} className="text-[#a3a6af]" />
               {rt.bedrooms} Bed
             </span>
           )}
           {rt?.bathrooms != null && (
-            <span className="inline-flex items-center gap-1 text-sm text-[#777b86]">
-              <Bath size={16} className="text-[#a3a6af]" />
+            <span className="inline-flex items-center gap-1 text-sm lg:text-base text-[#777b86]">
+              <Bath size={20} className="text-[#a3a6af]" />
               {rt.bathrooms} Bath
             </span>
           )}
@@ -496,7 +496,7 @@ function DefaultCard({
           className="flex items-center gap-1 text-sm bold"
           style={{ color: "var(--color-light-steel)" }}
         >
-          <MapPin size={16} />
+          <MapPin size={20} />
           {city}
           {country ? `, ${country}` : ""}
         </p>
