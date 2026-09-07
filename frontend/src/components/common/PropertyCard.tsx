@@ -147,7 +147,7 @@ function resolveAmenity(raw: string): {
 function AmenityChip({ raw }: { raw: string }) {
   const { label, Icon } = resolveAmenity(raw);
   return (
-    <span className="inline-flex items-center gap-1 text-[12px] text-[#777b86]">
+    <span className="inline-flex items-center gap-1 text-sm text-[#777b86]">
       {Icon ? (
         <Icon size={16} className="shrink-0 text-[#a3a6af]" />
       ) : (
@@ -256,7 +256,7 @@ function SearchCard({
               />
             ))}
           </div>
-          <span className="text-[12px] font-medium text-[#17191c]">
+          <span className="text-sm font-medium text-[#17191c]">
             {rating.toFixed(1)}
             <span className="text-[#a3a6af]">/5</span>
           </span>
@@ -338,7 +338,7 @@ function HomeCard({
           <p className="truncate text-[14px] font-semibold text-[#222]">
             {city ? `Stay in ${city}` : property.name}
           </p>
-          <span className="inline-flex shrink-0 items-center gap-0.5 text-[12px]">
+          <span className="inline-flex shrink-0 items-center gap-0.5 text-sm">
             <IoStar className="text-[11px]" />
             {rating.toFixed(1)}
           </span>
