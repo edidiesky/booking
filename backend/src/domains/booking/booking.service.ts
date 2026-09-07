@@ -406,7 +406,7 @@ export class BookingService {
         },
         client,
       );
-       await auditEventRepository.record(
+      await auditEventRepository.record(
         {
           tenantId: booking.tenant_id,
           actor: { type: "system" },
@@ -570,9 +570,10 @@ export class BookingService {
       await auditEventRepository.record(
         {
           tenantId: booking.tenant_id,
-          actor: requestingUserId === "system"
-            ? { type: "system" }
-            : { type: "user", id: requestingUserId },
+          actor:
+            requestingUserId === "system"
+              ? { type: "system" }
+              : { type: "user", id: requestingUserId },
           action: "booking.cancelled",
           targetType: "booking",
           targetId: bookingId,
@@ -947,7 +948,7 @@ export class BookingService {
         },
         client,
       );
-       await auditEventRepository.record(
+      await auditEventRepository.record(
         {
           tenantId,
           actor: { type: "user", id: actorUserId },
@@ -990,6 +991,6 @@ export class BookingService {
     ]);
     return { trend, comparison };
   }
-};
+}
 
-export const bookingService = new BookingService()
+export const bookingService = new BookingService();

@@ -18,6 +18,7 @@ import {
   GetRevenueTrendHandler,
   GetPropertyPerformanceHandler,
 } from "./booking.controller";
+
 import {
   cancelSchema,
   initiateSchema,

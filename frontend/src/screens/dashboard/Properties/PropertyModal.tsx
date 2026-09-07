@@ -15,6 +15,7 @@ import { ChartSelect } from "@/components/common/charts/Chartselect";
 import LocationPicker from "@/components/common/LocationPicker";
 import { geocodeAddress } from "@/hooks/useGeocodeAddress";
 import RichTextEditor from "@/components/common/RichTextEditor";
+import { AMENITY_GROUPS, AMENITY_OPTIONS } from "@/constants/amenities";
 
 const schema = z.object({
   name: z.string().min(3, "Min 3 characters"),
@@ -34,64 +35,64 @@ const PROPERTY_TYPE_OPTIONS = [
   { label: "Guesthouse", value: "guesthouse" },
 ];
 
-interface TagInputProps {
-  label: string;
-  placeholder: string;
-  tags: string[];
-  onChange: (tags: string[]) => void;
-}
+// interface TagInputProps {
+//   label: string;
+//   placeholder: string;
+//   tags: string[];
+//   onChange: (tags: string[]) => void;
+// }
 
-function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
-  const [draft, setDraft] = useState("");
+// function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
+//   const [draft, setDraft] = useState("");
 
-  const add = () => {
-    const trimmed = draft.trim();
-    if (trimmed && !tags.includes(trimmed)) onChange([...tags, trimmed]);
-    setDraft("");
-  };
+//   const add = () => {
+//     const trimmed = draft.trim();
+//     if (trimmed && !tags.includes(trimmed)) onChange([...tags, trimmed]);
+//     setDraft("");
+//   };
 
-  const remove = (i: number) => onChange(tags.filter((_, idx) => idx !== i));
+//   const remove = (i: number) => onChange(tags.filter((_, idx) => idx !== i));
 
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-xs lg:text-[13px]     text-[#17191c]">{label}</span>
-      <div className=" py-2 px-2 flex flex-wrap gap-2 min-h-[45px] focus-within:border-[#17191c] transition-colors">
-        {tags.map((tag, i) => (
-          <span
-            key={i}
-            className="inline-flex items-center gap-1 px-4 rounded-full bold py-1 bg-[#f2f0ed] text-xs lg:text-[13px]     text-[#17191c]"
-          >
-            {tag}
-            <button
-              type="button"
-              onClick={() => remove(i)}
-              aria-label={`Remove ${tag}`}
-            >
-              <X size={10} />
-            </button>
-          </span>
-        ))}
-        <Input
-          type="text"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === ",") {
-              e.preventDefault();
-              add();
-            }
-            if (e.key === "Backspace" && !draft && tags.length > 0)
-              remove(tags.length - 1);
-          }}
-          placeholder={tags.length === 0 ? placeholder : ""}
-        />
-      </div>
-      <p className="text-xs lg:text-[13px]     text-[#a3a6af]">
-        Press Enter or comma to add
-      </p>
-    </div>
-  );
-}
+//   return (
+//     <div className="flex flex-col gap-2">
+//       <span className="text-xs lg:text-[13px]     text-[#17191c]">{label}</span>
+//       <div className=" py-2 px-2 flex flex-wrap gap-2 min-h-[45px] focus-within:border-[#17191c] transition-colors">
+//         {tags.map((tag, i) => (
+//           <span
+//             key={i}
+//             className="inline-flex items-center gap-1 px-4 rounded-full bold py-1 bg-[#f2f0ed] text-xs lg:text-[13px]     text-[#17191c]"
+//           >
+//             {tag}
+//             <button
+//               type="button"
+//               onClick={() => remove(i)}
+//               aria-label={`Remove ${tag}`}
+//             >
+//               <X size={10} />
+//             </button>
+//           </span>
+//         ))}
+//         <Input
+//           type="text"
+//           value={draft}
+//           onChange={(e) => setDraft(e.target.value)}
+//           onKeyDown={(e) => {
+//             if (e.key === "Enter" || e.key === ",") {
+//               e.preventDefault();
+//               add();
+//             }
+//             if (e.key === "Backspace" && !draft && tags.length > 0)
+//               remove(tags.length - 1);
+//           }}
+//           placeholder={tags.length === 0 ? placeholder : ""}
+//         />
+//       </div>
+//       <p className="text-xs lg:text-[13px]     text-[#a3a6af]">
+//         Press Enter or comma to add
+//       </p>
+//     </div>
+//   );
+// }
 
 type FormData = z.infer<typeof schema>;
 
@@ -170,6 +171,15 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
 
   const handleSave = async (data: FormData) => {
     try {
+      const coords = await resolveCoords(data);
+      if (!coords) {
+        showToast(
+          "Set the property location on the map (or complete the address and click Locate).",
+          "error",
+        );
+        return;
+      }
+
       if (isEdit && propertyId) {
         await updateProperty({
           id: propertyId,
@@ -179,11 +189,19 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
             amenities,
             checkInTime: data.checkInTime,
             checkOutTime: data.checkOutTime,
+            address: {
+              street: data.street,
+              city: data.city,
+              state: data.state,
+              country: data.country,
+            },
+          latitude: coords.lat,
+            longitude: coords.lng,
           },
         }).unwrap();
         showToast("Property updated.", "success");
       } else {
-        await createProperty({
+        const prop = {
           name: data.name,
           description: data.description ?? "",
           propertyType: data.propertyType,
@@ -196,9 +214,11 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
           amenities,
           checkInTime: data.checkInTime,
           checkOutTime: data.checkOutTime,
-          latitude: latitude ?? undefined,
-          longitude: longitude ?? undefined,
-        }).unwrap();
+          latitude: coords.lat,
+          longitude: coords.lng,
+        }
+        // console.log("prop:", prop)
+        await createProperty(prop).unwrap();
         showToast("Property created.", "success");
       }
       onClose();
@@ -207,24 +227,92 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
     }
   };
 
-  const isBusy = creating || updating;
-
   const handleAddressBlur = async () => {
     const { street, city, state, country } = getValues();
-    if (!street || !city || !state || !country) return; // wait until the address is actually complete
+    if (!city?.trim() || !country?.trim()) return;
     setGeocoding(true);
     try {
-      const result = await geocodeAddress({ street, city, state, country });
+      const result = await geocodeAddress({
+        street: street ?? "",
+        city,
+        state: state ?? "",
+        country,
+      });
       if (result) {
         setLatitude(result.latitude);
         setLongitude(result.longitude);
       }
     } catch {
-      // geocoding failure isn't fatal, the host can still place the pin
-      // manually on the map once it renders, or save without one
+      // non-fatal
     } finally {
       setGeocoding(false);
     }
+  };
+
+  const handleLocateClick = async () => {
+    const { street, city, state, country } = getValues();
+    if (!city?.trim() || !country?.trim()) {
+      showToast("Enter at least city and country first.", "error");
+      return;
+    }
+    setGeocoding(true);
+    try {
+      const result = await geocodeAddress({
+        street: street ?? "",
+        city,
+        state: state ?? "",
+        country,
+      });
+      if (result) {
+        setLatitude(result.latitude);
+        setLongitude(result.longitude);
+        showToast("Location found — adjust the pin if needed.", "success");
+      } else {
+        showToast(
+          "Could not find that address. Click the map to place the pin.",
+          "error",
+        );
+      }
+    } catch {
+      showToast(
+        "Location lookup failed. Click the map to place the pin.",
+        "error",
+      );
+    } finally {
+      setGeocoding(false);
+    }
+  };
+
+  const isBusy = creating || updating;
+
+  const resolveCoords = async (
+    data: FormData,
+  ): Promise<{ lat: number; lng: number } | null> => {
+    if (
+      latitude != null &&
+      longitude != null &&
+      Number.isFinite(latitude) &&
+      Number.isFinite(longitude)
+    ) {
+      return { lat: latitude, lng: longitude };
+    }
+    setGeocoding(true);
+    try {
+      const result = await geocodeAddress({
+        street: data.street,
+        city: data.city,
+        state: data.state,
+        country: data.country,
+      });
+      if (result) {
+        setLatitude(result.latitude);
+        setLongitude(result.longitude);
+        return { lat: result.latitude, lng: result.longitude };
+      }
+    } finally {
+      setGeocoding(false);
+    }
+    return null;
   };
 
   const inputClass =
@@ -368,8 +456,8 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                           <Input
                             {...fieldProps}
                             onBlur={(e) => {
-                              fieldProps.onBlur(e); // keep react-hook-form's own validation-on-blur
-                              if (key === "country") void handleAddressBlur();
+                              fieldProps.onBlur(e);
+                              void handleAddressBlur();
                             }}
                             className={inputClass}
                             placeholder={ph}
@@ -385,14 +473,22 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                   </div>
 
                   <div className="mt-3">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs lg:text-[13px]     text-[#a3a6af]">
+                    <div className="flex items-center justify-between mb-1.5 gap-2">
+                      <span className="text-xs lg:text-[13px] text-[#a3a6af]">
                         {geocoding
-                          ? "Locating..."
-                          : latitude
-                            ? "Drag the pin if this isn't quite right."
-                            : "Fill in the address above to locate this property, or place the pin manually."}
+                          ? "Locating…"
+                          : latitude != null && longitude != null
+                            ? `Pin set (${latitude.toFixed(5)}, ${longitude.toFixed(5)}) — click map to adjust.`
+                            : "Fill the address, then Locate — or click the map to place the pin."}
                       </span>
+                      <button
+                        type="button"
+                        onClick={() => void handleLocateClick()}
+                        disabled={geocoding}
+                        className="shrink-0 h-8 rounded-full border border-[#e8e6e3] px-3 text-[12px] font-medium text-[#17191c] hover:bg-[#f7f7f5] disabled:opacity-50"
+                      >
+                        {geocoding ? "Locating…" : "Locate"}
+                      </button>
                     </div>
                     <LocationPicker
                       latitude={latitude}
@@ -429,12 +525,52 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                   </div>
                 </div>
 
-                <TagInput
-                  label="Amenities"
-                  placeholder="e.g. WiFi, Pool, Generator"
-                  tags={amenities}
-                  onChange={setAmenities}
-                />
+                <div className="flex flex-col gap-4">
+                  <span className="text-xs lg:text-[13px] text-[#17191c]">
+                    Amenities
+                  </span>
+                  <p className="text-[12px] text-[#777b86] -mt-2">
+                    Select all that apply. Guests will filter by these.
+                  </p>
+                  {AMENITY_GROUPS.map((g) => (
+                    <div key={g.key} className="flex flex-col gap-2">
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-[#a3a6af]">
+                        {g.title}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {AMENITY_OPTIONS.filter((a) => a.group === g.key).map(
+                          (a) => {
+                            const on =
+                              amenities.includes(a.id) ||
+                              amenities.includes(a.label);
+                            return (
+                              <button
+                                key={a.id}
+                                type="button"
+                                onClick={() => {
+                                  setAmenities((prev) =>
+                                    on
+                                      ? prev.filter(
+                                          (x) => x !== a.id && x !== a.label,
+                                        )
+                                      : [...prev, a.id],
+                                  );
+                                }}
+                                className={`h-9 rounded-full border px-3.5 text-[12px] transition-colors ${
+                                  on
+                                    ? "border-[#17191c] bg-[#f7f7f5] font-medium text-[#17191c]"
+                                    : "border-[#e8e6e3] text-[#444] hover:border-[#c4c6ce]"
+                                }`}
+                              >
+                                {a.label}
+                              </button>
+                            );
+                          },
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </motion.form>
             )}
           </AnimatePresence>

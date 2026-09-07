@@ -43,9 +43,9 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
             "Find the email from Bukking Platform",
             "Click the button below and enter the 6-digit code",
           ].map((step, i) => (
-            <div key={step} className="flex items-start gap-3">
+            <div key={step} className="flex items-center gap-3">
               <span
-                className="w-5 h-5 flex items-center justify-center text-xs lg:text-[13px]   shrink-0 mt-0.5"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-xs lg:text-[13px]   shrink-0 mt-0.5"
                 style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
               >
                 {i + 1}
@@ -58,7 +58,10 @@ export default function VerifyInterstitial({ email, onContinue, onResend, isRese
         <button
           onClick={onContinue}
           className="w-full h-12 flex items-center justify-center text-xs lg:text-[13px]   transition-opacity hover:opacity-80 rounded-full"
-          style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+          style={{
+              backgroundColor: "var(--color-vivid)",
+              color: "var(--color-vivid-foreground)",
+            }}
         >
           Enter the code
         </button>

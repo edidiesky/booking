@@ -20,6 +20,7 @@ import {
   type UploadProgress,
 } from "@/redux/services/cloudinaryAPI";
 import RichTextEditor from "@/components/common/RichTextEditor";
+import AmenitiesPicker from "@/components/common/AmenitiesPicker";
 //  types
 interface FormState {
   name: string;
@@ -206,67 +207,6 @@ function ImageSection({ images, onChange }: ImageSectionProps) {
   );
 }
 
-//  tag input
-
-interface TagInputProps {
-  label: string;
-  placeholder: string;
-  tags: string[];
-  onChange: (tags: string[]) => void;
-}
-
-function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
-  const [draft, setDraft] = useState("");
-
-  const add = () => {
-    const trimmed = draft.trim();
-    if (trimmed && !tags.includes(trimmed)) onChange([...tags, trimmed]);
-    setDraft("");
-  };
-
-  const remove = (i: number) => onChange(tags.filter((_, idx) => idx !== i));
-
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-xs lg:text-[13px]     text-[#17191c]">{label}</span>
-      <div className=" py-2 px-2 flex flex-wrap gap-2 min-h-[45px] focus-within:border-[#17191c] transition-colors">
-        {tags.map((tag, i) => (
-          <span
-            key={i}
-            className="inline-flex items-center gap-1 px-4 rounded-full bold py-1 bg-[#f2f0ed] text-xs lg:text-[13px]     text-[#17191c]"
-          >
-            {tag}
-            <button
-              type="button"
-              onClick={() => remove(i)}
-              aria-label={`Remove ${tag}`}
-            >
-              <X size={10} />
-            </button>
-          </span>
-        ))}
-        <Input
-          type="text"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === ",") {
-              e.preventDefault();
-              add();
-            }
-            if (e.key === "Backspace" && !draft && tags.length > 0)
-              remove(tags.length - 1);
-          }}
-          placeholder={tags.length === 0 ? placeholder : ""}
-        />
-      </div>
-      <p className="text-xs lg:text-[13px]     text-[#a3a6af]">
-        Press Enter or comma to add
-      </p>
-    </div>
-  );
-}
-
 //  modal
 
 interface Props {
@@ -293,8 +233,8 @@ export default function CreateRoomTypeModal({
   const { data: detailData, isLoading: loadingDetail } =
     useGetRoomTypeDetailQuery(roomTypeId ?? "", { skip: !isEdit || !isOpen });
 
-const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
-  setForm((prev) => ({ ...prev, [key]: value }));
+  const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+    setForm((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
     if (!isOpen) {
@@ -477,22 +417,20 @@ const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
                 }
               />
 
-              <TagInput
-                label="Amenities"
-                placeholder="e.g. WiFi, AC, Hot water"
-                tags={form.amenities}
+              <AmenitiesPicker
+                selected={form.amenities}
                 onChange={(tags) => setField("amenities", tags)}
               />
 
               <div className="flex flex-col gap-1.5">
-  <label className="text-xs lg:text-[13px] text-[#17191c]">
-    Description
-  </label>
-  <RichTextEditor
-    value={form.description}
-    onChange={(html) => setField("description", html)}
-  />
-</div>
+                <label className="text-xs lg:text-[13px] text-[#17191c]">
+                  Description
+                </label>
+                <RichTextEditor
+                  value={form.description}
+                  onChange={(html) => setField("description", html)}
+                />
+              </div>
             </motion.div>
           </AnimatePresence>
         </div>

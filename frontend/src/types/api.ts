@@ -243,6 +243,14 @@ export interface UpdatePropertyPayload {
   images?: string[];
   checkInTime?: string;
   checkOutTime?: string;
+   address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+  };
+  longitude?:number;
+  latitude?:number;
 }
 
 export interface SeedCalendarPayload {

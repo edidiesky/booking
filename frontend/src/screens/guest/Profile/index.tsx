@@ -1,57 +1,91 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { selectCurrentUser } from "@/redux/slices/authSlice";
-import AccountTab from "./tabs/AccountTab";
-import TripsTab from "./tabs/TripsTab";
-import SecurityTab from "./tabs/SecurityTab";
-import NotificationsTab from "./tabs/NotificationsTab";
-import { User } from "@/types/api";
 import Header from "@/components/common/Header";
+import ProfilePageShell from "@/components/profile/ProfilePageShell";
+import GuestProfileSidebar from "./GuestProfileSidebar";
+import BookingsTab from "./tabs/BookingsTab";
+import WishlistTab from "./tabs/WishlistTab";
+import ReviewsTab from "./tabs/ReviewsTab";
+import AccountTab from "./tabs/AccountTab";
+import { useGuestProfile } from "./hooks/useGuestProfile";
 
 const TABS = [
-  { key: "account", label: "Account", Component: AccountTab },
-  { key: "trips", label: "Trips", Component: TripsTab },
-  { key: "security", label: "Security", Component: SecurityTab },
-  { key: "notifications", label: "Notifications", Component: NotificationsTab },
+  { key: "bookings", label: "Purchase History" },
+  { key: "wishlist", label: "Wishlist" },
+  { key: "reviews", label: "Review" },
+  { key: "account", label: "Account" },
 ] as const;
 
+type TabKey = (typeof TABS)[number]["key"];
+
 export default function GuestProfile() {
-  const [active, setActive] = useState<(typeof TABS)[number]["key"]>("account");
+  const [active, setActive] = useState<TabKey>("bookings");
   const user = useSelector(selectCurrentUser);
-  const ActiveComponent = TABS.find((t) => t.key === active)!.Component;
-  const initial = user?.firstName?.charAt(0).toUpperCase() ?? "?";
-  const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ");
+  const { profile, isLoading } = useGuestProfile();
+  const navigate = useNavigate();
+
+  const fullName =
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
+    profile?.displayName ||
+    "Guest";
+
+  const statusTone =
+    user?.status === "active"
+      ? "active"
+      : user?.status === "suspended"
+        ? "suspended"
+        : "inactive";
+
+  const main = (() => {
+    switch (active) {
+      case "bookings":
+        return <BookingsTab />;
+      case "wishlist":
+        return <WishlistTab />;
+      case "reviews":
+        return <ReviewsTab />;
+      case "account":
+        return <AccountTab user={user!} />;
+      default:
+        return null;
+    }
+  })();
 
   return (
-    <div className="w-full flex flex-col gap-8">
+    <div className="w-full flex flex-col">
       <Header />
-      <div className="max-w-screen-2xl w-full lg:w-[90%] mx-auto lg:px-12 flex items-start justify-start flex-col gap-4">
-        <div className="w-full flex items-center gap-4">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center text-xl lg:text-3xl bg-[rgb(255,224,195)]">
-            {initial}
-          </div>
-          <div className="flex flex-col gap-2">
-            <h4 className="text-2xl font-semibold">{fullName} Settings</h4>
-            <span className="text-xs lg:text-[13px]   capitalize text-[#777b86] truncate">{`${user?.userType} profile`}</span>
-          </div>
-        </div>
-        <div className="w-full gap-10">
-          <div className="py-10 flex gap-8 lg:gap-8 items-start px-4">
-            <div className="flex gap-2 flex-col items-start">
-              {TABS.map((t) => (
-                <button
-                  key={t.key}
-                  onClick={() => setActive(t.key)}
-                  className={`px-4 min-w-56 lg:min-w-48 text-start  hover:bg-[#f5f5f3] py-3 text-xs lg:text-[13px]   ${active === t.key ? "border-r-2 bg-[#f5f5f3] border-[#17191c] font-semibold" : "text-[#a3a6af]"}`}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
-            <ActiveComponent user={user as User} />
-          </div>
-        </div>
-      </div>
+      {isLoading && !user ? (
+        <div className="p-12 text-[13px] text-[#a3a6af]">Loading profile…</div>
+      ) : (
+        <ProfilePageShell
+          name={fullName}
+          email={user?.email}
+          avatarUrl={profile?.avatarUrl}
+          statusLabel={
+            user?.status
+              ? user.status.charAt(0).toUpperCase() + user.status.slice(1)
+              : "Active"
+          }
+          statusTone={statusTone}
+          secondaryId={
+            user?.id
+              ? `Guest ID #${user.id.slice(0, 6).toUpperCase()}`
+              : undefined
+          }
+          primaryActionLabel="Edit profile"
+          onPrimaryAction={() => setActive("account")}
+          onBack={() => navigate(-1)}
+          tabs={[...TABS]}
+          activeTab={active}
+          onTabChange={(k) => setActive(k as TabKey)}
+          main={main}
+          sidebar={
+            <GuestProfileSidebar user={user} profile={profile ?? undefined} />
+          }
+        />
+      )}
     </div>
   );
 }

@@ -24,7 +24,7 @@ const Listing = () => {
       <div className="mx-auto px-4 lg:px-0 pt-32 pb-20 flex flex-col gap-8 lg:gap-20" style={{ maxWidth: "1280px" }}>
         <div className="grid lg:grid-cols-2 gap-4 items-start lg:items-center w-full">
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs lg:text-base md:text-lg text-[var(--primary)]">
+            <h4 className="text-sm md:text-lg text-[var(--primary)]">
               Passionate – Dedicated – Professional
             </h4>
             <h4 className="text-4xl lg:text-5xl capitalize family2 text-[var(--dark-1)]">
@@ -44,16 +44,16 @@ const Listing = () => {
         </div>
         <div className="w-full">
           {isLoading ? (
-            <div className="columns-2 lg:columns-3 gap-4 space-y-4">
+            <div className="w-full grid lg:grid-cols-3 grid-cols-1 gap-4 space-y-4">
               {Array.from({ length: 9 }).map((_, index) => (
                 <div key={index} className="break-inside-avoid"><CardLoader type="property_card" /></div>
               ))}
             </div>
           ) : (
-            <div className="columns-2 lg:columns-3 gap-4 space-y-4">
+            <div className="w-full grid lg:grid-cols-3 grid-cols-1 gap-4 space-y-4">
               {(properties?.slice(0, 6) ?? []).map((p: PropertyWithRoomTypes, index: number) => (
                 <div key={p.id} className="break-inside-avoid">
-                  <PropertyCard index={index} property={p} isFavorited={favoritedSet.has(p.id)} />
+                  <PropertyCard variant="default" index={index} property={p} isFavorited={favoritedSet.has(p.id)} />
                 </div>
               ))}
             </div>

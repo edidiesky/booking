@@ -5,6 +5,9 @@ import { usePropertyDetail } from "./hooks/usePropertyDetail";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useState } from "react";
 import RoomTypeDetailModal from "./RoomTypeDetailModal";
+import CreateRoomTypeModal from "../CreateRoomTypeModal";
+import Title from "@/components/dashboard/common/Title";
+import { EmptyState } from "@/components/common/EmptyState";
 
 const STATUS_CFG: Record<string, { label: string; className: string }> = {
   occupied: { label: "Occupied", className: "text-green-700" },
@@ -14,11 +17,22 @@ const STATUS_CFG: Record<string, { label: string; className: string }> = {
 
 export default function PropertyDetail() {
   const navigate = useNavigate();
-  const {property, roomTypes, summary, isLoading } =
-    usePropertyDetail();
+  const { property, roomTypes, summary, isLoading } = usePropertyDetail();
   const [selectedRoomTypeId, setSelectedRoomTypeId] = useState<string | null>(
     null,
   );
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editRoomTypeId, setEditRoomTypeId] = useState<string | undefined>();
+
+  const openCreate = () => {
+    setEditRoomTypeId(undefined);
+    setCreateOpen(true);
+  };
+
+  // const openEdit = (id: string) => {
+  //   setEditRoomTypeId(id);
+  //   setCreateOpen(true);
+  // };
 
   if (isLoading || !property) {
     return (
@@ -47,16 +61,11 @@ export default function PropertyDetail() {
           <ChevronRight size={13} />
           <span className="text-[#17191c] bold">{property.name}</span>
         </div>
-
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h4 className="text-xl bold text-[#17191c]">{property.name}</h4>
-            <p className="flex items-center gap-1.5 text-xs lg:text-[13px]     text-[#777b86] mt-1">
-              {property.address.street}, {property.address.city},{" "}
-              {property.address.state}
-            </p>
-          </div>
-        </div>
+        <Title
+          title={property.name}
+          description={`${property.address.street}, ${property.address.city}, 
+              ${property.address.state}`}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
           {/* Units / room types table */}
@@ -64,12 +73,10 @@ export default function PropertyDetail() {
             <div className="flex items-center justify-between">
               <p className="text-xs lg:text-[13px]     text-[#17191c]">Units</p>
               <button
-                onClick={() => {
-                  /* opens CreateRoomTypeModal, wire existing modal here */
-                }}
+                onClick={openCreate}
                 className="text-xs lg:text-[13px]     px-4 py-2 bg-[#17191c] text-white rounded-full hover:opacity-90 transition-opacity flex items-center gap-1.5"
               >
-                Add
+                Add Room Types
               </button>
             </div>
 
@@ -93,7 +100,11 @@ export default function PropertyDetail() {
                       colSpan={5}
                       className="px-5 py-10 text-center text-xs lg:text-[13px]     text-[#a3a6af]"
                     >
-                      No room types yet.
+                      <EmptyState
+                        title="Room Types"
+                        description={`No Room Types found. Click "Add Room Types" to create your
+                                          first Room Types.`}
+                      />
                     </td>
                   </tr>
                 ) : (
@@ -146,8 +157,12 @@ export default function PropertyDetail() {
                 ["Revenue", `${formatCurrency(summary?.revenue ?? 0)} / mo`],
               ].map(([label, value]) => (
                 <div key={label} className="flex flex-col gap-0.5">
-                  <span className="text-xs lg:text-[13px]     text-[#a3a6af]">{label}</span>
-                  <span className="text-xs lg:text-[13px]     text-[#17191c] bold">{value}</span>
+                  <span className="text-xs lg:text-[13px]     text-[#a3a6af]">
+                    {label}
+                  </span>
+                  <span className="text-xs lg:text-[13px]     text-[#17191c] bold">
+                    {value}
+                  </span>
                 </div>
               ))}
             </div>
@@ -178,6 +193,19 @@ export default function PropertyDetail() {
           <RoomTypeDetailModal
             roomTypeId={selectedRoomTypeId}
             onClose={() => setSelectedRoomTypeId(null)}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {createOpen && (
+          <CreateRoomTypeModal
+            isOpen={createOpen}
+            propertyId={property.id}
+            roomTypeId={editRoomTypeId}
+            onClose={() => {
+              setCreateOpen(false);
+              setEditRoomTypeId(undefined);
+            }}
           />
         )}
       </AnimatePresence>

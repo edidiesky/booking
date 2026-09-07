@@ -108,6 +108,10 @@ export const propertyApi = apiSlice.injectEndpoints({
         sort?: string;
         page: number;
         limit: number;
+        bedrooms?: number;
+        beds?: number;
+        bathrooms?: number;
+        amenities?: string;
       }
     >({
       query: (params) => {
@@ -261,5 +265,5 @@ export const {
   useSetRoomSortModeMutation,
   useReorderRoomTypesMutation,
   useSetGanttMaxVisibleRoomsMutation,
-  useUpdateRoomTypeMutation
+  useUpdateRoomTypeMutation,
 } = propertyApi;

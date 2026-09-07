@@ -79,13 +79,6 @@ export const campaignRepository = {
     return query<CampaignTemplate>(`SELECT * FROM campaign_templates WHERE campaign_id = $1`, [campaignId]);
   },
 
-  // One row per (campaign, user, channel), this is the audience snapshot,
-  // taken once at send time so the campaign's recipient list is fixed and
-  // auditable from here on, not re-derived from a possibly-changed live
-  // audience on every retry. Batched in chunks of 500: a single unbatched
-  // INSERT for a large audience would build an unreasonably large SQL
-  // statement and risk Postgres's parameter limit, same batching pattern
-  // used elsewhere in this codebase for bulk room-type inserts.
   async snapshotRecipients(campaignId: string, recipients: { userId: string; channel: CampaignChannel }[]): Promise<number> {
     const CHUNK_SIZE = 500;
     let inserted = 0;

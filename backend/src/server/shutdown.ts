@@ -1,12 +1,12 @@
 import http from "http";
 
-import { disconnectDB }          from "@booking/shared";
-import redisClient               from "../config/redis";
-import { disconnectRabbitMQ }    from "../messaging/connection";
-import { stopOutboxPoller }      from "../messaging/outboxPoller";
+import { disconnectDB } from "@booking/shared";
+import redisClient from "../config/redis";
+import { disconnectRabbitMQ } from "../messaging/connection";
+import { stopOutboxPoller } from "../messaging/outboxPoller";
 import { stopWebhookRetryWorker } from "../messaging/workers/webhookRetryWorker";
 // import { stopSocketServer }      from "../realtime/socketServer";
-import { serverHealthGauge }     from "../utils/metrics";
+import { serverHealthGauge } from "../utils/metrics";
 import logger from "../utils/logger";
 
 import {
@@ -41,7 +41,10 @@ export function registerShutdownHooks(server: http.Server): void {
         logger.info("shutdown_complete", { event: "shutdown_complete" });
         process.exit(0);
       } catch (err) {
-        logger.error("shutdown_error", { event: "shutdown_error", error: (err as Error).message });
+        logger.error("shutdown_error", {
+          event: "shutdown_error",
+          error: (err as Error).message,
+        });
         process.exit(1);
       }
     });
@@ -50,5 +53,5 @@ export function registerShutdownHooks(server: http.Server): void {
   };
 
   process.on("SIGTERM", () => void shutdown("SIGTERM"));
-  process.on("SIGINT",  () => void shutdown("SIGINT"));
+  process.on("SIGINT", () => void shutdown("SIGINT"));
 }

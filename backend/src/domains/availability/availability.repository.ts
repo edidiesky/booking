@@ -176,6 +176,7 @@ async seedCalendar(
          RETURNING *`,
         [data.roomTypeId, data.checkIn, data.checkOut, data.roomsHeld, data.sessionId]
       )).rows[0] as BookingLock;
+      
 
       availabilityLockCounter.inc({ action: "acquired" });
       logger.info("booking_lock_acquired", {

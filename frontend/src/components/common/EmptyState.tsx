@@ -38,10 +38,10 @@ export function EmptyState({
       )} */}
       <EmptyIcon/>
 
-      <div className="space-y-1">
+      <div className="space-y-2">
         <p className="text-sm font-medium">{title}</p>
         {description && (
-          <p className="max-w-sm text-xs text-muted-foreground lg:text-[13px]">
+          <p className="max-w-sm text-xs text-muted-foreground lg:text-xs">
             {description}
           </p>
         )}

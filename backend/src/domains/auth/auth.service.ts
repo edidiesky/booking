@@ -725,29 +725,40 @@ export class AuthService {
       reason: string,
       error: AppError,
     ): Promise<never> => {
-      await withTransaction((client) =>
-        auditEventRepository.record(
-          {
-            tenantId: user.tenant_id,
-            actor: {
-              type: "user",
-              id: user.id,
-              email: user.email,
-              name: [user.first_name, user.last_name].filter(Boolean).join(" "),
+      if (user.tenant_id) {
+        await withTransaction((client) =>
+          auditEventRepository.record(
+            {
+              tenantId: user.tenant_id,
+              actor: {
+                type: "user",
+                id: user.id,
+                email: user.email,
+                name: [user.first_name, user.last_name]
+                  .filter(Boolean)
+                  .join(" "),
+              },
+              action: "auth.login_failed",
+              targetType: "user",
+              targetId: user.id,
+              outcome: "denied",
+              denialReason: reason,
+              requestId: requestContext.get()?.requestId,
             },
-            action: "auth.login_failed",
-            targetType: "user",
-            targetId: user.id,
-            outcome: "denied",
-            denialReason: reason,
-            requestId: requestContext.get()?.requestId,
-          },
-          client,
-        ),
-      );
+            client,
+          ),
+        );
+      } else {
+        await auditRepository.log({
+          action: "login",
+          resource: "user",
+          resourceId: user.id,
+          userId: user.id,
+          newValue: { outcome: "denied", reason },
+        });
+      }
       throw error;
     };
-
     if (!(await bcrypt.compare(input.password, user.password_hash))) {
       await denyLogin(
         "incorrect_password",
