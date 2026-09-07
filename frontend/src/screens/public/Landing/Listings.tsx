@@ -20,9 +20,8 @@ const Listing = () => {
 
   return (
     <section data-scroll-section className="w-full py-20 lg:py-24">
-      {/* Same shell as Features / Expert / FAQ */}
       <div
-        className="mx-auto w-full px-6 lg:px-8"
+        className="mx-auto w-full px-4 lg:px-4"
         style={{ maxWidth: "1280px" }}
       >
         <div className="mb-10 grid w-full grid-cols-1 items-end gap-6 lg:mb-14 lg:grid-cols-2">
