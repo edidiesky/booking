@@ -1,24 +1,27 @@
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { DateRange }                 from "react-date-range";
-import { enUS }                      from "date-fns/locale";
-import type { RangeKeyDict }         from "react-date-range";
-import { useState, useEffect }       from "react";
-import { AvailabilityEvent }     from "@/hooks/useAvailabilityStream";
+import { DateRange } from "react-date-range";
+import { enUS } from "date-fns/locale";
+import type { RangeKeyDict } from "react-date-range";
+import { useState, useEffect } from "react";
+import { AvailabilityEvent } from "@/hooks/useAvailabilityStream";
 
 interface DateRangeValue {
   from: Date;
-  to:   Date;
+  to: Date;
 }
 
 interface Props {
-  nights:     number;
-  name:       string;
-  dateRange:  DateRangeValue;
-  onChange:   (range: DateRangeValue) => void;
-  liveEvent: AvailabilityEvent | null; 
-  availabilitySnapshot: { date: string; available_count: number; is_blocked: boolean }[];
-
+  nights: number;
+  name: string;
+  dateRange: DateRangeValue;
+  onChange: (range: DateRangeValue) => void;
+  liveEvent: AvailabilityEvent | null;
+  availabilitySnapshot: {
+    date: string;
+    available_count: number;
+    is_blocked: boolean;
+  }[];
 }
 
 const RANGE_COLOR = "#17191c";
@@ -34,10 +37,17 @@ function toDateArray(checkIn: string, checkOut: string): Date[] {
   return dates;
 }
 
-export default function PropertyCalendar({ nights, name, dateRange, onChange, liveEvent, availabilitySnapshot   }: Props) {
+export default function PropertyCalendar({
+  nights,
+  name,
+  dateRange,
+  onChange,
+  liveEvent,
+  availabilitySnapshot,
+}: Props) {
   const [disabledDates, setDisabledDates] = useState<Date[]>([]);
 
-useEffect(() => {
+  useEffect(() => {
     const blocked = availabilitySnapshot
       .filter((slot) => slot.is_blocked || slot.available_count <= 0)
       .map((slot) => new Date(slot.date));
@@ -51,7 +61,9 @@ useEffect(() => {
     setDisabledDates((prev) => {
       if (liveEvent.type === "booked" || liveEvent.type === "blocked") {
         const merged = [...prev, ...rangeDates];
-        return Array.from(new Map(merged.map((d) => [d.toDateString(), d])).values());
+        return Array.from(
+          new Map(merged.map((d) => [d.toDateString(), d])).values(),
+        );
       }
       const rangeStrings = new Set(rangeDates.map((d) => d.toDateString()));
       return prev.filter((d) => !rangeStrings.has(d.toDateString()));
@@ -61,8 +73,8 @@ useEffect(() => {
   const ranges = [
     {
       startDate: dateRange.from,
-      endDate:   dateRange.to,
-      key:       "selection",
+      endDate: dateRange.to,
+      key: "selection",
     },
   ];
 
@@ -74,22 +86,26 @@ useEffect(() => {
   };
 
   const fromLabel = dateRange.from.toLocaleDateString("en-NG", {
-    day: "numeric", month: "short", year: "numeric",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   });
   const toLabel = dateRange.to.toLocaleDateString("en-NG", {
-    day: "numeric", month: "short", year: "numeric",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   });
 
   const sharedProps = {
-    rangeColors:               [RANGE_COLOR],
+    rangeColors: [RANGE_COLOR],
     ranges,
-    onChange:                  handleSelect,
-    showDateDisplay:           false,
-    minDate:                   new Date(),
+    onChange: handleSelect,
+    showDateDisplay: false,
+    minDate: new Date(),
     disabledDates,
-    showSelectionPreview:      true,
+    showSelectionPreview: true,
     moveRangeOnFirstSelection: false,
-    locale:                    enUS,
+    locale: enUS,
   };
 
   return (

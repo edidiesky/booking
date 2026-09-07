@@ -1,45 +1,70 @@
 import type { ReactNode } from "react";
 import {
-  Wifi, Tv, ChefHat, WashingMachine, Wind as Dryer, Wind, Flame,
-  Laptop, Shirt, Sparkles, Car, Waves, Bath, Dumbbell, ArrowUpDown,
-  KeyRound, PawPrint, Plug, Coffee, Droplets, Trees, Utensils,
-  Sun, Building2, Palmtree, ShieldAlert, AlertTriangle, Cross,
-  FireExtinguisher, Camera,
+  Wifi,
+  Tv,
+  ChefHat,
+  WashingMachine,
+  Wind as Dryer,
+  Wind,
+  Flame,
+  Laptop,
+  Shirt,
+  Sparkles,
+  Car,
+  Waves,
+  Bath,
+  Dumbbell,
+  ArrowUpDown,
+  KeyRound,
+  PawPrint,
+  Plug,
+  Coffee,
+  Droplets,
+  Trees,
+  Utensils,
+  Sun,
+  Building2,
+  Palmtree,
+  ShieldAlert,
+  AlertTriangle,
+  Cross,
+  FireExtinguisher,
+  Camera,
 } from "lucide-react";
 import type { Property } from "@/types/api";
 import { AMENITY_OPTIONS } from "@/constants/amenities";
 
 const ICON_MAP: Record<string, ReactNode> = {
-  wifi:               <Wifi size={24} />,
-  tv:                 <Tv size={24} />,
-  kitchen:            <ChefHat size={24} />,
-  washer:             <WashingMachine size={24} />,
-  dryer:              <Dryer size={24} />,
-  ac:                 <Wind size={24} />,
-  heating:            <Flame size={24} />,
-  workspace:          <Laptop size={24} />,
-  iron:               <Shirt size={24} />,
-  hair_dryer:         <Sparkles size={24} />,
-  parking:            <Car size={24} />,
-  pool:               <Waves size={24} />,
-  hot_tub:            <Bath size={24} />,
-  gym:                <Dumbbell size={24} />,
-  elevator:           <ArrowUpDown size={24} />,
-  self_checkin:       <KeyRound size={24} />,
-  pets:               <PawPrint size={24} />,
-  ev_charger:         <Plug size={24} />,
-  breakfast:          <Coffee size={24} />,
-  bathtub:            <Droplets size={24} />,
-  garden:             <Trees size={24} />,
-  bbq:                <Utensils size={24} />,
-  patio:              <Sun size={24} />,
-  balcony:            <Building2 size={24} />,
-  beach_access:       <Palmtree size={24} />,
-  smoke_alarm:        <ShieldAlert size={24} />,
-  carbon_monoxide:    <AlertTriangle size={24} />,
-  first_aid:          <Cross size={24} />,
-  fire_extinguisher:  <FireExtinguisher size={24} />,
-  security_cameras:   <Camera size={24} />,
+  wifi: <Wifi size={24} />,
+  tv: <Tv size={24} />,
+  kitchen: <ChefHat size={24} />,
+  washer: <WashingMachine size={24} />,
+  dryer: <Dryer size={24} />,
+  ac: <Wind size={24} />,
+  heating: <Flame size={24} />,
+  workspace: <Laptop size={24} />,
+  iron: <Shirt size={24} />,
+  hair_dryer: <Sparkles size={24} />,
+  parking: <Car size={24} />,
+  pool: <Waves size={24} />,
+  hot_tub: <Bath size={24} />,
+  gym: <Dumbbell size={24} />,
+  elevator: <ArrowUpDown size={24} />,
+  self_checkin: <KeyRound size={24} />,
+  pets: <PawPrint size={24} />,
+  ev_charger: <Plug size={24} />,
+  breakfast: <Coffee size={24} />,
+  bathtub: <Droplets size={24} />,
+  garden: <Trees size={24} />,
+  bbq: <Utensils size={24} />,
+  patio: <Sun size={24} />,
+  balcony: <Building2 size={24} />,
+  beach_access: <Palmtree size={24} />,
+  smoke_alarm: <ShieldAlert size={24} />,
+  carbon_monoxide: <AlertTriangle size={24} />,
+  first_aid: <Cross size={24} />,
+  fire_extinguisher: <FireExtinguisher size={24} />,
+  security_cameras: <Camera size={24} />,
 };
 
 const LABEL_FALLBACK: Record<string, ReactNode> = {
@@ -63,7 +88,11 @@ function getIcon(amenity: string): ReactNode {
 
   const key = amenity.toLowerCase();
   const match = Object.entries(LABEL_FALLBACK).find(([k]) => key.includes(k));
-  return match ? match[1] : <span className="w-5 h-5 rounded-full bg-[#f2f0ed] inline-block" />;
+  return match ? (
+    match[1]
+  ) : (
+    <span className="w-5 h-5 rounded-full bg-[#f2f0ed] inline-block" />
+  );
 }
 
 function getLabel(amenity: string): string {
