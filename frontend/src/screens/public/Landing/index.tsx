@@ -10,18 +10,20 @@ import Testimonials from "./Testimonials";
 
 export default function Landing() {
   return (
-    <SmoothScroll>
+    <>
       <Header />
-      <main className="flex-1 w-full flex-col gap-14">
-        <Hero />
-        <About />
-        <Listing />
-        <Expert />
-        <Testimonials/>
-        <FAQ />
-      </main>
+      <SmoothScroll>
+        <main className="flex-1 w-full flex-col gap-14">
+          <Hero />
+          <About />
+          <Listing />
+          <Expert />
+          <Testimonials />
+          <FAQ />
+        </main>
 
-      <Footer />
-    </SmoothScroll>
+        <Footer />
+      </SmoothScroll>
+    </>
   );
 }
