@@ -65,7 +65,7 @@ function priceIcon(price: number | null, active: boolean) {
       border:1px solid ${active ? "#222" : "#ddd"};
       border-radius:999px;
       padding: 10px;
-      font-size:13px;
+      font-size:14px;
       font-weight:600;
       font-family:'Bricolage Grotesque', system-ui, sans-serif;
       box-shadow:0 2px 8px rgba(0,0,0,.15);

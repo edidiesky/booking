@@ -46,7 +46,9 @@ export default function Header() {
   return (
     <nav
       className={` top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-        isTransparent ? "bg-transparent" : "bg-white border-b border-[#e8e6e3]"
+        isTransparent
+          ? "bg-transparent"
+          : "bg-white border-b border-[#e8e6e3]"
       }`}
     >
       <MobileSidebar isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
