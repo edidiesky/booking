@@ -11,7 +11,7 @@ export default function MyFavorites() {
   const favorites = data?.data ?? [];
 
   return (
-    <div className="flex flex-col gap-14 w-full">
+    <div className="flex flex-col  w-full">
       <Header />
       <main className="flex-1 max-w-screen-xl mx-auto w-full px-4 md:px-0 py-10">
         <h1

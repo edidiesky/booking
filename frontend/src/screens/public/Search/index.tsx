@@ -92,7 +92,7 @@ export default function SearchPage() {
     (filtersState.beds != null ? 1 : 0);
 
   return (
-    <div className="flex flex-col gap-14 w-full">
+    <div className="flex flex-col  w-full">
       <Header />
       <motion.div
         initial={{ opacity: 0, y: 12 }}
