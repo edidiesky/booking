@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { DateRange } from "react-date-range";
 import type { RangeKeyDict } from "react-date-range";
 import { enUS } from "date-fns/locale";
@@ -10,12 +10,17 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { useSelector } from "react-redux";
 import { selectIsAuthenticated } from "@/redux/slices/authSlice";
 
+interface DateRangeValue {
+  from: Date;
+  to: Date;
+}
+
 interface Props {
   roomTypes: RoomType[];
   selectedRoomType: RoomType | null;
   onSelectRoomType: (rt: RoomType) => void;
-  dateRange: { from: Date; to: Date };
-  onDateChange: (range: { from: Date; to: Date }) => void;
+  dateRange: DateRangeValue;
+  onDateChange: (range: DateRangeValue) => void;
   guestCount: number;
   onGuestCount: (n: number) => void;
   nights: number;
@@ -24,37 +29,19 @@ interface Props {
   isBooking: boolean;
 }
 
-export default function BookingForm({
-  roomTypes,
-  selectedRoomType,
-  onSelectRoomType,
-  dateRange,
-  onDateChange,
-  guestCount,
-  onGuestCount,
-  nights,
-  totalAmount,
-  onBook,
-  isBooking,
-}: Props) {
-  const isAuth = useSelector(selectIsAuthenticated);
-  const [showPicker, setShowPicker] = useState(false);
-
-  const ranges = [
-    { startDate: dateRange.from, endDate: dateRange.to, key: "selection" },
-  ];
-
-  const handleSelect = (rangesByKey: RangeKeyDict) => {
-    const selection = rangesByKey["selection"];
-    if (selection?.startDate && selection?.endDate) {
-      onDateChange({ from: selection.startDate, to: selection.endDate });
-    }
-  };
-
-  const DatePickerBlock = () => (
+function DatePickerBlock({
+  dateRange, ranges, onSelect, showPicker, onTogglePicker,
+}: {
+  dateRange: DateRangeValue;
+  ranges: { startDate: Date; endDate: Date; key: string }[];
+  onSelect: (r: RangeKeyDict) => void;
+  showPicker: boolean;
+  onTogglePicker: () => void;
+}) {
+  return (
     <div className="relative">
       <div
-        onClick={() => setShowPicker((v) => !v)}
+        onClick={onTogglePicker}
         className="grid rounded-t-xl border border-[rgba(0,0,0,0.15)] min-h-[80px] w-full grid-cols-2 cursor-pointer"
       >
         <div className="flex items-start py-3 px-3 border-r border-[rgba(0,0,0,0.15)] flex-col gap-1">
@@ -84,7 +71,7 @@ export default function BookingForm({
           <DateRange
             rangeColors={["#17191c"]}
             ranges={ranges}
-            onChange={handleSelect}
+            onChange={onSelect}
             showDateDisplay={false}
             minDate={new Date()}
             moveRangeOnFirstSelection={false}
@@ -96,17 +83,46 @@ export default function BookingForm({
       )}
     </div>
   );
+}
+
+export default function BookingForm({
+  roomTypes,
+  selectedRoomType,
+  onSelectRoomType,
+  dateRange,
+  onDateChange,
+  guestCount,
+  onGuestCount,
+  nights,
+  totalAmount,
+  onBook,
+  isBooking,
+}: Props) {
+  const isAuth = useSelector(selectIsAuthenticated);
+  const [showPicker, setShowPicker] = useState(false);
+
+  const ranges = useMemo(
+    () => [{ startDate: dateRange.from, endDate: dateRange.to, key: "selection" }],
+    [dateRange.from.getTime(), dateRange.to.getTime()], // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const handleSelect = (rangesByKey: RangeKeyDict) => {
+    const selection = rangesByKey["selection"];
+    if (selection?.startDate && selection?.endDate) {
+      onDateChange({ from: selection.startDate, to: selection.endDate });
+    }
+  };
 
   return (
     <>
       {/* desktop sticky sidebar */}
       <div className="w-full lg:sticky top-[10%] hidden lg:flex flex-col">
         <div className="w-full border border-[#e8e6e3] rounded-xl py-8 px-4 flex flex-col gap-5 md:w-[380px] bg-white">
-          <h2 className="text-xl font-semibold text-[#17191c] px-2">
+          <h2 className="text-xl lg:text-2xl font-semibold text-[#17191c] px-2">
             {selectedRoomType
               ? formatCurrency(Number(selectedRoomType.base_price_ngn))
               : "Select a room"}
-            <span className="font-normal text-xs lg:text-[13px]     border-lime-950 text-[#777b86]"> /night</span>
+            <span className="font-normal text-sm border-lime-950 text-[#777b86]"> /night</span>
           </h2>
 
           {roomTypes.length > 0 && (
@@ -134,7 +150,13 @@ export default function BookingForm({
           )}
 
           <div className="w-full flex flex-col">
-            <DatePickerBlock />
+            <DatePickerBlock
+              dateRange={dateRange}
+              ranges={ranges}
+              onSelect={handleSelect}
+              showPicker={showPicker}
+              onTogglePicker={() => setShowPicker((v) => !v)}
+            />
 
             <div className="rounded-b-xl border border-t-0 border-[rgba(0,0,0,0.15)] min-h-[50px] p-3">
               <span className="text-xs lg:text-[13px]     bold text-[#777b86] uppercase">Guests</span>
