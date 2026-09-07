@@ -21,7 +21,7 @@ const Listing = () => {
   // console.log("room payload:", { isLoading, rooms });
   return (
     <div data-scroll-section className="w-full flex py-32 flex-col">
-      <div className="mx-auto px-4 lg:px-0 pt-32 pb-20 flex flex-col gap-8 lg:gap-20" style={{ maxWidth: "1280px" }}>
+      <div className="mx-auto px-4 lg:px-0 pt-32 pb-20 flex flex-col gap-8 lg:gap-20">
         <div className="grid lg:grid-cols-2 gap-4 items-start lg:items-center w-full">
           <div className="flex flex-col gap-4">
             <h4 className="text-sm md:text-lg text-[var(--primary)]">
