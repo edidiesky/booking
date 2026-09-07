@@ -51,14 +51,14 @@ export default function PropertyDetail() {
 
 
   return (
+     <div className="flex flex-col gap-14 w-full">
+          <Header />
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       className="flex flex-col min-h-screen"
     >
-      <Header />
-
       <main className="flex-1 pt-8 pb-24 lg:pb-0">
         <div className="w-full max-w-screen-xl mx-auto py-6 px-4 md:px-0">
 
@@ -137,5 +137,6 @@ export default function PropertyDetail() {
 
       <Footer />
     </motion.div>
+    </div>
   );
 }

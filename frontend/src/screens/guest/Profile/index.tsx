@@ -54,8 +54,8 @@ export default function GuestProfile() {
   })();
 
   return (
-    <div className="w-full flex flex-col">
-      <Header />
+    <div className="flex flex-col gap-14 w-full">
+         <Header />
       {isLoading && !user ? (
         <div className="p-12 text-[13px] text-[#a3a6af]">Loading profile…</div>
       ) : (

@@ -92,103 +92,104 @@ export default function SearchPage() {
     (filtersState.beds != null ? 1 : 0);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-      className="flex min-h-screen flex-col bg-white"
-    >
+    <div className="flex flex-col gap-14 w-full">
       <Header />
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+        className="flex min-h-screen flex-col bg-white"
+      >
+        <SearchFilterBar
+          value={bar}
+          onChange={setBar}
+          onApply={commitBar}
+          onReset={resetBar}
+          onOpenMoreFilters={() => setFiltersOpen(true)}
+          activeMoreCount={moreCount + activeFilterCount}
+        />
 
-      <SearchFilterBar
-        value={bar}
-        onChange={setBar}
-        onApply={commitBar}
-        onReset={resetBar}
-        onOpenMoreFilters={() => setFiltersOpen(true)}
-        activeMoreCount={moreCount + activeFilterCount}
-      />
+        <FiltersModal
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+          value={filtersState}
+          onApply={(next) => {
+            applyFilters(next);
+            setBar((b) => ({
+              ...b,
+              bedrooms: next.bedrooms,
+              bathrooms: next.bathrooms,
+              minPrice: next.minPrice,
+              maxPrice: next.maxPrice,
+              propertyType:
+                next.placeType !== "any" ? next.placeType : b.propertyType,
+            }));
+          }}
+          resultCount={properties.length || undefined}
+        />
 
-      <FiltersModal
-        open={filtersOpen}
-        onClose={() => setFiltersOpen(false)}
-        value={filtersState}
-        onApply={(next) => {
-          applyFilters(next);
-          setBar((b) => ({
-            ...b,
-            bedrooms: next.bedrooms,
-            bathrooms: next.bathrooms,
-            minPrice: next.minPrice,
-            maxPrice: next.maxPrice,
-            propertyType:
-              next.placeType !== "any" ? next.placeType : b.propertyType,
-          }));
-        }}
-        resultCount={properties.length || undefined}
-      />
+        <div className="mx-auto w-full max-w-screen-2xl flex-1">
+          <div className="grid min-h-[calc(100vh-140px)] grid-cols-1 lg:grid-cols-2">
+            <div className="max-h-[calc(100vh-140px)] overflow-y-auto px-4 py-6 lg:px-6 lg:py-8">
+              <div className="mb-5 flex items-baseline justify-between gap-3">
+                <h1 className="text-[20px] font-semibold text-[#222] lg:text-[22px]">
+                  {isLoading
+                    ? "Searching stays…"
+                    : city
+                      ? `Over ${Math.max(properties.length, 1).toLocaleString()} homes in ${city}`
+                      : `${Math.max(properties.length, 0).toLocaleString()} stays available`}
+                </h1>
+                <p className="hidden shrink-0 text-[13px] text-[#717171] sm:block">
+                  Prices include all fees
+                </p>
+              </div>
 
-      <div className="mx-auto pt-8 w-full max-w-screen-2xl flex-1">
-        <div className="grid min-h-[calc(100vh-140px)] grid-cols-1 lg:grid-cols-2">
-          <div className="max-h-[calc(100vh-140px)] overflow-y-auto px-4 py-6 lg:px-6 lg:py-8">
-            <div className="mb-5 flex items-baseline justify-between gap-3">
-              <h1 className="text-[20px] font-semibold text-[#222] lg:text-[22px]">
-                {isLoading
-                  ? "Searching stays…"
-                  : city
-                    ? `Over ${Math.max(properties.length, 1).toLocaleString()} homes in ${city}`
-                    : `${Math.max(properties.length, 0).toLocaleString()} stays available`}
-              </h1>
-              <p className="hidden shrink-0 text-[13px] text-[#717171] sm:block">
-                Prices include all fees
-              </p>
+              {isLoading ? (
+                <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <CardLoader key={i} type="property_card" />
+                  ))}
+                </div>
+              ) : properties.length === 0 ? (
+                <p className="py-20 text-center text-[14px] text-[#717171]">
+                  No properties match your filters.
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 gap-x-4 gap-y-6">
+                  {properties.map((p: PropertyWithRoomTypes, i: number) => (
+                    <div
+                      key={p.id}
+                      onMouseEnter={() => setActiveId(p.id)}
+                      onMouseLeave={() => setActiveId(null)}
+                      className={
+                        activeId === p.id
+                          ? "rounded-2xl ring-2 ring-[#17191c]"
+                          : ""
+                      }
+                    >
+                      <PropertyCard
+                        property={p}
+                        index={i}
+                        isFavorited={favoritedSet.has(p.id)}
+                        variant="search"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {isLoading ? (
-              <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <CardLoader key={i} type="property_card" />
-                ))}
-              </div>
-            ) : properties.length === 0 ? (
-              <p className="py-20 text-center text-[14px] text-[#717171]">
-                No properties match your filters.
-              </p>
-            ) : (
-              <div className="grid grid-cols-1 gap-x-4 gap-y-6">
-                {properties.map((p: PropertyWithRoomTypes, i: number) => (
-                  <div
-                    key={p.id}
-                    onMouseEnter={() => setActiveId(p.id)}
-                    onMouseLeave={() => setActiveId(null)}
-                    className={
-                      activeId === p.id
-                        ? "rounded-2xl ring-2 ring-[#17191c]"
-                        : ""
-                    }
-                  >
-                    <PropertyCard
-                      property={p}
-                      index={i}
-                      isFavorited={favoritedSet.has(p.id)}
-                      variant="search"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="sticky top-[57px] hidden h-[calc(100vh-57px)] p-3 pl-0 lg:block">
-            <SearchMap
-              properties={properties}
-              activeId={activeId}
-              onSelect={setActiveId}
-              className="h-full rounded-2xl"
-            />
+            <div className="sticky top-[57px] hidden h-[calc(100vh-57px)] p-3 pl-0 lg:block">
+              <SearchMap
+                properties={properties}
+                activeId={activeId}
+                onSelect={setActiveId}
+                className="h-full rounded-2xl"
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }

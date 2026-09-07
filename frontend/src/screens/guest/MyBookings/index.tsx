@@ -32,13 +32,14 @@ export default function MyBookings() {
   const hasBookings = bookings.length > 0;
 
   return (
+     <div className="flex flex-col gap-14 w-full">
+          <Header />
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       className="flex flex-col min-h-screen"
     >
-      <Header />
 
       <main className="flex-1 py-20 pb-12">
         <div className="max-w-screen-xl mx-auto flex flex-col gap-12">
@@ -106,5 +107,6 @@ export default function MyBookings() {
 
       <Footer />
     </motion.div>
+    </div>
   );
 }
