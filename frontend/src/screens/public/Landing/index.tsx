@@ -12,7 +12,7 @@ export default function Landing() {
   return (
     <SmoothScroll>
       <Header />
-      <main className="flex-1 flex-col gap-14">
+      <main className="flex-1 w-full flex-col gap-14">
         <Hero />
         <About />
         <Listing />
