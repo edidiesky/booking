@@ -1,66 +1,73 @@
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import AnimateTextWord from "@/components/common/AnimateTextWord";
 import { useProperties } from "../Properties/hooks/useProperties";
 import CardLoader from "@/components/common/loader/CardLoader";
 import PropertyCard from "@/components/common/PropertyCard";
-// import InfiniteDragRow from "@/components/common/InfiniteDragRow";
 import { useListFavoritedIdsQuery } from "@/redux/services/favoriteApi";
 import { selectAccessToken } from "@/redux/slices/authSlice";
-import { PropertyWithRoomTypes } from "@/types/api";
+import type { PropertyWithRoomTypes } from "@/types/api";
 
 const Listing = () => {
-  const {
-      properties, isLoading,
-    } = useProperties();
+  const { properties, isLoading } = useProperties();
 
   const token = useSelector(selectAccessToken);
-  const visibleIds = (properties ?? []).slice(0, 3).map((p) => p.id);
-  const { data: favoritedData } = useListFavoritedIdsQuery(visibleIds, { skip: !token || visibleIds.length === 0 });
+  const visibleIds = (properties ?? []).slice(0, 6).map((p) => p.id);
+  const { data: favoritedData } = useListFavoritedIdsQuery(visibleIds, {
+    skip: !token || visibleIds.length === 0,
+  });
   const favoritedSet = new Set(favoritedData?.data ?? []);
-  
-  // console.log("room payload:", { isLoading, rooms });
+
   return (
-    <div data-scroll-section className="w-full flex py-32 flex-col">
-      <div className="mx-auto px-4 lg:px-0 pt-32 pb-20" style={{ maxWidth: "1280px" }}>
-        <div className="grid lg:grid-cols-2 gap-4 items-start lg:items-center w-full">
-          <div className="flex flex-col gap-4">
-            <h4 className="text-sm md:text-lg text-[var(--primary)]">
+    <section data-scroll-section className="w-full py-20 lg:py-24">
+      {/* Same shell as Features / Expert / FAQ */}
+      <div
+        className="mx-auto w-full px-6 lg:px-8"
+        style={{ maxWidth: "1280px" }}
+      >
+        <div className="mb-10 grid w-full grid-cols-1 items-end gap-6 lg:mb-14 lg:grid-cols-2">
+          <div className="flex flex-col gap-3">
+            <p className="text-sm md:text-base text-[var(--primary)]">
               Passionate – Dedicated – Professional
-            </h4>
-            <h4 className="text-4xl lg:text-5xl capitalize family2 text-[var(--dark-1)]">
-              <AnimateTextWord type={"bigtext"}>
-                Stays worth 
-              </AnimateTextWord>
-              <AnimateTextWord type={"bigtext"}>
-               booking again
-              </AnimateTextWord>
-            </h4>
+            </p>
+            <h2 className="family2 text-4xl capitalize text-[var(--dark-1)] lg:text-5xl">
+              <AnimateTextWord type="bigtext">Stays worth</AnimateTextWord>
+              <AnimateTextWord type="bigtext">booking again</AnimateTextWord>
+            </h2>
           </div>
-          <div className="flex lg:items-center md:justify-end">
-            <button className="btn rounded-full md:px-8 px-4 py-4 text-xs md:text-base family1 text-white font-normal">
+          <div className="flex lg:justify-end">
+            <Link
+              to="/search"
+              className="btn family1 rounded-full px-6 py-3.5 text-xs font-normal text-white md:px-8 md:text-base"
+            >
               Browse all Homes
-            </button>
+            </Link>
           </div>
         </div>
-        <div className="w-full">
-          {isLoading ? (
-            <div className="w-full grid lg:grid-cols-3 grid-cols-1 gap-4 space-y-4">
-              {Array.from({ length: 9 }).map((_, index) => (
-                <div key={index} className="break-inside-avoid"><CardLoader type="property_card" /></div>
-              ))}
-            </div>
-          ) : (
-            <div className="w-full grid lg:grid-cols-3 grid-cols-1 gap-4 space-y-4">
-              {(properties?.slice(0, 6) ?? []).map((p: PropertyWithRoomTypes, index: number) => (
-                <div key={p.id} className="break-inside-avoid">
-                  <PropertyCard variant="default" index={index} property={p} isFavorited={favoritedSet.has(p.id)} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+
+        {isLoading ? (
+          <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <CardLoader key={index} type="property_card" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {(properties?.slice(0, 6) ?? []).map(
+              (p: PropertyWithRoomTypes, index: number) => (
+                <PropertyCard
+                  key={p.id}
+                  variant="default"
+                  index={index}
+                  property={p}
+                  isFavorited={favoritedSet.has(p.id)}
+                />
+              ),
+            )}
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 };
 
