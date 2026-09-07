@@ -60,8 +60,8 @@ export interface PropertyCardData {
   instantBook?: boolean;
   latitude?: number | string | null;
   longitude?: number | string | null;
-  fromPrice?: number;
-  from_price?: number;
+  fromPrice?: number | null;
+  from_price?: number | null;
 }
 
 export type PropertyCardVariant =

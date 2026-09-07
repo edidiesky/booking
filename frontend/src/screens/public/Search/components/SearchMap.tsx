@@ -108,7 +108,7 @@ export default function SearchMap({
   const pins = useMemo(() => pinsFromProperties(properties), [properties]);
   const center: [number, number] = pins[0]
     ? [pins[0].lat, pins[0].lng]
-    : [9.082, 8.6753]; 
+    : [9.082, 8.6753];
 
   return (
     <div
