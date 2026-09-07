@@ -21,7 +21,7 @@ const Listing = () => {
   return (
     <section data-scroll-section className="w-full py-20 lg:py-24">
       <div
-        className="mx-auto w-full px-4 lg:px-4"
+        className="mx-auto w-full px-4 lg:px-0"
         style={{ maxWidth: "1280px" }}
       >
         <div className="mb-10 grid w-full grid-cols-1 items-end gap-6 lg:mb-14 lg:grid-cols-2">
