@@ -21,7 +21,9 @@ import {
 import AccountDropdown from "@/components/common/AccountDropdown";
 import { useEffect, useState } from "react";
 import MobileSidebar from "../dashboard/common/MobileSidebar";
+
 const TRANSPARENT_ROUTES = ["/"];
+
 export default function Header() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
@@ -45,7 +47,7 @@ export default function Header() {
   }, [location.pathname]);
   return (
     <nav
-      className={`sticky top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+      className={`${canBeTransparent ? "fixed" : "sticky"} top-0 left-0 right-0 z-50 transition-colors duration-300 ${
         isTransparent
           ? "bg-transparent"
           : "bg-white border-b border-[#e8e6e3]"
