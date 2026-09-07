@@ -149,7 +149,7 @@ function AmenityChip({ raw }: { raw: string }) {
   return (
     <span className="inline-flex items-center gap-1 text-[12px] text-[#777b86]">
       {Icon ? (
-        <Icon size={13} className="shrink-0 text-[#a3a6af]" />
+        <Icon size={16} className="shrink-0 text-[#a3a6af]" />
       ) : (
         <span className="inline-block h-1 w-1 shrink-0 rounded-full bg-[#c4c6ce]" />
       )}
@@ -264,14 +264,14 @@ function SearchCard({
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-0.5">
           {rt?.bedrooms != null && (
-            <span className="inline-flex items-center gap-1 text-[12px] text-[#777b86]">
-              <BedDouble size={13} className="text-[#a3a6af]" />
+            <span className="inline-flex items-center gap-1 text-sm text-[#777b86]">
+              <BedDouble size={16} className="text-[#a3a6af]" />
               {rt.bedrooms} Bed
             </span>
           )}
           {rt?.bathrooms != null && (
-            <span className="inline-flex items-center gap-1 text-[12px] text-[#777b86]">
-              <Bath size={13} className="text-[#a3a6af]" />
+            <span className="inline-flex items-center gap-1 text-sm text-[#777b86]">
+              <Bath size={16} className="text-[#a3a6af]" />
               {rt.bathrooms} Bath
             </span>
           )}
@@ -281,9 +281,9 @@ function SearchCard({
         </div>
 
         {price != null && (
-          <p className="mt-0.5 text-[15px] font-semibold text-[#17191c]">
+          <p className="mt-0.5 text-lg lg:text-xl font-semibold text-[#17191c]">
             {formatCurrency(price)}
-            <span className="text-[13px] font-normal text-[#777b86]"> night</span>
+            <span className="text-base font-normal text-[#777b86]"> night</span>
           </p>
         )}
       </div>
@@ -335,7 +335,7 @@ function HomeCard({
       </div>
       <div className="flex min-w-0 flex-col gap-0.5">
         <div className="flex items-center justify-between gap-1">
-          <p className="truncate text-[13px] font-semibold text-[#222]">
+          <p className="truncate text-[14px] font-semibold text-[#222]">
             {city ? `Stay in ${city}` : property.name}
           </p>
           <span className="inline-flex shrink-0 items-center gap-0.5 text-[12px]">
@@ -344,7 +344,7 @@ function HomeCard({
           </span>
         </div>
         {price != null && (
-          <p className="text-[13px] text-[#222]">
+          <p className="text-[14px] text-[#222]">
             <span className="font-semibold">{formatCurrency(price)}</span>
             <span className="text-[#717171]"> for 2 nights</span>
           </p>
@@ -504,7 +504,7 @@ function DefaultCard({
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-0.5">
               {Array.from({ length: 4 }).map((_, i) => (
-                <IoStar key={i} className="text-[13px] text-[#f5a623]" />
+                <IoStar key={i} className="text-[14px] text-[#f5a623]" />
               ))}
             </div>
             <span className="text-sm bold" style={{ color: "var(--color-ink)" }}>
