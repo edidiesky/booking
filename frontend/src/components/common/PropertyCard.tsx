@@ -147,7 +147,7 @@ function resolveAmenity(raw: string): {
 function AmenityChip({ raw }: { raw: string }) {
   const { label, Icon } = resolveAmenity(raw);
   return (
-    <span className="inline-flex items-center gap-1 text-sm lg:text-base text-[#777b86]">
+    <span className="inline-flex items-center gap-1 text-sm lg:text-sm text-[#777b86]">
       {Icon ? (
         <Icon size={20} className="shrink-0 text-[#a3a6af]" />
       ) : (
