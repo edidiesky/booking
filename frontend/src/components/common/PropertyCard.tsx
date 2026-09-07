@@ -147,7 +147,7 @@ function resolveAmenity(raw: string): {
 function AmenityChip({ raw }: { raw: string }) {
   const { label, Icon } = resolveAmenity(raw);
   return (
-    <span className="inline-flex items-center gap-1 text-sm lg:text-sm text-[#777b86]">
+    <span className="inline-flex items-center gap-1 text-sm lg:text-[13px] text-[#777b86]">
       {Icon ? (
         <Icon size={20} className="shrink-0 text-[#a3a6af]" />
       ) : (
@@ -391,8 +391,9 @@ function DefaultCard({
     guesthouse: "bg-[#f3f3f1] text-[#a37d18]",
   };
   const typeClass =
-    TYPE_COLORS[property.property_type ?? property.propertyType ?? "shortlet"] ??
-    "bg-[#f3f3f1] text-[#a37d18]";
+    TYPE_COLORS[
+      property.property_type ?? property.propertyType ?? "shortlet"
+    ] ?? "bg-[#f3f3f1] text-[#a37d18]";
 
   return (
     <motion.div
@@ -477,23 +478,24 @@ function DefaultCard({
           >
             {property.name}
           </h3>
-          {price !== null && (
-            <p
-              className="shrink-0 text-base bold lg:text-xl"
-              style={{ color: "var(--color-ink)" }}
-            >
-              {formatCurrency(price)}
-              <span
-                className="text-sm font-normal"
-                style={{ color: "var(--color-light-steel)" }}
-              >
-                /night
-              </span>
-            </p>
-          )}
         </div>
+        {price !== null && (
+          <p
+            className="shrink-0 text-lg bold lg:text-2xl"
+            style={{ color: "var(--color-ink)" }}
+          >
+            {formatCurrency(price)}
+            <span
+              className="text-sm font-normal"
+              style={{ color: "var(--color-light-steel)" }}
+            >
+              /night
+            </span>
+          </p>
+        )}
+
         <p
-          className="flex items-center gap-1 text-sm bold"
+          className="flex items-center gap-1 text-sm lg:text-base bold"
           style={{ color: "var(--color-light-steel)" }}
         >
           <MapPin size={20} />
