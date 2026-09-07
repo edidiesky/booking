@@ -191,12 +191,12 @@ function SearchCard({
   const city = property.address?.city ?? property.city ?? "";
   const country = property.address?.country;
   const price = lowestPrice(property);
-  const rating = property.rating ?? 4.8;
+  // const rating = property.rating ?? 4.8;
   const type = property.property_type ?? property.propertyType ?? "Stay";
-  const filled = Math.round(Math.min(5, Math.max(0, rating)));
+  // const filled = Math.round(Math.min(5, Math.max(0, rating)));
 
   const rt = property.roomTypes?.[0];
-  const amenityPreview = (property.amenities ?? []).slice(0, 3);
+  const amenityPreview = (property.amenities ?? []).slice(0, 4);
 
   return (
     <article
@@ -239,16 +239,25 @@ function SearchCard({
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5 p-3.5">
-        <h3 className="line-clamp-1 text-lg font-semibold text-[#17191c] lg:text-xl">
-          {property.name}
-        </h3>
-        <p className="line-clamp-1 text-sm text-[#777b86] lg:text-base">
-          {type.charAt(0).toUpperCase() + type.slice(1)}
-          {city ? ` in ${city}` : ""}
-          {country ? `, ${country}` : ""}
-        </p>
+      <div className="flex flex-col gap-2 p-3.5 w-full">
+        <div className="flex flex-col gap-1 w-full">
+          <h3 className="line-clamp-1 text-lg font-semibold text-[#17191c] lg:text-xl">
+            {property.name}
+          </h3>
+          <p className="line-clamp-1 text-sm text-[#777b86] lg:text-base">
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+            {city ? ` in ${city}` : ""}
+            {country ? `, ${country}` : ""}
+          </p>
+        </div>
+        {price != null && (
+          <p className="mt-0.5 text-lg lg:text-2xl font-semibold text-[#17191c]">
+            {formatCurrency(price)}
+            <span className="text-base font-normal text-[#777b86]"> night</span>
+          </p>
+        )}
 
+        {/* 
         <div className="flex items-center gap-1.5">
           <div className="flex items-center gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -264,7 +273,7 @@ function SearchCard({
             {rating.toFixed(1)}
             <span className="text-[#a3a6af]">/5</span>
           </span>
-        </div>
+        </div> */}
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-0.5">
           {rt?.bedrooms != null && (
@@ -283,13 +292,6 @@ function SearchCard({
             <AmenityChip key={a} raw={a} />
           ))}
         </div>
-
-        {price != null && (
-          <p className="mt-0.5 text-lg lg:text-2xl font-semibold text-[#17191c]">
-            {formatCurrency(price)}
-            <span className="text-base font-normal text-[#777b86]"> night</span>
-          </p>
-        )}
       </div>
     </article>
   );

@@ -45,7 +45,7 @@ export default function Header() {
   }, [location.pathname]);
   return (
     <nav
-      className={` top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+      className={`sticky top-0 left-0 right-0 z-50 transition-colors duration-300 ${
         isTransparent
           ? "bg-transparent"
           : "bg-white border-b border-[#e8e6e3]"
