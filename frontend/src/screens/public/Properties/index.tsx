@@ -23,7 +23,7 @@ export default function Properties() {
     >
       <Header />
 
-      <main className="flex-1">
+      <main className="flex-1 pt-8">
         <div className="mx-auto px-6 lg:px-8 py-12" style={{ maxWidth: "1280px" }}>
           <div className="flex flex-col gap-2 mb-10">
             <h1 className="text-3xl bold"

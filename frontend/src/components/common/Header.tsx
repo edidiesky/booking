@@ -70,7 +70,7 @@ export default function Header() {
           {["Properties", "How it works", "About"].map((item) => (
             <Link
               key={item}
-              to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+              to={`/search`}
               className={`${isTransparent ? "text-white" : "text-dark"} text-sm lg:text-sm font-bold transition-opacity px-4 py-2 rounded-full hover:bg-[#f5f5f3]`}
             >
               {item}

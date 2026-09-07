@@ -128,7 +128,7 @@ export default function SearchPage() {
         resultCount={properties.length || undefined}
       />
 
-      <div className="mx-auto w-full max-w-screen-2xl flex-1">
+      <div className="mx-auto pt-8 w-full max-w-screen-2xl flex-1">
         <div className="grid min-h-[calc(100vh-140px)] grid-cols-1 lg:grid-cols-2">
           <div className="max-h-[calc(100vh-140px)] overflow-y-auto px-4 py-6 lg:px-6 lg:py-8">
             <div className="mb-5 flex items-baseline justify-between gap-3">
