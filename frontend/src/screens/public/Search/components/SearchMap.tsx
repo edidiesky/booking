@@ -13,18 +13,43 @@ export type MapPin = {
   name: string;
 };
 
+function toCoord(v: unknown): number | null {
+  if (v == null || v === "") return null;
+  const n = typeof v === "number" ? v : Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+function pinPrice(p: PropertyCardData): number | null {
+  const fromList = p.fromPrice ?? p.from_price;
+  if (fromList != null && Number.isFinite(Number(fromList))) {
+    return Number(fromList);
+  }
+  if (p.roomTypes?.length) {
+    const prices = p.roomTypes
+      .map((r) => Number(r.base_price_ngn))
+      .filter((n) => Number.isFinite(n));
+    if (prices.length) return Math.min(...prices);
+  }
+  return null;
+}
+
 function pinsFromProperties(properties: PropertyCardData[]): MapPin[] {
   return properties
     .map((p) => {
-      const lat = p.address?.lat;
-      const lng = p.address?.lng;
+      // API returns root latitude/longitude (not address.lat/lng)
+      const lat = toCoord(p.latitude ?? p.address?.lat);
+      const lng = toCoord(p.longitude ?? p.address?.lng);
       if (lat == null || lng == null) return null;
-      const price = p.roomTypes?.length
-        ? Math.min(...p.roomTypes.map((r) => Number(r.base_price_ngn)))
-        : null;
-      return { id: p.id, lat, lng, price, name: p.name };
+
+      return {
+        id: p.id,
+        lat,
+        lng,
+        price: pinPrice(p),
+        name: p.name,
+      };
     })
-    .filter(Boolean) as MapPin[];
+    .filter((x): x is MapPin => x != null);
 }
 
 function priceIcon(price: number | null, active: boolean) {
@@ -32,8 +57,8 @@ function priceIcon(price: number | null, active: boolean) {
     price != null ? formatCurrency(price).replace(/\.00$/, "") : "·";
   return L.divIcon({
     className: "",
-    iconSize: [64, 28],
-    iconAnchor: [32, 14],
+    iconSize: [72, 28],
+    iconAnchor: [36, 14],
     html: `<div style="
       background:${active ? "#222" : "#fff"};
       color:${active ? "#fff" : "#222"};
@@ -46,6 +71,7 @@ function priceIcon(price: number | null, active: boolean) {
       box-shadow:0 2px 8px rgba(0,0,0,.15);
       white-space:nowrap;
       text-align:center;
+      cursor:pointer;
     ">${label}</div>`,
   });
 }
@@ -61,7 +87,7 @@ function FitBounds({ pins }: { pins: MapPin[] }) {
     const bounds = L.latLngBounds(
       pins.map((p) => [p.lat, p.lng] as [number, number]),
     );
-    map.fitBounds(bounds, { padding: [40, 40] });
+    map.fitBounds(bounds, { padding: [48, 48] });
   }, [map, pins]);
   return null;
 }
@@ -82,15 +108,15 @@ export default function SearchMap({
   const pins = useMemo(() => pinsFromProperties(properties), [properties]);
   const center: [number, number] = pins[0]
     ? [pins[0].lat, pins[0].lng]
-    : [6.5244, 3.3792];
+    : [9.082, 8.6753]; 
 
   return (
     <div
-      className={`w-full h-full min-h-[320px] rounded-2xl overflow-hidden border border-[#e8e6e3] ${className}`}
+      className={`w-full h-full min-h-[320px] overflow-hidden rounded-2xl border border-[#e8e6e3] ${className}`}
     >
       <MapContainer
         center={center}
-        zoom={12}
+        zoom={pins.length ? 12 : 6}
         style={{ height: "100%", width: "100%" }}
         scrollWheelZoom
       >

@@ -58,6 +58,10 @@ export interface PropertyCardData {
   isGuestFavorite?: boolean;
   isSuperhost?: boolean;
   instantBook?: boolean;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
+  fromPrice?: number;
+  from_price?: number;
 }
 
 export type PropertyCardVariant =
