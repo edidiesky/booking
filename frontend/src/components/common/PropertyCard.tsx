@@ -281,7 +281,7 @@ function SearchCard({
         </div>
 
         {price != null && (
-          <p className="mt-0.5 text-lg lg:text-xl font-semibold text-[#17191c]">
+          <p className="mt-0.5 text-lg lg:text-2xl font-semibold text-[#17191c]">
             {formatCurrency(price)}
             <span className="text-base font-normal text-[#777b86]"> night</span>
           </p>
@@ -370,7 +370,7 @@ function DefaultCard({
   const IMAGE_HEIGHT =
     variant === "default" ? 340 : variant === "compact" ? 220 : 160;
   const showAmenities = variant !== "minimal";
-  const showRating = variant !== "minimal";
+  // const showRating = variant !== "minimal";
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, {
     margin: "0px 100px -120px 0px",
@@ -472,14 +472,14 @@ function DefaultCard({
       <div className="flex w-full flex-col gap-2 px-4 py-8">
         <div className="flex items-start justify-between gap-2">
           <h3
-            className="line-clamp-1 flex-1 text-lg leading-snug bold"
+            className="line-clamp-1 flex-1 text-lg lg:text-xl leading-snug bold"
             style={{ color: "var(--color-ink)" }}
           >
             {property.name}
           </h3>
           {price !== null && (
             <p
-              className="shrink-0 text-sm bold lg:text-base"
+              className="shrink-0 text-base bold lg:text-xl"
               style={{ color: "var(--color-ink)" }}
             >
               {formatCurrency(price)}
@@ -500,7 +500,7 @@ function DefaultCard({
           {city}
           {country ? `, ${country}` : ""}
         </p>
-        {showRating && (
+        {/* {showRating && (
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-0.5">
               {Array.from({ length: 4 }).map((_, i) => (
@@ -517,7 +517,7 @@ function DefaultCard({
               87 reviews
             </span>
           </div>
-        )}
+        )} */}
         {showAmenities && visibleAmenities.length > 0 && (
           <div className="flex flex-wrap items-center gap-3 pt-0.5">
             {visibleAmenities.map((a) => (
