@@ -1,11 +1,11 @@
-import { roleRepository }        from "../role/role.repository";
+import { roleRepository }        from "./role.repository";
 import { permissionRepository }  from "../permission/permission.repository";
-import { rolePermissionRepository } from "../role/role-permission.repository";
+import { rolePermissionRepository } from "./role-permission.repository";
 import {
   ROLE_SEED,
   PERMISSION_SEED,
   ROLE_PERMISSION_SEED,
-} from "../role/role.constants";
+} from "./role.constants";
 import logger  from "../../utils/logger";
 import redisClient from "../../config/redis";
 

@@ -1,94 +1,122 @@
 # Bukking Platform
 
-Multi-tenant booking marketplace for shortlets, hotels, and guesthouses.
+I built a multi-tenant booking marketplace for shortlets, hotels, and
+guesthouses, end to end: authentication and RBAC, property and
+availability management, escrow-based payments, seller storefronts on
+custom domains, structured audit logging, and real-time messaging.
 Node.js and TypeScript throughout, PostgreSQL with row-level security,
-Redis, RabbitMQ, Elasticsearch, Docker Compose.
+Redis, RabbitMQ, Docker Compose.
 
-## Services
+**[Live demo ](https://bukkings.space)**
 
-| Service | Port | Owns | Docs |
-|---|---|---|---|
-| backend | 4000 | Express API: auth (password, 2FA, Google OAuth), properties, bookings, escrow/payments, tenants, admin (sellers/tenants only, see below) | [API Contracts index](./docs/api-contracts/) |
-| booking-expiry-worker | none | expires unpaid `pending_payment` bookings past their hold window | not started |
-| availability-worker | none | availability calendar recalculation, lock cleanup | not started |
-| csv-room-import-worker | none | bulk room-type import from uploaded CSV | not started |
-| seller-notification-worker | none | in-app/email/SMS dispatch to hosts | not started |
-| campaign-worker | none | scheduled guest re-engagement email campaigns | not started |
-| audit-worker | none | consumes `audit.log.requested`, writes `audit_logs` | not started |
-| property-search-worker | none | Elasticsearch index sync for property search | not started |
-| events-worker | none | **exists as a package, not wired into any docker-compose file, dev or workers-specific. Does not run anywhere right now.** | not started |
+## What I actually have running
 
-Infra containers (not part of this documentation set): rabbitmq, redis,
-redis-insight, pgbouncer, postgres, elasticsearch.
+| Service | Port | Owns |
+|---|---|---|
+| backend | 4000 | Express API (auth, 2FA, Google OAuth, properties, bookings, escrow/payments, tenants, seller domains, admin) **and** 6 in-process background workers (see below) |
+| gateway | — | Rate limiting, subdomain resolution for seller storefronts |
+| frontend | — | React SPA, guest marketplace + host dashboard, subdomain-aware storefront routing |
+
+Infra containers: rabbitmq, redis, pgbouncer, postgres.
+
+## Background work: I run these in-process, not as separate containers
+
+I used to run six workers as their own Docker containers. I now run
+them **inside the backend process**, started from its own bootstrap
+sequence. This was a deliberate tradeoff I made, not the architecture
+I'd default to: on Railway's compute budget, one process was realistic
+for me where seven wasn't. I kept the old, separate-container
+implementation on a real git branch (`archive/separate-worker-
+containers`), this wasn't a rewrite for me, it was a migration with a
+rollback path I documented.
+
+| Worker | Job | README |
+|---|---|---|
+| availability-worker | Sweeps expired availability holds/locks, reconciles the availability calendar against actual bookings | [README](./packages/availability-worker/README.md) |
+| booking-expiry-worker | Expires unpaid `pending_payment` bookings past their hold window, reconciliation pass for anything the scheduler missed | [README](./packages/booking-expiry-worker/README.md) |
+| csv-room-import-worker | Bulk room-type import from an uploaded CSV | [README](./packages/csv-room-import-worker/README.md) |
+| seller-notification-worker | In-app notification + SSE push to hosts on booking lifecycle events | [README](./packages/seller-notification-worker/README.md) |
+| campaign-worker | Scheduled guest re-engagement email campaigns, ticks every 3s for due campaigns | [README](./packages/campaign-worker/README.md) |
+| audit-worker | Consumes `audit.log.requested`, writes the older `audit_logs` table | [README](./packages/audit-worker/README.md) |
+
+## Two packages I still have on disk but don't run
+
+| Package | Status | README |
+|---|---|---|
+| property-search-worker | **Dead code, on my end.** Its entire job was syncing property writes to Elasticsearch. I run property search directly in Postgres now (`tsvector` full-text + `pg_trgm` fuzzy fallback + `earthdistance` geo), I removed Elasticsearch. I left the package on disk, I don't invoke it anywhere, in-process or standalone. | [README](./packages/property-search-worker/README.md) |
+| events-worker | I never wired this into any docker-compose file, dev or workers-specific, at any point in this project's history. I don't run it anywhere. | [README](./packages/events-worker/README.md) |
 
 ## Architecture
 
-Single PostgreSQL database, `FORCE ROW LEVEL SECURITY` on tenant-scoped
-tables, driven by `SET LOCAL app.current_tenant_id` inside a per-request
-transaction. Two Postgres roles are the intended model: `booking_app`
-(RLS-subject, the main backend) and `booking_worker` (`BYPASSRLS`, every
-worker plus the popular-properties materialized-view refresh scheduler
-that runs inside the backend process). `pgbouncer/userlist.txt`
-lists only `postgres`, which bypasses RLS regardless of `FORCE`, meaning
-RLS is schema-complete but not yet actually enforced end to end. Verify
-with `SET ROLE booking_app; SELECT count(*) FROM bookings;`, expect `0`
-without a tenant context set, before trusting this paragraph is out of
-date.
+I am basically running a single PostgreSQL database, with `FORCE ROW LEVEL SECURITY` on
+tenant-scoped tables, driven by `SET LOCAL app.current_tenant_id`
+inside a per-request transaction. I intended two Postgres roles:
+`booking_app` (RLS-subject, the main backend) and `booking_worker`
+(`BYPASSRLS`, every in-process worker). My `pgbouncer/userlist.txt`
+currently lists only `postgres`, which bypasses RLS regardless of
+`FORCE`, so **I have RLS schema-complete but not yet actually enforced
+end to end**. I mostly verify this with `SET ROLE booking_app; SELECT
+count(*) FROM bookings;`, I expect `0` without a tenant context set,
+and I'd check that again before trusting this paragraph is current.
 
-PgBouncer runs in transaction pool mode, which is why tenant context is
-set with `SET LOCAL`, not `SET`, `SET LOCAL` is scoped to the current
-transaction and survives connection multiplexing correctly under
-transaction-mode pooling, a bare `SET` would leak across pooled
-connections.
+I run PgBouncer in transaction pool mode, which is why I set tenant
+context with `SET LOCAL`, not `SET`, `SET LOCAL` stays scoped to the
+current transaction and survives connection multiplexing correctly
+under transaction-mode pooling, a bare `SET` would leak across my
+pooled connections.
 
-Schema migrations are not separate `.sql` files, they're one large
-ordered array of inline SQL strings in `backend/src/migrations/runner.ts`,
-run inside a single transaction on every backend boot, idempotent via
-`IF NOT EXISTS`/`DROP ... IF EXISTS` guards rather than a version-tracking
-table. There is no down-migration mechanism.
+I also run property search entirely in Postgres: a generated, weighted
+`tsvector` column for relevance-ranked full-text search, `pg_trgm` as
+a fuzzy fallback when my primary query returns nothing (typo
+tolerance), and `earthdistance`/`cube` for radius search and distance
+sort. I didn't reach for PostGIS, deliberately, a simple radius filter
+doesn't need spatial joins or polygons for what I'm doing here.
 
-Workers are isolated packages under `packages/`, each with its own
-`package.json`, connecting to RabbitMQ as `booking_worker` (see the role
-caveat above). `packages/shared` holds the DB pool, Redis client, RabbitMQ
-connection helpers, and shared types/utilities every service and worker
-depends on.
+I do resolve seller storefronts by subdomain
+(`sellername.bukkings.space`): my gateway extracts the subdomain from
+the `Host` header, resolves it to a tenant via a cached backend
+lookup, and injects tenant context before proxying. I also resolve the
+subdomain independently on the frontend (I didn't rely on the
+gateway's header reaching the frontend's own API calls, since I hadn't
+settled same-origin-vs-separate-API-host at the time I built this). I
+designed and coded full custom domains (`sellername.com`, not just
+subdomains) against a Caddy-based reverse proxy with automatic TLS,
+but I've only made that meaningful once I run this on infrastructure I
+fully control, I'm not live on that yet, still on Railway's own
+managed edge.
+
+I don't keep schema migrations as separate `.sql` files, I run one
+large ordered array of inline SQL strings in
+`backend/src/migrations/runner.ts`, inside a single transaction on
+every backend boot, idempotent via `IF NOT EXISTS`/`DROP ... IF
+EXISTS` guards rather than a version-tracking table. I don't have a
+down-migration mechanism.
 
 ## Prerequisites
 
-- Node.js and npm (workspaces-based monorepo, `npm install` at the root
-  installs and links every package)
+- Node.js and npm (I built this as a workspaces-based monorepo,
+  `npm install` at the root installs and links every package)
 - Docker and Docker Compose for infra (Postgres, Redis, RabbitMQ,
-  Elasticsearch, PgBouncer)
+  PgBouncer)
 
-## Local setup
+## How I set this up locally
 
 ```
 npm install
 npm run docker:up:build
 ```
 
-
-**Windows**: `npm install` inside `backend/` will fail on `puppeteer`'s
-postinstall step, it tries to download its own bundled Chrome build,
-which is unreliable on Windows and fails with `Failed to set up
-chrome-headless-shell`. Neither a `puppeteer_skip_download` nor
-`puppeteer_skip_chromium_download` key in `.npmrc` works around this,
-both are silently rejected as `Unknown project config` by this npm
-version, npm does not forward `.npmrc` entries into a dependency's
-install script as an environment variable. `setx` (a persistent
-Windows env var) was also tried and did not take effect in the same
-session it was set. What works, confirmed:
+**Windows**: I found `npm install` inside `backend/` fails on
+`puppeteer`'s postinstall step, it tries to download its own bundled
+Chrome build, which is unreliable on Windows and fails with `Failed to
+set up chrome-headless-shell`. Neither a `puppeteer_skip_download` nor
+`puppeteer_skip_chromium_download` key in `.npmrc` worked around this
+for me, both get silently rejected as `Unknown project config` by the
+npm version I'm on. What worked for me, confirmed:
 
 ```
 PUPPETEER_SKIP_DOWNLOAD=true npm install
 ```
-
-Individual services/workers are not independently runnable outside the
-monorepo root scripts as configured, `docker:up`/`docker:up:build` bring
-up the full dev + monitoring + workers stack via three combined
-compose files (`docker-compose.dev.yml`, `docker-compose.monitoring.yml`,
-`docker-compose.workers.yml`). See `package.json`'s `docker:*` scripts for
-the exact file combination.
 
 ## Testing
 
@@ -97,26 +125,25 @@ npm run test              # unit tests, mocked DB/Redis/RabbitMQ, backend worksp
 npm run test:integration  # real Postgres via testcontainers, real HTTP routing
 ```
 
-Unit tests target repositories and services directly, with `@booking/shared`'s
-`query`/`queryOne`/`withTransaction` mocked. Integration tests spin up a
-disposable Postgres container per run, apply the real migration set via
-`runMigrations()`, and exercise real Express routing end to end. **Neither
-suite currently tests against the `booking_app` role**, both connect as
-the container/database superuser, meaning RLS enforcement itself is not
-covered by either test tier yet, only the schema-level policies exist,
-their actual behavior under the intended role separation is unverified by
-automated tests. See `docs/testing.md` for the full unit vs. integration
-split and what's covered domain by domain, most domains do not have
-either tier of test yet, this is actively in progress, not complete.
+I target repositories and services directly in my unit tests, with
+`@booking/shared`'s `query`/`queryOne`/`withTransaction` mocked. My
+integration tests spin up a disposable Postgres container per run,
+apply my real migration set via `runMigrations()`, and exercise real
+Express routing end to end. **I don't currently test against the
+`booking_app` role in either suite**, both connect as the
+container/database superuser, so I don't have RLS enforcement itself
+covered by either test tier yet, I only have the schema-level policies
+in place, I haven't verified their actual behavior under my intended
+role separation with automated tests. I don't have either tier of test
+for most domains yet, I'm actively working through that, it's not
+complete.
 
-## Documentation approach
+## How I document this
 
-Each backend domain that has one gets an API Contracts doc under
-`docs/api-contracts/`, written from the actual route/controller/service
-source, not from what an endpoint's name implies.
+I write an API Contracts doc under `docs/api-contracts/` for each
+backend domain that has one, from the actual route/controller/service
+source, not from what an endpoint's name implies. I give each
+in-process worker its own README under its package directory, same
+standard.
 
-ADRs live at `docs/ADR-*.md`. Runbooks live
-at `docs/runbooks/`.
-
-
-
+I keep ADRs at `docs/ADR-*.md`. I keep runbooks at `docs/runbooks/`.

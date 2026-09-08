@@ -2,7 +2,7 @@ import redisClient             from "../../config/redis";
 import { rolePermissionRepository } from "../role/role-permission.repository";
 import { userRoleRepository }  from "../user-role/user-role.repository";
 import { userPermissionRepository } from "../user-permission/user-permission.repository";
-import { permissionRepository } from "../permission/permission.repository";
+import { permissionRepository } from "./permission.repository";
 import logger                  from "../../utils/logger";
 import { requestContext }      from "../../context/requestContext";
 
