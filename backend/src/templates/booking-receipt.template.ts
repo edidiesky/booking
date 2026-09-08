@@ -43,7 +43,7 @@ function shortRef(ref: string): string {
 
 const LOGO_SVG = `
 <svg width="120" height="24" viewBox="0 0 120 24" xmlns="http://www.w3.org/2000/svg">
-  <text x="0" y="21" font-family="'Cabinet', sans-serif" font-size="20" font-weight="700" fill="#1a1a1a">StaBooking</text>
+  <text x="0" y="21" font-family="'Cabinet', sans-serif" font-size="20" font-weight="700" fill="#1a1a1a">Bukkings</text>
 </svg>`;
 
 function buildAddressBlock(label: string, lines: string[]): string {
@@ -79,7 +79,7 @@ export function buildBookingReceiptHtml(data: BookingReceiptData): string {
 
   const fromBlock = buildAddressBlock("From", [
     data.propertyName,
-    "via StaBooking",
+    "via Bukkings",
     "support@stayBooking.io",
   ]);
 
@@ -173,7 +173,7 @@ ${buildStyles()}
 
     <div class="footer">
       This is a system-generated receipt and does not require a signature.<br/>
-      StaBooking &middot; support@stayBooking.io
+      Bukkings &middot; support@stayBooking.io
     </div>
 
   </div>
@@ -185,7 +185,7 @@ function buildStyles(): string {
 
   return `
 @font-face {
-  font-family: 'Cabinet'; font-weight: 400; font-style: normal;
+  font-family: 'Cabinet'; font-weight: 700; font-style: normal;
   src: url('data:font/truetype;base64,${fonts.regular}') format('truetype');
 }
 @font-face {
@@ -202,24 +202,24 @@ function buildStyles(): string {
 
 html, body {
   font-family: 'Cabinet', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  font-size: 14px; font-weight: 400; color: #1a1a1a; line-height: 1.55; background: #fff;
+  font-size: 13px; font-weight: 700; color: #1a1a1a; line-height: 1.55; background: #fff;
 }
 
 .page { width: 210mm; min-height: 297mm; padding: 18mm 18mm 24mm; box-sizing: border-box; }
 
 .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
-.doc-title { font-size: 24px; font-weight: 700; color: #1a1a1a; }
+.doc-title { font-size: 20px; font-weight: 700; color: #1a1a1a; }
 .logo { line-height: 0; }
 
 .meta-row { display: flex; gap: 36px; margin-bottom: 28px; }
 .meta-item { display: flex; flex-direction: column; gap: 2px; }
-.meta-label { font-size: 13px; font-weight: 400; color: #6b6b6b; }
-.meta-value { font-size: 14px; font-weight: 500; color: #1a1a1a; }
+.meta-label { font-size: 13px; font-weight: 700; color: #6b6b6b; }
+.meta-value { font-size: 13px; font-weight: 500; color: #1a1a1a; }
 
 .addr-row { display: flex; gap: 60px; margin-bottom: 28px; }
 .addr-col { flex: 1; }
 .addr-label { font-size: 13px; font-weight: 700; color: #6b6b6b; margin-bottom: 6px; }
-.addr-line { font-size: 14px; font-weight: 400; color: #1a1a1a; }
+.addr-line { font-size: 13px; font-weight: 700; color: #1a1a1a; }
 
 .due-row { margin-bottom: 28px; }
 .due-amount { font-size: 17px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
@@ -230,22 +230,22 @@ html, body {
 .items-table th { font-size: 13px; font-weight: 500; color: #6b6b6b; text-align: left; padding: 0 0 8px; }
 .th-qty, .th-unit, .th-amount { text-align: right; }
 
-.item-row td { padding: 10px 0; border-bottom: 1px solid #eaeaea; font-size: 14px; font-weight: 400; vertical-align: top; }
+.item-row td { padding: 10px 0; border-bottom: 1px solid #eaeaea; font-size: 13px; font-weight: 700; vertical-align: top; }
 .item-title { font-weight: 500; color: #1a1a1a; }
 .item-sub { font-size: 12px; color: #6b6b6b; margin-top: 2px; }
 .item-qty, .item-unit, .item-amount { text-align: right; white-space: nowrap; }
 
 .totals-block { width: 260px; margin-left: auto; margin-bottom: 36px; }
-.totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; font-weight: 400; color: #444; }
+.totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; font-weight: 700; color: #444; }
 .totals-row--total { border-top: 1px solid #eaeaea; margin-top: 4px; padding-top: 10px; font-weight: 700; color: #1a1a1a; }
 .totals-row--paid { font-weight: 700; color: #1a1a1a; }
 
 .tx-block { border-top: 1px solid #eaeaea; padding-top: 16px; margin-bottom: 36px; }
 .tx-label { font-size: 13px; font-weight: 700; color: #6b6b6b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-.tx-row { display: flex; font-size: 13px; font-weight: 400; padding: 4px 0; }
+.tx-row { display: flex; font-size: 13px; font-weight: 700; padding: 4px 0; }
 .tx-key { width: 150px; color: #6b6b6b; flex-shrink: 0; }
 .tx-val { color: #1a1a1a; word-break: break-all; }
 
-.footer { font-size: 13px; font-weight: 400; color: #9a9a9a; text-align: center; margin-top: 24px; }
+.footer { font-size: 13px; font-weight: 700; color: #9a9a9a; text-align: center; margin-top: 24px; }
 `;
 }
