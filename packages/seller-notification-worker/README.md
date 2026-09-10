@@ -28,8 +28,7 @@ provides).
 
 This worker only ever creates **in-app** notifications. It has no
 email-sending capability at all, no template rendering, no dispatcher
-call, confirmed directly by reading its source, not assumed. A host
-gets a bell-icon notification and nothing else from this path.
+call. A host gets a bell-icon notification and nothing else from this path.
 
 The real email a host receives when a payment succeeds is sent from a
 completely different place: `backend/src/infra/handlers/

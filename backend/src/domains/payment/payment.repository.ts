@@ -370,3 +370,12 @@ export interface PaymentStats {
   volumeGrowthPct: number;
 }
 // user_type
+
+
+
+// CREATE INDEX IF NOT EXISTS idx_payment_txn ON payments(transaction_id)
+// CREATE INDEX IF NOT EXISTS idx_payment_booking ON payments(booking_id, created_at DESC);
+// 
+
+
+
