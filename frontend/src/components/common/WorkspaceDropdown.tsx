@@ -103,7 +103,7 @@ export default function WorkspaceDropdown({ onSignOut }: Props) {
         <div className="flex flex-col w-full gap-2">
           <DropdownMenuItem asChild>
             <Link
-              to="/dashboard/settings"
+              to="/dashboard/account"
               className="flex items-center gap-3 px-2.5 py-2 text-xs lg:text-[13px] text-[#17191c] cursor-pointer hover:bg-[#f2f0ed] rounded-lg outline-none"
             >
               <Settings size={16} className="text-[#4c4c4c] shrink-0" />
