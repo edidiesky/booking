@@ -17,11 +17,17 @@ import type { PropertyWithRoomTypes } from "@/types/api";
 export default function SearchPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   const {
     properties,
     isLoading,
     city,
+    setCity,
+    search,
+    setSearch,
+    sort,
+    setSort,
     propertyType,
     setPropertyType,
     minPrice,
@@ -34,6 +40,15 @@ export default function SearchPage() {
     applyFilters,
     activeFilterCount,
   } = useSearch();
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try { await navigator.share({ title: "Search results", url }); } catch { /* user cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+    }
+  };
 
   const [bar, setBar] = useState<SearchBarFilters>(() => ({
     minPrice,
@@ -107,6 +122,15 @@ export default function SearchPage() {
           onReset={resetBar}
           onOpenMoreFilters={() => setFiltersOpen(true)}
           activeMoreCount={moreCount + activeFilterCount}
+          city={city}
+          onCityChange={setCity}
+          search={search}
+          onSearchChange={setSearch}
+          sort={sort}
+          onSortChange={setSort}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          onShare={handleShare}
         />
 
         <FiltersModal
@@ -131,18 +155,19 @@ export default function SearchPage() {
         <div className="mx-auto w-full max-w-screen-2xl flex-1">
           <div className="grid min-h-[calc(100vh-140px)] grid-cols-1 lg:grid-cols-2">
             <div className="max-h-[calc(100vh-140px)] overflow-y-auto px-4 py-6 lg:px-6 lg:py-8">
-              <div className="mb-5 flex items-baseline justify-between gap-3">
+              <div className={viewMode === "map" ? "hidden lg:block" : "block"}>
+              <div className="mb-1 flex items-baseline justify-between gap-3">
                 <h1 className="text-[20px] font-semibold text-[#222] lg:text-[22px]">
                   {isLoading
                     ? "Searching stays…"
                     : city
-                      ? `Over ${Math.max(properties.length, 1).toLocaleString()} homes in ${city}`
+                      ? `${Math.max(properties.length, 1).toLocaleString()} stays in ${city}`
                       : `${Math.max(properties.length, 0).toLocaleString()} stays available`}
                 </h1>
-                <p className="hidden shrink-0 text-[13px] text-[#717171] sm:block">
-                  Prices include all fees
-                </p>
               </div>
+              <p className="mb-5 text-[13px] text-[#717171]">
+                Book your next stay at one of our properties.
+              </p>
 
               {isLoading ? (
                 <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
@@ -177,9 +202,10 @@ export default function SearchPage() {
                   ))}
                 </div>
               )}
+              </div>
             </div>
 
-            <div className="sticky top-[57px] hidden h-[calc(100vh-57px)] p-3 pl-0 lg:block">
+            <div className={`sticky top-[57px] h-[calc(100vh-57px)] p-3 pl-0 lg:block ${viewMode === "map" ? "block" : "hidden"}`}>
               <SearchMap
                 properties={properties}
                 activeId={activeId}

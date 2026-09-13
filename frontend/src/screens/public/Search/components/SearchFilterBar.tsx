@@ -22,6 +22,10 @@ import {
   Bath,
   Users,
   Building2,
+  MapPin,
+  Search,
+  LayoutGrid,
+  Map as MapIcon,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -149,6 +153,15 @@ interface Props {
   onReset: () => void;
   onOpenMoreFilters: () => void;
   activeMoreCount?: number;
+  city: string;
+  onCityChange: (v: string) => void;
+  search: string;
+  onSearchChange: (v: string) => void;
+  sort: string;
+  onSortChange: (v: string) => void;
+  viewMode: "list" | "map";
+  onViewModeChange: (v: "list" | "map") => void;
+  onShare: () => void;
 }
 
 function Chip({
@@ -183,10 +196,19 @@ export default function SearchFilterBar({
   onReset,
   onOpenMoreFilters,
   activeMoreCount = 0,
+  city,
+  onCityChange,
+  search,
+  onSearchChange,
+  sort,
+  onSortChange,
+  viewMode,
+  onViewModeChange,
 }: Props) {
   const [open, setOpen] = useState<
-    null | "dates" | "price" | "guests" | "beds" | "baths" | "type"
+    null | "dates" | "price" | "guests" | "beds" | "baths" | "type" | "location"
   >(null);
+  const [cityDraft, setCityDraft] = useState(city);
 
   const from = value.checkIn ? new Date(value.checkIn) : null;
   const to = value.checkOut ? new Date(value.checkOut) : null;
@@ -210,6 +232,13 @@ export default function SearchFilterBar({
         >
           <CalendarDays size={15} className="text-[#777b86]" />
           {dateLabel}
+        </Chip>
+        <Chip
+          active={!!city}
+          onClick={() => setOpen(open === "location" ? null : "location")}
+        >
+          <MapPin size={15} className="text-[#777b86]" />
+          {city || "Location"}
         </Chip>
         <Chip
           active={value.minPrice != null || value.maxPrice != null}
@@ -286,6 +315,72 @@ export default function SearchFilterBar({
         </div>
       </div>
 
+      <div className="mx-auto flex max-w-[1760px] items-center gap-2 px-4 pb-3 lg:px-6">
+        <div className="relative flex-1 max-w-xs">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#a3a6af]" />
+          <input
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search"
+            className="h-10 w-full rounded-full border border-[#e8e6e3] pl-9 pr-3 text-[13px] outline-none focus:border-[#c4c6ce]"
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onSortChange("newest")}
+          className={cn(
+            "h-10 shrink-0 rounded-full border px-3.5 text-[13px]",
+            sort === "newest" ? "border-[#17191c] bg-[#f7f7f5] font-medium" : "border-[#e8e6e3] text-[#444]",
+          )}
+        >
+          Sort by date
+        </button>
+        <button
+          type="button"
+          onClick={() => onSortChange(sort === "price_asc" ? "newest" : "price_asc")}
+          className={cn(
+            "h-10 shrink-0 rounded-full border px-3.5 text-[13px]",
+            sort === "price_asc" || sort === "price_desc"
+              ? "border-[#17191c] bg-[#f7f7f5] font-medium"
+              : "border-[#e8e6e3] text-[#444]",
+          )}
+        >
+          Sort by price
+        </button>
+
+        <div className="ml-auto flex items-center gap-1 rounded-full border border-[#e8e6e3] p-1 lg:hidden">
+          <button
+            type="button"
+            onClick={() => onViewModeChange("list")}
+            className={cn(
+              "flex h-8 w-8 items-center justify-center rounded-full",
+              viewMode === "list" ? "bg-[#17191c] text-white" : "text-[#777b86]",
+            )}
+          >
+            <LayoutGrid size={15} />
+          </button>
+          <button
+            type="button"
+            onClick={() => onViewModeChange("map")}
+            className={cn(
+              "flex h-8 w-8 items-center justify-center rounded-full",
+              viewMode === "map" ? "bg-[#17191c] text-white" : "text-[#777b86]",
+            )}
+          >
+            <MapIcon size={15} />
+          </button>
+        </div>
+        <button
+          type="button"
+          disabled
+          title="Coming soon"
+          className="hidden h-10 shrink-0 cursor-not-allowed items-center gap-1.5 rounded-full bg-[#f2f0ed] px-3.5 text-[13px] text-[#a3a6af] lg:flex"
+        >
+          Bookmark Results
+        </button>
+      </div>
+
       {open && (
         <div className="relative mx-auto max-w-[1760px] px-4 lg:px-6">
           <div className="absolute left-4 top-0 z-40 rounded-2xl border border-[#e8e6e3] bg-white shadow-xl lg:left-6">
@@ -310,6 +405,28 @@ export default function SearchFilterBar({
                     })
                   }
                 />
+              </div>
+            )}
+            {open === "location" && (
+              <div className="w-[260px] p-4">
+                <p className="mb-2 text-[13px] font-semibold text-[#17191c]">Where to?</p>
+                <input
+                  autoFocus
+                  value={cityDraft}
+                  onChange={(e) => setCityDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") { onCityChange(cityDraft); setOpen(null); }
+                  }}
+                  placeholder="City or area"
+                  className="w-full rounded-xl border border-[#e8e6e3] px-3 py-2.5 text-[14px] outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => { onCityChange(cityDraft); setOpen(null); }}
+                  className="mt-2 h-9 w-full rounded-lg bg-[#17191c] text-[13px] font-medium text-white"
+                >
+                  Search this location
+                </button>
               </div>
             )}
             {open === "price" && (

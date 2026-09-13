@@ -23,6 +23,7 @@ export interface PropertySearchQuery {
   lat?:        number;
   lon?:        number;
   radiusKm?:   number;
+  tenantId?:   string;
   page?:       number;
   limit?:      number;
 }

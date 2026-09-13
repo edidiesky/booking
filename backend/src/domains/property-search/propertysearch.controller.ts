@@ -5,6 +5,9 @@ import { propertySearchRepository } from "./propertysearch.repository";
 export const SearchPropertiesHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const q = req.query as Record<string, string | undefined>;
 
+  const headerTenantId = req.headers["x-tenant-id"];
+  const tenantId = q["tenantId"] ?? (typeof headerTenantId === "string" ? headerTenantId : undefined);
+
   const result = await propertySearchRepository.search({
     q:            q["q"],
     city:         q["city"],
@@ -15,6 +18,7 @@ export const SearchPropertiesHandler = asyncHandler(async (req: Request, res: Re
     lat:          q["lat"] ? Number(q["lat"]) : undefined,
     lon:          q["lon"] ? Number(q["lon"]) : undefined,
     radiusKm:     q["radiusKm"] ? Number(q["radiusKm"]) : undefined,
+    tenantId,
     page:         q["page"] ? Number(q["page"]) : undefined,
     limit:        q["limit"] ? Number(q["limit"]) : undefined,
   });

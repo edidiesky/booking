@@ -158,6 +158,10 @@ function buildQuery(
     values.push(params.maxPrice);
     clauses.push(`pa.from_price_ngn <= $${values.length}`);
   }
+  if (params.tenantId) {
+    values.push(params.tenantId);
+    clauses.push(`p.tenant_id = $${values.length}`);
+  }
 
   let latParamIndex: number | null = null;
   let lonParamIndex: number | null = null;
