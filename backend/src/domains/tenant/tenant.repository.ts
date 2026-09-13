@@ -22,6 +22,13 @@ export interface Tenant {
   country?: string;
   created_at: Date;
   updated_at: Date;
+  subdomain: string | null;
+  custom_domain: string | null;
+  custom_domain_status: "none" | "pending" | "verified" | "failed";
+  custom_domain_verified_at: string | null;
+  custom_domain_verification_token: string | null;
+  caddy_subdomain_route_id: string | null;
+  caddy_custom_route_id: string | null;
 }
 
 export const tenantRepository = {
@@ -123,9 +130,14 @@ export const tenantRepository = {
       [limit, offset],
     );
   },
-  async updateStatus(id: string, status: TenantStatus, client?: PoolClient): Promise<Tenant | null> {
+  async updateStatus(
+    id: string,
+    status: TenantStatus,
+    client?: PoolClient,
+  ): Promise<Tenant | null> {
     const sql = `UPDATE tenants SET status = $1, updated_at = now() WHERE id = $2 RETURNING *`;
-    if (client) return (await client.query<Tenant>(sql, [status, id])).rows[0] ?? null;
+    if (client)
+      return (await client.query<Tenant>(sql, [status, id])).rows[0] ?? null;
     return queryOne<Tenant>(sql, [status, id]);
   },
   async countAllByStatus(): Promise<{
@@ -149,5 +161,77 @@ export const tenantRepository = {
       suspended: Number(row?.suspended ?? 0),
       draft: Number(row?.draft ?? 0),
     };
+  },
+
+  async findByCustomDomain(domain: string): Promise<Tenant | null> {
+    return queryOne<Tenant>(
+      `SELECT * FROM tenants WHERE custom_domain = $1 LIMIT 1`,
+      [domain],
+    );
+  },
+
+  async setCaddySubdomainRouteId(
+    tenantId: string,
+    routeId: string,
+    client?: PoolClient,
+  ): Promise<void> {
+    const sql = `UPDATE tenants SET caddy_subdomain_route_id = $1 WHERE id = $2`;
+    if (client) {
+      await client.query(sql, [routeId, tenantId]);
+      return;
+    }
+    await query(sql, [routeId, tenantId]);
+  },
+
+  async setPendingCustomDomain(
+    tenantId: string,
+    domain: string,
+    verificationToken: string,
+  ): Promise<Tenant | null> {
+    return queryOne<Tenant>(
+      `UPDATE tenants
+       SET custom_domain = $1, custom_domain_status = 'pending',
+           custom_domain_verification_token = $2, updated_at = now()
+       WHERE id = $3 RETURNING *`,
+      [domain, verificationToken, tenantId],
+    );
+  },
+
+  async markCustomDomainVerified(
+    tenantId: string,
+    caddyRouteId: string,
+    client?: PoolClient,
+  ): Promise<Tenant | null> {
+    const sql = `UPDATE tenants
+       SET custom_domain_status = 'verified', custom_domain_verified_at = now(),
+           caddy_custom_route_id = $1, updated_at = now()
+       WHERE id = $2 RETURNING *`;
+    if (client)
+      return (
+        (await client.query<Tenant>(sql, [caddyRouteId, tenantId])).rows[0] ??
+        null
+      );
+    return queryOne<Tenant>(sql, [caddyRouteId, tenantId]);
+  },
+
+  async markCustomDomainFailed(tenantId: string): Promise<void> {
+    await query(
+      `UPDATE tenants SET custom_domain_status = 'failed', updated_at = now() WHERE id = $1`,
+      [tenantId],
+    );
+  },
+
+  async clearCustomDomain(
+    tenantId: string,
+    client?: PoolClient,
+  ): Promise<Tenant | null> {
+    const sql = `UPDATE tenants
+       SET custom_domain = NULL, custom_domain_status = 'none',
+           custom_domain_verified_at = NULL, custom_domain_verification_token = NULL,
+           caddy_custom_route_id = NULL, updated_at = now()
+       WHERE id = $1 RETURNING *`;
+    if (client)
+      return (await client.query<Tenant>(sql, [tenantId])).rows[0] ?? null;
+    return queryOne<Tenant>(sql, [tenantId]);
   },
 };
