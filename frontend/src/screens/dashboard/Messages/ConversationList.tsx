@@ -1,10 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Search } from "lucide-react";
 import { OnlineDot } from "@/screens/dashboard/Messages/OnlineDot";
 import { cn } from "@/lib/utils";
 import type { Conversation } from "@/screens/dashboard/Messages/types";
-import { Search } from "lucide-react";
-import { useState } from "react";
+import Avatar from "@/components/common/Avatar";
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -13,22 +12,22 @@ interface ConversationListProps {
   className?: string;
 }
 
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+function relativeTime(iso: string): string {
+  const date = new Date(iso);
+  const diffMs = Date.now() - date.getTime();
+  const mins = Math.floor(diffMs / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return date.toLocaleDateString([], { month: "short", day: "numeric" });
 }
 
-function formatTimestamp(iso: string) {
-  const date = new Date(iso);
-  const now = new Date();
-  const isToday = date.toDateString() === now.toDateString();
-  return isToday
-    ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-    : date.toLocaleDateString([], { weekday: "short" });
+function handleFromName(name: string): string {
+  const part = name.trim().split(/\s+/)[0] ?? name;
+  return `@${part.toLowerCase()}`;
 }
 
 export function ConversationList({
@@ -43,19 +42,38 @@ export function ConversationList({
     c.participant.name.toLowerCase().includes(search.toLowerCase()),
   );
 
+  const totalUnread = conversations.reduce(
+    (n, c) => n + (c.unreadCount || 0),
+    0,
+  );
+
   return (
-    <div className={cn("flex h-full flex-col border-r border-border", className)}>
-      <div className="border-b border-border p-4">
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search conversations"
-          icon={<Search className="size-4" />}
-          iconPosition="left"
-        />
+    <div className={cn("flex h-full flex-col", className)}>
+      <div className="shrink-0 border-b border-[#ebebeb] px-5 pt-5 pb-4">
+        <div className="mb-4 flex items-center gap-2">
+          <h1 className="text-[18px] font-semibold text-[#17191c]">Chatting</h1>
+          {conversations.length > 0 && (
+            <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#eef2ff] px-1.5 text-[11px] font-semibold text-[#4f46e5]">
+              {totalUnread > 0 ? totalUnread : conversations.length}
+            </span>
+          )}
+        </div>
+
+        <div className="relative">
+          <Search
+            size={15}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#a3a6af]"
+          />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search Chats"
+            className="h-10 w-full rounded-xl border border-[#e8e6e3] bg-[#f7f7f5] pl-9 pr-3 text-[13px] text-[#17191c] outline-none placeholder:text-[#a3a6af] focus:border-[#c4c6ce] focus:bg-white"
+          />
+        </div>
       </div>
 
-      <ul className="flex-1 overflow-y-auto" role="list">
+      <ul className="flex-1 overflow-y-auto px-2 py-2" role="list">
         {filtered.map((conv) => {
           const isSelected = conv.id === selectedId;
           return (
@@ -65,35 +83,48 @@ export function ConversationList({
                 onClick={() => onSelect(conv.id)}
                 aria-current={isSelected ? "true" : undefined}
                 className={cn(
-                  "flex w-full items-start gap-3 border-b border-border/50 p-4 text-left transition-colors hover:bg-accent",
-                  isSelected && "bg-accent",
+                  "flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition-colors",
+                  isSelected ? "bg-[#f3f4f6]" : "hover:bg-[#fafaf9]",
                 )}
               >
                 <div className="relative shrink-0">
-                  <Avatar>
-                    <AvatarImage src={conv.participant.avatarUrl} alt={conv.participant.name} />
-                    <AvatarFallback>{initials(conv.participant.name)}</AvatarFallback>
-                  </Avatar>
+                  <Avatar
+                    src={conv.participant.avatarUrl}
+                    name={conv.participant.name}
+                    size={44}
+                  />
                   <OnlineDot isOnline={conv.participant.isOnline} />
                 </div>
 
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 pt-0.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="truncate text-sm font-medium">
-                      {conv.participant.name}
-                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-[14px] font-semibold text-[#17191c]">
+                        {conv.participant.name}
+                      </p>
+                      <p className="truncate text-[12px] text-[#a3a6af]">
+                        {handleFromName(conv.participant.name)}
+                      </p>
+                    </div>
                     {conv.lastMessage && (
-                      <span className="shrink-0 text-xs text-muted-foreground">
-                        {formatTimestamp(conv.lastMessage.sentAt)}
+                      <span className="shrink-0 text-[11px] text-[#a3a6af]">
+                        {relativeTime(conv.lastMessage.sentAt)}
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="truncate text-xs text-muted-foreground">
+                  <div className="mt-1 flex items-center justify-between gap-2">
+                    <p
+                      className={cn(
+                        "truncate text-[13px]",
+                        conv.unreadCount > 0
+                          ? "font-medium text-[#17191c]"
+                          : "text-[#777b86]",
+                      )}
+                    >
                       {conv.lastMessage?.body ?? "No messages yet"}
-                    </span>
+                    </p>
                     {conv.unreadCount > 0 && (
-                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                      <span className="flex h-[18px] min-w-[18px] shrink-0 items-center justify-center rounded-full bg-[#4f46e5] px-1 text-[10px] font-semibold text-white">
                         {conv.unreadCount}
                       </span>
                     )}
@@ -105,7 +136,7 @@ export function ConversationList({
         })}
 
         {filtered.length === 0 && (
-          <li className="p-6 text-center text-sm text-muted-foreground">
+          <li className="px-4 py-10 text-center text-[13px] text-[#a3a6af]">
             No conversations found.
           </li>
         )}

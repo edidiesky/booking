@@ -10,8 +10,8 @@ export function OnlineDot({ isOnline, className }: OnlineDotProps) {
     <span
       aria-label={isOnline ? "Online" : "Offline"}
       className={cn(
-        "absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-background",
-        isOnline ? "bg-green-500" : "bg-muted-foreground/40",
+        "absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-white",
+        isOnline ? "bg-[#22c55e]" : "bg-[#c4c6ce]",
         className,
       )}
     />

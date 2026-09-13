@@ -12,6 +12,7 @@ import {
   LuUsers,
   LuShieldCheck,
   LuScrollText,
+  LuMessageSquare,
   // LuMessageSquare,
 } from "react-icons/lu";
 import {  clearCredentials } from "@/redux/slices/authSlice";
@@ -33,7 +34,7 @@ export const NAV_GROUPS = [
         path: "",
         tour: "nav-dashboard",
       },
-      // { icon: LuMessageSquare,   text: "Messages",       path: "messages",      tour: "nav-messages"      },
+      { icon: LuMessageSquare,   text: "Messages",       path: "messages",      tour: "nav-messages"      },
       {
         icon: LuBell,
         text: "Notifications",

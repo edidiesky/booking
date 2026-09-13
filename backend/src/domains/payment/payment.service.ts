@@ -26,6 +26,7 @@ import {
 import { requestCoalescer } from "../../utils/requestCoalescer";
 import { auditEventRepository } from "../audit/auditEvent.repository";
 
+
 export interface InitializePaymentInput {
   bookingId: string;
   guestUserId: string;
@@ -150,7 +151,6 @@ async function runPaymentInitLogic(
         },
         client,
       );
-
       await outboxRepository.create(
         "payment.initiated",
         {

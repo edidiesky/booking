@@ -102,7 +102,7 @@ export default function Login() {
             Good to see you again
           </h1>
           <p
-            className="text-xs lg:text-[13px]"
+            className="text-sm lg:text-base"
             style={{ color: "var(--color-muted-stone)" }}
           >
             Sign in to check on bookings, payouts, and what's happening across
