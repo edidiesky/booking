@@ -22,6 +22,10 @@ export interface Tenant {
   country?: string;
   created_at: Date;
   updated_at: Date;
+  subdomain: string | null;
+  custom_domain: string | null;
+  custom_domain_status: "none" | "pending" | "verified" | "failed";
+  custom_domain_verified_at: string | null;
 }
 
 export const tenantRepository = {
@@ -123,9 +127,14 @@ export const tenantRepository = {
       [limit, offset],
     );
   },
-  async updateStatus(id: string, status: TenantStatus, client?: PoolClient): Promise<Tenant | null> {
+  async updateStatus(
+    id: string,
+    status: TenantStatus,
+    client?: PoolClient,
+  ): Promise<Tenant | null> {
     const sql = `UPDATE tenants SET status = $1, updated_at = now() WHERE id = $2 RETURNING *`;
-    if (client) return (await client.query<Tenant>(sql, [status, id])).rows[0] ?? null;
+    if (client)
+      return (await client.query<Tenant>(sql, [status, id])).rows[0] ?? null;
     return queryOne<Tenant>(sql, [status, id]);
   },
   async countAllByStatus(): Promise<{
@@ -149,5 +158,25 @@ export const tenantRepository = {
       suspended: Number(row?.suspended ?? 0),
       draft: Number(row?.draft ?? 0),
     };
+  },
+
+  async findBySubdomain(subdomain: string): Promise<Tenant | null> {
+    return queryOne<Tenant>(
+      `SELECT * FROM tenants WHERE subdomain = $1 LIMIT 1`,
+      [subdomain],
+    );
+  },
+
+  async setSubdomain(
+    tenantId: string,
+    subdomain: string,
+    client?: PoolClient,
+  ): Promise<Tenant | null> {
+    const sql = `UPDATE tenants SET subdomain = $1, updated_at = now() WHERE id = $2 RETURNING *`;
+    if (client)
+      return (
+        (await client.query<Tenant>(sql, [subdomain, tenantId])).rows[0] ?? null
+      );
+    return queryOne<Tenant>(sql, [subdomain, tenantId]);
   },
 };

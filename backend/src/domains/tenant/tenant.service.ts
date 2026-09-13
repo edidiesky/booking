@@ -1,9 +1,10 @@
-import { tenantRepository } from "./tenant.repository";
+import { Tenant, tenantRepository } from "./tenant.repository";
 import {
   query,
   AppError,
   withTransaction,
   requestContext,
+  redisClient,
 } from "@booking/shared";
 import { reviewRepository } from "../review/review.repository";
 import { CancellationPolicyTier } from "../../types";
@@ -364,5 +365,78 @@ export const tenantService = {
       recentPurchases,
       recentActivity,
     };
+  },
+
+  async claimSubdomain(
+    tenantId: string,
+    requested: string,
+    actorUserId: string,
+  ) {
+    const base = requested
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 40);
+
+    if (!base) {
+      throw AppError.badRequest(
+        "That name produces an empty subdomain, use letters or numbers.",
+      );
+    }
+
+    let candidate = base;
+    let existing = await tenantRepository.findBySubdomain(candidate);
+    for (
+      let attempt = 1;
+      existing && existing.id !== tenantId && attempt <= 10;
+      attempt++
+    ) {
+      candidate = `${base.slice(0, 36)}-${attempt}`;
+      existing = await tenantRepository.findBySubdomain(candidate);
+    }
+    if (existing && existing.id !== tenantId) {
+      throw AppError.conflict(
+        "Could not find an available subdomain close to that name, try something more specific.",
+      );
+    }
+
+    return withTransaction(async (client) => {
+      const updated = await tenantRepository.setSubdomain(
+        tenantId,
+        candidate,
+        client,
+      );
+      if (!updated) throw AppError.notFound("Tenant not found.");
+
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: { type: "user", id: actorUserId },
+          action: "tenant.subdomain_claimed",
+          targetType: "tenant",
+          targetId: tenantId,
+          after: { subdomain: candidate },
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+
+      return updated;
+    });
+  },
+
+  async resolveBySubdomain(subdomain: string): Promise<Tenant | null> {
+    const cacheKey = `tenant:subdomain:${subdomain}`;
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return JSON.parse(cached) as Tenant;
+
+    const tenant = await tenantRepository.findBySubdomain(subdomain);
+    if (tenant)
+      await redisClient.set(cacheKey, JSON.stringify(tenant), "EX", 3600);
+    return tenant;
   },
 };
