@@ -1,9 +1,11 @@
-import { tenantRepository } from "./tenant.repository";
+import { Tenant, tenantRepository } from "./tenant.repository";
 import {
   query,
   AppError,
   withTransaction,
   requestContext,
+  redisClient,
+  logger,
 } from "@booking/shared";
 import { reviewRepository } from "../review/review.repository";
 import { CancellationPolicyTier } from "../../types";
@@ -12,6 +14,13 @@ import { propertyRepository } from "../property/property.repository";
 import { bookingRepository } from "../booking/booking.repository";
 import { auditRepository } from "../audit/audit.repository";
 import { auditEventRepository } from "../audit/auditEvent.repository";
+import { caddyService } from "../../infra/providers/caddy.service";
+import { nanoid } from "nanoid";
+import {
+  verifyDomainCNAME,
+  verifyDomainTXT,
+} from "../../utils/domainVerification";
+import { PoolClient } from "pg";
 export const tenantService = {
   async getMyTenant(tenantId: string) {
     const tenant = await tenantRepository.findById(tenantId);
@@ -364,5 +373,297 @@ export const tenantService = {
       recentPurchases,
       recentActivity,
     };
+  },
+
+  async claimSubdomain(
+    tenantId: string,
+    requested: string,
+    actorUserId: string,
+  ) {
+    const base = requested
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 40);
+
+    if (!base) {
+      throw AppError.badRequest(
+        "That name produces an empty subdomain, use letters or numbers.",
+      );
+    }
+
+    let candidate = base;
+    let existing = await tenantRepository.findBySubdomain(candidate);
+    for (
+      let attempt = 1;
+      existing && existing.id !== tenantId && attempt <= 10;
+      attempt++
+    ) {
+      candidate = `${base.slice(0, 36)}-${attempt}`;
+      existing = await tenantRepository.findBySubdomain(candidate);
+    }
+    if (existing && existing.id !== tenantId) {
+      throw AppError.conflict(
+        "Could not find an available subdomain close to that name, try something more specific.",
+      );
+    }
+
+    return withTransaction(async (client) => {
+      const updated = await tenantRepository.setSubdomain(
+        tenantId,
+        candidate,
+        client,
+      );
+      if (!updated) throw AppError.notFound("Tenant not found.");
+
+      if (process.env.CADDY_ADMIN_URL) {
+        const routeId = `tenant-subdomain-${tenantId}`;
+        try {
+          await caddyService.registerRoute(routeId, candidate, true);
+          await tenantRepository.setCaddySubdomainRouteId(
+            tenantId,
+            routeId,
+            client,
+          );
+        } catch (err) {
+          logger.error("caddy_subdomain_registration_failed", {
+            event: "caddy_subdomain_registration_failed",
+            tenantId,
+            subdomain: candidate,
+            error: (err as Error).message,
+          });
+        }
+      }
+
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: { type: "user", id: actorUserId },
+          action: "tenant.subdomain_claimed",
+          targetType: "tenant",
+          targetId: tenantId,
+          after: { subdomain: candidate },
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+
+      return updated;
+
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: { type: "user", id: actorUserId },
+          action: "tenant.subdomain_claimed",
+          targetType: "tenant",
+          targetId: tenantId,
+          after: { subdomain: candidate },
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+
+      return updated;
+    });
+  },
+
+  async resolveBySubdomain(subdomain: string): Promise<Tenant | null> {
+    const cacheKey = `tenant:subdomain:${subdomain}`;
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return JSON.parse(cached) as Tenant;
+
+    const tenant = await tenantRepository.findBySubdomain(subdomain);
+    if (tenant)
+      await redisClient.set(cacheKey, JSON.stringify(tenant), "EX", 3600);
+    return tenant;
+  },
+
+  async addCustomDomain(tenantId: string, domain: string, actorUserId: string) {
+    const normalized = domain.toLowerCase().trim();
+    const existing = await tenantRepository.findByCustomDomain(normalized);
+    if (existing && existing.id !== tenantId) {
+      throw AppError.conflict(
+        `The domain "${normalized}" is already registered to another tenant.`,
+      );
+    }
+
+    const verificationToken = `bukkings-verify-${nanoid(24)}`;
+    const updated = await tenantRepository.setPendingCustomDomain(
+      tenantId,
+      normalized,
+      verificationToken,
+    );
+    if (!updated) throw AppError.notFound("Tenant not found.");
+
+    await auditRepository.log({
+      action: "updated",
+      resource: "tenant_custom_domain",
+      resourceId: tenantId,
+      tenantId,
+      userId: actorUserId,
+      newValue: { domain: normalized, status: "pending" },
+    });
+
+    return updated;
+  },
+
+  async verifyCustomDomain(tenantId: string, actorUserId: string) {
+    const tenant = await tenantRepository.findById(tenantId);
+    if (!tenant?.custom_domain)
+      throw AppError.notFound("No custom domain set for this tenant.");
+
+    if (tenant.custom_domain_status === "verified") return tenant;
+
+    if (!process.env.CADDY_ADMIN_URL) {
+      throw AppError.badRequest(
+        "Custom domain verification isn't available yet, this platform is still running on infrastructure that doesn't support it. Check back after the Hetzner migration.",
+      );
+    }
+
+    const [cnameOk, txtOk] = await Promise.all([
+      verifyDomainCNAME(tenant.custom_domain),
+      tenant.custom_domain_verification_token
+        ? verifyDomainTXT(
+            tenant.custom_domain,
+            tenant.custom_domain_verification_token,
+          )
+        : Promise.resolve(false),
+    ]);
+
+    if (!cnameOk || !txtOk) {
+      await tenantRepository.markCustomDomainFailed(tenantId);
+      throw AppError.badRequest(
+        `DNS records not fully propagated (CNAME: ${cnameOk ? "ok" : "missing"}, TXT: ${txtOk ? "ok" : "missing"}). Retry in a few minutes.`,
+      );
+    }
+
+    const routeId = `tenant-custom-${tenantId}`;
+
+    return withTransaction(async (client) => {
+      await caddyService.registerRoute(routeId, tenant.custom_domain!, false);
+      const updated = await tenantRepository.markCustomDomainVerified(
+        tenantId,
+        routeId,
+        client,
+      );
+      if (!updated) throw AppError.notFound("Tenant not found.");
+
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: { type: "user", id: actorUserId },
+          action: "tenant.custom_domain_verified",
+          targetType: "tenant",
+          targetId: tenantId,
+          after: { domain: tenant.custom_domain },
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+
+      return updated;
+    });
+  },
+
+  async removeCustomDomain(tenantId: string, actorUserId: string) {
+    const tenant = await tenantRepository.findById(tenantId);
+    if (!tenant?.custom_domain)
+      throw AppError.notFound("No custom domain set for this tenant.");
+
+    if (tenant.caddy_custom_route_id && process.env.CADDY_ADMIN_URL) {
+      await caddyService.deregisterRoute(tenant.caddy_custom_route_id);
+    }
+
+    return withTransaction(async (client) => {
+      const updated = await tenantRepository.clearCustomDomain(
+        tenantId,
+        client,
+      );
+
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: { type: "user", id: actorUserId },
+          action: "tenant.custom_domain_removed",
+          targetType: "tenant",
+          targetId: tenantId,
+          before: { domain: tenant.custom_domain },
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
+
+      return updated;
+    });
+  },
+
+  async resolveAndClaimSubdomain(
+    tenantId: string,
+    requested: string,
+    client: PoolClient,
+  ): Promise<string | null> {
+    const base = requested
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 40);
+
+    if (!base) {
+      throw AppError.badRequest(
+        "That name produces an empty subdomain, use letters or numbers.",
+      );
+    }
+
+    let candidate = base;
+    let existing = await tenantRepository.findBySubdomain(candidate);
+    for (
+      let attempt = 1;
+      existing && existing.id !== tenantId && attempt <= 10;
+      attempt++
+    ) {
+      candidate = `${base.slice(0, 36)}-${attempt}`;
+      existing = await tenantRepository.findBySubdomain(candidate);
+    }
+    if (existing && existing.id !== tenantId) {
+      return null;
+    }
+
+    const updated = await tenantRepository.setSubdomain(
+      tenantId,
+      candidate,
+      client,
+    );
+    if (!updated) throw AppError.notFound("Tenant not found.");
+
+    if (process.env.CADDY_ADMIN_URL) {
+      const routeId = `tenant-subdomain-${tenantId}`;
+      try {
+        await caddyService.registerRoute(routeId, candidate, true);
+        await tenantRepository.setCaddySubdomainRouteId(
+          tenantId,
+          routeId,
+          client,
+        );
+      } catch (err) {
+        logger.error("caddy_subdomain_registration_failed", {
+          event: "caddy_subdomain_registration_failed",
+          tenantId,
+          subdomain: candidate,
+          error: (err as Error).message,
+        });
+      }
+    }
+
+    return candidate;
   },
 };

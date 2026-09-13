@@ -16,8 +16,14 @@ import {
   ActivateTenantHandler,
   GetPublicTenantProfileHandler,
   GetAdminTenantDetailHandler,
+  ResolveSubdomainHandler,
+  ClaimSubdomainHandler,
+  AddCustomDomainHandler,
+  VerifyCustomDomainHandler,
+  RemoveCustomDomainHandler,
 } from "./tenant.controller";
 import { requirePermission } from "../../middleware/require-permission.middleware";
+import { requireInternalSecret } from "../../middleware/internal.middleware";
 
 const updateSettingsSchema = Joi.object({
   timezone: Joi.string().optional(),
@@ -26,11 +32,11 @@ const updateSettingsSchema = Joi.object({
 });
 
 const updateProfileSchema = Joi.object({
-  bio:        Joi.string().max(1000).allow("").optional(),
-  avatarUrl:  Joi.string().uri().allow("").optional(),
-  city:       Joi.string().max(100).allow("").optional(),
-  state:      Joi.string().max(100).allow("").optional(),
-  country:    Joi.string().max(100).allow("").optional(),
+  bio: Joi.string().max(1000).allow("").optional(),
+  avatarUrl: Joi.string().uri().allow("").optional(),
+  city: Joi.string().max(100).allow("").optional(),
+  state: Joi.string().max(100).allow("").optional(),
+  country: Joi.string().max(100).allow("").optional(),
 });
 
 const cancellationPolicySchema = Joi.object({
@@ -89,8 +95,41 @@ router.patch(
   authorize("platform:admin"),
   ActivateTenantHandler,
 );
+router.patch(
+  "/me/subdomain",
+  authenticate,
+  requireTenantMember,
+  ClaimSubdomainHandler,
+);
 
+router.post(
+  "/me/custom-domain",
+  authenticate,
+  requireTenantMember,
+  AddCustomDomainHandler,
+);
+router.post(
+  "/me/custom-domain/verify",
+  authenticate,
+  requireTenantMember,
+  VerifyCustomDomainHandler,
+);
+router.delete(
+  "/me/custom-domain",
+  authenticate,
+  requireTenantMember,
+  RemoveCustomDomainHandler,
+);
 
-router.get("/:tenantId/admin-detail", authenticate, authorize("platform:admin"), GetAdminTenantDetailHandler);
-
+router.get(
+  "/:tenantId/admin-detail",
+  authenticate,
+  authorize("platform:admin"),
+  GetAdminTenantDetailHandler,
+);
+router.get(
+  "/internal/subdomain/:subdomain",
+  requireInternalSecret,
+  ResolveSubdomainHandler,
+);
 export default router;

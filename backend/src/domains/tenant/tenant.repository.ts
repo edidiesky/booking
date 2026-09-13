@@ -234,4 +234,24 @@ export const tenantRepository = {
       return (await client.query<Tenant>(sql, [tenantId])).rows[0] ?? null;
     return queryOne<Tenant>(sql, [tenantId]);
   },
+
+  async findBySubdomain(subdomain: string): Promise<Tenant | null> {
+    return queryOne<Tenant>(
+      `SELECT * FROM tenants WHERE subdomain = $1 LIMIT 1`,
+      [subdomain],
+    );
+  },
+
+  async setSubdomain(
+    tenantId: string,
+    subdomain: string,
+    client?: PoolClient,
+  ): Promise<Tenant | null> {
+    const sql = `UPDATE tenants SET subdomain = $1, updated_at = now() WHERE id = $2 RETURNING *`;
+    if (client)
+      return (
+        (await client.query<Tenant>(sql, [subdomain, tenantId])).rows[0] ?? null
+      );
+    return queryOne<Tenant>(sql, [subdomain, tenantId]);
+  },
 };

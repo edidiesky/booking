@@ -6,17 +6,19 @@ import {
   Settings2,
   MonitorSmartphone,
   LifeBuoy,
+  Globe,
 } from "lucide-react";
 import TeamManagementTab from "./tabs/TeamManagementTab";
 import RolesPermissionsTab from "./tabs/RolesPermissionsTab";
-
-type TopTab = "general" | "team" | "roles" | "sessions" | "support";
+import DomainSettingsTab from "./tabs/domain/DomainSettingsTab";
+type TopTab = "general" | "team" | "roles" | "domain" | "sessions" | "support";
 
 const TOP_TABS: {
   key: TopTab;
   label: string;
   icon: typeof Users;
 }[] = [
+  { key: "domain", label: "Domain", icon: Globe },
   { key: "general", label: "General", icon: Settings2 },
   { key: "team", label: "Team", icon: Users },
   { key: "roles", label: "Roles", icon: ShieldCheck },
@@ -73,6 +75,8 @@ export default function DashboardRoles() {
       {activeTab === "team" && (
         <TeamManagementTab onManageRoles={() => setActiveTab("roles")} />
       )}
+
+      {activeTab === "domain" && <DomainSettingsTab />}
 
       {activeTab === "roles" && <RolesPermissionsTab />}
 

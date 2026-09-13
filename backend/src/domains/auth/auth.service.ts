@@ -24,6 +24,7 @@ import { OAuth2Client } from "google-auth-library";
 import { auditEventRepository } from "../audit/auditEvent.repository";
 import { roleRepository } from "../role/role.repository";
 import { userRoleRepository } from "../user-role/user-role.repository";
+import { tenantService } from "../tenant/tenant.service";
 
 const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -350,6 +351,13 @@ export class AuthService {
           "host:admin system role is not seeded. Registration cannot proceed.",
         );
       }
+
+      const subdomainCandidate = await tenantService.resolveAndClaimSubdomain(
+        tenantId,
+        input.tenantSlug,
+        client,
+      );
+
       await userRoleRepository.assign(
         {
           userId,
@@ -373,6 +381,7 @@ export class AuthService {
           action: "tenant.registered",
           targetType: "tenant",
           targetId: tenantId,
+          after: { subdomain: subdomainCandidate },
           outcome: "allowed",
           requestId: requestContext.get()?.requestId,
         },

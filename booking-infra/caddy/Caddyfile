@@ -1,0 +1,8 @@
+{
+	admin 0.0.0.0:2019
+	email essienedidiong1000@gmail.com
+}
+
+bukkings.space, *.bukkings.space {
+	reverse_proxy frontend:3000
+}
