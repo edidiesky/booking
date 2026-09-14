@@ -155,6 +155,27 @@ services:
       retries: 10
       start_period: 1m
 
+  gateway:
+    build:
+      context: ..
+      dockerfile: gateway/Dockerfile
+    env_file:
+      - ./.env.production
+    networks:
+      - app-tier
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+      booking:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
   booking:
     build:
       context: ..
@@ -164,8 +185,6 @@ services:
       - ./.env.production
     networks:
       - app-tier
-    ports:
-      - "4000:4000"
     depends_on:
       rabbitmq:
         condition: service_healthy
