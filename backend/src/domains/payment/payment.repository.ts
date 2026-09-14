@@ -251,7 +251,7 @@ export const paymentRepository = {
     );
   },
 
-  // Atomic: one query, all status counts + month-over-month volume growth.
+  // status counts + month-over-month volume growth.
   async getStatsForTenant(tenantId: string): Promise<PaymentStats> {
     const row = await queryOne<{
       success_count: string;
