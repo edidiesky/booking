@@ -132,4 +132,10 @@ router.get(
   requireInternalSecret,
   ResolveSubdomainHandler,
 );
+
+router.get(
+  "/by-subdomain/:subdomain",
+  ResolveSubdomainHandler,
+);
+
 export default router;
