@@ -189,7 +189,7 @@ function buildStyles(): string {
   src: url('data:font/truetype;base64,${fonts.regular}') format('truetype');
 }
 @font-face {
-  font-family: 'Cabinet'; font-weight: 500; font-style: normal;
+  font-family: 'Cabinet'; font-weight: 700; font-style: normal;
   src: url('data:font/truetype;base64,${fonts.medium}') format('truetype');
 }
 @font-face {
@@ -214,7 +214,7 @@ html, body {
 .meta-row { display: flex; gap: 36px; margin-bottom: 28px; }
 .meta-item { display: flex; flex-direction: column; gap: 2px; }
 .meta-label { font-size: 13px; font-weight: 700; color: #6b6b6b; }
-.meta-value { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+.meta-value { font-size: 13px; font-weight: 700; color: #1a1a1a; }
 
 .addr-row { display: flex; gap: 60px; margin-bottom: 28px; }
 .addr-col { flex: 1; }
@@ -223,15 +223,15 @@ html, body {
 
 .due-row { margin-bottom: 28px; }
 .due-amount { font-size: 17px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
-.verify-link { font-size: 12px; font-weight: 500; color: #E56000; text-decoration: underline; }
+.verify-link { font-size: 12px; font-weight: 700; color: #E56000; text-decoration: underline; }
 
 .items-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
 .items-table thead tr { border-bottom: 1px solid #1a1a1a; }
-.items-table th { font-size: 13px; font-weight: 500; color: #6b6b6b; text-align: left; padding: 0 0 8px; }
+.items-table th { font-size: 13px; font-weight: 700; color: #6b6b6b; text-align: left; padding: 0 0 8px; }
 .th-qty, .th-unit, .th-amount { text-align: right; }
 
 .item-row td { padding: 10px 0; border-bottom: 1px solid #eaeaea; font-size: 13px; font-weight: 700; vertical-align: top; }
-.item-title { font-weight: 500; color: #1a1a1a; }
+.item-title { font-weight: 700; color: #1a1a1a; }
 .item-sub { font-size: 12px; color: #6b6b6b; margin-top: 2px; }
 .item-qty, .item-unit, .item-amount { text-align: right; white-space: nowrap; }
 
