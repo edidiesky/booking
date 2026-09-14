@@ -5,6 +5,7 @@ import {
 } from "../../middleware/auth.middleware";
 import { requirePermission } from "../../middleware/require-permission.middleware";
 import { validate } from "../../middleware/validate.middleware";
+import { enforceSubdomainTenantScope } from "../../middleware/enforceSubdomainTenantScope";
 import {
   ListPublicPropertiesHandler,
   GetTenantPropertiesHandler,
@@ -39,7 +40,9 @@ import {
 
 const propertyRouter = Router();
 
-// Tenant reads
+// Tenant reads (unchanged, already real, already correctly scoped via
+// authenticate + requireTenantMember + requirePermission, a
+// different, already-working mechanism for authenticated routes)
 propertyRouter.get(
   "/mine",
   authenticate,
@@ -83,19 +86,27 @@ propertyRouter.get(
   GetTenantBookingsInRangeHandler,
 );
 
-// Public
+// Public, real, all 4 now scoped
 propertyRouter.get(
   "/room-types/:roomTypeId/availability",
+  enforceSubdomainTenantScope.byRoomTypeId((req) => req.params.roomTypeId as string),
   GetAvailabilityHandler,
 );
 propertyRouter.get(
   "/room-types/:roomTypeId/availability/stream",
+  enforceSubdomainTenantScope.byRoomTypeId((req) => req.params.roomTypeId as string),
   StreamRoomTypeAvailabilityHandler,
 );
 propertyRouter.get("/", ListPublicPropertiesHandler);
-propertyRouter.get("/:propertyId", GetPropertyHandler);
+propertyRouter.get(
+  "/:propertyId",
+  enforceSubdomainTenantScope.byPropertyId((req) => req.params.propertyId as string),
+  GetPropertyHandler,
+);
 
-// Mutations
+// Mutations (unchanged, real, already authenticated + tenant-member-
+// scoped, this middleware isn't needed here, these routes require
+// the acting user to already belong to the tenant they're mutating)
 propertyRouter.post(
   "/",
   authenticate,

@@ -5,7 +5,6 @@ import {
   LayoutGrid,
   SlidersHorizontal,
 } from "lucide-react";
-import Footer from "@/components/common/Footer";
 import PropertyGrid from "@/screens/public/Properties/PropertyGrid";
 import SearchMap from "@/screens/public/Search/components/SearchMap";
 import FiltersModal, {
@@ -226,8 +225,6 @@ export default function TenantStorefront() {
           </div>
         )}
       </div>
-
-      <Footer />
     </div>
   );
 }
