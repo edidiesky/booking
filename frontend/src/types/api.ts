@@ -127,6 +127,8 @@ export interface CancellationPolicyTier {
   refund_pct: number;
 }
 
+export type CustomDomainStatus = "none" | "pending" | "verified" | "failed";
+
 export interface Tenant {
   id: string;
   slug: string;
@@ -136,6 +138,11 @@ export interface Tenant {
   status: "draft" | "active" | "suspended";
   settings: TenantSettings;
   cancellationPolicy: CancellationPolicyTier[];
+  subdomain: string | null;
+  customDomain: string | null;
+  customDomainStatus: CustomDomainStatus;
+  customDomainVerifiedAt: string | null;
+
   createdAt: string;
   updatedAt: string;
 }

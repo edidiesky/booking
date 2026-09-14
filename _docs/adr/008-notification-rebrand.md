@@ -15,7 +15,7 @@ Adopt the reference's visual shell exactly: same layout structure, same typograp
 
 - Font stack: Newsreader, matching the reference exactly.
 - Color tokens: mapped to the Bukking Platform's real CSS variables, not the reference's mislabeled blue "terracotta." `ink: #17191c`, `fog: #f7f7f8`, `mutedStone: #4c4c4c`, `lightSteel: #777b86`, `hintOfGrey: #a3a6af`, `canvas: #ffffff`, and the CTA/link accent color set to the platform's real terracotta, `#5d2a1a`.
-- Wordmark: "Selleasi" becomes "Booking".
+- Wordmark: "Bukkings" becomes "Booking".
 - Footer tagline: "Marketplace · Support · Help Center" becomes a booking-platform-appropriate equivalent.
 
 ## Explicitly out of scope, corrected from the prior draft of this ADR

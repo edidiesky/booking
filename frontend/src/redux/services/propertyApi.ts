@@ -112,6 +112,7 @@ export const propertyApi = apiSlice.injectEndpoints({
         beds?: number;
         bathrooms?: number;
         amenities?: string;
+        tenantId?:string;
       }
     >({
       query: (params) => {

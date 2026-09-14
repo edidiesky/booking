@@ -505,7 +505,7 @@ html.lenis body {
   animation: shake 0.45s ease-in-out;
 }
 
-/* Selleasi driver.js popover overrides */
+/* Bukkings driver.js popover overrides */
 
 .driver-popover-title,
 .driver-popover-description,
@@ -515,7 +515,7 @@ html.lenis body {
   font-family: "Bricolage Grotesque", sans-serif !important;
 }
 
-.selleasi-tour-popover {
+.Bukkings-tour-popover {
   font-family: inherit;
   border-radius: 12px !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18) !important;
@@ -526,32 +526,32 @@ html.lenis body {
   font-family: "Bricolage Grotesque", sans-serif;
 }
 
-.selleasi-tour-popover .driver-popover-title {
+.Bukkings-tour-popover .driver-popover-title {
   font-size: 15px !important;
   font-weight: 600 !important;
   color: #292929 !important;
   margin-bottom: 6px !important;
 }
 
-.selleasi-tour-popover .driver-popover-description {
+.Bukkings-tour-popover .driver-popover-description {
   font-size: 13px !important;
   color: #4c4c4c !important;
   /* line-height: 1.6 !important; */
 }
 
-.selleasi-tour-popover .driver-popover-progress-text {
+.Bukkings-tour-popover .driver-popover-progress-text {
   font-size: 11px !important;
   color: #a3a6af !important;
 }
 
-.selleasi-tour-popover .driver-popover-footer {
+.Bukkings-tour-popover .driver-popover-footer {
   margin-top: 16px !important;
   gap: 8px !important;
 }
 
-.selleasi-tour-popover .driver-popover-prev-btn,
-.selleasi-tour-popover .driver-popover-next-btn,
-.selleasi-tour-popover .driver-popover-done-btn {
+.Bukkings-tour-popover .driver-popover-prev-btn,
+.Bukkings-tour-popover .driver-popover-next-btn,
+.Bukkings-tour-popover .driver-popover-done-btn {
   border-radius: 8px !important;
   font-size: 12px !important;
   font-weight: 600 !important;
@@ -559,23 +559,23 @@ html.lenis body {
   border: none !important;
 }
 
-.selleasi-tour-popover .driver-popover-next-btn,
-.selleasi-tour-popover .driver-popover-done-btn {
+.Bukkings-tour-popover .driver-popover-next-btn,
+.Bukkings-tour-popover .driver-popover-done-btn {
   background: #292929 !important;
   color: #fff !important;
 }
 
-.selleasi-tour-popover .driver-popover-next-btn:hover,
-.selleasi-tour-popover .driver-popover-done-btn:hover {
+.Bukkings-tour-popover .driver-popover-next-btn:hover,
+.Bukkings-tour-popover .driver-popover-done-btn:hover {
   opacity: 0.85 !important;
 }
 
-.selleasi-tour-popover .driver-popover-prev-btn {
+.Bukkings-tour-popover .driver-popover-prev-btn {
   background: #f2f0ed !important;
   color: #292929 !important;
 }
 
-.selleasi-tour-popover .driver-popover-close-btn {
+.Bukkings-tour-popover .driver-popover-close-btn {
   color: #a3a6af !important;
   font-size: 18px !important;
 }

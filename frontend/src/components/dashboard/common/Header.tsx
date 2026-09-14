@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Menu, Search } from "lucide-react";
+import { Menu, Search, Copy, Check } from "lucide-react";
 import NotificationBell from "@/components/common/NotificationBell";
 import {
   Calendar,
@@ -15,8 +15,24 @@ import {
 import AccountDropdown from "@/components/common/AccountDropdown";
 import { useState } from "react";
 import MobileSidebar from "./MobileSidebar";
+import { useGetMyTenantQuery } from "@/redux/services/tenantApi";
+
+const PLATFORM_DOMAIN = import.meta.env.VITE_PLATFORM_DOMAIN ?? "bukkings.space";
+
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const { data: tenant } = useGetMyTenantQuery();
+  const storefrontUrl = tenant?.data?.subdomain
+    ? `https://${tenant?.data?.subdomain}.${PLATFORM_DOMAIN}`
+    : null;
+
+  const handleCopyStorefrontLink = async () => {
+    if (!storefrontUrl) return;
+    await navigator.clipboard.writeText(storefrontUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <header
@@ -52,6 +68,20 @@ export default function Header() {
         <div className="flex items-center gap-3">
           {/* Notifications */}
           <NotificationBell />
+          {storefrontUrl && (
+            <button
+              onClick={handleCopyStorefrontLink}
+              className="hidden sm:flex items-center gap-1.5 text-xs lg:text-[13px] px-4 py-1.5 rounded-full border transition-opacity hover:opacity-70"
+              style={{
+                color: copied ? "var(--color-ink)" : "var(--color-muted-stone)",
+                borderColor: "var(--color-fog)",
+              }}
+              title={storefrontUrl}
+            >
+              {copied ? <Check size={13} /> : <Copy size={13} />}
+              {copied ? "Copied" : "Share storefront"}
+            </button>
+          )}
 
           {/* View public site */}
           <Link

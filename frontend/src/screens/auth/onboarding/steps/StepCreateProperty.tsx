@@ -64,7 +64,7 @@ export default function StepCreateProperty({ onSubmit, isLoading }: Props) {
           <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
             Your booking page:{" "}
             <span style={{ color: "var(--color-ink)" }}>
-              {slug || "your-property"}.bookingplatform.com
+              {slug || "your-property"}.bukkings.com
             </span>
           </p>
         </div>

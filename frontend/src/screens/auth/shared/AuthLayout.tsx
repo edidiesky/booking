@@ -123,7 +123,7 @@ export default function AuthLayout({
         </div>
 
         <p className="text-xs" style={{ color: "#9ca3af" }}>
-          © {new Date().getFullYear()} Selleasi Technologies
+          © {new Date().getFullYear()} Bukkings Technologies
         </p>
       </div>
 
@@ -142,7 +142,7 @@ export default function AuthLayout({
             className="text-xs lg:text-[13px]     mb-8 block lg:hidden"
             style={{ color: "#17191c" }}
           >
-            Selleasi
+            Bukkings
           </Link>
           {children}
         </motion.div>
