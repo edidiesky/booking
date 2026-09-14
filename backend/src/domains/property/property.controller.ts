@@ -101,7 +101,7 @@ export const ListPublicPropertiesHandler = asyncHandler(
       sort: q["sort"] as "price_asc" | "price_desc" | "newest" | undefined,
       page: Number(q["page"] ?? 1),
       limit: Number(q["limit"] ?? 20),
-      tenantId: req.tenantId,
+      tenantId: q["tenantId"] ?? req.tenantId,
     });
     res.status(200).json({ success: true, data: results });
   },

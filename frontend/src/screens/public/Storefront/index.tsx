@@ -192,7 +192,7 @@ export default function TenantStorefront() {
         resultCount={properties.length || undefined}
       />
 
-      <div className="mx-auto w-full px-4 py-8" style={{ maxWidth: "1280px" }}>
+      <div className="mx-auto w-full px-4 py-8 pb-24" style={{ maxWidth: "1280px" }}>
         <div className="mb-6">
           <h1 className="text-2xl lg:text-3xl font-semibold text-[#17171A]">
             {tenantName}
