@@ -112,72 +112,74 @@ export default function TenantStorefront() {
       <StorefrontHeader tenantName={tenantName} tenantSlug={subdomain} />
 
       <div className="sticky top-0 z-30 border-b border-[#ebebeb] bg-white">
-        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-3 px-4 py-3 lg:px-6">
-          <div className="relative flex-1 min-w-[200px] max-w-sm">
-            <Search
-              size={15}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#a3a6af]"
-            />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={`Search ${tenantName ?? "listings"}`}
-              className="h-10 w-full rounded-full border border-[#e8e6e3] pl-9 pr-3 text-[13px] outline-none focus:border-[#c4c6ce]"
-            />
-          </div>
+        <div className="mx-auto w-full px-4" style={{ maxWidth: "1280px" }}>
+          <div className="mx-auto flex w-full flex-wrap items-center gap-3 px-4 py-3 lg:px-6">
+            <div className="relative flex-1 min-w-[200px] max-w-sm">
+              <Search
+                size={15}
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#a3a6af]"
+              />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={`Search ${tenantName ?? "listings"}`}
+                className="h-10 w-full rounded-full border border-[#e8e6e3] pl-9 pr-3 text-[13px] outline-none focus:border-[#c4c6ce]"
+              />
+            </div>
 
-          <button
-            onClick={() => setFiltersOpen(true)}
-            className={`flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-4 text-[13px] transition-colors ${
-              activeFilterCount > 0
-                ? "border-[#17191c] bg-[#f7f7f5] font-medium text-[#17191c]"
-                : "border-[#e8e6e3] text-[#5B5B66] hover:border-[#c4c6ce]"
-            }`}
-          >
-            <SlidersHorizontal size={14} />
-            Filters
-            {activeFilterCount > 0 && (
-              <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#17191c] px-1 text-[10px] font-semibold text-white">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
+            <button
+              onClick={() => setFiltersOpen(true)}
+              className={`flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-4 text-[13px] transition-colors ${
+                activeFilterCount > 0
+                  ? "border-[#17191c] bg-[#f7f7f5] font-medium text-[#17191c]"
+                  : "border-[#e8e6e3] text-[#5B5B66] hover:border-[#c4c6ce]"
+              }`}
+            >
+              <SlidersHorizontal size={14} />
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#17191c] px-1 text-[10px] font-semibold text-white">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
 
-          <div className="flex items-center gap-2 overflow-x-auto">
-            {TYPE_TABS.map((t) => (
+            <div className="flex items-center gap-2 overflow-x-auto">
+              {TYPE_TABS.map((t) => (
+                <button
+                  key={t.value}
+                  onClick={() => setTypeFilter(t.value)}
+                  className={`h-9 shrink-0 rounded-full border px-4 text-[13px] transition-colors ${
+                    typeFilter === t.value
+                      ? "border-[#17191c] bg-[#f7f7f5] font-medium text-[#17191c]"
+                      : "border-[#e8e6e3] text-[#5B5B66] hover:border-[#c4c6ce]"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="ml-auto flex items-center gap-1 rounded-full border border-[#e8e6e3] p-1">
               <button
-                key={t.value}
-                onClick={() => setTypeFilter(t.value)}
-                className={`h-9 shrink-0 rounded-full border px-4 text-[13px] transition-colors ${
-                  typeFilter === t.value
-                    ? "border-[#17191c] bg-[#f7f7f5] font-medium text-[#17191c]"
-                    : "border-[#e8e6e3] text-[#5B5B66] hover:border-[#c4c6ce]"
+                onClick={() => setView("list")}
+                className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                  view === "list" ? "bg-[#17191c] text-white" : "text-[#777b86]"
                 }`}
+                title="List view"
               >
-                {t.label}
+                <LayoutGrid size={15} />
               </button>
-            ))}
-          </div>
-
-          <div className="ml-auto flex items-center gap-1 rounded-full border border-[#e8e6e3] p-1">
-            <button
-              onClick={() => setView("list")}
-              className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                view === "list" ? "bg-[#17191c] text-white" : "text-[#777b86]"
-              }`}
-              title="List view"
-            >
-              <LayoutGrid size={15} />
-            </button>
-            <button
-              onClick={() => setView("map")}
-              className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                view === "map" ? "bg-[#17191c] text-white" : "text-[#777b86]"
-              }`}
-              title="Map view"
-            >
-              <MapIcon size={15} />
-            </button>
+              <button
+                onClick={() => setView("map")}
+                className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                  view === "map" ? "bg-[#17191c] text-white" : "text-[#777b86]"
+                }`}
+                title="Map view"
+              >
+                <MapIcon size={15} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -190,10 +192,12 @@ export default function TenantStorefront() {
         resultCount={properties.length || undefined}
       />
 
-      <div className="flex-1 max-w-[1600px] mx-auto w-full px-4 lg:px-6 py-8">
+      <div className="mx-auto w-full px-4" style={{ maxWidth: "1280px" }}>
         <div className="mb-6">
-          <h1 className="text-xl font-semibold text-[#17171A]">{tenantName}</h1>
-          <p className="text-sm text-[#777b86] mt-1">
+          <h1 className="text-2xl lg:text-3xl font-semibold text-[#17171A]">
+            {tenantName}
+          </h1>
+          <p className="text-sm lg:text-base text-[#777b86] mt-1">
             {properties.length} listing{properties.length === 1 ? "" : "s"}{" "}
             available
           </p>

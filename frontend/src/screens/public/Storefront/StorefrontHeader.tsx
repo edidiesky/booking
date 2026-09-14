@@ -6,7 +6,13 @@ interface Props {
   avatarUrl?: string | null;
 }
 
-function TenantAvatar({ name, avatarUrl }: { name: string | null; avatarUrl?: string | null }) {
+function TenantAvatar({
+  name,
+  avatarUrl,
+}: {
+  name: string | null;
+  avatarUrl?: string | null;
+}) {
   if (avatarUrl) {
     return (
       <img
@@ -28,21 +34,30 @@ function TenantAvatar({ name, avatarUrl }: { name: string | null; avatarUrl?: st
   );
 }
 
-export default function StorefrontHeader({ tenantName, tenantSlug, avatarUrl }: Props) {
+export default function StorefrontHeader({
+  tenantName,
+  tenantSlug,
+  avatarUrl,
+}: Props) {
   return (
     <div className="flex items-center gap-2.5 px-4 lg:px-6 py-3 border-b border-[#f2f0ed]">
-      <TenantAvatar name={tenantName} avatarUrl={avatarUrl} />
-      <div className="flex flex-col leading-tight">
-        <span className="text-[14px] font-semibold text-[#17171A]">
-          {tenantName ?? "Storefront"}
-        </span>
-        {tenantSlug && (
-          <span className="text-[11px] text-[#8A8A94]">
-            {tenantSlug}.bukkings.space
+      <div
+        className="mx-auto w-full px-4"
+        style={{ maxWidth: "1280px" }}
+      >
+        <TenantAvatar name={tenantName} avatarUrl={avatarUrl} />
+        <div className="flex flex-col leading-tight">
+          <span className="text-[14px] font-semibold text-[#17171A]">
+            {tenantName ?? "Storefront"}
           </span>
-        )}
+          {tenantSlug && (
+            <span className="text-[11px] text-[#8A8A94]">
+              {tenantSlug}.bukkings.space
+            </span>
+          )}
+        </div>
+        <ChevronRight size={16} className="text-[#B4B4BC] ml-1" />
       </div>
-      <ChevronRight size={16} className="text-[#B4B4BC] ml-1" />
     </div>
   );
 }
