@@ -46,9 +46,25 @@ import messageRoutes from "./domains/message/message.routes";
 const app = express();
 
 if (!process.env.WEB_ORIGIN) throw new Error("WEB_ORIGIN env var not set.");
+const PLATFORM_DOMAIN = process.env.PLATFORM_DOMAIN ?? "bukkings.space";
+const WEB_ORIGIN = process.env.WEB_ORIGIN;
 
 app.use(helmet());
-app.use(cors({ origin: [process.env.WEB_ORIGIN], credentials: true }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (origin === WEB_ORIGIN) return callback(null, true);
+      try {
+        const hostname = new URL(origin).hostname;
+        if (hostname.endsWith(`.${PLATFORM_DOMAIN}`))
+          return callback(null, true);
+      } catch {}
+      callback(new Error(`Origin ${origin} not allowed`));
+    },
+    credentials: true,
+  }),
+);
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
@@ -73,9 +89,9 @@ app.get("/health", async (_req, res) => {
   }
   const healthy = Object.values(checks).every(Boolean);
   logger.info("Health Checks:", {
-    event:"booking_health_check_event",
-    checks
-  })
+    event: "booking_health_check_event",
+    checks,
+  });
   res.json({
     status: healthy ? "ok" : "Degraded",
     service: "booking-platform",
@@ -105,7 +121,12 @@ app.use("/api/v1/escrow", tenantMiddleware, rlsMiddleware, escrowRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/security", securityRoutes);
 app.use("/api/v1/audit", tenantMiddleware, auditRoutes);
-app.use("/api/v1/audit-events", tenantMiddleware, rlsMiddleware, auditEventRoutes);
+app.use(
+  "/api/v1/audit-events",
+  tenantMiddleware,
+  rlsMiddleware,
+  auditEventRoutes,
+);
 app.use("/api/v1/roles", tenantMiddleware, roleRoutes);
 app.use("/api/v1/permissions", tenantMiddleware, permissionRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
@@ -117,8 +138,18 @@ app.use("/api/v1/favorites", favoriteRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/invitations", invitationRoutes);
 app.use("/api/v1/admin", adminRoutes);
-app.use("/api/v1/conversations", tenantMiddleware, rlsMiddleware, conversationRoutes);
-app.use("/api/v1/conversations", tenantMiddleware, rlsMiddleware, messageRoutes);
+app.use(
+  "/api/v1/conversations",
+  tenantMiddleware,
+  rlsMiddleware,
+  conversationRoutes,
+);
+app.use(
+  "/api/v1/conversations",
+  tenantMiddleware,
+  rlsMiddleware,
+  messageRoutes,
+);
 // adminRoutes
 
 app.use(NotFound);

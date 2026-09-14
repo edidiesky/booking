@@ -1,9 +1,16 @@
 import { useState, useMemo } from "react";
-import { Search, Map as MapIcon, LayoutGrid, SlidersHorizontal } from "lucide-react";
+import {
+  Search,
+  Map as MapIcon,
+  LayoutGrid,
+  SlidersHorizontal,
+} from "lucide-react";
 import Footer from "@/components/common/Footer";
 import PropertyGrid from "@/screens/public/Properties/PropertyGrid";
 import SearchMap from "@/screens/public/Search/components/SearchMap";
-import FiltersModal, { type SearchFiltersState } from "@/screens/public/Search/components/FiltersModal";
+import FiltersModal, {
+  type SearchFiltersState,
+} from "@/screens/public/Search/components/FiltersModal";
 import StorefrontHeader from "./StorefrontHeader";
 import StorefrontSkeletonGrid from "./StorefrontSkeletonGrid";
 import { useTenantContext } from "@/hooks/useTenantContext";
@@ -55,7 +62,9 @@ export default function TenantStorefront() {
       bedrooms: filters.bedrooms,
       beds: filters.beds,
       bathrooms: filters.bathrooms,
-      amenities: filters.amenities.length ? filters.amenities.join(",") : undefined,
+      amenities: filters.amenities.length
+        ? filters.amenities.join(",")
+        : undefined,
       page: 1,
       limit: 24,
     },

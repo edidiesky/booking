@@ -2,9 +2,9 @@ import { lazy, Suspense } from "react";
 import type { RouteObject } from "react-router-dom";
 import PageLoader from "@/components/common/PageLoader";
 import { ProtectRoute } from "./guards/ProtectRoute";
+import RootRouteGate from "@/screens/public/RootRouteGate";
 const GuestProfile = lazy(() => import("@/screens/guest/Profile"));
 const GuestFavorites = lazy(() => import("@/screens/guest/MyFavorites"));
-const Landing = lazy(() => import("@/screens/public/Landing"));
 const Properties = lazy(() => import("@/screens/public/Properties"));
 const SearchPage = lazy(() => import("@/screens/public/Search"));
 const PropertyDetail = lazy(() => import("@/screens/public/PropertyDetail"));
@@ -16,7 +16,7 @@ const s = (el: React.ReactNode) => (
 );
 
 export const guestRoutes: RouteObject[] = [
-  { path: "/", element: s(<Landing />) },
+  { path: "/", element: <RootRouteGate /> },
   { path: "/properties", element: s(<Properties />) },
   { path: "/favorites", element: s(<GuestFavorites />) },
   { path: "/properties/:id", element: s(<PropertyDetail />) },
