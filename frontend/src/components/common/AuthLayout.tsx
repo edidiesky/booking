@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle2, Circle, Loader2 } from "lucide-react";
 import type { StepItem } from "@/types/ui";
+// import LazyImage from "./LazyImage";
 
 interface Props {
   children: React.ReactNode;
@@ -78,13 +79,8 @@ export default function AuthLayout({
     resolvedSteps?.filter((s) => s.status !== "done").length ?? null;
 
   return (
-    <div
-      className="min-h-screen grid lg:grid-cols-[600px_1fr]"
-    >
-      <div
-        className="hidden lg:flex flex-col justify-between p-10"
-        
-      >
+    <div className="min-h-screen grid lg:grid-cols-[600px_1fr]">
+      <div className="hidden lg:flex flex-col justify-between p-10">
         <div className="flex flex-col gap-6">
           {resolvedSteps ? (
             <>
@@ -119,6 +115,7 @@ export default function AuthLayout({
                 >
                   Book your next stay.
                 </h3>
+                
                 <p
                   className="text-[15px] w-[80%] leading-relaxed"
                   style={{ color: "#6b7280" }}
@@ -126,6 +123,11 @@ export default function AuthLayout({
                   Discover properties, make reservations, and manage your trips
                   all in one place.
                 </p>
+                {/* <div
+                  className="w-full h-[500px] my-10 overflow-hidden rounded-3xl block"
+                >
+                  <LazyImage src={'/background.jpeg'} alt={'Bukkings Background'} />
+                </div> */}
               </div>
             ))
           )}
