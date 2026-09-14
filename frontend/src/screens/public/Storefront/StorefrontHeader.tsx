@@ -18,7 +18,7 @@ function TenantAvatar({
       <img
         src={avatarUrl}
         alt={name ?? "Storefront"}
-        className="h-9 w-9 rounded-full object-cover border border-[#e8e6e3]"
+        className="h-14 w-14 rounded-full object-cover border border-[#e8e6e3]"
       />
     );
   }
@@ -26,7 +26,7 @@ function TenantAvatar({
   const initial = (name?.trim()?.[0] ?? "?").toUpperCase();
   return (
     <div
-      className="flex h-9 w-9 items-center justify-center rounded-full text-[13px] font-semibold text-white"
+      className="flex h-14 w-14 items-center justify-center rounded-full text-xl font-semibold text-white"
       style={{ backgroundColor: "#6C5CE7" }}
     >
       {initial}
@@ -42,16 +42,16 @@ export default function StorefrontHeader({
   return (
     <div className="flex items-center gap-2.5 px-4 lg:px-6 py-3 border-b border-[#f2f0ed]">
       <div
-        className="mx-auto w-full px-4"
+        className="mx-auto w-full px-4 flex items-center gap-2.5"
         style={{ maxWidth: "1280px" }}
       >
         <TenantAvatar name={tenantName} avatarUrl={avatarUrl} />
         <div className="flex flex-col leading-tight">
-          <span className="text-[14px] font-semibold text-[#17171A]">
+          <span className="text-xl font-semibold text-[#17171A]">
             {tenantName ?? "Storefront"}
           </span>
           {tenantSlug && (
-            <span className="text-[11px] text-[#8A8A94]">
+            <span className="text-base text-[#8A8A94]">
               {tenantSlug}.bukkings.space
             </span>
           )}

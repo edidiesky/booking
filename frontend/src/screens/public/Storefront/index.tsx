@@ -108,7 +108,7 @@ export default function TenantStorefront() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col  min-h-screen">
       <StorefrontHeader tenantName={tenantName} tenantSlug={subdomain} />
 
       <div className="sticky top-0 z-30 border-b border-[#ebebeb] bg-white">
@@ -192,7 +192,7 @@ export default function TenantStorefront() {
         resultCount={properties.length || undefined}
       />
 
-      <div className="mx-auto w-full px-4" style={{ maxWidth: "1280px" }}>
+      <div className="mx-auto w-full px-4 py-8" style={{ maxWidth: "1280px" }}>
         <div className="mb-6">
           <h1 className="text-2xl lg:text-3xl font-semibold text-[#17171A]">
             {tenantName}
