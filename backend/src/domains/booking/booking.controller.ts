@@ -61,16 +61,17 @@ export const GetBookingHandler = asyncHandler(
 export const GetMyBookingsHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     if (!req.user) throw AppError.unauthorized();
-    const { page, limit } = req.query as Record<string, string>;
-    const bookings = await bookingService.getGuestBookings(
-      req.user.userId,
-      Number(page ?? 1),
-      Number(limit ?? 20),
-    );
+    const q = req.query as Record<string, string>;
+    const bookings = await bookingService.getGuestBookings(req.user.userId, {
+      status: q["status"] as BookingStatus | undefined,
+      checkInAfter: q["checkInAfter"],
+      checkInBefore: q["checkInBefore"],
+      page: Number(q["page"] ?? 1),
+      limit: Number(q["limit"] ?? 20),
+    });
     res.status(200).json({ success: true, data: bookings });
   },
 );
-
 export const GetTenantBookingsHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     if (!req.tenantId) throw AppError.badRequest("Tenant context required.");

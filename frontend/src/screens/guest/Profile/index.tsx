@@ -23,7 +23,7 @@ type TabKey = (typeof TABS)[number]["key"];
 export default function GuestProfile() {
   const [active, setActive] = useState<TabKey>("bookings");
   const user = useSelector(selectCurrentUser);
-  const { profile, isLoading } = useGuestProfile();
+    const { profile, isLoading, saving, handleUpdate } = useGuestProfile();
   const navigate = useNavigate();
 
   const fullName =
@@ -47,7 +47,7 @@ export default function GuestProfile() {
       case "reviews":
         return <ReviewsTab />;
       case "account":
-        return <AccountTab user={user!} />;
+        return <AccountTab user={user!} profile={profile ?? undefined} onSave={handleUpdate} isSaving={saving} />;
       default:
         return null;
     }

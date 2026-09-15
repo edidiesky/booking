@@ -99,8 +99,12 @@ function toDoc(row: PropertySearchRow): ESPropertyDoc {
     city: row.city ?? "",
     propertyType: row.property_type,
     amenities: row.amenities ?? [],
-    fromPriceNgn: row.from_price_ngn !== null ? Number(row.from_price_ngn) : null,
-    location: row.latitude !== null && row.longitude !== null ? { lat: Number(row.latitude), lon: Number(row.longitude) } : null,
+    fromPriceNgn:
+      row.from_price_ngn !== null ? Number(row.from_price_ngn) : null,
+    location:
+      row.latitude !== null && row.longitude !== null
+        ? { lat: Number(row.latitude), lon: Number(row.longitude) }
+        : null,
     isDeleted: row.status !== "active",
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -130,7 +134,9 @@ function buildQuery(
     values.push(params.q.trim());
     textParamIndex = values.length;
     if (textMode === "tsquery") {
-      clauses.push(`p.search_vector @@ plainto_tsquery('english', $${textParamIndex})`);
+      clauses.push(
+        `p.search_vector @@ plainto_tsquery('english', $${textParamIndex})`,
+      );
       rankExpr = `ts_rank(p.search_vector, plainto_tsquery('english', $${textParamIndex}))`;
     } else {
       clauses.push(`p.name % $${textParamIndex}`);
@@ -175,7 +181,7 @@ function buildQuery(
       values.push(params.radiusKm * 1000);
       clauses.push(
         `p.latitude IS NOT NULL AND p.longitude IS NOT NULL ` +
-        `AND earth_distance(ll_to_earth($${latParamIndex}, $${lonParamIndex}), ll_to_earth(p.latitude, p.longitude)) <= $${values.length}`,
+          `AND earth_distance(ll_to_earth($${latParamIndex}, $${lonParamIndex}), ll_to_earth(p.latitude, p.longitude)) <= $${values.length}`,
       );
     }
   }
@@ -210,13 +216,20 @@ function buildQuery(
 }
 
 export const propertySearchRepository = {
-  async search(params: PropertySearchQuery): Promise<{ hits: ESPropertyDoc[]; total: number }> {
+  async search(
+    params: PropertySearchQuery,
+  ): Promise<{ hits: ESPropertyDoc[]; total: number }> {
     const page = params.page ?? 1;
     const limit = params.limit ?? 20;
     const offset = (page - 1) * limit;
     const hasQuery = !!params.q?.trim();
 
-    const result = await this.run(params, offset, limit, hasQuery ? "tsquery" : "none");
+    const result = await this.run(
+      params,
+      offset,
+      limit,
+      hasQuery ? "tsquery" : "none",
+    );
     if (!hasQuery || result.hits.length > 0) return result;
 
     return this.run(params, offset, limit, "trigram");
@@ -228,9 +241,17 @@ export const propertySearchRepository = {
     limit: number,
     textMode: "tsquery" | "trigram" | "none",
   ): Promise<{ hits: ESPropertyDoc[]; total: number }> {
-    const { sql, countSql, values } = buildQuery(params, offset, limit, textMode);
+    const { sql, countSql, values } = buildQuery(
+      params,
+      offset,
+      limit,
+      textMode,
+    );
     const rows = await query<PropertySearchRow>(sql, values);
-    const countRows = await query<{ total: number }>(countSql, values.slice(0, values.length - 2));
+    const countRows = await query<{ total: number }>(
+      countSql,
+      values.slice(0, values.length - 2),
+    );
     return { hits: rows.map(toDoc), total: countRows[0]?.total ?? 0 };
   },
 };

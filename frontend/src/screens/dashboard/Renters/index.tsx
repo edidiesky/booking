@@ -2,11 +2,11 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Eye } from "lucide-react";
 import RowActionsMenu from "@/components/common/RowActionsMenu";
-import RenterDetailsModal from "./RenterDetailsModal";
 import { useRenters } from "./hooks/useRenters";
 import { formatDate } from "@/utils/formatDate";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/common/EmptyState";
+import UserProfileModal from "@/components/common/userProfile/UserProfileModal";
 
 export default function DashboardRenters() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -147,10 +147,10 @@ export default function DashboardRenters() {
 
       <AnimatePresence>
         {selectedId && (
-          <RenterDetailsModal
-            renterId={selectedId}
-            onClose={() => setSelectedId(null)}
-          />
+          <UserProfileModal
+          userId={selectedId}
+          onClose={() => setSelectedId(null)}
+        />
         )}
       </AnimatePresence>
     </>

@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { authenticate } from "../../middleware/auth.middleware";
+import { authenticate, requireTenantMember } from "../../middleware/auth.middleware";
 import { validate } from "../../middleware/validate.middleware";
 import {
   GetMyProfileHandler,
+  GetUserProfileHandler,
   UpdateMyProfileHandler,
 } from "./profile.controller";
 import { updateProfileSchema } from "./profile.validator";
@@ -16,5 +17,7 @@ router.patch(
   validate(updateProfileSchema),
   UpdateMyProfileHandler,
 );
+router.get("/user/:userId", authenticate, requireTenantMember, GetUserProfileHandler);
+
 
 export default router;

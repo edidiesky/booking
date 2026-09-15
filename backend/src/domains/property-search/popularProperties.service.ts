@@ -1,22 +1,12 @@
 import { Pool } from "pg";
 import logger from "../../utils/logger";
 
-// Dedicated connection using the BYPASSRLS role, not the app's normal
-// RLS-subject one. This refresh runs on a setInterval, outside any
-// HTTP request, so there's no app.current_tenant_id session variable
-// ever set. "Popular properties" is inherently a cross-tenant,
-// marketplace-wide aggregation (bookings/reviews/properties are all
-// RLS-protected with FORCE), running it through the normal role would
-// get silently filtered to zero rows, corrupting the view for every
-// tenant, not just returning an empty result for one. Same reasoning
-// as why the isolated workers need booking_worker's BYPASSRLS
-// connection string, this is that same class of operation, just
-// running inside the main backend process instead of a separate one.
 const ADMIN_DATABASE_URL = process.env.ADMIN_DATABASE_URL;
 if (!ADMIN_DATABASE_URL) {
   logger.error("admin_database_url_missing", {
     event: "admin_database_url_missing",
-    message: "ADMIN_DATABASE_URL is not set, popular-properties refresh will not run. This must point at the BYPASSRLS role's connection string, not the normal app role.",
+    message:
+      "ADMIN_DATABASE_URL is not set, popular-properties refresh will not run. This must point at the BYPASSRLS role's connection string, not the normal app role.",
   });
 }
 const adminPool = new Pool({ connectionString: ADMIN_DATABASE_URL });
@@ -36,11 +26,19 @@ export async function refreshPopularProperties(): Promise<void> {
       await adminPool.query(`REFRESH MATERIALIZED VIEW mv_popular_properties`);
       hasBeenPopulated = true;
     } else {
-      await adminPool.query(`REFRESH MATERIALIZED VIEW CONCURRENTLY mv_popular_properties`);
+      await adminPool.query(
+        `REFRESH MATERIALIZED VIEW CONCURRENTLY mv_popular_properties`,
+      );
     }
-    logger.info("popular_properties_refreshed", { event: "popular_properties_refreshed", durationMs: Date.now() - start });
+    logger.info("popular_properties_refreshed", {
+      event: "popular_properties_refreshed",
+      durationMs: Date.now() - start,
+    });
   } catch (err) {
-    logger.error("popular_properties_refresh_failed", { event: "popular_properties_refresh_failed", error: (err as Error).message });
+    logger.error("popular_properties_refresh_failed", {
+      event: "popular_properties_refresh_failed",
+      error: (err as Error).message,
+    });
   }
 }
 
@@ -55,7 +53,9 @@ let intervalHandle: NodeJS.Timeout | null = null;
 
 export function startPopularPropertiesScheduler(): void {
   void refreshPopularProperties(); // populate on boot, don't wait for the first interval tick
-  intervalHandle = setInterval(() => { void refreshPopularProperties(); }, REFRESH_INTERVAL_MS);
+  intervalHandle = setInterval(() => {
+    void refreshPopularProperties();
+  }, REFRESH_INTERVAL_MS);
 }
 
 // Mirrors stopOutboxPoller/stopWebhookRetryWorker's exact convention

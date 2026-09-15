@@ -219,10 +219,36 @@ export const bookingRepository = {
 
   async listByGuest(
     guestUserId: string,
-    page = 1,
-    limit = 20,
+    opts: {
+      status?: string;
+      checkInAfter?: string;
+      checkInBefore?: string;
+      page?: number;
+      limit?: number;
+    } = {},
   ): Promise<Booking[]> {
+    const page = opts.page ?? 1;
+    const limit = opts.limit ?? 20;
     const offset = (page - 1) * limit;
+
+    const clauses = [`b.guest_user_id = $1`];
+    const params: unknown[] = [guestUserId];
+
+    if (opts.status) {
+      params.push(opts.status);
+      clauses.push(`b.status = $${params.length}`);
+    }
+    if (opts.checkInAfter) {
+      params.push(opts.checkInAfter);
+      clauses.push(`b.check_in >= $${params.length}`);
+    }
+    if (opts.checkInBefore) {
+      params.push(opts.checkInBefore);
+      clauses.push(`b.check_in <= $${params.length}`);
+    }
+
+    params.push(limit, offset);
+
     try {
       return await query<Booking>(
         `SELECT b.*, p.name AS property_name, rt.name AS room_type_name,
@@ -230,9 +256,9 @@ export const bookingRepository = {
          FROM bookings b
          JOIN properties p  ON p.id  = b.property_id
          JOIN room_types rt ON rt.id = b.room_type_id
-         WHERE b.guest_user_id = $1
-         ORDER BY b.created_at DESC LIMIT $2 OFFSET $3`,
-        [guestUserId, limit, offset],
+         WHERE ${clauses.join(" AND ")}
+         ORDER BY b.created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
+        params,
       );
     } catch (err) {
       trackError("booking_list_failed", "booking_repository", "medium");

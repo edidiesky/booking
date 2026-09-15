@@ -75,7 +75,6 @@ export default function TeamManagementTab({ onManageRoles }: Props) {
   const [showAssign, setShowAssign] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-
   const {
     assignments,
     isLoading,

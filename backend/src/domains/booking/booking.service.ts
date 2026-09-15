@@ -873,10 +873,9 @@ export class BookingService {
 
   async getGuestBookings(
     guestUserId: string,
-    page = 1,
-    limit = 20,
+    opts: { status?: string; checkInAfter?: string; checkInBefore?: string; page?: number; limit?: number } = {},
   ): Promise<BookingDto[]> {
-    return (await bookingRepository.listByGuest(guestUserId, page, limit)).map(
+    return (await bookingRepository.listByGuest(guestUserId, opts)).map(
       (b) => toDto(b),
     );
   }

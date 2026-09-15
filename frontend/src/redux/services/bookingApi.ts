@@ -35,11 +35,15 @@ export const bookingApi = apiSlice.injectEndpoints({
 
     getMyBookings: builder.query<
       BookingListResponse,
-      { page?: number; limit?: number }
+      { status?: string; checkInAfter?: string; checkInBefore?: string; page?: number; limit?: number }
     >({
-      query: ({ page = 1, limit = 20 } = {}) => ({
-        url: `${BOOKING_URL}/mine?page=${page}&limit=${limit}`,
-      }),
+      query: ({ status, checkInAfter, checkInBefore, page = 1, limit = 20 } = {}) => {
+        const qs = new URLSearchParams({ page: String(page), limit: String(limit) });
+        if (status) qs.set("status", status);
+        if (checkInAfter) qs.set("checkInAfter", checkInAfter);
+        if (checkInBefore) qs.set("checkInBefore", checkInBefore);
+        return { url: `${BOOKING_URL}/mine?${qs.toString()}` };
+      },
       providesTags: ["Booking"],
     }),
 

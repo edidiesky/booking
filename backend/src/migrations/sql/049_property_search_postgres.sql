@@ -1,4 +1,4 @@
-/* 0XX property_search_postgres */
+/* 049 property_search_postgres */
 /* Replaces Elasticsearch as the property search read path.
    Postgres was already the source of truth for writes (see 043's own
    comment: "Postgres stays the source of truth for writes,

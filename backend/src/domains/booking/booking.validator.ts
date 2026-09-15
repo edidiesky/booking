@@ -14,14 +14,17 @@ export const cancelSchema = Joi.object({
   reason: Joi.string().max(500).optional(),
 });
 
-export const listQuerySchema = Joi.object({
-  status: Joi.string().valid("pending_payment","confirmed","checked_in","checked_out","cancelled","refunded").optional(),
-  page:   Joi.number().integer().min(1).default(1),
-  limit:  Joi.number().integer().min(1).max(100).default(20),
-});
 
 export const transitionStatusSchema = Joi.object({
   status: Joi.string()
     .valid("pending_payment", "confirmed", "checked_in", "checked_out", "cancelled", "refunded")
     .required(),
+});
+
+export const listQuerySchema = Joi.object({
+  status: Joi.string().valid("pending_payment","confirmed","checked_in","checked_out","cancelled","refunded").optional(),
+  checkInAfter:  Joi.date().iso().optional(),
+  checkInBefore: Joi.date().iso().optional(),
+  page:   Joi.number().integer().min(1).default(1),
+  limit:  Joi.number().integer().min(1).max(100).default(20),
 });

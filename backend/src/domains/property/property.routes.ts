@@ -40,9 +40,6 @@ import {
 
 const propertyRouter = Router();
 
-// Tenant reads (unchanged, already real, already correctly scoped via
-// authenticate + requireTenantMember + requirePermission, a
-// different, already-working mechanism for authenticated routes)
 propertyRouter.get(
   "/mine",
   authenticate,
@@ -104,9 +101,6 @@ propertyRouter.get(
   GetPropertyHandler,
 );
 
-// Mutations (unchanged, real, already authenticated + tenant-member-
-// scoped, this middleware isn't needed here, these routes require
-// the acting user to already belong to the tenant they're mutating)
 propertyRouter.post(
   "/",
   authenticate,
