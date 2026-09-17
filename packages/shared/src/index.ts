@@ -13,6 +13,7 @@ export {
   withTransaction,
   checkoutClient,
   disconnectDB,
+  getPoolStats
 } from "./config/database";
 export { default as redisClient, connectRedis } from "./config/redis";
 export {
@@ -49,10 +50,9 @@ export { requestContext } from "./context/requestContext";
 export { default as logger } from "./utils/logger";
 export { AppError } from "./utils/AppError";
 export * from "./utils/metrics";
+export {disable, enable, getStatus, isDisabled} from "./utils/killSwitch";
 
 export * from "./messaging/publisher";
-export * from "./utils/metrics";
-
 export { rateLimitRepository } from "./domains/rate-limit/rate-limit.repository";
 export { createRateLimitService } from "./domains/rate-limit/rate-limit.service";
 export type { RateLimitService } from "./domains/rate-limit/rate-limit.service";

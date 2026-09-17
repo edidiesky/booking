@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { adminService } from "./admin.service";
 import { AppError } from "@booking/shared";
 import { BookingStatus } from "../../types";
+import { disable, enable, getStatus, listDisabled } from "@booking/shared/dist/utils/killSwitch";
 
 function pageParams(req: Request) {
   return {
@@ -100,4 +101,34 @@ export const GetGanttBookingsInRangeHandler = asyncHandler(async (req: Request, 
   const to = req.query["to"] as string;
   const data = await adminService.getGanttBookingsInRange(from, to);
   res.status(200).json({ success: true, data });
+});
+
+export const ListKillSwitchesHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const corridors = await listDisabled();
+  const statuses = await Promise.all(
+    corridors.map(async (c) => ({ corridor: c, ...(await getStatus(c)) })),
+  );
+  res.status(200).json({ success: true, data: statuses });
+});
+
+export const GetKillSwitchStatusHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { corridor } = req.params as { corridor: string };
+  const status = await getStatus(corridor);
+  res.status(200).json({ success: true, data: status });
+});
+
+export const DisableKillSwitchHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) throw AppError.unauthorized();
+  const { corridor } = req.params as { corridor: string };
+  const { reason } = req.body as { reason?: string };
+  if (!reason?.trim()) throw AppError.badRequest("A reason is required to disable a corridor.");
+  await disable(corridor, reason, req.user.userId);
+  res.status(200).json({ success: true, message: `${corridor} disabled.` });
+});
+
+export const EnableKillSwitchHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) throw AppError.unauthorized();
+  const { corridor } = req.params as { corridor: string };
+  await enable(corridor, req.user.userId);
+  res.status(200).json({ success: true, message: `${corridor} re-enabled.` });
 });
