@@ -68,6 +68,7 @@ export async function checkoutClient(): Promise<PoolClient> {
   return pool.connect();
 }
 
+
 export function getPoolStats(): { total: number; idle: number; waiting: number } {
   return {
     total:   pool.totalCount,
