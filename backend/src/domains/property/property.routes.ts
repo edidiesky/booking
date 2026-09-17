@@ -37,6 +37,7 @@ import {
   updatePropertySchema,
   updateRoomTypeSchema,
 } from "./property.validator";
+import { shedIfSaturated } from "../../middleware/load-shed.middleware";
 
 const propertyRouter = Router();
 
@@ -83,21 +84,27 @@ propertyRouter.get(
   GetTenantBookingsInRangeHandler,
 );
 
-// Public, real, all 4 now scoped
+// Public
 propertyRouter.get(
   "/room-types/:roomTypeId/availability",
-  enforceSubdomainTenantScope.byRoomTypeId((req) => req.params.roomTypeId as string),
+  enforceSubdomainTenantScope.byRoomTypeId(
+    (req) => req.params.roomTypeId as string,
+  ),
   GetAvailabilityHandler,
 );
 propertyRouter.get(
   "/room-types/:roomTypeId/availability/stream",
-  enforceSubdomainTenantScope.byRoomTypeId((req) => req.params.roomTypeId as string),
+  enforceSubdomainTenantScope.byRoomTypeId(
+    (req) => req.params.roomTypeId as string,
+  ),
   StreamRoomTypeAvailabilityHandler,
 );
-propertyRouter.get("/", ListPublicPropertiesHandler);
+propertyRouter.get("/", shedIfSaturated, ListPublicPropertiesHandler);
 propertyRouter.get(
   "/:propertyId",
-  enforceSubdomainTenantScope.byPropertyId((req) => req.params.propertyId as string),
+  enforceSubdomainTenantScope.byPropertyId(
+    (req) => req.params.propertyId as string,
+  ),
   GetPropertyHandler,
 );
 
