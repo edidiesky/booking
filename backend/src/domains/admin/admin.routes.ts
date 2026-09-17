@@ -18,6 +18,10 @@ import {
   ListEscrowHandler,
   GetEscrowStatsHandler,
   GetGanttBookingsInRangeHandler,
+  ListKillSwitchesHandler,
+  GetKillSwitchStatusHandler,
+  DisableKillSwitchHandler,
+  EnableKillSwitchHandler,
 } from "./admin.controller";
 import { requirePermission } from "../../middleware/require-permission.middleware";
 
@@ -47,6 +51,26 @@ router.get(
   "/gantt/bookings-in-range",
   requirePermission("booking", "read"),
   GetGanttBookingsInRangeHandler,
+);
+router.get(
+  "/kill-switches",
+  requirePermission("payment", "read"),
+  ListKillSwitchesHandler,
+);
+router.get(
+  "/kill-switches/:corridor",
+  requirePermission("payment", "read"),
+  GetKillSwitchStatusHandler,
+);
+router.post(
+  "/kill-switches/:corridor/disable",
+  requirePermission("payment", "write"),
+  DisableKillSwitchHandler,
+);
+router.post(
+  "/kill-switches/:corridor/enable",
+  requirePermission("payment", "write"),
+  EnableKillSwitchHandler,
 );
 router.post("/administrators/:userId/promote", PromoteAdministratorHandler);
 router.post("/administrators/:userId/demote", DemoteAdministratorHandler);

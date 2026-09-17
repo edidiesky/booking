@@ -5,6 +5,7 @@ import { requestContext } from "../context/requestContext";
 
 types.setTypeParser(1700, (val: string) => parseFloat(val));
 
+
 const pool = new Pool({
   connectionString:        process.env.DATABASE_URL,
   max:                     20,
@@ -67,6 +68,15 @@ export async function checkoutClient(): Promise<PoolClient> {
   return pool.connect();
 }
 
+export function getPoolStats(): { total: number; idle: number; waiting: number } {
+  return {
+    total:   pool.totalCount,
+    idle:    pool.idleCount,
+    waiting: pool.waitingCount,
+  };
+}
+
+
 export async function withTransaction<T>(
   fn: (client: PoolClient) => Promise<T>
 ): Promise<T> {
@@ -90,3 +100,5 @@ export async function disconnectDB(): Promise<void> {
 }
 
 export default pool;
+
+
