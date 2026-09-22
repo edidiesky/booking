@@ -221,13 +221,13 @@ function FooterSection2() {
               className="text-2xl lg:text-7xl bold"
               style={{ color: "var(--color-ink)" }}
             >
-              pEERK
+              Bukkings
             </span>
             <p
               className="text-xs lg:text-[13px]   "
               style={{ color: "var(--color-light-steel)" }}
             >
-              © {new Date().getFullYear()} pEERK
+              © {new Date().getFullYear()} Bukkings
             </p>
           </div>
 
