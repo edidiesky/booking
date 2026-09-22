@@ -57,7 +57,12 @@ export const rtkQueryErrorMiddleware: Middleware = () => (next) => (action) => {
         break;
 
       case 401:
-        // handled by baseQueryWithReauth (refresh / redirect) — no toast here
+        if (endpointName === "login") {
+          showToast(
+            extractMessage(data, "Invalid email or password."),
+            "error",
+          );
+        }
         break;
 
       case 403:

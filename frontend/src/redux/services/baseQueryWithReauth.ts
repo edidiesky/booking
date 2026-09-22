@@ -17,12 +17,11 @@ const rawBaseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     const state = getState() as RootState;
     const token = state.auth.accessToken;
-    const slug  = state.auth.tenantSlug;   
+    const slug = state.auth.tenantSlug;
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
-      
     }
-    if (slug)  headers.set("x-tenant-slug", slug);   
+    if (slug) headers.set("x-tenant-slug", slug);
     return headers;
   },
 });
@@ -49,7 +48,7 @@ export const baseQueryWithReauth: BaseQueryFn<
   if (api.endpoint === "login") {
     return result;
   }
-  
+
   if (refreshMutex.isLocked()) {
     await refreshMutex.waitForUnlock();
     result = await rawBaseQuery(args, api, extraOptions);
@@ -61,18 +60,18 @@ export const baseQueryWithReauth: BaseQueryFn<
   try {
     const storedRefreshToken = (api.getState() as RootState).auth.refreshToken;
 
-  if (!storedRefreshToken) {
-    api.dispatch(clearCredentials());
-    showToast("Session expired. Please log in again.", "error");
-    redirectToLogin();
-    return result;
-  }
+    if (!storedRefreshToken) {
+      api.dispatch(clearCredentials());
+      showToast("Session expired. Please log in again.", "error");
+      redirectToLogin();
+      return result;
+    }
 
     const refreshResult = await rawBaseQuery(
       {
-        url:    `${AUTH_URL}/refresh`,
+        url: `${AUTH_URL}/refresh`,
         method: "POST",
-        body:   { refreshToken: storedRefreshToken },
+        body: { refreshToken: storedRefreshToken },
         headers: { "Content-Type": "application/json" },
       },
       api,
@@ -81,8 +80,8 @@ export const baseQueryWithReauth: BaseQueryFn<
 
     if (refreshResult.data) {
       const data = refreshResult.data as {
-        success:      boolean;
-        accessToken:  string;
+        success: boolean;
+        accessToken: string;
         refreshToken: string;
       };
 
@@ -91,8 +90,8 @@ export const baseQueryWithReauth: BaseQueryFn<
       if (currentUser && data.accessToken) {
         api.dispatch(
           setCredentials({
-            user:         currentUser,
-            accessToken:  data.accessToken,
+            user: currentUser,
+            accessToken: data.accessToken,
             refreshToken: data.refreshToken ?? storedRefreshToken,
           }),
         );
