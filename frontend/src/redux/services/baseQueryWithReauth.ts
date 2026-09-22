@@ -46,6 +46,10 @@ export const baseQueryWithReauth: BaseQueryFn<
     return result;
   }
 
+  if (api.endpoint === "login") {
+    return result;
+  }
+  
   if (refreshMutex.isLocked()) {
     await refreshMutex.waitForUnlock();
     result = await rawBaseQuery(args, api, extraOptions);
