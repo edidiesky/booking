@@ -5,7 +5,7 @@ import { AppError } from "../../utils/AppError";
 import { BookingStatus } from "../../types";
 import { bookingRepository } from "./booking.repository";
 
-//  Handlers
+
 export const InitiateBookingHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     if (!req.user) throw AppError.unauthorized();

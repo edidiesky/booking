@@ -21,3 +21,4 @@ CREATE TABLE IF NOT EXISTS payments (
   CREATE INDEX IF NOT EXISTS idx_payments_transaction ON payments(transaction_id);
   CREATE INDEX IF NOT EXISTS idx_payments_idempotency ON payments(idempotency_key);
   CREATE INDEX IF NOT EXISTS idx_payments_status      ON payments(status, created_at DESC);
+

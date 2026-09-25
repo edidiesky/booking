@@ -30,3 +30,4 @@ CREATE TABLE IF NOT EXISTS bookings (
   CREATE INDEX IF NOT EXISTS idx_bookings_room_dates    ON bookings(room_type_id, check_in, check_out);
   CREATE INDEX IF NOT EXISTS idx_bookings_ref           ON bookings(booking_ref);
   CREATE INDEX IF NOT EXISTS idx_bookings_status        ON bookings(status, created_at DESC);
+

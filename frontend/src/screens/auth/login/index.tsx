@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
 import AuthLayout from "@/components/common/AuthLayout";
-import GoogleAuthButton from "@/components/common/GoogleAuthButton";
+// import GoogleAuthButton from "@/components/common/GoogleAuthButton";
 import { Input } from "@/components/ui/input";
 import { loginSchema, type LoginFormData } from "./schema/login.schema";
 import { useLogin } from "./hooks/useLogin";
@@ -110,7 +110,7 @@ export default function Login() {
           </p>
         </div>
 
-        <GoogleAuthButton />
+        {/* <GoogleAuthButton /> */}
 
         <div className="flex items-center gap-3">
           <div className="flex-1 h-px" style={{ backgroundColor: "#e2e2e2" }} />

@@ -25,3 +25,4 @@ eddykey.pem
 eddykey.pem.*
 
 booking-infra/.env.*
+service-decomposition
