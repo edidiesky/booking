@@ -112,7 +112,7 @@ export default function Login() {
 
         {/* <GoogleAuthButton /> */}
 
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3">
           <div className="flex-1 h-px" style={{ backgroundColor: "#e2e2e2" }} />
           <span
             className="text-xs"
@@ -121,7 +121,7 @@ export default function Login() {
             or sign in with email
           </span>
           <div className="flex-1 h-px" style={{ backgroundColor: "#e2e2e2" }} />
-        </div>
+        </div> */}
 
         <form
           onSubmit={handleSubmit(handleLogin, shake)}
