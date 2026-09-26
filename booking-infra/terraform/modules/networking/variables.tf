@@ -10,58 +10,50 @@
 * 8. define tags
 */
 
-// environment
-variable "environment" {
-  type = string
-  description = "Deployment environment"
-  validation {
-    condition = contains(["dev", "staging", "production"], var.environment)
-    error_message = "Environment variable has to be either dev, staging or production"
-  }
-}
-
-// project
+# project
 variable "project" {
-  type = string
-  default = "booking"
+  type        = string
   description = "Project name"
 }
 
-// aws_region
+variable "environment" {
+  type        = string
+  description = "Deployment environment"
+  validation {
+    condition     = contains(["dev", "staging", "prod"], var.environment)
+    error_message = "Must be dev, staging, or prod"
+  }
+}
+
 variable "aws_region" {
-  type = string
+  type        = string
   description = "AWS region"
 }
 
-// vpc_cidr
 variable "vpc_cidr" {
-  type = string
-  description = "VPC CIDRS block"
-  default = "10.0.0.0/16" 
+  type        = string
+  description = "VPC CIDR block"
+  default     = "10.0.0.0/16"
 }
 
-// availability_zones
 variable "availability_zones" {
-  type = list(string)
-  description = "List of Availability zones to deploy into"
+  type        = list(string)
+  description = "List of AZs"
 }
 
-// private_subnet_cidrs
 variable "private_subnet_cidrs" {
-  type = list(string)
-  description = "List of Private Subnet CIDRS (EKS, Redis, RDS)"
+  type        = list(string)
+  description = "CIDR blocks for private subnets"
 }
 
-// public_subnet_cidrs
 variable "public_subnet_cidrs" {
-  type = list(string)
-  description = "List of Public Subnet CIDRS (NAT, ALB, RDS)"
+  type        = list(string)
+  description = "CIDR blocks for public subnets"
 }
 
-// enable_nat_gateway
 variable "enable_nat_gateway" {
-  type = bool
-  description = "Enable NAT gateway for private subnet internet access"
+  type        = bool
+  description = "Enable NAT gateway"
   default     = true
 }
 

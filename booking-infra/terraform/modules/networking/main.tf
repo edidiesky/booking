@@ -6,6 +6,7 @@
 * 5. define resource security grous for rabbitmq
 * 6. define resource security grous for elasticsearch
 */
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0"
@@ -37,7 +38,7 @@ module "vpc" {
   tags = local.tags
 }
 
-#  EKS Nodes Security Group 
+# EKS Nodes Security Group
 resource "aws_security_group" "eks_nodes" {
   name        = "${local.name}-eks-nodes-sg"
   description = "Security group for EKS worker nodes"
@@ -68,7 +69,7 @@ resource "aws_vpc_security_group_egress_rule" "eks_nodes_all" {
   description       = "Allow all outbound"
 }
 
-#  RDS Security Group 
+# RDS Security Group
 resource "aws_security_group" "rds" {
   name        = "${local.name}-rds-sg"
   description = "Security group for RDS PostgreSQL"
@@ -92,7 +93,7 @@ resource "aws_vpc_security_group_egress_rule" "rds_all" {
   description       = "Allow all outbound"
 }
 
-#  Redis Security Group 
+# Redis Security Group
 resource "aws_security_group" "redis" {
   name        = "${local.name}-redis-sg"
   description = "Security group for ElastiCache Redis"
@@ -116,7 +117,7 @@ resource "aws_vpc_security_group_egress_rule" "redis_all" {
   description       = "Allow all outbound"
 }
 
-#  RabbitMQ Security Group 
+# RabbitMQ Security Group
 resource "aws_security_group" "rabbitmq" {
   name        = "${local.name}-rabbitmq-sg"
   description = "Security group for Amazon MQ RabbitMQ"
@@ -149,7 +150,7 @@ resource "aws_vpc_security_group_egress_rule" "rabbitmq_all" {
   description       = "Allow all outbound"
 }
 
-#  OpenSearch Security Group 
+# OpenSearch Security Group
 resource "aws_security_group" "elasticsearch" {
   name        = "${local.name}-es-sg"
   description = "Security group for OpenSearch"

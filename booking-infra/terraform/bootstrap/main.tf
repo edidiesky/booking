@@ -75,7 +75,7 @@ output "aws_region" {
 output "backend_config" {
   value = <<-EOT
     bucket       = "${aws_s3_bucket.terraform_state.bucket}"
-    key          = "booking/<ENV>/terraform.tfstate"
+    key          = "booking/${var.environment}/terraform.tfstate"
     region       = "${var.aws_region}"
     use_lockfile = true
     encrypt      = true
