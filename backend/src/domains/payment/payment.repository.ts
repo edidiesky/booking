@@ -45,8 +45,8 @@ export interface PaymentSummary {
   room_type_name: string;
   room_type_images: string[];
   tenant_name: string;
-  tenant_id: string,
-tenant_email: string,
+  tenant_id: string;
+  tenant_email: string;
 }
 
 function ctx() {
