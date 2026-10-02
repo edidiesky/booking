@@ -1,0 +1,263 @@
+@import url("https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..800&display=swap");
+
+/*
+ * Marketing tokens. Scoped to .mkt so dashboard and admin keep their current
+ * look until they are migrated on purpose.
+ */
+.mkt {
+  --mk-paper: #f3f5f2;
+  --mk-surface: #ffffff;
+  --mk-ink: #13201c;
+  --mk-muted: #59645f;
+  --mk-faint: #8a948f;
+  --mk-line: #dbe1dc;
+  --mk-lagoon: #0e4a40;
+  --mk-lagoon-deep: #0a3630;
+  --mk-lagoon-tint: #e2ede9;
+  --mk-brass: #b8862f;
+  --mk-brass-tint: #f5ecdc;
+  --mk-signal: #1e8a57;
+
+  --mk-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --mk-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --mk-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --mk-ease-swap: cubic-bezier(0.2, 0, 0, 1);
+
+  --mk-shadow-border:
+    0px 0px 0px 1px oklch(0 0 0 / 0.06),
+    0px 1px 2px -1px oklch(0 0 0 / 0.06),
+    0px 2px 4px 0px oklch(0 0 0 / 0.04);
+  --mk-shadow-border-hover:
+    0px 0px 0px 1px oklch(0 0 0 / 0.08),
+    0px 1px 2px -1px oklch(0 0 0 / 0.08),
+    0px 2px 4px 0px oklch(0 0 0 / 0.06);
+  --mk-shadow-float:
+    0px 0px 0px 1px oklch(0 0 0 / 0.05),
+    0px 12px 32px -8px oklch(0 0 0 / 0.18);
+
+  font-family: "Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  font-weight: 400;
+  color: var(--mk-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The global stylesheet forces Bricolage on every tag; win it back here. */
+.mkt :where(h1, h2, h3, h4, h5, h6, p, span, a, button, input, label, li, select, textarea, dt, dd) {
+  font-family: inherit;
+}
+.mkt :where(h1, h2) {
+  line-height: 1.04;
+}
+
+/* Type scale */
+.mk-display {
+  font-size: clamp(2.6rem, 1.6rem + 4.4vw, 5.25rem);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 0.98 !important;
+  text-wrap: balance;
+}
+.mk-h2 {
+  font-size: clamp(2rem, 1.35rem + 2.6vw, 3.5rem);
+  font-weight: 620;
+  letter-spacing: -0.03em;
+  line-height: 1.02 !important;
+  text-wrap: balance;
+}
+.mk-h3 {
+  font-size: clamp(1.35rem, 1.15rem + 0.8vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.mk-lead {
+  font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--mk-muted);
+  text-wrap: pretty;
+  max-width: 60ch;
+}
+.mk-body {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--mk-muted);
+  text-wrap: pretty;
+}
+.mk-kicker {
+  font-size: 0.9375rem;
+  font-weight: 560;
+  color: var(--mk-lagoon);
+}
+.mk-num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Layout */
+.mk-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+}
+.mk-section {
+  padding-block: clamp(4.5rem, 3rem + 6vw, 8.5rem);
+}
+
+/* Buttons. Press feedback is scale(0.96), per better-ui. */
+.mk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 3rem;
+  padding-inline: 1.375rem;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 560;
+  white-space: nowrap;
+  transition-property: background-color, color, box-shadow, scale;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.mk-btn:active:not(:disabled) {
+  scale: 0.96;
+}
+.mk-btn:disabled {
+  opacity: 0.55;
+}
+.mk-btn-primary {
+  background: var(--mk-lagoon);
+  color: #fff;
+}
+.mk-btn-primary:hover {
+  background: var(--mk-lagoon-deep);
+}
+.mk-btn-ghost {
+  background: var(--mk-surface);
+  color: var(--mk-ink);
+  box-shadow: var(--mk-shadow-border);
+}
+.mk-btn-ghost:hover {
+  box-shadow: var(--mk-shadow-border-hover);
+}
+.mk-btn-inverse {
+  background: #fff;
+  color: var(--mk-lagoon-deep);
+}
+.mk-btn-inverse:hover {
+  background: var(--mk-lagoon-tint);
+}
+.mk-btn-sm {
+  height: 2.5rem;
+  padding-inline: 1.125rem;
+  font-size: 0.875rem;
+}
+.mk-link {
+  font-weight: 560;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, currentColor 30%, transparent);
+  text-underline-offset: 0.22em;
+  transition-property: text-decoration-color;
+  transition-duration: 150ms;
+}
+.mk-link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Focus is always visible. */
+.mkt :focus-visible {
+  outline: 2px solid var(--mk-lagoon);
+  outline-offset: 3px;
+}
+
+/* Surfaces */
+.mk-card {
+  background: var(--mk-surface);
+  border-radius: 20px;
+  box-shadow: var(--mk-shadow-border);
+}
+.mk-img-outline {
+  outline: 1px solid oklch(0 0 0 / 0.1);
+  outline-offset: -1px;
+}
+
+/* Height animation without measuring: grid rows 0fr to 1fr. */
+.mk-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 250ms var(--mk-ease-out);
+}
+.mk-collapse[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.mk-collapse > * {
+  overflow: hidden;
+  min-height: 0;
+  /* Hidden from assistive tech once closed, after the height finishes. */
+  visibility: hidden;
+  transition: visibility 0s linear 250ms;
+}
+.mk-collapse[data-open="true"] > * {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* Native carousel rail */
+.mk-rail {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.mk-rail::-webkit-scrollbar {
+  display: none;
+}
+.mk-rail > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* Form fields: borders stay borders (structure + accessibility). */
+.mk-field {
+  width: 100%;
+  height: 3rem;
+  padding-inline: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--mk-line);
+  background: var(--mk-surface);
+  font-size: 1rem;
+  color: var(--mk-ink);
+  transition-property: border-color, box-shadow;
+  transition-duration: 150ms;
+}
+.mk-field:hover {
+  border-color: var(--mk-faint);
+}
+.mk-field:focus {
+  outline: none;
+  border-color: var(--mk-lagoon);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--mk-lagoon) 18%, transparent);
+}
+.mk-field[aria-invalid="true"] {
+  border-color: #b4322a;
+}
+textarea.mk-field {
+  height: auto;
+  min-height: 8rem;
+  padding-block: 0.75rem;
+  resize: vertical;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mkt *,
+  .mkt *::before,
+  .mkt *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
