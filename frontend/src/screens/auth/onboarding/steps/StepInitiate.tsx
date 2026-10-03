@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link }        from "react-router-dom";
 import { Mail, Lock }  from "lucide-react";
 import { Input }       from "@/components/ui/input";
-import GoogleAuthButton from "@/components/common/GoogleAuthButton";
+// import GoogleAuthButton from "@/components/common/GoogleAuthButton";
 import { initiateSchema, type InitiateFormData } from "../schema/onboarding.schema";
 
 interface Props {
@@ -42,7 +42,7 @@ export default function StepInitiate({ onSubmit, isLoading, userChoice }: Props)
         </p>
       </div>
 
-      {userChoice === "guest" && (
+      {/* {userChoice === "guest" && (
         <>
           <GoogleAuthButton label="Sign up with Google" />
           <div className="flex items-center gap-3">
@@ -51,7 +51,7 @@ export default function StepInitiate({ onSubmit, isLoading, userChoice }: Props)
             <div className="flex-1 h-px" style={{ backgroundColor: "#e2e2e2" }} />
           </div>
         </>
-      )}
+      )} */}
 
       <form onSubmit={handleSubmit(onSubmit, shake)} noValidate className="flex flex-col gap-6">
         <div ref={fieldsRef} className="flex flex-col gap-4">
