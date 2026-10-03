@@ -1,4 +1,4 @@
-import { OutboxEventType, outboxRepository } from "@/domains/outbox/outbox.repository";
+import { generateWorkerId, OutboxEventType, outboxRepository } from "@/domains/outbox/outbox.repository";
 import * as publisher from "../publisher";
 import { outboxProcessedCounter, trackError, logger } from "@booking/shared";
 
@@ -27,9 +27,9 @@ const PUBLISHER_MAP: Record<OutboxEventType, PublisherFn> = {
 };
 
 let pollerTimer: NodeJS.Timeout | null = null;
-
+const WORKER_ID = generateWorkerId();
 async function pollOnce(): Promise<void> {
-  const events = await outboxRepository.getPending();
+  const events = await outboxRepository.claimPending(WORKER_ID);
   if (events.length === 0) return;
 
   logger.info("outbox_poller_processing", { event: "outbox_poller_processing", count: events.length });
@@ -38,17 +38,20 @@ async function pollOnce(): Promise<void> {
     try {
       const pub = PUBLISHER_MAP[evt.event_type];
       if (!pub) {
-        await outboxRepository.incrementRetry(evt.id, `Unknown event type: ${evt.event_type}`);
+        await outboxRepository.incrementRetry(evt.id, WORKER_ID, `Unknown event type: ${evt.event_type}`);
         continue;
       }
       pub(evt.payload);
-      await outboxRepository.markProcessed(evt.id);
+      const wrote = await outboxRepository.markProcessed(evt.id, WORKER_ID);
+      if (!wrote) {
+        logger.warn("outbox_marked_processed_after_lease_lost", { event: "outbox_marked_processed_after_lease_lost", id: evt.id, type: evt.event_type });
+      }
       outboxProcessedCounter.inc({ event_type: evt.event_type, status: "success" });
     } catch (err) {
-      const reason = err instanceof Error ? err.message : String(err);
+       const reason = err instanceof Error ? err.message : String(err);
       trackError("outbox_publish_failed", evt.event_type, "high");
       outboxProcessedCounter.inc({ event_type: evt.event_type, status: "failed" });
-      await outboxRepository.incrementRetry(evt.id, reason);
+      await outboxRepository.incrementRetry(evt.id, WORKER_ID, reason);
     }
   }
 }

@@ -267,14 +267,21 @@ export const paymentService = {
 
     try {
       const result = await runPaymentInitLogic(booking, input);
-      await idempotencyRepository.markCompleted(
-        claim.id,
+      const wrote = await idempotencyRepository.markCompleted(
+        claim.row.id,
+        claim.ownerToken,
         200,
         result as unknown as Record<string, unknown>,
       );
+      if (!wrote) {
+        logger.warn("payment_init_completed_after_lease_lost", {
+          event: "payment_init_completed_after_lease_lost",
+          paymentId: claim.row.id,
+        });
+      }
       return result;
     } catch (err) {
-      await idempotencyRepository.markFailed(claim.id, (err as Error).message);
+      await idempotencyRepository.markFailed(claim.row.id, claim.ownerToken, (err as Error).message);
       throw err;
     }
   },
