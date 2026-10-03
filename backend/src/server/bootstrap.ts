@@ -1,5 +1,5 @@
 import logger from "../utils/logger";
-import redisClient from "../config/redis";
+import redisClient, { createRedisSubscriber } from "../config/redis";
 import http from "http";
 import {
   connectDB,
@@ -35,7 +35,11 @@ import {
   stopBookingExpiryReconciliation,
 } from "@booking/booking-expiry-worker/dist/reconciliation";
 import { startSocketServer } from "../realtime/socketServer";
-
+import { FeatureFlagRepository } from "../domains/feature-flags/featureFlag.repository";
+import { FeatureFlagEngine, setFeatureFlagEngine } from "../domains/feature-flags/FeatureFlagEngine";
+import { FeatureFlagSync } from "../domains/feature-flags/FeatureFlagSync";
+import Redis from "ioredis";
+export let featureFlagSubscriber: Redis | null = null;
 const CAMPAIGN_TICK_MS = 3_000;
 
 export const campaignScheduler = createLockedScheduler({
@@ -83,6 +87,19 @@ export async function bootstrapServer(httpServer: http.Server): Promise<void> {
       name: "redis",
       fn: async () => {
         await redisClient.ping();
+      },
+    },
+    {
+      name: "feature_flags",
+      fn: async () => {
+        const repository = new FeatureFlagRepository(redisClient);
+        const engine = new FeatureFlagEngine(repository);
+        await engine.start();
+        setFeatureFlagEngine(engine);
+
+        featureFlagSubscriber = createRedisSubscriber();
+        const sync = new FeatureFlagSync(featureFlagSubscriber, engine);
+        await sync.subscribe();
       },
     },
     { name: "rabbitmq", fn: connectRabbitMQ },

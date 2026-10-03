@@ -42,6 +42,9 @@ import { logger, query } from "@booking/shared";
 import propertySearchRoutes from "./domains/property-search/propertySearch.routes";
 import conversationRoutes from "./domains/conversation/conversation.routes";
 import messageRoutes from "./domains/message/message.routes";
+import { createFeatureFlagRouter } from "./domains/feature-flags/feature-flags.routes";
+import { FeatureFlagRepository } from "./domains/feature-flags/featureFlag.repository";
+import { getFeatureFlagEngine } from "./domains/feature-flags/FeatureFlagEngine";
 // import discoveryRoutes from "./domains/property-search/discovery.routes";
 const app = express();
 
@@ -150,6 +153,14 @@ app.use(
   rlsMiddleware,
   messageRoutes,
 );
+app.use("/api/v1/admin/feature-flags", (req, res, next) => {
+  // Lazy bind so import order stays safe: engine exists only after bootstrap
+  const router = createFeatureFlagRouter(
+    new FeatureFlagRepository(redisClient),
+    getFeatureFlagEngine(),
+  );
+  return router(req, res, next);
+});
 // adminRoutes
 
 app.use(NotFound);
