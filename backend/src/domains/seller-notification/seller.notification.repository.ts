@@ -69,4 +69,19 @@ export const sellerNotificationRepository = {
       params,
     );
   },
+  async create(input: {
+    tenantId: string;
+    bookingId: string;
+    type: SellerNotificationType;
+    title: string;
+    body: string;
+  }): Promise<SellerNotification> {
+    const row = await queryOne<SellerNotification>(
+      `INSERT INTO seller_notifications (tenant_id, booking_id, type, title, body)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING *`,
+      [input.tenantId, input.bookingId, input.type, input.title, input.body],
+    );
+    return row!;
+  },
 };
