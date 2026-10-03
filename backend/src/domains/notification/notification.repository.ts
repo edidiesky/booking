@@ -28,6 +28,7 @@ export interface Notification {
 }
 
 export const notificationRepository = {
+  
   async create(data: {
     type:            NotificationType;
     channel:         NotificationChannel;
