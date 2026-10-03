@@ -1,7 +1,6 @@
 import type { Request } from "express";
 import jwt from "jsonwebtoken";
 import type { RateLimitUserType } from "@booking/shared";
-import { createHash } from "crypto";
 
 export interface RequestIdentity {
   key: string;
@@ -14,8 +13,11 @@ export function getRealIp(req: Request): string {
 }
 
 export function resolveIdentity(req: Request): RequestIdentity {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined;
+  const headerToken = req.headers["authorization"]?.startsWith("Bearer ")
+    ? req.headers["authorization"].slice(7)
+    : undefined;
+  const cookieToken = (req.cookies as Record<string, string> | undefined)?.["jwt"];
+  const token = headerToken ?? cookieToken;
 
   if (token) {
     try {
@@ -30,15 +32,10 @@ export function resolveIdentity(req: Request): RequestIdentity {
         isAuthenticated: true,
       };
     } catch {
-      // Falls through to anonymous identity below, deliberately not
+      // fall through to anonymous
     }
   }
 
   const ip = getRealIp(req);
-  const uaHash = createHash("sha256")
-    .update(req.headers["user-agent"] ?? "unknown")
-    .digest("hex")
-    .slice(0, 12);
-
-  return { key: `${ip}:${uaHash}`, isAuthenticated: false };
+  return { key: ip, isAuthenticated: false };
 }
