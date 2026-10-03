@@ -17,7 +17,7 @@ import {
   stopBookingExpiryReconciliation,
 } from "./bootstrap";
 import { stopSocketServer } from "../realtime/socketServer";
-
+import { featureFlagSubscriber } from "./bootstrap";
 export function registerShutdownHooks(server: http.Server): void {
   const shutdown = async (signal: string): Promise<void> => {
     logger.info("shutdown_initiated", { event: "shutdown_initiated", signal });
@@ -37,6 +37,19 @@ export function registerShutdownHooks(server: http.Server): void {
 
         await disconnectRabbitMQ();
         await disconnectDB();
+        try {
+          if (featureFlagSubscriber) {
+            await featureFlagSubscriber.unsubscribe();
+            await featureFlagSubscriber.quit();
+          }
+        } catch (err) {
+          logger.warn("feature_flag_subscriber_shutdown_error", {
+            event: "feature_flag_subscriber_shutdown_error",
+            error: (err as Error).message,
+          });
+        }
+
+        await redisClient.quit();
         await redisClient.quit();
         logger.info("shutdown_complete", { event: "shutdown_complete" });
         process.exit(0);
