@@ -35,14 +35,33 @@ export function useLogin() {
   const clearChallenge = () => setLoginStep({ step: "password" });
 
   const finishLogin = async (result: AuthTokens) => {
-    const user: User = result.data.user as unknown as User;
+    const root = result as unknown as Record<string, unknown>;
+    const data = (
+      isRecord(root.data) && "accessToken" in (root.data as object)
+        ? root.data
+        : root
+    ) as {
+      accessToken: string;
+      refreshToken: string;
+      user: User;
+    };
+
+    if (!data?.accessToken || !data?.user) {
+      showToast(
+        "You can reach out to the system adminstrators for this specific issues!.",
+        "error",
+      );
+      return;
+    }
+
+    const user = data.user;
     const userType = user.userType;
 
     dispatch(
       setCredentials({
         user,
-        accessToken: result.data.accessToken,
-        refreshToken: result.data.refreshToken,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
       }),
     );
 
@@ -57,7 +76,7 @@ export function useLogin() {
         dispatch(
           setCredentials({
             user,
-            accessToken: result.data.accessToken,
+            accessToken: data.accessToken,
             tenantSlug: tenantResult.data.slug,
           }),
         );
@@ -86,17 +105,20 @@ export function useLogin() {
         password: data.password,
       }).unwrap();
 
-      const payload = (isRecord(result) && isRecord(result.data)
-        ? result.data
-        : result) as Record<string, unknown>;
+      const payload = (
+        isRecord(result) && isRecord(result.data) ? result.data : result
+      ) as Record<string, unknown>;
 
-      // Normal user → email OTP
-      if (payload.emailOtpRequired === true && typeof payload.email === "string") {
-        setLoginStep({ step: "email_otp", email: payload.email });
+      // The server no longer echoes the email. The client already has
+      // the address the user typed, and the backend normalizes it on verify.
+      if (payload.emailOtpRequired === true) {
+        setLoginStep({
+          step: "email_otp",
+          email: data.email.trim().toLowerCase(),
+        });
         return;
       }
 
-      // Authenticator already enabled → TOTP
       if (
         payload.twoFactorRequired === true &&
         typeof payload.challengeToken === "string"
@@ -133,8 +155,7 @@ export function useLogin() {
     handleVerifyEmailOtp,
     isLoading: isLoginLoading || isOtpLoading,
     loginStep,
-    challengeToken:
-      loginStep.step === "totp" ? loginStep.challengeToken : null,
+    challengeToken: loginStep.step === "totp" ? loginStep.challengeToken : null,
     emailForOtp: loginStep.step === "email_otp" ? loginStep.email : null,
     finishLogin,
     clearChallenge,

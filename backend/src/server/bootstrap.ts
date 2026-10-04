@@ -39,6 +39,15 @@ import { FeatureFlagRepository } from "../domains/feature-flags/featureFlag.repo
 import { FeatureFlagEngine, setFeatureFlagEngine } from "../domains/feature-flags/FeatureFlagEngine";
 import { FeatureFlagSync } from "../domains/feature-flags/FeatureFlagSync";
 import Redis from "ioredis";
+import { PresenceRepository } from "../domains/session/presence.repository";
+import { PresenceEngine } from "../domains/session/PresenceEngine";
+import { setPresence } from "../domains/session/presence.instance";
+import { createPresenceRouter } from "../domains/session/presence.routes";
+import { app } from "../app"; // only if you mount from bootstrap
+import { PresenceSync } from "../domains/session/PresenceSync";
+
+export let presenceSubscriber: Redis | null = null;
+
 export let featureFlagSubscriber: Redis | null = null;
 const CAMPAIGN_TICK_MS = 3_000;
 
@@ -87,6 +96,30 @@ export async function bootstrapServer(httpServer: http.Server): Promise<void> {
       name: "redis",
       fn: async () => {
         await redisClient.ping();
+      },
+    },
+    {
+      name: "presence",
+      fn: async () => {
+        try {
+          await redisClient.config("SET", "notify-keyspace-events", "Ex");
+        } catch (err) {
+          logger.warn("presence_keyspace_config_failed", {
+            event: "presence_keyspace_config_failed",
+            error: (err as Error).message,
+            hint: "Set notify-keyspace-events Ex in redis.conf if CONFIG is disabled",
+          });
+        }
+
+        const repository = new PresenceRepository(redisClient);
+        const engine = new PresenceEngine();
+        setPresence(repository, engine);
+
+        presenceSubscriber = createRedisSubscriber();
+        const sync = new PresenceSync(presenceSubscriber, engine);
+        await sync.subscribe();
+
+        app.use("/api/v1", createPresenceRouter());
       },
     },
     {

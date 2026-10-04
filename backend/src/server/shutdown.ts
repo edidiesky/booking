@@ -15,6 +15,7 @@ import {
   campaignScheduler,
   stopBookingExpiryScheduler,
   stopBookingExpiryReconciliation,
+  presenceSubscriber,
 } from "./bootstrap";
 import { stopSocketServer } from "../realtime/socketServer";
 import { featureFlagSubscriber } from "./bootstrap";
@@ -47,6 +48,18 @@ export function registerShutdownHooks(server: http.Server): void {
             event: "feature_flag_subscriber_shutdown_error",
             error: (err as Error).message,
           });
+        }
+
+        if (presenceSubscriber) {
+          try {
+            await presenceSubscriber.unsubscribe();
+            await presenceSubscriber.quit();
+          } catch (err) {
+            logger.warn("presence_subscriber_shutdown_error", {
+              event: "presence_subscriber_shutdown_error",
+              error: (err as Error).message,
+            });
+          }
         }
 
         await redisClient.quit();
