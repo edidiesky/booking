@@ -1,20 +1,133 @@
 import asyncHandler from "express-async-handler";
 import { Request, Response } from "express";
-import { authService } from "./auth.service";
+import { authService, SessionDeviceMeta } from "./auth.service";
 import { AppError } from "../../utils/AppError";
+import { extractDeviceInfo } from "../../utils/deviceInfo";
+
+function toDeviceType(device: string): SessionDeviceMeta["deviceType"] {
+  const d = device.toLowerCase();
+  if (d === "mobile") return "mobile";
+  if (d === "tablet") return "tablet";
+  if (d === "desktop") return "desktop";
+  return "unknown";
+}
+
+function toSessionDeviceMeta(
+  info: Awaited<ReturnType<typeof extractDeviceInfo>>,
+): SessionDeviceMeta {
+  const parts = info.location.split(",").map((s) => s.trim());
+  const city =
+    info.location === "Unknown Location" || info.location === "Local Network"
+      ? info.location
+      : parts[0] || null;
+  const country = parts.length >= 2 ? parts[parts.length - 1] : null;
+
+  return {
+    deviceLabel: `${info.browser} on ${info.os}`,
+    deviceType: toDeviceType(info.device),
+    os: info.os,
+    browser: info.browser,
+    ipAddress: info.ipAddress,
+    city,
+    country,
+  };
+}
 
 export const InitiateOnboardingHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const result = await authService.initiateOnboarding(
       req.body as Parameters<typeof authService.initiateOnboarding>[0],
     );
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: result.message,
-        ...(result.debug ? { debug: result.debug } : {}),
-      });
+    res.status(200).json({
+      success: true,
+      message: result.message,
+      ...(result.debug ? { debug: result.debug } : {}),
+    });
+  },
+);
+
+export const RegisterGuestHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const device = toSessionDeviceMeta(await extractDeviceInfo(req));
+    const result = await authService.registerGuest(
+      req.body as Parameters<typeof authService.registerGuest>[0],
+      device,
+    );
+    res.status(201).json({
+      success: true,
+      message: "Account created.",
+      data: result,
+    });
+  },
+);
+
+export const RegisterHostHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const device = toSessionDeviceMeta(await extractDeviceInfo(req));
+    const result = await authService.registerHost(
+      req.body as Parameters<typeof authService.registerHost>[0],
+      device,
+    );
+    res.status(201).json({
+      success: true,
+      message: "Host account and property created.",
+      data: result,
+    });
+  },
+);
+
+export const VerifyTwoFactorLoginHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { challengeToken, code } = req.body as {
+      challengeToken: string;
+      code: string;
+    };
+    const device = toSessionDeviceMeta(await extractDeviceInfo(req));
+    const result = await authService.verifyTwoFactorLogin(
+      challengeToken,
+      code,
+      device,
+    );
+    res.status(200).json({
+      success: true,
+      message: "Login successful.",
+      data: result,
+    });
+  },
+);
+
+export const GoogleOAuthHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { code, codeVerifier } = req.body as {
+      code: string;
+      codeVerifier: string;
+    };
+    const device = toSessionDeviceMeta(await extractDeviceInfo(req));
+    const result = await authService.loginWithGoogle(
+      code,
+      codeVerifier,
+      device,
+    );
+    res.status(200).json({
+      success: true,
+      message: "Login successful.",
+      data: result,
+    });
+  },
+);
+
+export const VerifyLoginEmailOtpHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { email, code } = req.body as { email: string; code: string };
+    const device = toSessionDeviceMeta(await extractDeviceInfo(req));
+    const tokens = await authService.verifyLoginEmailOtp(email, code, device);
+
+    // Prefer same envelope as other login handlers (frontend often expects data.*)
+    res.status(200).json({
+      success: true,
+      message: "Login successful.",
+      data: tokens,
+    });
   },
 );
 
@@ -23,40 +136,13 @@ export const ConfirmEmailHandler = asyncHandler(
     await authService.confirmEmail(
       req.body as Parameters<typeof authService.confirmEmail>[0],
     );
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Email verified. You may now complete registration.",
-      });
+    res.status(200).json({
+      success: true,
+      message: "Email verified. You may now complete registration.",
+    });
   },
 );
 
-export const RegisterGuestHandler = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const result = await authService.registerGuest(
-      req.body as Parameters<typeof authService.registerGuest>[0],
-    );
-    res
-      .status(201)
-      .json({ success: true, message: "Account created.", data: result });
-  },
-);
-
-export const RegisterHostHandler = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const result = await authService.registerHost(
-      req.body as Parameters<typeof authService.registerHost>[0],
-    );
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Host account and property created.",
-        data: result,
-      });
-  },
-);
 
 export const LoginHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -73,13 +159,11 @@ export const RefreshTokenHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { refreshToken } = req.body as { refreshToken: string };
     const result = await authService.refreshToken(refreshToken);
-    res
-      .status(200)
-      .json({
-        success: true,
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
-      });
+    res.status(200).json({
+      success: true,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    });
   },
 );
 
@@ -98,7 +182,7 @@ export const LogoutHandler = asyncHandler(
       req.user.userId,
       token,
       refreshToken,
-      req.sessionId, 
+      req.sessionId,
     );
 
     res.clearCookie?.("jwt", {
@@ -148,13 +232,11 @@ export const ResendOtpHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { email } = req.body as { email: string };
     const result = await authService.resendOtp(email);
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: result.message,
-        ...(result.debug ? { debug: result.debug } : {}),
-      });
+    res.status(200).json({
+      success: true,
+      message: result.message,
+      ...(result.debug ? { debug: result.debug } : {}),
+    });
   },
 );
 
@@ -174,13 +256,11 @@ export const VerifyEnableTwoFactorHandler = asyncHandler(
       req.user.userId,
       token,
     );
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: result.message,
-        data: { backupCodes: result.backupCodes },
-      });
+    res.status(200).json({
+      success: true,
+      message: result.message,
+      data: { backupCodes: result.backupCodes },
+    });
   },
 );
 
@@ -196,42 +276,3 @@ export const DisableTwoFactorHandler = asyncHandler(
   },
 );
 
-export const VerifyTwoFactorLoginHandler = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const { challengeToken, code } = req.body as {
-      challengeToken: string;
-      code: string;
-    };
-    const result = await authService.verifyTwoFactorLogin(challengeToken, code);
-    res
-      .status(200)
-      .json({ success: true, message: "Login successful.", data: result });
-  },
-);
-
-export const GoogleOAuthHandler = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const { code, codeVerifier } = req.body as {
-      code: string;
-      codeVerifier: string;
-    };
-    const result = await authService.loginWithGoogle(code, codeVerifier);
-    res
-      .status(200)
-      .json({ success: true, message: "Login successful.", data: result });
-  },
-);
-
-export const VerifyLoginEmailOtpHandler = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const result = await authService.verifyLoginEmailOtp(
-      req.body.email,
-      req.body.code,
-    );
-    res.status(200).json({
-      success: true,
-      message: "Login successful.",
-      data: result,
-    });
-  },
-);
