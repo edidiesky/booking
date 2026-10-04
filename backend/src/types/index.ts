@@ -43,10 +43,9 @@ export type AuditAction =
 export interface JWTPayload {
   userId: string;
   userType: UserType;
-  tenantId?: string;
   name: string;
+  tenantId?: string;
 }
-
 export interface CancellationPolicyTier {
   hours_before: number;
   refund_pct: number;
