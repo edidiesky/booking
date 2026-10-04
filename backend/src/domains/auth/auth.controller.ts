@@ -1,107 +1,226 @@
 import asyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import { authService } from "./auth.service";
-import { AppError }    from "../../utils/AppError";
+import { AppError } from "../../utils/AppError";
 
-export const InitiateOnboardingHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const result = await authService.initiateOnboarding(
-    req.body as Parameters<typeof authService.initiateOnboarding>[0]
-  );
-  res.status(200).json({ success: true, message: result.message, ...(result.debug ? { debug: result.debug } : {}) });
-});
+export const InitiateOnboardingHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const result = await authService.initiateOnboarding(
+      req.body as Parameters<typeof authService.initiateOnboarding>[0],
+    );
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: result.message,
+        ...(result.debug ? { debug: result.debug } : {}),
+      });
+  },
+);
 
-export const ConfirmEmailHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  await authService.confirmEmail(req.body as Parameters<typeof authService.confirmEmail>[0]);
-  res.status(200).json({ success: true, message: "Email verified. You may now complete registration." });
-});
+export const ConfirmEmailHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    await authService.confirmEmail(
+      req.body as Parameters<typeof authService.confirmEmail>[0],
+    );
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Email verified. You may now complete registration.",
+      });
+  },
+);
 
-export const RegisterGuestHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const result = await authService.registerGuest(req.body as Parameters<typeof authService.registerGuest>[0]);
-  res.status(201).json({ success: true, message: "Account created.", data: result });
-});
+export const RegisterGuestHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const result = await authService.registerGuest(
+      req.body as Parameters<typeof authService.registerGuest>[0],
+    );
+    res
+      .status(201)
+      .json({ success: true, message: "Account created.", data: result });
+  },
+);
 
-export const RegisterHostHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const result = await authService.registerHost(req.body as Parameters<typeof authService.registerHost>[0]);
-  res.status(201).json({ success: true, message: "Host account and property created.", data: result });
-});
+export const RegisterHostHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const result = await authService.registerHost(
+      req.body as Parameters<typeof authService.registerHost>[0],
+    );
+    res
+      .status(201)
+      .json({
+        success: true,
+        message: "Host account and property created.",
+        data: result,
+      });
+  },
+);
 
-export const LoginHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const result = await authService.login(req.body as Parameters<typeof authService.login>[0]);
-  res.status(200).json({ success: true, message: "Login successful.", data: result });
-});
+export const LoginHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const result = await authService.login(
+      req.body as Parameters<typeof authService.login>[0],
+    );
+    res
+      .status(200)
+      .json({ success: true, message: "Login successful.", data: result });
+  },
+);
 
-export const RefreshTokenHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const { refreshToken } = req.body as { refreshToken: string };
-  const result = await authService.refreshToken(refreshToken);
-  res.status(200).json({ success: true, accessToken: result.accessToken, refreshToken: result.refreshToken });
-});
+export const RefreshTokenHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { refreshToken } = req.body as { refreshToken: string };
+    const result = await authService.refreshToken(refreshToken);
+    res
+      .status(200)
+      .json({
+        success: true,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+      });
+  },
+);
 
-export const LogoutHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  if (!req.user) throw AppError.unauthorized();
-  const token = req.headers.authorization?.replace("Bearer ", "") ?? "";
-  const { refreshToken } = req.body as { refreshToken?: string };
-  await authService.logout(req.user.userId, token, refreshToken);
-  res.status(200).json({ success: true, message: "Logged out successfully." });
-});
+export const LogoutHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) throw AppError.unauthorized();
 
-export const MeHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  res.status(200).json({ success: true, data: req.user });
-});
+    const token =
+      req.headers.authorization?.replace("Bearer ", "") ??
+      (req.cookies as Record<string, string> | undefined)?.["jwt"] ??
+      "";
 
-export const ChangePasswordHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  if (!req.user) throw AppError.unauthorized();
-  const result = await authService.changePassword(req.user.userId, req.body);
-  res.status(200).json({ success: true, ...result });
-});
+    const { refreshToken } = req.body as { refreshToken?: string };
 
-export const RequestPasswordResetHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const { email } = req.body as { email: string };
-  const result = await authService.requestPasswordReset(email);
-  res.status(200).json({ success: true, message: result.message });
-});
+    await authService.logout(
+      req.user.userId,
+      token,
+      refreshToken,
+      req.sessionId, 
+    );
 
-export const ConfirmPasswordResetHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const result = await authService.confirmPasswordReset(req.body);
-  res.status(200).json({ success: true, message: result.message });
-});
+    res.clearCookie?.("jwt", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
 
-export const ResendOtpHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const { email } = req.body as { email: string };
-  const result = await authService.resendOtp(email);
-  res.status(200).json({ success: true, message: result.message, ...(result.debug ? { debug: result.debug } : {}) });
-});
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully.",
+    });
+  },
+);
 
-export const SetupTwoFactorHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  if (!req.user) throw AppError.unauthorized();
-  const result = await authService.setupTwoFactor(req.user.userId);
-  res.status(200).json({ success: true, data: result });
-});
+export const MeHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    res.status(200).json({ success: true, data: req.user });
+  },
+);
 
-export const VerifyEnableTwoFactorHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  if (!req.user) throw AppError.unauthorized();
-  const { token } = req.body as { token: string };
-  const result = await authService.verifyAndEnableTwoFactor(req.user.userId, token);
-  res.status(200).json({ success: true, message: result.message, data: { backupCodes: result.backupCodes } });
-});
+export const ChangePasswordHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) throw AppError.unauthorized();
+    const result = await authService.changePassword(req.user.userId, req.body);
+    res.status(200).json({ success: true, ...result });
+  },
+);
 
-export const DisableTwoFactorHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  if (!req.user) throw AppError.unauthorized();
-  const { password } = req.body as { password: string };
-  const result = await authService.disableTwoFactor(req.user.userId, password);
-  res.status(200).json({ success: true, message: result.message });
-});
+export const RequestPasswordResetHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { email } = req.body as { email: string };
+    const result = await authService.requestPasswordReset(email);
+    res.status(200).json({ success: true, message: result.message });
+  },
+);
 
-export const VerifyTwoFactorLoginHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const { challengeToken, code } = req.body as { challengeToken: string; code: string };
-  const result = await authService.verifyTwoFactorLogin(challengeToken, code);
-  res.status(200).json({ success: true, message: "Login successful.", data: result });
-});
+export const ConfirmPasswordResetHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const result = await authService.confirmPasswordReset(req.body);
+    res.status(200).json({ success: true, message: result.message });
+  },
+);
 
-export const GoogleOAuthHandler = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const { code, codeVerifier } = req.body as { code: string; codeVerifier: string };
-  const result = await authService.loginWithGoogle(code, codeVerifier);
-  res.status(200).json({ success: true, message: "Login successful.", data: result });
-});
+export const ResendOtpHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { email } = req.body as { email: string };
+    const result = await authService.resendOtp(email);
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: result.message,
+        ...(result.debug ? { debug: result.debug } : {}),
+      });
+  },
+);
+
+export const SetupTwoFactorHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) throw AppError.unauthorized();
+    const result = await authService.setupTwoFactor(req.user.userId);
+    res.status(200).json({ success: true, data: result });
+  },
+);
+
+export const VerifyEnableTwoFactorHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) throw AppError.unauthorized();
+    const { token } = req.body as { token: string };
+    const result = await authService.verifyAndEnableTwoFactor(
+      req.user.userId,
+      token,
+    );
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: result.message,
+        data: { backupCodes: result.backupCodes },
+      });
+  },
+);
+
+export const DisableTwoFactorHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) throw AppError.unauthorized();
+    const { password } = req.body as { password: string };
+    const result = await authService.disableTwoFactor(
+      req.user.userId,
+      password,
+    );
+    res.status(200).json({ success: true, message: result.message });
+  },
+);
+
+export const VerifyTwoFactorLoginHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { challengeToken, code } = req.body as {
+      challengeToken: string;
+      code: string;
+    };
+    const result = await authService.verifyTwoFactorLogin(challengeToken, code);
+    res
+      .status(200)
+      .json({ success: true, message: "Login successful.", data: result });
+  },
+);
+
+export const GoogleOAuthHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { code, codeVerifier } = req.body as {
+      code: string;
+      codeVerifier: string;
+    };
+    const result = await authService.loginWithGoogle(code, codeVerifier);
+    res
+      .status(200)
+      .json({ success: true, message: "Login successful.", data: result });
+  },
+);
 
 export const VerifyLoginEmailOtpHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -116,4 +235,3 @@ export const VerifyLoginEmailOtpHandler = asyncHandler(
     });
   },
 );
-
