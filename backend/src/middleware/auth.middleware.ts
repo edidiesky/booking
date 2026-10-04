@@ -5,13 +5,13 @@ import { JWTPayload, UserType } from "../types";
 import { AppError } from "../utils/AppError";
 import { requestContext } from "../context/requestContext";
 import { sessionVersionRepository } from "../domains/auth/sessionVersion.repository";
-// import { IdleTrackingRepository } from "../domains/auth/idleTracking.repository";
+import { idleTrackingRepository } from "../domains/auth/idleTracking.repository";
 import { sessionRepository } from "../domains/session/session.repository";
 import logger from "../utils/logger";
 
 const LAST_ACTIVE_THROTTLE_MS = 5 * 60 * 1000;
+const LAST_TOUCHED_CACHE_MAX = 10_000;
 const lastTouchedCache = new Map<string, number>();
-// const idleTracking = new IdleTrackingRepository(redisClient, 30 * 60);
 
 type AccessTokenPayload = {
   user: JWTPayload;
@@ -77,33 +77,43 @@ export function authenticate(
           return;
         }
 
-        // if (await idleTracking.isIdle(decoded.sessionId)) {
-        //   await sessionRepository.revoke(decoded.sessionId, "user_logout");
-        //   await sessionVersionRepository.bump(userId);
-        //   res.status(401).json({
-        //     success: false,
-        //     message: "Session expired due to inactivity. Please log in again.",
-        //   });
-        //   return;
-        // }
+        const active = await idleTrackingRepository.touchIfActive(
+          decoded.sessionId,
+        );
+        if (!active) {
+          sessionRepository
+            .revoke(decoded.sessionId, "user_logout")
+            .catch((err) => {
+              logger.error("session_idle_revoke_failed", {
+                event: "session_idle_revoke_failed",
+                sessionId: decoded.sessionId,
+                error: (err as Error).message,
+              });
+            });
+          res.status(401).json({
+            success: false,
+            message: "Session expired due to inactivity. Please log in again.",
+          });
+          return;
+        }
 
         req.sessionId = decoded.sessionId;
 
+        // Redis idle TTL is refreshed above on every request. Only the
+        // Postgres last_active_at write stays throttled.
+        const now = Date.now();
         const lastTouched = lastTouchedCache.get(decoded.sessionId) ?? 0;
-        if (Date.now() - lastTouched > LAST_ACTIVE_THROTTLE_MS) {
-          lastTouchedCache.set(decoded.sessionId, Date.now());
+        if (now - lastTouched > LAST_ACTIVE_THROTTLE_MS) {
+          if (lastTouchedCache.size >= LAST_TOUCHED_CACHE_MAX) {
+            lastTouchedCache.clear();
+          }
+          lastTouchedCache.set(decoded.sessionId, now);
           sessionRepository.touchLastActive(decoded.sessionId).catch((err) => {
             logger.error("session_touch_failed", {
               event: "session_touch_failed",
               error: (err as Error).message,
             });
           });
-          // idleTracking.touch(decoded.sessionId).catch((err) => {
-          //   logger.error("idle_tracking_touch_failed", {
-          //     event: "idle_tracking_touch_failed",
-          //     error: (err as Error).message,
-          //   });
-          // });
         }
       }
 
