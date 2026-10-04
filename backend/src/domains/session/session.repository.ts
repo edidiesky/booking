@@ -62,7 +62,7 @@ export const sessionRepository = {
        WHERE id IN (
          SELECT id FROM sessions
          WHERE user_id = $1 AND revoked_at IS NULL
-         ORDER BY created_at ASC
+         ORDER BY created_at DESC
          OFFSET $2
        )`,
       [userId, MAX_SESSIONS_PER_USER],
