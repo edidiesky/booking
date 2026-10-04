@@ -4,6 +4,21 @@ import redisClient from "../config/redis";
 import { JWTPayload, UserType } from "../types";
 import { AppError } from "../utils/AppError";
 import { requestContext } from "../context/requestContext";
+import { sessionVersionRepository } from "../domains/auth/sessionVersion.repository";
+// import { IdleTrackingRepository } from "../domains/auth/idleTracking.repository";
+import { sessionRepository } from "../domains/session/session.repository";
+import logger from "../utils/logger";
+
+const LAST_ACTIVE_THROTTLE_MS = 5 * 60 * 1000;
+const lastTouchedCache = new Map<string, number>();
+// const idleTracking = new IdleTrackingRepository(redisClient, 30 * 60);
+
+type AccessTokenPayload = {
+  user: JWTPayload;
+  sessionId?: string;
+  sessionVersion?: number;
+  jti?: string;
+};
 
 export function authenticate(
   req: Request,
@@ -15,31 +30,31 @@ export function authenticate(
     (req.cookies as Record<string, string> | undefined)?.["jwt"];
 
   if (!token) {
-    res
-      .status(401)
-      .json({ success: false, message: "Authentication required." });
+    res.status(401).json({ success: false, message: "Authentication required." });
     return;
   }
 
-  let decoded: { user: JWTPayload; jti?: string };
+  let decoded: AccessTokenPayload;
   try {
     decoded = jwt.verify(token, process.env.JWT_SECRET!, {
       issuer: "booking-platform",
       audience: "booking-client",
-    }) as { user: JWTPayload; jti?: string };
+    }) as AccessTokenPayload;
   } catch {
-    res
-      .status(401)
-      .json({
-        success: false,
-        message: "Session expired. Please log in again.",
-      });
+    res.status(401).json({
+      success: false,
+      message: "Session expired. Please log in again.",
+    });
     return;
   }
 
-  redisClient
-    .get(`blocklist:${decoded.jti ?? decoded.user.userId}`)
-    .then((blocked) => {
+  const userId = decoded.user.userId;
+
+  void (async () => {
+    try {
+      const blocked = await redisClient.get(
+        `blocklist:${decoded.jti ?? userId}`,
+      );
       if (blocked) {
         res.status(401).json({
           success: false,
@@ -47,6 +62,51 @@ export function authenticate(
         });
         return;
       }
+
+      // Session-bound tokens (post-rollout)
+      if (decoded.sessionId) {
+        const currentVersion = await sessionVersionRepository.get(userId);
+        if (
+          decoded.sessionVersion === undefined ||
+          decoded.sessionVersion !== currentVersion
+        ) {
+          res.status(401).json({
+            success: false,
+            message: "Session revoked. Please log in again.",
+          });
+          return;
+        }
+
+        // if (await idleTracking.isIdle(decoded.sessionId)) {
+        //   await sessionRepository.revoke(decoded.sessionId, "user_logout");
+        //   await sessionVersionRepository.bump(userId);
+        //   res.status(401).json({
+        //     success: false,
+        //     message: "Session expired due to inactivity. Please log in again.",
+        //   });
+        //   return;
+        // }
+
+        req.sessionId = decoded.sessionId;
+
+        const lastTouched = lastTouchedCache.get(decoded.sessionId) ?? 0;
+        if (Date.now() - lastTouched > LAST_ACTIVE_THROTTLE_MS) {
+          lastTouchedCache.set(decoded.sessionId, Date.now());
+          sessionRepository.touchLastActive(decoded.sessionId).catch((err) => {
+            logger.error("session_touch_failed", {
+              event: "session_touch_failed",
+              error: (err as Error).message,
+            });
+          });
+          // idleTracking.touch(decoded.sessionId).catch((err) => {
+          //   logger.error("idle_tracking_touch_failed", {
+          //     event: "idle_tracking_touch_failed",
+          //     error: (err as Error).message,
+          //   });
+          // });
+        }
+      }
+
       req.user = decoded.user;
       requestContext.set({
         userId: decoded.user.userId,
@@ -54,12 +114,13 @@ export function authenticate(
         userType: decoded.user.userType,
       });
       next();
-    })
-    .catch(() =>
-      res
-        .status(503)
-        .json({ success: false, message: "Service temporarily unavailable." }),
-    );
+    } catch {
+      res.status(503).json({
+        success: false,
+        message: "Service temporarily unavailable.",
+      });
+    }
+  })();
 }
 
 export function authorize(...roles: UserType[]) {
@@ -129,12 +190,6 @@ export async function requireTenantMember(
   }
 
   req.tenantId = tenantId;
-
-  // Same RLS setup rlsMiddleware uses for subdomain-resolved public
-  // routes, this is the chokepoint for every authenticated dashboard
-  // request instead, requireTenantMember already runs on every route
-  // that touches tenant-scoped data, so this activates RLS everywhere
-  // it needs to without adding a new middleware call to every route file.
   const ok = await beginTenantScopedTransaction(req, res, tenantId);
   if (!ok) {
     next(new Error("Failed to establish tenant-scoped database session."));
