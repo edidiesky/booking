@@ -37,6 +37,7 @@ import userNotificationRoutes from "./domains/user-notification/user-notificatio
 import favoriteRoutes from "./domains/favorite/favorite.routes";
 import jobRoutes from "./domains/jobs/job.routes";
 import invitationRoutes from "./domains/invitation/invitation.routes";
+import sessionRoutes from "./domains/session/session.routes";
 import redisClient from "./config/redis";
 import { logger, query } from "@booking/shared";
 import propertySearchRoutes from "./domains/property-search/propertySearch.routes";
@@ -122,7 +123,8 @@ app.use("/api/v1/bookings", tenantMiddleware, rlsMiddleware, bookingRoutes);
 app.use("/api/v1/payments", tenantMiddleware, rlsMiddleware, paymentRoutes);
 app.use("/api/v1/escrow", tenantMiddleware, rlsMiddleware, escrowRoutes);
 app.use("/api/v1/profile", profileRoutes);
-app.use("/api/v1/security", securityRoutes);
+app.use("/api/v1/security", securityRoutes); 
+app.use("/api/v1/sessions", sessionRoutes); 
 app.use("/api/v1/audit", tenantMiddleware, auditRoutes);
 app.use(
   "/api/v1/audit-events",
