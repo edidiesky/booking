@@ -26,8 +26,8 @@ import { roleRepository } from "../role/role.repository";
 import { userRoleRepository } from "../user-role/user-role.repository";
 import { tenantService } from "../tenant/tenant.service";
 import { sessionVersionRepository } from "./sessionVersion.repository";
-import { parseDeviceMetadata } from "@/utils/parseDeviceMetadata";
-import { noOpGeoLookup } from "@/utils/geoLookup";
+import { parseDeviceMetadata } from "../../utils/parseDeviceMetadata";
+import { noOpGeoLookup } from "../../utils/geoLookup";
 import { sessionRepository } from "../session/session.repository";
 
 const googleClient = new OAuth2Client(
@@ -489,27 +489,37 @@ export class AuthService {
     userId: string,
     accessToken: string,
     refreshToken?: string,
+    sessionId?: string,
   ): Promise<void> {
     let ttl = JWT_EXPIRY_SEC;
-    let jti: string | undefined;
+
     try {
       const decoded = jwt.decode(accessToken) as {
         exp?: number;
-        jti?: string;
+        sessionId?: string;
       } | null;
-      if (decoded?.exp)
+
+      if (decoded?.exp) {
         ttl = Math.max(0, decoded.exp - Math.floor(Date.now() / 1000));
-      jti = decoded?.jti;
+      }
+      if (!sessionId && decoded?.sessionId) {
+        sessionId = decoded.sessionId;
+      }
     } catch {
-      /**/
+      /* ignore decode errors */
     }
 
-    if (jti) {
-      await redisClient.set(blocklistKey(jti), "1", "EX", ttl);
-    } else {
-      await redisClient.set(blocklistKey(userId), "1", "EX", ttl);
+    if (sessionId) {
+      await sessionRepository.revoke(sessionId, "user_logout");
     }
 
+    await sessionVersionRepository.bump(userId);
+    await redisClient.set(
+      blocklistKey(userId),
+      "1",
+      "EX",
+      Math.min(ttl || JWT_EXPIRY_SEC, JWT_EXPIRY_SEC),
+    );
     if (refreshToken) {
       await redisClient.del(refreshKey(refreshToken));
     }
@@ -519,11 +529,13 @@ export class AuthService {
       resource: "user",
       resourceId: userId,
       userId,
+      newValue: { sessionId: sessionId ?? null },
     });
 
     logger.info("user_logged_out", {
       event: "user_logged_out",
       userId,
+      sessionId,
       requestId: requestContext.get()?.requestId,
     });
   }
