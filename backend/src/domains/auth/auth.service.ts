@@ -26,9 +26,8 @@ import { roleRepository } from "../role/role.repository";
 import { userRoleRepository } from "../user-role/user-role.repository";
 import { tenantService } from "../tenant/tenant.service";
 import { sessionVersionRepository } from "./sessionVersion.repository";
-import { parseDeviceMetadata } from "../../utils/parseDeviceMetadata";
-import { noOpGeoLookup } from "../../utils/geoLookup";
 import { sessionRepository } from "../session/session.repository";
+import { idleTrackingRepository } from "./idleTracking.repository";
 
 const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -55,6 +54,16 @@ interface OnboardingState {
   token?: string;
   tokenExpiresAt?: number;
 }
+
+export type SessionDeviceMeta = {
+  deviceLabel: string;
+  deviceType: "desktop" | "mobile" | "tablet" | "unknown";
+  os: string | null;
+  browser: string | null;
+  ipAddress: string;
+  city: string | null;
+  country: string | null;
+};
 
 function signAccessToken(
   payload: JWTPayload,
@@ -196,7 +205,10 @@ export class AuthService {
     });
   }
 
-  async registerGuest(input: RegisterGuestInput): Promise<AuthTokens> {
+  async registerGuest(
+    input: RegisterGuestInput,
+    device?: SessionDeviceMeta,
+  ): Promise<AuthTokens> {
     const email = input.email.toLowerCase().trim();
     const raw = await redisClient.get(onboardingKey(email));
 
@@ -290,10 +302,11 @@ export class AuthService {
       "guest",
       `${input.firstName} ${input.lastName}`,
       undefined,
+      device
     );
   }
 
-  async registerHost(input: RegisterHostInput): Promise<AuthTokens> {
+  async registerHost(input: RegisterHostInput, device?: SessionDeviceMeta): Promise<AuthTokens> {
     const email = input.email.toLowerCase().trim();
     const raw = await redisClient.get(onboardingKey(email));
 
@@ -432,6 +445,7 @@ export class AuthService {
       "host:admin",
       `${input.firstName} ${input.lastName}`,
       tenantId,
+      device
     );
   }
 
@@ -461,6 +475,15 @@ export class AuthService {
       throw AppError.unauthorized("Session expired. Please log in again.");
     }
 
+    const active = await idleTrackingRepository.touchIfActive(data.sessionId);
+    if (!active) {
+      await sessionRepository.revoke(data.sessionId, "user_logout");
+      await redisClient.del(refreshKey(token));
+      throw AppError.unauthorized(
+        "Session expired due to inactivity. Please log in again.",
+      );
+    }
+
     const sessionVersion = await sessionVersionRepository.get(data.userId);
     const accessToken = signAccessToken(
       {
@@ -484,7 +507,6 @@ export class AuthService {
 
     return { accessToken, refreshToken: newRefreshToken };
   }
-
   async logout(
     userId: string,
     accessToken: string,
@@ -589,44 +611,39 @@ export class AuthService {
     userType: UserType,
     name: string,
     tenantId: string | undefined,
-    meta?: {
-      userAgent?: string;
-      ip?: string;
-    },
+    device?: SessionDeviceMeta,
   ): Promise<AuthTokens> {
-    const device = parseDeviceMetadata(meta?.userAgent);
-    const geo = await noOpGeoLookup.lookup(meta?.ip ?? "0.0.0.0");
-
     const session = await sessionRepository.create({
       userId,
-      deviceLabel: device.deviceLabel,
-      deviceType: device.deviceType,
-      os: device.os,
-      browser: device.browser,
-      ipAddress: meta?.ip ?? "0.0.0.0",
-      city: geo.city,
-      country: geo.country,
+      deviceLabel: device?.deviceLabel ?? "Unknown device",
+      deviceType: device?.deviceType ?? "unknown",
+      os: device?.os ?? null,
+      browser: device?.browser ?? null,
+      ipAddress: device?.ipAddress ?? "0.0.0.0",
+      city: device?.city ?? null,
+      country: device?.country ?? null,
     });
 
-    // Seed idle key so the first authenticated request is not treated as expired
-    // const idleTracking = new IdleTrackingRepository(redisClient, 30 * 60);
-    // await idleTracking.touch(session.id);
+    await idleTrackingRepository.start(session.id);
+    await redisClient.del(blocklistKey(userId));
 
     const sessionVersion = await sessionVersionRepository.get(userId);
-    const payload: JWTPayload = { userId, userType, name, tenantId };
-    const accessToken = signAccessToken(payload, session.id, sessionVersion);
+    const accessToken = signAccessToken(
+      { userId, userType, name, tenantId },
+      session.id,
+      sessionVersion,
+    );
 
     const refreshToken = nanoid(32);
-    const refreshData = JSON.stringify({
-      userId,
-      userType,
-      name,
-      tenantId,
-      sessionId: session.id,
-    });
     await redisClient.set(
       refreshKey(refreshToken),
-      refreshData,
+      JSON.stringify({
+        userId,
+        userType,
+        name,
+        tenantId,
+        sessionId: session.id,
+      }),
       "EX",
       REFRESH_EXPIRY_SEC,
     );
@@ -787,7 +804,7 @@ export class AuthService {
   ): Promise<
     | AuthTokens
     | { twoFactorRequired: true; challengeToken: string; method: "totp" }
-    | { emailOtpRequired: true; email: string; method: "email" }
+    | { emailOtpRequired: true; method: "email" }
   > {
     const email = input.email.toLowerCase().trim();
     const user = await userRepository.findByEmail(email);
@@ -917,12 +934,15 @@ export class AuthService {
 
     return {
       emailOtpRequired: true,
-      email: user.email,
       method: "email",
     };
   }
 
-  async verifyLoginEmailOtp(email: string, code: string): Promise<AuthTokens> {
+  async verifyLoginEmailOtp(
+    email: string,
+    code: string,
+    device?: SessionDeviceMeta,
+  ): Promise<AuthTokens> {
     const normalizedEmail = email.toLowerCase().trim();
     const key = `login-otp:${normalizedEmail}`;
     const raw = await redisClient.get(key);
@@ -1035,12 +1055,19 @@ export class AuthService {
     });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    return this._buildTokens(user.id, user.user_type, name, user.tenant_id);
+    return this._buildTokens(
+      user.id,
+      user.user_type,
+      name,
+      user.tenant_id ?? undefined,
+      device,
+    );
   }
 
   async verifyTwoFactorLogin(
     challengeToken: string,
     code: string,
+    device?: SessionDeviceMeta,
   ): Promise<AuthTokens> {
     const userId = await redisClient.get(twoFactorChallengeKey(challengeToken));
     if (!userId)
@@ -1130,7 +1157,13 @@ export class AuthService {
     });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    return this._buildTokens(user.id, user.user_type, name, user.tenant_id);
+    return this._buildTokens(
+      user.id,
+      user.user_type,
+      name,
+      user.tenant_id ?? undefined,
+      device,
+    );
   }
 
   async disableTwoFactor(userId: string, password: string) {
@@ -1244,6 +1277,7 @@ export class AuthService {
   async loginWithGoogle(
     code: string,
     codeVerifier: string,
+    device?: SessionDeviceMeta,
   ): Promise<AuthTokens> {
     const { tokens } = await googleClient.getToken({ code, codeVerifier });
     if (!tokens.id_token)
@@ -1317,7 +1351,13 @@ export class AuthService {
     });
 
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    return this._buildTokens(user.id, user.user_type, name, user.tenant_id);
+    return this._buildTokens(
+      user.id,
+      user.user_type,
+      name,
+      user.tenant_id ?? undefined,
+      device,
+    );
   }
 }
 
