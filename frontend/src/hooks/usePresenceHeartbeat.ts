@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { API_BASE_URL } from "@/constants/api";
+import { BASE } from "@/constants/api";
 
 const HEARTBEAT_INTERVAL_MS = 60_000;
 
@@ -9,7 +9,7 @@ export function usePresenceHeartbeat(isAuthenticated: boolean) {
 
     const beat = () => {
       if (document.visibilityState !== "visible") return;
-      fetch(`${API_BASE_URL}/me/presence/heartbeat`, { method: "POST", credentials: "include" }).catch(() => {
+      fetch(`${BASE}/me/presence/heartbeat`, { method: "POST", credentials: "include" }).catch(() => {
         // Real, a missed heartbeat just means this session shows
         // offline a bit early, not a real error worth surfacing to
         // the user.
