@@ -12,21 +12,32 @@ function toDeviceType(device: string): SessionDeviceMeta["deviceType"] {
   return "unknown";
 }
 
+const NON_GEO_LOCATIONS = new Set(["Unknown Location", "Local Network"]);
+
+function knownOrNull(value: string): string | null {
+  const v = value.trim();
+  return !v || v.toLowerCase().startsWith("unknown") ? null : v;
+}
+
 function toSessionDeviceMeta(
   info: Awaited<ReturnType<typeof extractDeviceInfo>>,
 ): SessionDeviceMeta {
-  const parts = info.location.split(",").map((s) => s.trim());
-  const city =
-    info.location === "Unknown Location" || info.location === "Local Network"
-      ? info.location
-      : parts[0] || null;
-  const country = parts.length >= 2 ? parts[parts.length - 1] : null;
+  const parts = NON_GEO_LOCATIONS.has(info.location)
+    ? []
+    : info.location.split(",").map((s) => s.trim()).filter(Boolean);
+  const city = parts.length >= 2 ? parts[0] : null;
+  const country = parts.length >= 1 ? parts[parts.length - 1] : null;
+
+  const browser = knownOrNull(info.browser);
+  const os = knownOrNull(info.os);
+  const deviceLabel =
+    browser && os ? `${browser} on ${os}` : (browser ?? os ?? "Unknown device");
 
   return {
-    deviceLabel: `${info.browser} on ${info.os}`,
+    deviceLabel,
     deviceType: toDeviceType(info.device),
-    os: info.os,
-    browser: info.browser,
+    os,
+    browser,
     ipAddress: info.ipAddress,
     city,
     country,

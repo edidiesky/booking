@@ -9,11 +9,10 @@ export function usePresenceHeartbeat(isAuthenticated: boolean) {
 
     const beat = () => {
       if (document.visibilityState !== "visible") return;
-      fetch(`${BASE}/me/presence/heartbeat`, { method: "POST", credentials: "include" }).catch(() => {
-        // Real, a missed heartbeat just means this session shows
-        // offline a bit early, not a real error worth surfacing to
-        // the user.
-      });
+      fetch(`${BASE}/me/presence/heartbeat`, {
+        method: "POST",
+        credentials: "include",
+      }).catch(() => {});
     };
 
     beat();

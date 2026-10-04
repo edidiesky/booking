@@ -3,8 +3,10 @@ import { Readable } from "stream";
 import { Request, Response } from "express";
 import { logger } from "@booking/shared";
 import { getBreakerFire } from "./utils/createBreaker";
+import { getRealIp } from "./utils/identity";
 
 const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN ?? "http://localhost:4000";
+const GATEWAY_SHARED_SECRET = process.env.GATEWAY_SHARED_SECRET ?? "";
 
 const WEBHOOK_SIGNATURE_HEADERS = ["x-paystack-signature", "verif-hash"];
 
@@ -18,12 +20,22 @@ function toHeader(value: unknown): string | undefined {
 }
 
 function buildForwardHeaders(req: Request): Record<string, string> {
+  const clientIp = getRealIp(req);
+
   const headers: Record<string, string> = {
     "content-type": toHeader(req.headers["content-type"]) || "application/json",
-    "x-forwarded-for": req.ip ?? "",
+    "x-forwarded-for": clientIp,
+    "x-client-ip": clientIp,
     "x-request-id": toHeader(req.headers["x-request-id"]) ?? "",
     host: new URL(BACKEND_ORIGIN).host,
   };
+
+  const userAgent = toHeader(req.headers["user-agent"]);
+  if (userAgent) headers["user-agent"] = userAgent;
+
+  if (GATEWAY_SHARED_SECRET) {
+    headers["x-gateway-secret"] = GATEWAY_SHARED_SECRET;
+  }
 
   const auth = toHeader(req.headers.authorization);
   if (auth) headers.authorization = auth;

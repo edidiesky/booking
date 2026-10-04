@@ -18,7 +18,7 @@ import { createSubdomainResolver } from "./middleware/subdomainResolver";
 export function createApp(engine: RateLimitEngine, rulesSync: RulesSyncPubSub) {
   const app = express();
 
-  app.set("trust proxy", 1);
+   app.set("trust proxy", Number(process.env.TRUST_PROXY_HOPS ?? 1));
 
   app.use(helmet());
   app.use(cors({ origin: process.env.WEB_ORIGIN, credentials: true }));
