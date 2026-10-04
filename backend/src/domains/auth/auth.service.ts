@@ -25,6 +25,10 @@ import { auditEventRepository } from "../audit/auditEvent.repository";
 import { roleRepository } from "../role/role.repository";
 import { userRoleRepository } from "../user-role/user-role.repository";
 import { tenantService } from "../tenant/tenant.service";
+import { sessionVersionRepository } from "./sessionVersion.repository";
+import { parseDeviceMetadata } from "@/utils/parseDeviceMetadata";
+import { noOpGeoLookup } from "@/utils/geoLookup";
+import { sessionRepository } from "../session/session.repository";
 
 const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -52,13 +56,20 @@ interface OnboardingState {
   tokenExpiresAt?: number;
 }
 
-function signAccessToken(payload: JWTPayload): string {
-  return jwt.sign({ user: payload }, process.env.JWT_SECRET!, {
-    expiresIn: JWT_EXPIRY_SEC,
-    issuer: "booking-platform",
-    audience: "booking-client",
-    jwtid: nanoid(),
-  });
+function signAccessToken(
+  payload: JWTPayload,
+  sessionId: string,
+  sessionVersion: number,
+): string {
+  return jwt.sign(
+    { user: payload, sessionId, sessionVersion },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: JWT_EXPIRY_SEC,
+      issuer: "booking-platform",
+      audience: "booking-client",
+    },
+  );
 }
 
 export interface InitiateOnboardingInput {
@@ -434,21 +445,39 @@ export class AuthService {
       userId: string;
       userType: UserType;
       name: string;
-      email: string;
       tenantId?: string;
+      sessionId?: string;
     };
-    const accessToken = signAccessToken({
-      userId: data.userId,
-      userType: data.userType,
-      name: data.name,
-      tenantId: data.tenantId,
-    });
+
+    if (!data.sessionId) {
+      // Force re-login for pre-session refresh tokens
+      await redisClient.del(refreshKey(token));
+      throw AppError.unauthorized("Session expired. Please log in again.");
+    }
+
+    const session = await sessionRepository.findById(data.sessionId);
+    if (!session || session.revoked_at) {
+      await redisClient.del(refreshKey(token));
+      throw AppError.unauthorized("Session expired. Please log in again.");
+    }
+
+    const sessionVersion = await sessionVersionRepository.get(data.userId);
+    const accessToken = signAccessToken(
+      {
+        userId: data.userId,
+        userType: data.userType,
+        name: data.name,
+        tenantId: data.tenantId,
+      },
+      data.sessionId,
+      sessionVersion,
+    );
 
     await redisClient.del(refreshKey(token));
     const newRefreshToken = nanoid(32);
     await redisClient.set(
       refreshKey(newRefreshToken),
-      raw,
+      JSON.stringify(data),
       "EX",
       REFRESH_EXPIRY_SEC,
     );
@@ -548,12 +577,41 @@ export class AuthService {
     userType: UserType,
     name: string,
     tenantId: string | undefined,
+    meta?: {
+      userAgent?: string;
+      ip?: string;
+    },
   ): Promise<AuthTokens> {
-    const payload: JWTPayload = { userId, userType, name, tenantId };
-    const accessToken = signAccessToken(payload);
-    const refreshToken = nanoid(32);
-    const refreshData = JSON.stringify({ userId, userType, name, tenantId });
+    const device = parseDeviceMetadata(meta?.userAgent);
+    const geo = await noOpGeoLookup.lookup(meta?.ip ?? "0.0.0.0");
 
+    const session = await sessionRepository.create({
+      userId,
+      deviceLabel: device.deviceLabel,
+      deviceType: device.deviceType,
+      os: device.os,
+      browser: device.browser,
+      ipAddress: meta?.ip ?? "0.0.0.0",
+      city: geo.city,
+      country: geo.country,
+    });
+
+    // Seed idle key so the first authenticated request is not treated as expired
+    // const idleTracking = new IdleTrackingRepository(redisClient, 30 * 60);
+    // await idleTracking.touch(session.id);
+
+    const sessionVersion = await sessionVersionRepository.get(userId);
+    const payload: JWTPayload = { userId, userType, name, tenantId };
+    const accessToken = signAccessToken(payload, session.id, sessionVersion);
+
+    const refreshToken = nanoid(32);
+    const refreshData = JSON.stringify({
+      userId,
+      userType,
+      name,
+      tenantId,
+      sessionId: session.id,
+    });
     await redisClient.set(
       refreshKey(refreshToken),
       refreshData,
@@ -562,6 +620,7 @@ export class AuthService {
     );
 
     const user = await userRepository.findById(userId);
+
     return {
       accessToken,
       refreshToken,
