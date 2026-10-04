@@ -1,9 +1,13 @@
+
 import asyncHandler from "express-async-handler";
 import { Request, Response } from "express";
-import { AppError } from "@booking/shared";
+import { withTransaction } from "@booking/shared";
+import { AppError } from "../../utils/AppError";
+import { requestContext } from "../../context/requestContext";
 import { sessionRepository } from "./session.repository";
 import { sessionVersionRepository } from "../auth/sessionVersion.repository";
-import logger from "../../utils/logger";
+import { auditEventRepository } from "../audit/auditEvent.repository";
+import { auditRepository } from "../audit/audit.repository";
 
 async function revokeAndSync(
   sessionId: string,
@@ -27,6 +31,15 @@ export const ListMySessionsHandler = asyncHandler(
   },
 );
 
+export const AdminListUserSessionsHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req.params as { userId: string };
+    const sessions = await sessionRepository.listForUserAdmin(userId);
+    res.status(200).json({ success: true, data: sessions });
+  },
+);
+
+
 export const RevokeSessionHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     if (!req.user) throw AppError.unauthorized();
@@ -42,8 +55,39 @@ export const RevokeSessionHandler = asyncHandler(
       req.user.userId,
       "user_logout",
     );
-    if (!revoked)
+    if (!revoked) {
       throw AppError.notFound("Session not found or already revoked.");
+    }
+
+    const tenantId = req.user.tenantId;
+    if (tenantId) {
+      await withTransaction(async (client) => {
+        await auditEventRepository.record(
+          {
+            tenantId,
+            actor: { type: "user", id: req.user!.userId },
+            action: "session.revoked",
+            targetType: "session",
+            targetId: sessionId,
+            metadata: {
+              deviceLabel: session.device_label,
+              reason: "user_logout",
+            },
+            outcome: "allowed",
+            requestId: requestContext.get()?.requestId,
+          },
+          client, // required second arg
+        );
+      });
+    } else {
+      await auditRepository.log({
+        action: "logout",
+        resource: "session",
+        resourceId: sessionId,
+        userId: req.user.userId,
+        newValue: { reason: "user_logout", deviceLabel: session.device_label },
+      });
+    }
 
     res.status(200).json({ success: true, message: "Device logged out." });
   },
@@ -60,9 +104,37 @@ export const LogoutOtherSessionsHandler = asyncHandler(
     );
     await sessionVersionRepository.bump(req.user.userId);
 
-    res
-      .status(200)
-      .json({ success: true, message: `Logged out ${count} other device(s).` });
+    const tenantId = req.user.tenantId;
+    if (tenantId) {
+      await withTransaction(async (client) => {
+        await auditEventRepository.record(
+          {
+            tenantId,
+            actor: { type: "user", id: req.user!.userId },
+            action: "session.logout_others",
+            targetType: "user",
+            targetId: req.user!.userId,
+            metadata: { revokedCount: count },
+            outcome: "allowed",
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        );
+      });
+    } else {
+      await auditRepository.log({
+        action: "logout",
+        resource: "session",
+        resourceId: req.user.userId,
+        userId: req.user.userId,
+        newValue: { reason: "user_logout_all", revokedCount: count },
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Logged out ${count} other device(s).`,
+    });
   },
 );
 
@@ -76,20 +148,37 @@ export const LogoutAllSessionsHandler = asyncHandler(
     );
     await sessionVersionRepository.bump(req.user.userId);
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: `Logged out ${count} device(s). Please log in again.`,
+    const tenantId = req.user.tenantId;
+    if (tenantId) {
+      await withTransaction(async (client) => {
+        await auditEventRepository.record(
+          {
+            tenantId,
+            actor: { type: "user", id: req.user!.userId },
+            action: "session.logout_all",
+            targetType: "user",
+            targetId: req.user!.userId,
+            metadata: { revokedCount: count },
+            outcome: "allowed",
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        );
       });
-  },
-);
+    } else {
+      await auditRepository.log({
+        action: "logout",
+        resource: "session",
+        resourceId: req.user.userId,
+        userId: req.user.userId,
+        newValue: { reason: "logout_all", revokedCount: count },
+      });
+    }
 
-export const AdminListUserSessionsHandler = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const { userId } = req.params as { userId: string };
-    const sessions = await sessionRepository.listForUserAdmin(userId);
-    res.status(200).json({ success: true, data: sessions });
+    res.status(200).json({
+      success: true,
+      message: `Logged out ${count} device(s). Please log in again.`,
+    });
   },
 );
 
@@ -103,12 +192,27 @@ export const AdminRevokeSessionHandler = asyncHandler(
     const revoked = await sessionRepository.adminRevoke(sessionId);
     if (revoked) await sessionVersionRepository.bump(session.user_id);
 
-    logger.info("admin_session_revoked", {
-      event: "admin_session_revoked",
-      sessionId,
-      targetUserId: session.user_id,
-      adminId: req.user?.userId,
-    });
+    const tenantId = req.user?.tenantId;
+    if (tenantId && req.user) {
+      await withTransaction(async (client) => {
+        await auditEventRepository.record(
+          {
+            tenantId,
+            actor: { type: "user", id: req.user!.userId },
+            action: "session.admin_revoked",
+            targetType: "session",
+            targetId: sessionId,
+            metadata: {
+              targetUserId: session.user_id,
+              deviceLabel: session.device_label,
+            },
+            outcome: "allowed",
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        );
+      });
+    }
 
     res.status(200).json({ success: true, message: "Session revoked." });
   },
