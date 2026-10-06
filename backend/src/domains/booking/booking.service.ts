@@ -30,6 +30,7 @@ import {
 } from "../../messaging/publisher";
 import { auditEventRepository } from "../audit/auditEvent.repository";
 import { ledgerService } from "../ledger/ledger.service";
+import type { TenantBookingFilters } from "./booking.repository";
 
 export interface InitiateBookingInput {
   propertyId: string;
@@ -882,25 +883,29 @@ export class BookingService {
 
   async getGuestBookings(
     guestUserId: string,
-    opts: { status?: string; checkInAfter?: string; checkInBefore?: string; page?: number; limit?: number } = {},
+    opts: {
+      status?: string;
+      checkInAfter?: string;
+      checkInBefore?: string;
+      page?: number;
+      limit?: number;
+    } = {},
   ): Promise<BookingDto[]> {
-    return (await bookingRepository.listByGuest(guestUserId, opts)).map(
-      (b) => toDto(b),
+    return (await bookingRepository.listByGuest(guestUserId, opts)).map((b) =>
+      toDto(b),
     );
   }
 
   async getTenantBookings(
     tenantId: string,
-    opts: { status?: BookingStatus; page?: number; limit?: number } = {},
-  ): Promise<BookingDto[]> {
-    return (
-      await bookingRepository.listByTenant(
-        tenantId,
-        opts.status,
-        opts.page,
-        opts.limit,
-      )
-    ).map((b) => toDto(b));
+    opts: TenantBookingFilters & { page: number; limit: number },
+  ): Promise<{ data: BookingDto[]; total: number }> {
+    const { page, limit, ...filters } = opts;
+    const [rows, total] = await Promise.all([
+      bookingRepository.listByTenant(tenantId, undefined, page, limit, filters),
+      bookingRepository.countByTenant(tenantId, filters),
+    ]);
+    return { data: rows.map((b) => toDto(b)), total };
   }
 
   async getTenantBookingStats(tenantId: string) {
@@ -1000,5 +1005,7 @@ export class BookingService {
     return { trend, comparison };
   }
 }
+
+
 
 export const bookingService = new BookingService();

@@ -1,4 +1,7 @@
 import Joi from "joi";
+import { paginationKeys } from "../../utils/pagination";
+
+
 //  Validators
 export const initiateSchema = Joi.object({
   propertyId:      Joi.string().uuid().required(),
@@ -27,4 +30,29 @@ export const listQuerySchema = Joi.object({
   checkInBefore: Joi.date().iso().optional(),
   page:   Joi.number().integer().min(1).default(1),
   limit:  Joi.number().integer().min(1).max(100).default(20),
+});
+
+
+const BOOKING_STATUSES = [
+  "pending_payment",
+  "confirmed",
+  "checked_in",
+  "checked_out",
+  "cancelled",
+  "refunded",
+] as const;
+
+const isoDay = Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/);
+
+export const tenantListQuerySchema = Joi.object({
+  // 200 because the analytics page requests 200 rows today.
+  ...paginationKeys(200, 20),
+  status: Joi.array()
+    .items(Joi.string().valid(...BOOKING_STATUSES))
+    .single()
+    .unique()
+    .optional(),
+  search: Joi.string().trim().max(50).allow("").optional(),
+  checkInFrom: isoDay.optional(),
+  checkInTo: isoDay.optional(),
 });

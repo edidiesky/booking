@@ -23,6 +23,7 @@ import {
   cancelSchema,
   initiateSchema,
   listQuerySchema,
+  tenantListQuerySchema,
   transitionStatusSchema,
 } from "./booking.validator";
 import { requireInternalSecret } from "../../middleware/internal.middleware";
@@ -40,7 +41,7 @@ router.get(
   authenticate,
   requireTenantMember,
   requirePermission("booking", "read"),
-  validate(listQuerySchema, "query"),
+  validate(tenantListQuerySchema, "query"),
   GetTenantBookingsHandler,
 );
 router.get(
