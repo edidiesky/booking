@@ -53,6 +53,21 @@ function ctx() {
   return requestContext.get() ?? {};
 }
 
+
+export interface TenantPaymentFilters {
+  status?: PaymentStatus;
+  gateway?: PaymentGateway;
+}
+
+function tenantPaymentWhere(tenantId: string, f: TenantPaymentFilters) {
+  const params: unknown[] = [tenantId];
+  const conditions = ["p.tenant_id = $1"];
+  if (f.status) conditions.push(`p.status = $${params.push(f.status)}`);
+  if (f.gateway) conditions.push(`p.gateway = $${params.push(f.gateway)}`);
+  return { clause: conditions.join(" AND "), params };
+}
+
+
 export const paymentRepository = {
   async create(
     data: {
@@ -216,8 +231,12 @@ export const paymentRepository = {
     tenantId: string,
     page = 1,
     limit = 20,
+    filters: TenantPaymentFilters = {},
   ): Promise<PaymentSummary[]> {
-    const offset = (page - 1) * limit;
+    const { clause, params } = tenantPaymentWhere(tenantId, filters);
+    const limitIdx = params.push(limit);
+    const offsetIdx = params.push((page - 1) * limit);
+
     return query<PaymentSummary>(
       `SELECT
        p.id,
@@ -234,8 +253,8 @@ export const paymentRepository = {
        b.check_out,
        b.receipt_url,
        u.first_name AS guest_first_name,
-       u.last_name  AS guest_last_name, 
-       u.user_type  AS guest_user_type, 
+       u.last_name  AS guest_last_name,
+       u.user_type  AS guest_user_type,
        u.email  AS guest_email,
        u.profile_image AS guest_profile_image,
        rt.name AS room_type_name,
@@ -244,11 +263,23 @@ export const paymentRepository = {
      JOIN bookings   b  ON b.id  = p.booking_id
      JOIN room_types rt ON rt.id = b.room_type_id
      JOIN users      u  ON u.id  = p.guest_user_id
-     WHERE p.tenant_id = $1
-     ORDER BY p.created_at DESC
-     LIMIT $2 OFFSET $3`,
-      [tenantId, limit, offset],
+     WHERE ${clause}
+     ORDER BY p.created_at DESC, p.id DESC
+     LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
+      params,
     );
+  },
+
+  async countByTenant(
+    tenantId: string,
+    filters: TenantPaymentFilters = {},
+  ): Promise<number> {
+    const { clause, params } = tenantPaymentWhere(tenantId, filters);
+    const row = await queryOne<{ count: number }>(
+      `SELECT COUNT(*)::int AS count FROM payments p WHERE ${clause}`,
+      params,
+    );
+    return row?.count ?? 0;
   },
 
   // status counts + month-over-month volume growth.

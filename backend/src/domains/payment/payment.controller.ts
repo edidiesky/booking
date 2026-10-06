@@ -6,6 +6,35 @@ import { AppError }        from "../../utils/AppError";
 import { PaymentGateway }  from "../../types";
 import { userRepository } from "../auth/auth.repository";
 
+
+import { buildPaginationMeta } from "../../utils/pagination";
+import type { PaymentStatus } from "../../types";
+
+export const GetTenantPaymentsHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+    const { page, limit, status, gateway } = req.query as unknown as {
+      page: number;
+      limit: number;
+      status?: PaymentStatus;
+      gateway?: PaymentGateway;
+    };
+    const filters = { status, gateway };
+
+    const [data, total] = await Promise.all([
+      paymentRepository.listByTenant(req.tenantId, page, limit, filters),
+      paymentRepository.countByTenant(req.tenantId, filters),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data,
+      meta: buildPaginationMeta(page, limit, total),
+    });
+  },
+);
+
+
 export const InitializePaymentHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     if (!req.user) throw AppError.unauthorized();
@@ -34,16 +63,6 @@ export const GetPaymentByBookingHandler = asyncHandler(
     const payment = await paymentRepository.findByBookingId(req.params["bookingId"] as string);
     if (!payment) throw AppError.notFound("No payment found for this booking.");
     res.status(200).json({ success: true, data: payment });
-  }
-);
-
-export const GetTenantPaymentsHandler = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
-    const page  = Number(req.query["page"]  ?? 1);
-    const limit = Number(req.query["limit"] ?? 20);
-    const payments = await paymentRepository.listByTenant(req.tenantId, page, limit);
-    res.status(200).json({ success: true, data: payments });
   }
 );
 
