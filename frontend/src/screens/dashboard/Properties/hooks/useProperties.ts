@@ -2,28 +2,43 @@ import { useState } from "react";
 import {
   useCreatePropertyMutation,
   useCreateRoomTypeMutation,
-} from "@/redux/services/propertyApi";
-import { showToast } from "@/components/common/Toast";
-import type { CreatePropertyPayload, CreateRoomTypePayload } from "@/types/api";
-import {
   useGetMyPropertiesQuery,
   useGetTenantPropertyStatsQuery,
-} from "../../../../redux/services/propertyApi";
+} from "@/redux/services/propertyApi";
+import { showToast } from "@/components/common/Toast";
+import type {
+  CreatePropertyPayload,
+  CreateRoomTypePayload,
+  PropertyStatus,
+} from "@/types/api";
+import { useClampPage, usePagination } from "@/hooks/usePagination";
+
+const PAGE_SIZE = 20;
 
 export function useProperties() {
-  const [page, setPage] = useState(1);
+  const { page, setPage, resetPage } = usePagination();
+  const [statusFilter, setStatusFilterRaw] = useState<PropertyStatus | "">("");
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(
     null,
   );
 
-  const { data, isLoading } = useGetMyPropertiesQuery({ page, limit: 20 });
+  const { data, isLoading, isFetching } = useGetMyPropertiesQuery({
+    page,
+    limit: PAGE_SIZE,
+    status: statusFilter || undefined,
+  });
   const { data: statsData, isLoading: isStatsLoading } =
     useGetTenantPropertyStatsQuery();
   const [createProperty, { isLoading: creating }] = useCreatePropertyMutation();
   const [createRoomType, { isLoading: creatingRoom }] =
     useCreateRoomTypeMutation();
 
-  const properties = data?.data ?? [];
+  useClampPage(data?.meta, page, setPage);
+
+  const setStatusFilter = (value: PropertyStatus | "") => {
+    setStatusFilterRaw(value);
+    resetPage();
+  };
 
   const handleCreateProperty = async (payload: CreatePropertyPayload) => {
     try {
@@ -49,10 +64,14 @@ export function useProperties() {
   };
 
   return {
-    properties,
+    properties: data?.data ?? [],
+    meta: data?.meta,
     isLoading,
+    isFetching,
     page,
     setPage,
+    statusFilter,
+    setStatusFilter,
     selectedPropertyId,
     setSelectedPropertyId,
     handleCreateProperty,

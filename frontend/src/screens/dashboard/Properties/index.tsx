@@ -15,6 +15,7 @@ import ImportRoomTypesModal from "./ImportRoomTypesModal";
 import Title from "@/components/dashboard/common/Title";
 import PropertyPerformanceModal from "./PropertyPerformanceModal";
 import { EmptyState } from "@/components/common/EmptyState";
+import TablePagination from "@/components/common/table/TablePagination";
 
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
@@ -40,14 +41,21 @@ export default function DashboardProperties() {
     id: string;
     name: string;
   } | null>(null);
-  const [statusFilter, setStatusFilter] = useState<PropertyStatus | "">("");
   const navigate = useNavigate();
 
-  const { properties, isLoading, stats, isStatsLoading } = useProperties();
-
-  const filtered = properties.filter(
-    (p) => !statusFilter || p.status === statusFilter,
-  );
+  const {
+    properties,
+    meta,
+    isLoading,
+    isFetching,
+    setPage,
+    statusFilter,
+    setStatusFilter,
+    stats,
+    isStatsLoading,
+  } = useProperties();
+  // Filtering now happens on the server.
+  const filtered = properties;
 
   const handleOpenCreate = () => {
     setEditPropertyId(null);
@@ -208,7 +216,7 @@ export default function DashboardProperties() {
               options={STATUS_OPTIONS}
             />
             <span className="text-xs lg:text-[13px]     text-[#a3a6af]">
-              {filtered.length} propert{filtered.length === 1 ? "y" : "ies"}
+              {meta?.total ?? 0} propert{meta?.total === 1 ? "y" : "ies"}
             </span>
           </div>
           <div className="flex lg:justify-end">
@@ -279,6 +287,12 @@ export default function DashboardProperties() {
             </tbody>
           </table>
         </div>
+        <TablePagination
+          meta={meta}
+          onPageChange={setPage}
+          isFetching={isFetching}
+          noun={{ singular: "property", plural: "properties" }}
+        />
       </motion.div>
 
       <AnimatePresence>
