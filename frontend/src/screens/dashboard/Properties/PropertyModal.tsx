@@ -16,6 +16,7 @@ import LocationPicker from "@/components/common/LocationPicker";
 import { geocodeAddress } from "@/hooks/useGeocodeAddress";
 import RichTextEditor from "@/components/common/RichTextEditor";
 import { AMENITY_GROUPS, AMENITY_OPTIONS } from "@/constants/amenities";
+import { CreatePropertyPayload } from "@/types/api";
 
 const schema = z.object({
   name: z.string().min(3, "Min 3 characters"),
@@ -164,7 +165,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
         }).unwrap();
         showToast("Property updated.", "success");
       } else {
-        const prop = {
+        const prop: CreatePropertyPayload = {
           name: data.name,
           description: data.description ?? "",
           propertyType: data.propertyType,
@@ -355,50 +356,50 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                       </p>
                     )}
                   </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs lg:text-[13px]     text-[#17191c]">
-                        Property Type
-                      </label>
-                      <Controller
-                        name="propertyType"
-                        control={control}
-                        render={({ field }) => (
-                          <ChartSelect
-                            value={field.value}
-                            onValueChange={field.onChange}
-                            options={PROPERTY_TYPE_OPTIONS}
-                            placeholder="Select type"
-                          />
-                        )}
-                      />
-                      {errors.propertyType && (
-                        <p className="text-xs lg:text-[13px]   text-red-500">
-                          {errors.propertyType.message}
-                        </p>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs lg:text-[13px]     text-[#17191c]">
+                      Property Type
+                    </label>
+                    <Controller
+                      name="propertyType"
+                      control={control}
+                      render={({ field }) => (
+                        <ChartSelect
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          options={PROPERTY_TYPE_OPTIONS}
+                          placeholder="Select type"
+                        />
                       )}
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs lg:text-[13px] text-[#17191c]">
-                        Status
-                      </label>
-                      <Controller
-                        name="status"
-                        control={control}
-                        render={({ field }) => (
-                          <ChartSelect
-                            value={field.value}
-                            onValueChange={field.onChange}
-                            options={statusOptions}
-                            placeholder="Select status"
-                          />
-                        )}
-                      />
-                      {/* <p className="text-xs text-[#a3a6af]">
+                    />
+                    {errors.propertyType && (
+                      <p className="text-xs lg:text-[13px]   text-red-500">
+                        {errors.propertyType.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs lg:text-[13px] text-[#17191c]">
+                      Status
+                    </label>
+                    <Controller
+                      name="status"
+                      control={control}
+                      render={({ field }) => (
+                        <ChartSelect
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          options={statusOptions}
+                          placeholder="Select status"
+                        />
+                      )}
+                    />
+                    {/* <p className="text-xs text-[#a3a6af]">
                         {hasActiveRoom
                           ? "Active properties appear on your storefront and the main website."
                           : "Add at least one active room type to publish this property. Until then it stays hidden from guests."}
                       </p> */}
-                    </div>
+                  </div>
                 </div>
                 {/* description */}
                 <div className="flex flex-col gap-1.5">
