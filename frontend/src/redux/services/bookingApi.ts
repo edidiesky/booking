@@ -35,10 +35,25 @@ export const bookingApi = apiSlice.injectEndpoints({
 
     getMyBookings: builder.query<
       BookingListResponse,
-      { status?: string; checkInAfter?: string; checkInBefore?: string; page?: number; limit?: number }
+      {
+        status?: string;
+        checkInAfter?: string;
+        checkInBefore?: string;
+        page?: number;
+        limit?: number;
+      }
     >({
-      query: ({ status, checkInAfter, checkInBefore, page = 1, limit = 20 } = {}) => {
-        const qs = new URLSearchParams({ page: String(page), limit: String(limit) });
+      query: ({
+        status,
+        checkInAfter,
+        checkInBefore,
+        page = 1,
+        limit = 20,
+      } = {}) => {
+        const qs = new URLSearchParams({
+          page: String(page),
+          limit: String(limit),
+        });
         if (status) qs.set("status", status);
         if (checkInAfter) qs.set("checkInAfter", checkInAfter);
         if (checkInBefore) qs.set("checkInBefore", checkInBefore);
@@ -51,12 +66,27 @@ export const bookingApi = apiSlice.injectEndpoints({
       BookingListResponse,
       TenantBookingQueryParams
     >({
-      query: ({ status, page = 1, limit = 20 }) => {
+      query: ({
+        status,
+        search,
+        checkInFrom,
+        checkInTo,
+        page = 1,
+        limit = 20,
+      }) => {
         const qs = new URLSearchParams({
           page: String(page),
           limit: String(limit),
         });
-        if (status) qs.set("status", status);
+        const statuses = Array.isArray(status)
+          ? status
+          : status
+            ? [status]
+            : [];
+        for (const s of statuses) qs.append("status", s);
+        if (search) qs.set("search", search);
+        if (checkInFrom) qs.set("checkInFrom", checkInFrom);
+        if (checkInTo) qs.set("checkInTo", checkInTo);
         return { url: `${BOOKING_URL}/tenant?${qs.toString()}` };
       },
       providesTags: ["Booking"],
@@ -142,7 +172,6 @@ export const bookingApi = apiSlice.injectEndpoints({
   }),
 });
 
-
 export const {
   useInitiateBookingMutation,
   useGetBookingByIdQuery,
@@ -156,5 +185,3 @@ export const {
   useTransitionBookingStatusMutation,
   useGetRevenueTrendQuery,
 } = bookingApi;
-
-
