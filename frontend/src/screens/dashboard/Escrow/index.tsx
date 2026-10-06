@@ -5,6 +5,7 @@ import { useTenantEscrow } from "./hooks/useTenantEscrow";
 import { formatCurrency } from "@/utils/formatCurrency";
 import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import { EmptyState } from "@/components/common/EmptyState";
+import TablePagination from "@/components/common/table/TablePagination";
 
 const HEADERS = [
   "Booking Ref",
@@ -17,8 +18,15 @@ const HEADERS = [
 ];
 
 export default function DashboardEscrow() {
-  const { escrows, isLoading, stats, isStatsLoading } = useTenantEscrow();
-
+  const {
+    escrows,
+    meta,
+    isLoading,
+    isFetching,
+    setPage,
+    stats,
+    isStatsLoading,
+  } = useTenantEscrow();
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -119,6 +127,12 @@ export default function DashboardEscrow() {
           </tbody>
         </table>
       </div>
+      <TablePagination
+        meta={meta}
+        onPageChange={setPage}
+        isFetching={isFetching}
+        noun={{ singular: "escrow record", plural: "escrow records" }}
+      />
     </motion.div>
   );
 }

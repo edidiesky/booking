@@ -1,21 +1,31 @@
-import { useState } from "react";
-import { useGetTenantEscrowQuery, useGetTenantEscrowStatsQuery } from "@/redux/services/escrowApi";
+import {
+  useGetTenantEscrowQuery,
+  useGetTenantEscrowStatsQuery,
+} from "@/redux/services/escrowApi";
+import { useClampPage, usePagination } from "@/hooks/usePagination";
+
+const PAGE_SIZE = 10;
 
 export function useTenantEscrow() {
-  const [page, setPage] = useState(1);
+  const { page, setPage } = usePagination();
 
-  const { data, isLoading }             = useGetTenantEscrowQuery({ page, limit: 10 });
-  const { data: statsData, isLoading: isStatsLoading } = useGetTenantEscrowStatsQuery();
+  const { data, isLoading, isFetching } = useGetTenantEscrowQuery({
+    page,
+    limit: PAGE_SIZE,
+  });
+  const { data: statsData, isLoading: isStatsLoading } =
+    useGetTenantEscrowStatsQuery();
 
-  const escrows = data?.data ?? [];
-  const stats   = statsData?.data;
+  useClampPage(data?.meta, page, setPage);
 
   return {
-    escrows,
+    escrows: data?.data ?? [],
+    meta: data?.meta,
     isLoading,
+    isFetching,
     page,
     setPage,
-    stats,
+    stats: statsData?.data,
     isStatsLoading,
   };
 }
