@@ -69,6 +69,49 @@ function diffKeys(
   );
 }
 
+function auditWhere(filters: AuditEventFilters): {
+  clause: string;
+  params: unknown[];
+} {
+  const params: unknown[] = [filters.tenantId];
+  const conditions = ["tenant_id = $1"];
+  const add = (sql: (idx: number) => string, value: unknown) => {
+    conditions.push(sql(params.push(value)));
+  };
+
+  if (filters.actor)
+    add(
+      (i) => `(actor_id::text = $${i} OR actor_email = $${i})`,
+      filters.actor,
+    );
+  if (filters.actorType) add((i) => `actor_type = $${i}`, filters.actorType);
+  if (filters.action) {
+    if (filters.action.endsWith("*")) {
+      add((i) => `action LIKE $${i}`, filters.action.slice(0, -1) + "%");
+    } else {
+      add((i) => `action = $${i}`, filters.action);
+    }
+  }
+  if (filters.outcome) add((i) => `outcome = $${i}`, filters.outcome);
+  if (filters.affectedUser) {
+    add(
+      (i) => `(affected_user_id::text = $${i} OR affected_user_email = $${i})`,
+      filters.affectedUser,
+    );
+  }
+  if (filters.targetType) add((i) => `target_type = $${i}`, filters.targetType);
+  if (filters.targetId) add((i) => `target_id = $${i}`, filters.targetId);
+  if (filters.changedField)
+    add((i) => `changed_fields @> ARRAY[$${i}]::text[]`, filters.changedField);
+  if (filters.requestId) add((i) => `request_id = $${i}`, filters.requestId);
+  if (filters.occurredAfter)
+    add((i) => `occurred_at >= $${i}`, filters.occurredAfter);
+  if (filters.occurredBefore)
+    add((i) => `occurred_at <= $${i}`, filters.occurredBefore);
+
+  return { clause: conditions.join(" AND "), params };
+}
+
 export interface AuditEventFilters {
   tenantId: string;
   actor?: string; // matches actor_id or actor_email
@@ -129,94 +172,30 @@ export const auditEventRepository = {
 
     return row;
   },
-
-  // The structured-filter read path, "the schema is the query
-  // language": every filter here maps directly to an indexed column,
-  // there is no free-text search, matching the source's stated
-  // position that a text box over an audit log is an admission the
-  // schema was never finished.
   async list(
     filters: AuditEventFilters,
     page: number,
     limit: number,
   ): Promise<AuditEventRow[]> {
-    const conditions: string[] = ["tenant_id = $1"];
-    const params: unknown[] = [filters.tenantId];
-    let i = 2;
-
-    if (filters.actor) {
-      conditions.push(`(actor_id::text = $${i} OR actor_email = $${i})`);
-      params.push(filters.actor);
-      i++;
-    }
-    if (filters.actorType) {
-      conditions.push(`actor_type = $${i}`);
-      params.push(filters.actorType);
-      i++;
-    }
-    if (filters.action) {
-      if (filters.action.endsWith("*")) {
-        conditions.push(`action LIKE $${i}`);
-        params.push(filters.action.slice(0, -1) + "%");
-        i++;
-      } else {
-        conditions.push(`action = $${i}`);
-        params.push(filters.action);
-        i++;
-      }
-    }
-    if (filters.outcome) {
-      conditions.push(`outcome = $${i}`);
-      params.push(filters.outcome);
-      i++;
-    }
-    if (filters.affectedUser) {
-      conditions.push(
-        `(affected_user_id::text = $${i} OR affected_user_email = $${i})`,
-      );
-      params.push(filters.affectedUser);
-      i++;
-    }
-    if (filters.targetType) {
-      conditions.push(`target_type = $${i}`);
-      params.push(filters.targetType);
-      i++;
-    }
-    if (filters.targetId) {
-      conditions.push(`target_id = $${i}`);
-      params.push(filters.targetId);
-      i++;
-    }
-    if (filters.changedField) {
-      conditions.push(`changed_fields @> ARRAY[$${i}]::text[]`);
-      params.push(filters.changedField);
-      i++;
-    }
-    if (filters.requestId) {
-      conditions.push(`request_id = $${i}`);
-      params.push(filters.requestId);
-      i++;
-    }
-    if (filters.occurredAfter) {
-      conditions.push(`occurred_at >= $${i}`);
-      params.push(filters.occurredAfter);
-      i++;
-    }
-    if (filters.occurredBefore) {
-      conditions.push(`occurred_at <= $${i}`);
-      params.push(filters.occurredBefore);
-      i++;
-    }
-
-    params.push(limit, (page - 1) * limit);
-
+    const { clause, params } = auditWhere(filters);
+    const limitIdx = params.push(limit);
+    const offsetIdx = params.push((page - 1) * limit);
     return query<AuditEventRow>(
-      `SELECT * FROM audit_events WHERE ${conditions.join(" AND ")}
-       ORDER BY occurred_at DESC LIMIT $${i} OFFSET $${i + 1}`,
+      `SELECT * FROM audit_events WHERE ${clause}
+       ORDER BY occurred_at DESC, id DESC
+       LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
       params,
     );
   },
 
+  async count(filters: AuditEventFilters): Promise<number> {
+    const { clause, params } = auditWhere(filters);
+    const row = await queryOne<{ count: number }>(
+      `SELECT COUNT(*)::int AS count FROM audit_events WHERE ${clause}`,
+      params,
+    );
+    return row?.count ?? 0;
+  },
   // Single-event fetch by id, deliberately separate from list()'s
   // structured-filter surface, "get me event X" and "filter events by
   // Y" are different real operations, not the same thing with a
