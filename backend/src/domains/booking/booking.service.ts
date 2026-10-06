@@ -29,6 +29,7 @@ import {
   publishNotifyBookingCheckedOut,
 } from "../../messaging/publisher";
 import { auditEventRepository } from "../audit/auditEvent.repository";
+import { ledgerService } from "../ledger/ledger.service";
 
 export interface InitiateBookingInput {
   propertyId: string;
@@ -357,6 +358,14 @@ export class BookingService {
           hostPayoutNgn: Number(booking.host_payout_ngn),
         },
         client,
+      );
+
+      await ledgerService.recordPaymentReceived(
+        client,
+        bookingId,
+        undefined,
+        booking.tenant_id,
+        Number(booking.total_amount_ngn),
       );
 
       await outboxRepository.create(
