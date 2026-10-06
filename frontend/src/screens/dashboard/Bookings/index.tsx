@@ -25,6 +25,7 @@ import MultiSelectDropdown from "@/components/dashboard/common/gant/MultiSelectD
 import DateRangeDropdown from "@/components/common/filters/DateRangeDropdown";
 import { EmptyState } from "@/components/common/EmptyState";
 import Title from "@/components/dashboard/common/Title";
+import TablePagination from "@/components/common/table/TablePagination";
 const STATUS_OPTIONS: { label: string; value: BookingStatus | "" }[] = [
   { label: "All statuses", value: "" },
   { label: "Pending Payment", value: "pending_payment" },
@@ -57,6 +58,9 @@ export default function DashboardBookings() {
     resetFilters,
     stats,
     isStatsLoading,
+    isFetching,
+    setPage,
+    meta
   } = useTenantBookings();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
@@ -257,6 +261,7 @@ export default function DashboardBookings() {
                   return (
                     <BookingTableRow
                       booking={b}
+                      key={b.bookingId}
                       onViewDetails={setSelectedBooking}
                       onCancel={setCancelTarget}
                       onCheckIn={handleCheckIn}
@@ -270,6 +275,13 @@ export default function DashboardBookings() {
           </table>
         </div>
       </motion.div>
+      
+        <TablePagination
+          meta={meta}
+          onPageChange={setPage}
+          isFetching={isFetching}
+          noun={{ singular: "booking", plural: "bookings" }}
+        />
     </>
   );
 }
