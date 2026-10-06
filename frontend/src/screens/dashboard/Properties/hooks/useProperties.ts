@@ -13,7 +13,7 @@ import type {
 } from "@/types/api";
 import { useClampPage, usePagination } from "@/hooks/usePagination";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 7;
 
 export function useProperties() {
   const { page, setPage, resetPage } = usePagination();
