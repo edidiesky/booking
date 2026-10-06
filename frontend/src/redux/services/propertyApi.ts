@@ -14,12 +14,11 @@ import type {
   RoomTypeWithOccupancy,
   PropertyStatsResponse,
   UpdateRoomTypePayload,
+  PaginatedResponse,
+  PropertyStatus,
 } from "@/types/api";
 
-export interface PropertiesResponse {
-  success: boolean;
-  data: Property[];
-}
+export type PropertiesResponse = PaginatedResponse<Property>;
 interface PropertyResponse {
   success: boolean;
   data: Property;
@@ -60,10 +59,11 @@ export const propertyApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getMyProperties: builder.query<
       PropertiesResponse,
-      { page?: number; limit?: number }
+      { page?: number; limit?: number; status?: PropertyStatus }
     >({
       query: ({ page = 1, limit = 20 } = {}) => ({
-        url: `${PROPERTY_URL}/mine?page=${page}&limit=${limit}`,
+         url: `${PROPERTY_URL}/mine`,
+        params: { page, limit, ...(status ? { status } : {}) },
       }),
       providesTags: ["Property"],
     }),
