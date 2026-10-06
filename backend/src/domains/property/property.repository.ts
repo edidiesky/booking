@@ -43,7 +43,7 @@ export interface PropertySearchFilters {
   sort?: "price_asc" | "price_desc" | "newest";
   page: number;
   limit: number;
-  tenantId?: string; // set when the request came through a seller's subdomain
+  tenantId?: string;
 }
 
 export interface RoomTypeWithOccupancy extends RoomType {
@@ -66,6 +66,18 @@ export interface RoomType {
   status: RoomStatus;
   created_at: Date;
   updated_at: Date;
+}
+
+export interface TenantPropertyFilters {
+  status?: PropertyStatus;
+}
+
+function tenantPropertyWhere(tenantId: string, filters: TenantPropertyFilters) {
+  const params: unknown[] = [tenantId];
+  const clause = filters.status
+    ? `tenant_id = $1 AND status = $${params.push(filters.status)}`
+    : `tenant_id = $1 AND status != 'archived'`;
+  return { clause, params };
 }
 
 export const propertyRepository = {
@@ -96,17 +108,22 @@ export const propertyRepository = {
     tenantId: string,
     page = 1,
     limit = 20,
+    filters: TenantPropertyFilters = {},
   ): Promise<(Property & { roomTypes: RoomType[] })[]> {
-    const offset = (page - 1) * limit;
+    const { clause, params } = tenantPropertyWhere(tenantId, filters);
+    const limitIdx = params.push(limit);
+    const offsetIdx = params.push((page - 1) * limit);
+
     const properties = await query<Property>(
-      `SELECT * FROM properties WHERE tenant_id = $1 AND status != 'archived'
-       ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
-      [tenantId, limit, offset],
+      `SELECT * FROM properties WHERE ${clause}
+       ORDER BY created_at DESC, id DESC
+       LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
+      params,
     );
     if (!properties.length) return [];
     const ids = properties.map((p) => p.id);
     const rooms = await query<RoomType>(
-      `SELECT * FROM room_types WHERE property_id = ANY($1::uuid[])  AND status = 'active'
+      `SELECT * FROM room_types WHERE property_id = ANY($1::uuid[]) AND status = 'active'
        ORDER BY base_price_ngn ASC`,
       [ids],
     );
@@ -114,6 +131,18 @@ export const propertyRepository = {
       ...p,
       roomTypes: rooms.filter((r) => r.property_id === p.id),
     }));
+  },
+
+  async countForTenant(
+    tenantId: string,
+    filters: TenantPropertyFilters = {},
+  ): Promise<number> {
+    const { clause, params } = tenantPropertyWhere(tenantId, filters);
+    const row = await queryOne<{ count: number }>(
+      `SELECT COUNT(*)::int AS count FROM properties WHERE ${clause}`,
+      params,
+    );
+    return row?.count ?? 0;
   },
 
   async searchPublicProperties(

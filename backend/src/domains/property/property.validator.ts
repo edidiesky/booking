@@ -1,5 +1,10 @@
 import Joi from "joi";
+import { paginationKeys } from "../../utils/pagination";
 
+export const listTenantPropertiesQuerySchema = Joi.object({
+  ...paginationKeys(),
+  status: Joi.string().valid("draft", "active", "paused", "archived").optional(),
+});
 export const createPropertySchema = Joi.object({
   name: Joi.string().min(3).max(200).required(),
   description: Joi.string().max(5000).optional(),
