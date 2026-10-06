@@ -211,6 +211,7 @@ export interface CreatePropertyPayload {
   checkOutTime?: string;
   latitude?: number;
   longitude?: number;
+  status?: Extract<PropertyStatus, "draft" | "paused">;
 }
 
 export interface CreateRoomTypePayload {

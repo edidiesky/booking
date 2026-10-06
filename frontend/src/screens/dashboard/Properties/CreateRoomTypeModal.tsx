@@ -41,7 +41,11 @@ const EMPTY: FormState = {
   amenities: [],
   status: "active",
 };
-
+const isRichTextEmpty = (html: string) =>
+  html
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .trim().length === 0;
 interface PendingFile {
   preview: string;
   progress: number;
@@ -51,12 +55,20 @@ interface PendingFile {
 interface ImageSectionProps {
   images: string[];
   onChange: (updater: string[] | ((prev: string[]) => string[])) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 }
-
-function ImageSection({ images, onChange }: ImageSectionProps) {
+function ImageSection({
+  images,
+  onChange,
+  onUploadingChange,
+}: ImageSectionProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [pending, setPending] = useState<PendingFile[]>([]);
+  const isUploading = pending.some((p) => !p.error);
 
+  useEffect(() => {
+    onUploadingChange?.(isUploading);
+  }, [isUploading, onUploadingChange]);
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
     Array.from(files).forEach((file) => {
@@ -225,7 +237,7 @@ export default function CreateRoomTypeModal({
   const isEdit = Boolean(roomTypeId);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [images, setImages] = useState<string[]>([]);
-
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [createRoomType, { isLoading: isCreating }] =
     useCreateRoomTypeMutation();
   const [updateRoomType, { isLoading: isUpdating }] =
@@ -256,22 +268,36 @@ export default function CreateRoomTypeModal({
       setImages(rt.images ?? []);
     }
   }, [isOpen, isEdit, detailData]);
+  const validate = (): string | null => {
+    if (isUploadingImages) return "Please wait for images to finish uploading.";
 
+    if (form.name.trim().length < 2)
+      return "Room name must be at least 2 characters.";
+
+    if (!Number.isFinite(form.basePriceNgn) || form.basePriceNgn <= 0)
+      return "Price per night must be greater than 0.";
+
+    if (!Number.isInteger(form.maxOccupancy) || form.maxOccupancy < 1)
+      return "Max guests must be a whole number of at least 1.";
+
+    if (!Number.isInteger(form.quantity) || form.quantity < 1)
+      return "Quantity must be a whole number of at least 1.";
+
+    if (!form.status) return "Please select a status.";
+
+    if (images.length === 0) return "Add at least one room photo.";
+
+    if (form.amenities.length === 0) return "Select at least one amenity.";
+
+    if (isRichTextEmpty(form.description))
+      return "Please add a room description.";
+
+    return null;
+  };
   const handleSave = async () => {
-    if (!form.name || form.name.length < 2) {
-      showToast("Room name must be at least 2 characters.", "error");
-      return;
-    }
-    if (form.maxOccupancy < 1) {
-      showToast("Max guests must be at least 1.", "error");
-      return;
-    }
-    if (form.quantity < 1) {
-      showToast("Quantity must be at least 1.", "error");
-      return;
-    }
-    if (form.basePriceNgn < 0) {
-      showToast("Price cannot be negative.", "error");
+    const error = validate();
+    if (error) {
+      showToast(error, "error");
       return;
     }
 
@@ -301,6 +327,7 @@ export default function CreateRoomTypeModal({
   };
 
   const isBusy = isCreating || isUpdating;
+  const isDisabled = isBusy || isUploadingImages;
 
   console.log("loadingDetail:", loadingDetail);
 
@@ -314,9 +341,9 @@ export default function CreateRoomTypeModal({
         className="bg-white w-full rounded-2xl overflow-hidden relative flex flex-col lg:w-[560px] h-full"
       >
         {/* header */}
-        <div className="border-b border-[#e8e6e3] flex items-center justify-between px-8 h-[72px] shrink-0">
+        <div className="border-b border-[#e8e6e3] flex items-center justify-between px-8 min-h-[74px] py-2 shrink-0">
           <div>
-            <h4 className="text-xs lg:text-base  text-[#17191c]">
+            <h4 className="text-base  text-[#17191c]">
               {isEdit ? "Edit Room Type" : "Add Room Type"}
             </h4>
             <p className="text-xs lg:text-[13px]     text-[#777b86] mt-0.5">
@@ -415,6 +442,7 @@ export default function CreateRoomTypeModal({
                     typeof updater === "function" ? updater(prev) : updater,
                   )
                 }
+                onUploadingChange={setIsUploadingImages}
               />
 
               <AmenitiesPicker
@@ -445,10 +473,14 @@ export default function CreateRoomTypeModal({
           </button>
           <button
             onClick={handleSave}
-            disabled={isBusy}
-            className="bg-[#17191c] text-white text-xs lg:text-[13px]   rounded-full px-6 h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+            disabled={isDisabled}
+            className="bg-[#17191c] disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs lg:text-[13px]   rounded-full px-6 h-9 flex items-center gap-2 hover:opacity-90  transition-opacity"
           >
-            {isBusy ? "Saving..." : "Save room type"}
+            {isBusy
+              ? "Saving..."
+              : isUploadingImages
+                ? "Uploading images..."
+                : "Save room type"}
           </button>
         </div>
       </motion.div>

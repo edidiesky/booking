@@ -256,13 +256,14 @@ export const propertyRepository = {
       checkOutTime?: string;
       latitude?: number;
       longitude?: number;
+      status?: PropertyStatus;
     },
     client?: PoolClient,
   ): Promise<Property> {
     const sql = `
       INSERT INTO properties
         (tenant_id, name, description, property_type, address, amenities, images, check_in_time, check_out_time, latitude, longitude, status)
-      VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,$11,'active')
+      VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,$11,$12)
       RETURNING *`;
     const params = [
       data.tenantId,
@@ -276,6 +277,7 @@ export const propertyRepository = {
       data.checkOutTime ?? "11:00",
       data.latitude ?? null,
       data.longitude ?? null,
+      data.status ?? "draft",
     ];
     const row = client
       ? ((await client.query(sql, params)).rows[0] as Property)
@@ -306,6 +308,15 @@ export const propertyRepository = {
     );
   },
 
+  async countActiveRoomTypes(propertyId: string): Promise<number> {
+    const row = await queryOne<{ count: number }>(
+      `SELECT COUNT(*)::int AS count FROM room_types
+       WHERE property_id = $1 AND status = 'active'`,
+      [propertyId],
+    );
+    return row?.count ?? 0;
+  },
+
   async updateProperty(
     id: string,
     tenantId: string,
@@ -321,6 +332,7 @@ export const propertyRepository = {
         | "status"
       >
     >,
+    client?: PoolClient,
   ): Promise<Property | null> {
     const fields: string[] = [];
     const values: unknown[] = [];
@@ -334,12 +346,17 @@ export const propertyRepository = {
     if (!fields.length) return null;
     fields.push("updated_at = now()");
     values.push(id, tenantId);
-    return queryOne<Property>(
-      `UPDATE properties SET ${fields.join(", ")}
+    let sql = `UPDATE properties SET ${fields.join(", ")}
+       WHERE id = $${idx} AND tenant_id = $${idx + 1}
+       RETURNING *`;
+    return client
+      ? (await client.query<Property>(sql, values)).rows[0]
+      : await queryOne<Property>(
+          `UPDATE properties SET ${fields.join(", ")}
        WHERE id = $${idx} AND tenant_id = $${idx + 1}
        RETURNING *`,
-      values,
-    );
+          values,
+        );
   },
 
   async deleteProperty(id: string, tenantId: string): Promise<void> {

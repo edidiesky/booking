@@ -27,6 +27,7 @@ const schema = z.object({
   country: z.string().min(1, "Required"),
   checkInTime: z.string().optional(),
   checkOutTime: z.string().optional(),
+  status: z.enum(["draft", "active", "paused"]),
 });
 
 const PROPERTY_TYPE_OPTIONS = [
@@ -35,64 +36,11 @@ const PROPERTY_TYPE_OPTIONS = [
   { label: "Guesthouse", value: "guesthouse" },
 ];
 
-// interface TagInputProps {
-//   label: string;
-//   placeholder: string;
-//   tags: string[];
-//   onChange: (tags: string[]) => void;
-// }
-
-// function TagInput({ label, placeholder, tags, onChange }: TagInputProps) {
-//   const [draft, setDraft] = useState("");
-
-//   const add = () => {
-//     const trimmed = draft.trim();
-//     if (trimmed && !tags.includes(trimmed)) onChange([...tags, trimmed]);
-//     setDraft("");
-//   };
-
-//   const remove = (i: number) => onChange(tags.filter((_, idx) => idx !== i));
-
-//   return (
-//     <div className="flex flex-col gap-2">
-//       <span className="text-xs lg:text-[13px]     text-[#17191c]">{label}</span>
-//       <div className=" py-2 px-2 flex flex-wrap gap-2 min-h-[45px] focus-within:border-[#17191c] transition-colors">
-//         {tags.map((tag, i) => (
-//           <span
-//             key={i}
-//             className="inline-flex items-center gap-1 px-4 rounded-full bold py-1 bg-[#f2f0ed] text-xs lg:text-[13px]     text-[#17191c]"
-//           >
-//             {tag}
-//             <button
-//               type="button"
-//               onClick={() => remove(i)}
-//               aria-label={`Remove ${tag}`}
-//             >
-//               <X size={10} />
-//             </button>
-//           </span>
-//         ))}
-//         <Input
-//           type="text"
-//           value={draft}
-//           onChange={(e) => setDraft(e.target.value)}
-//           onKeyDown={(e) => {
-//             if (e.key === "Enter" || e.key === ",") {
-//               e.preventDefault();
-//               add();
-//             }
-//             if (e.key === "Backspace" && !draft && tags.length > 0)
-//               remove(tags.length - 1);
-//           }}
-//           placeholder={tags.length === 0 ? placeholder : ""}
-//         />
-//       </div>
-//       <p className="text-xs lg:text-[13px]     text-[#a3a6af]">
-//         Press Enter or comma to add
-//       </p>
-//     </div>
-//   );
-// }
+const STATUS_LABELS: Record<"draft" | "active" | "paused", string> = {
+  draft: "Draft, hidden from guests",
+  active: "Active, visible to guests",
+  paused: "Paused, hidden from guests",
+};
 
 type FormData = z.infer<typeof schema>;
 
@@ -136,8 +84,18 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
       country: "Nigeria",
       checkInTime: "14:00",
       checkOutTime: "11:00",
+      status: "draft",
     },
   });
+
+  const existing = propertyData?.data;
+  // The public detail endpoint returns active room types only.
+  const hasActiveRoom = (existing?.roomTypes?.length ?? 0) > 0;
+  const statusOptions = (
+    hasActiveRoom
+      ? (["draft", "active", "paused"] as const)
+      : (["draft", "paused"] as const)
+  ).map((value) => ({ value, label: STATUS_LABELS[value] }));
 
   useEffect(() => {
     const p = propertyData?.data;
@@ -155,6 +113,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
         country: p.address.country,
         checkInTime: p.checkInTime,
         checkOutTime: p.checkOutTime,
+        status: p.status === "archived" ? "draft" : p.status,
       });
     } else if (!propertyId) {
       setAmenities([]);
@@ -165,6 +124,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
         country: "Nigeria",
         checkInTime: "14:00",
         checkOutTime: "11:00",
+        status: "draft",
       });
     }
   }, [propertyData, propertyId, reset]);
@@ -195,8 +155,11 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
               state: data.state,
               country: data.country,
             },
-          latitude: coords.lat,
+            latitude: coords.lat,
             longitude: coords.lng,
+            ...(data.status !== existing?.status
+              ? { status: data.status }
+              : {}),
           },
         }).unwrap();
         showToast("Property updated.", "success");
@@ -216,7 +179,8 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
           checkOutTime: data.checkOutTime,
           latitude: coords.lat,
           longitude: coords.lng,
-        }
+          status: data.status === "paused" ? "paused" : "draft",
+        };
         // console.log("prop:", prop)
         await createProperty(prop).unwrap();
         showToast("Property created.", "success");
@@ -375,7 +339,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                 id="property-form"
               >
                 {/* name + type */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs lg:text-[13px]     text-[#17191c]">
                       Property Name
@@ -391,31 +355,51 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                       </p>
                     )}
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs lg:text-[13px]     text-[#17191c]">
-                      Property Type
-                    </label>
-                    <Controller
-                      name="propertyType"
-                      control={control}
-                      render={({ field }) => (
-                        <ChartSelect
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          options={PROPERTY_TYPE_OPTIONS}
-                          placeholder="Select type"
-                        />
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs lg:text-[13px]     text-[#17191c]">
+                        Property Type
+                      </label>
+                      <Controller
+                        name="propertyType"
+                        control={control}
+                        render={({ field }) => (
+                          <ChartSelect
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            options={PROPERTY_TYPE_OPTIONS}
+                            placeholder="Select type"
+                          />
+                        )}
+                      />
+                      {errors.propertyType && (
+                        <p className="text-xs lg:text-[13px]   text-red-500">
+                          {errors.propertyType.message}
+                        </p>
                       )}
-                    />
-                    {errors.propertyType && (
-                      <p className="text-xs lg:text-[13px]   text-red-500">
-                        {errors.propertyType.message}
-                      </p>
-                    )}
-                  </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs lg:text-[13px] text-[#17191c]">
+                        Status
+                      </label>
+                      <Controller
+                        name="status"
+                        control={control}
+                        render={({ field }) => (
+                          <ChartSelect
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            options={statusOptions}
+                            placeholder="Select status"
+                          />
+                        )}
+                      />
+                      {/* <p className="text-xs text-[#a3a6af]">
+                        {hasActiveRoom
+                          ? "Active properties appear on your storefront and the main website."
+                          : "Add at least one active room type to publish this property. Until then it stays hidden from guests."}
+                      </p> */}
+                    </div>
                 </div>
-
-                {/* description */}
                 {/* description */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs lg:text-[13px] text-[#17191c]">

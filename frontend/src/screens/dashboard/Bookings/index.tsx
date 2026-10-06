@@ -60,7 +60,7 @@ export default function DashboardBookings() {
     isStatsLoading,
     isFetching,
     setPage,
-    meta
+    meta,
   } = useTenantBookings();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
@@ -251,7 +251,7 @@ export default function DashboardBookings() {
                     className="px-5 py-10 text-center text-xs lg:text-[13px]     text-[#a3a6af]"
                   >
                     <EmptyState
-                      title="Bookings"
+                      title="Bookings Empty"
                       description="No recent bookings yet"
                     />
                   </td>
@@ -274,14 +274,13 @@ export default function DashboardBookings() {
             </tbody>
           </table>
         </div>
-      </motion.div>
-      
         <TablePagination
           meta={meta}
           onPageChange={setPage}
           isFetching={isFetching}
           noun={{ singular: "booking", plural: "bookings" }}
         />
+      </motion.div>
     </>
   );
 }

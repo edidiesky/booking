@@ -3,7 +3,9 @@ import { paginationKeys } from "../../utils/pagination";
 
 export const listTenantPropertiesQuerySchema = Joi.object({
   ...paginationKeys(),
-  status: Joi.string().valid("draft", "active", "paused", "archived").optional(),
+  status: Joi.string()
+    .valid("draft", "active", "paused", "archived")
+    .optional(),
 });
 export const createPropertySchema = Joi.object({
   name: Joi.string().min(3).max(200).required(),
@@ -27,19 +29,23 @@ export const createPropertySchema = Joi.object({
   checkOutTime: Joi.string()
     .pattern(/^\d{2}:\d{2}$/)
     .optional(),
-  status: Joi.string().valid("active", "inactive").default("active").optional(),
+  status: Joi.string().valid("draft", "paused").default("draft").messages({
+    "any.only":
+      "A new property starts as a draft. Add a room type, then publish it.",
+  }),
   latitude: Joi.number().min(-90).max(90).optional(),
   longitude: Joi.number().min(-180).max(180).optional(),
 });
 
 export const createRoomTypeSchema = Joi.object({
   name: Joi.string().min(2).max(100).required(),
-  description: Joi.string().max(2000).optional(),
+  description: Joi.string().max(2000).required(),
   maxOccupancy: Joi.number().integer().min(1).required(),
   basePriceNgn: Joi.number().min(0).required(),
-  images: Joi.array().items(Joi.string().uri()).optional(),
-  amenities: Joi.array().items(Joi.string()).optional(),
+  images: Joi.array().items(Joi.string().uri()).required(),
+  amenities: Joi.array().items(Joi.string()).required(),
   quantity: Joi.number().integer().min(1).required(),
+  status: Joi.string().valid("active", "inactive").required(),
 });
 
 export const seedCalendarSchema = Joi.object({

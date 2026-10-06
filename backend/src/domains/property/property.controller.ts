@@ -58,6 +58,7 @@ export const CreatePropertyHandler = asyncHandler(
       checkOutTime?: string;
       latitude: number;
       longitude: number;
+      status?: PropertyStatus;
     };
     const data = await propertyService.createProperty(req.tenantId, {
       ...body,
@@ -79,6 +80,7 @@ export const CreateRoomTypeHandler = asyncHandler(
       images?: string[];
       amenities?: string[];
       quantity: number;
+      status: "active" | "inactive";
     };
     const data = await propertyService.createRoomType(
       req.tenantId,
@@ -142,12 +144,10 @@ export const BlockDatesHandler = asyncHandler(
       endDate,
       block,
     );
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: block ? "Dates blocked." : "Dates unblocked.",
-      });
+    res.status(200).json({
+      success: true,
+      message: block ? "Dates blocked." : "Dates unblocked.",
+    });
   },
 );
 
@@ -176,7 +176,12 @@ export const GetTenantPropertiesHandler = asyncHandler(async (req, res) => {
   const filters = { status };
 
   const [data, total] = await Promise.all([
-    propertyRepository.listPropertiesWithRoomTypes(req.tenantId, page, limit, filters),
+    propertyRepository.listPropertiesWithRoomTypes(
+      req.tenantId,
+      page,
+      limit,
+      filters,
+    ),
     propertyRepository.countForTenant(req.tenantId, filters),
   ]);
 

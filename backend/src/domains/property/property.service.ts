@@ -16,6 +16,9 @@ import { auditRepository } from "../audit/audit.repository";
 import { auditEventRepository } from "../audit/auditEvent.repository";
 const SEED_WINDOW_DAYS = 365;
 
+const PUBLISH_BLOCKED_MESSAGE =
+  "Add at least one active room type before publishing this property.";
+
 export class PropertyService {
   async listPublicProperties(page: number, limit: number) {
     return propertyRepository.listPublicPropertiesWithRoomTypes(page, limit);
@@ -52,8 +55,12 @@ export class PropertyService {
       checkOutTime?: string;
       latitude?: number;
       longitude?: number;
+      status?: PropertyStatus;
     },
   ) {
+    if (body.status === "active") {
+      throw AppError.unprocessable(PUBLISH_BLOCKED_MESSAGE);
+    }
     const { outboxRepository, requestContext } =
       await import("@booking/shared");
 
@@ -143,6 +150,7 @@ export class PropertyService {
       images?: string[];
       amenities?: string[];
       quantity: number;
+      status:"active" | "inactive"
     },
   ) {
     const property = await propertyRepository.findPropertyById(
@@ -173,19 +181,33 @@ export class PropertyService {
         },
         client,
       );
-      await auditEventRepository.record(
+
+      if (property.status === "draft" && body.status === "active") {
+        await propertyRepository.updateProperty(
+          propertyId,
+          tenantId,
           {
-            tenantId,
-            actor: requestContext.get()?.userId ? { type: "user", id: requestContext.get()!.userId! } : { type: "system" },
-            action: "property.room_type_created",
-            targetType: "room_type",
-            targetId: roomType.id,
-            metadata: { propertyId: property.id, name: body.name },
-            outcome: "allowed",
-            requestId: requestContext.get()?.requestId,
+            status: "active",
           },
           client,
         );
+      }
+
+      await auditEventRepository.record(
+        {
+          tenantId,
+          actor: requestContext.get()?.userId
+            ? { type: "user", id: requestContext.get()!.userId! }
+            : { type: "system" },
+          action: "property.room_type_created",
+          targetType: "room_type",
+          targetId: roomType.id,
+          metadata: { propertyId: property.id, name: body.name },
+          outcome: "allowed",
+          requestId: requestContext.get()?.requestId,
+        },
+        client,
+      );
     });
 
     return roomType;
@@ -375,12 +397,22 @@ export class PropertyService {
       tenantId,
     );
     if (!existing) throw AppError.notFound("Property not found.");
+    if (body.status === "active" && existing.status !== "active") {
+      const activeRooms =
+        await propertyRepository.countActiveRoomTypes(propertyId);
+
+      if (activeRooms === 0) {
+        throw AppError.unprocessable(PUBLISH_BLOCKED_MESSAGE);
+      }
+    }
 
     const existingClient = requestContext.get()?.dbClient;
     const actorId = requestContext.get()?.userId;
     const auditPayload = {
       tenantId,
-      actor: actorId ? ({ type: "user" as const, id: actorId }) : ({ type: "system" as const }),
+      actor: actorId
+        ? { type: "user" as const, id: actorId }
+        : { type: "system" as const },
       action: "property.room_type_updated",
       targetType: "room_type",
       targetId: propertyId,
@@ -392,7 +424,9 @@ export class PropertyService {
     if (existingClient) {
       await auditEventRepository.record(auditPayload, existingClient);
     } else {
-      await withTransaction((client) => auditEventRepository.record(auditPayload, client));
+      await withTransaction((client) =>
+        auditEventRepository.record(auditPayload, client),
+      );
     }
 
     const updated = await propertyRepository.updateProperty(

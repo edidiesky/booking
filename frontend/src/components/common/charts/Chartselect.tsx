@@ -29,7 +29,7 @@ export function ChartSelect({ value, onValueChange, options, placeholder }: Char
       value={toInternal(value)}
       onValueChange={(v) => onValueChange(toExternal(v))}
     >
-      <SelectTrigger className="p-1 rounded h-auto cursor-pointer border shadow-custom-light bg-white flex items-center justify-center w-[140px]">
+      <SelectTrigger className="p-1 rounded h-[40px] cursor-pointer border shadow-custom-light bg-white flex items-center justify-start px-4 min-w-[140px]">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className="bg-white border border-gray-200 rounded-xl shadow-sm">
