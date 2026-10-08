@@ -1,11 +1,13 @@
 import "dotenv/config";
 import { connectDB, connectRabbitMQ, getRabbitMQConnection, logger } from "@booking/shared";
 import { startCsvRoomImportWorker } from "./workers/csvRoomImportWorker";
+import { startPropertyImportWorker } from "./property-import/propertyImportWorker";
 
 async function main(): Promise<void> {
   await connectDB();
   await connectRabbitMQ();
   await startCsvRoomImportWorker(getRabbitMQConnection());
+  await startPropertyImportWorker(getRabbitMQConnection());
   logger.info("csv_room_import_worker_process_started", { event: "csv_room_import_worker_process_started" });
 }
 
