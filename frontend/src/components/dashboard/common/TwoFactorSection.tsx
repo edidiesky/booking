@@ -201,7 +201,7 @@ export default function TwoFactorSection({ enabled, onChanged }: Props) {
             Each code works once if you lose your authenticator.
           </p>
           <ul
-            className="grid grid-cols-2 gap-1 text-xs font-mono"
+            className="grid grid-cols-2 gap-1 text-xs "
             style={{ color: "#17191c" }}
           >
             {backupCodes.map((c) => (
