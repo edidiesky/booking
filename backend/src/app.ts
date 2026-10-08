@@ -46,6 +46,7 @@ import messageRoutes from "./domains/message/message.routes";
 import { createFeatureFlagRouter } from "./domains/feature-flags/feature-flags.routes";
 import { FeatureFlagRepository } from "./domains/feature-flags/featureFlag.repository";
 import { getFeatureFlagEngine } from "./domains/feature-flags/FeatureFlagEngine";
+import propertyImportRoutes from "./domains/property-import/propertyImport.routes";
 // import discoveryRoutes from "./domains/property-search/discovery.routes";
 const app = express();
 
@@ -118,6 +119,7 @@ app.use("/api/v1/renters", tenantMiddleware, rlsMiddleware, renterRoutes);
 app.use("/api/v1/sse", tenantMiddleware, rlsMiddleware, sseRouter);
 app.use("/api/v1/tenants", tenantMiddleware, rlsMiddleware, tenantRoutes);
 app.use("/api/v1/properties", tenantMiddleware, rlsMiddleware, propertyRoutes);
+app.use("/api/v1/property-imports", propertyImportRoutes);
 app.use("/api/v1/properties-search", propertySearchRoutes);
 // app.use("/api/v1/properties-discovery", discoveryRoutes);
 app.use("/api/v1/bookings", tenantMiddleware, rlsMiddleware, bookingRoutes);
