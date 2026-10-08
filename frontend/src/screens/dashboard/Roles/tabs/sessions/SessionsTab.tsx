@@ -240,7 +240,7 @@ export default function SessionsTab() {
                     <td className="px-4 py-3 text-xs lg:text-[13px] whitespace-nowrap">
                       {describeLocation(s)}
                     </td>
-                    <td className="px-4 py-3 text-xs lg:text-[13px] whitespace-nowrap font-mono">
+                    <td className="px-4 py-3 text-xs lg:text-[13px] whitespace-nowrap ">
                       {describeIp(s.ipAddress)}
                     </td>
                     <td className="px-4 py-3 text-xs lg:text-[13px] whitespace-nowrap">
