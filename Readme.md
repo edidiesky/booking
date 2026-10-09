@@ -48,6 +48,24 @@ Access is not “JWT until expiry only.” Login creates a durable session (devi
 
 Money movement is recorded as real debit/credit entries (payment received, escrow hold/release, refund, chargeback paths), not only a status flag on a payment row. Balances and clawback/refund decisions can be reasoned about from the ledger, scoped correctly (e.g. per booking, not an unrelated aggregate).
 
+
+### 7. Observability you can operate
+
+The system is instrumented to answer “is it broken?” and “where?” without SSHing into a box first.
+
+- **Metrics (Prometheus):** HTTP RED, domain ops (`measureAuthOp`, `measureBookingOp`, `measurePaymentOp`, …), DB query timing, cache hit/miss, worker job success/duration. Low-cardinality labels only (operation, status, route — not user or booking IDs).
+- **Workers expose `/metrics`** on their own ports so background reclaim, import, and outbox work is visible, not only the API.
+- **Grafana:** overview (RED), critical domains, workers, database pool/query latency, and deeper KPI boards (confirm success rate, auth funnel, payment path).
+- **Telegram alerts:** health down, elevated 5xx, auth/payment error rates, worker job failures, DB pool saturation — to a phone, not only a dashboard tab.
+- **k6 SLIs:** critical paths (health, authenticated reads, booking list) and hot paths (public search/list), with thresholds that match the same availability and latency budgets the alerts use.
+
+If it cannot be measured or paged, it is not fully “in production” for this codebase.
+
+### 8. Tests as a product constraint
+
+Unit tests target repositories and services (infra mocked). Integration tests spin real Postgres via Testcontainers, apply the real migration set, and exercise HTTP routing end to end. The intent is to lock the money path, session revoke, and outbox seams — not only utility helpers. Coverage is still partial; suites do not yet run as `booking_app`, so RLS is not asserted in CI. That gap is tracked, not ignored.
+
+
 ---
 
 ## What sits on top of that spine
@@ -118,3 +136,4 @@ Integration uses Testcontainers Postgres and real migrations. Suites do not yet 
 - RLS enforced on every production connection
 - Perfect once-only delivery without consumer idempotency
 - Complete automated coverage of every domain
+- Alerting with zero false positives  
