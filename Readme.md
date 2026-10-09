@@ -16,6 +16,7 @@ Taking short-stay bookings online is messy: rooms get double-booked, payments ar
 3. Host path: onboarding → properties → bookings and payouts in the dashboard.
 
 Local: API `4000` · gateway `8080` · frontend `5173`.
+![Dashboard diagram](./_docs/dashboard.png)
 
 ---
 
@@ -58,7 +59,7 @@ Availability calendars and locks, escrow release to hosts, RBAC, subdomain store
 ---
 
 ## Shape of the system
-![Architecture diagram](./docs/architecture1.png)
+![Architecture diagram](./_docs/architecture1.png)
 
 | Process              | Role                                                                                                                            |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
