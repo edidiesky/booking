@@ -34,7 +34,7 @@ Domain commits and “tell the rest of the system” are not two independent hop
 ### 3. Tenant-aware rate limiting
 
 Abuse is not only global. Limits are matched by identity (user vs IP), route, and tenant/user type at the gateway, with Redis-backed limiters and fail-closed behavior on sensitive auth routes when Redis is down. One noisy tenant or scraper should not define the experience for everyone.
-
+    
 ### 4. Reclaim / recovery workflows
 
 Holds expire, unpaid `pending_payment` bookings time out, availability locks are swept, and reconciliation passes close gaps the happy path missed. The system assumes partial failure: reclaim is a first-class workflow, not a manual SQL cleanup.
@@ -58,21 +58,13 @@ Availability calendars and locks, escrow release to hosts, RBAC, subdomain store
 ---
 
 ## Shape of the system
+![Architecture diagram](./docs/architecture1.png)
 
-```text
-Client → gateway (tenant-aware rate limit, Host → tenant) → backend API
-                                                            ↘ in-process workers
-                                                              (outbox, reclaim, import, notify, …)
-Backend → PgBouncer → Postgres (sessions, ledger, outbox, bookings, …)
-        → Redis (rate limits, session version, locks)
-        → RabbitMQ
-```
-
-| Process | Role |
-|---------|------|
-| **backend** `:4000` | API + in-process workers (availability sweep, booking expiry/reclaim, import, notifications, campaigns, audit/outbox consumers) |
-| **gateway** `:8080` | Rate limiting, subdomain → tenant |
-| **frontend** `:5173` | Guest marketplace + host dashboard |
+| Process              | Role                                                                                                                            |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **backend** `:4000`  | API + in-process workers (availability sweep, booking expiry/reclaim, import, notifications, campaigns, audit/outbox consumers) |
+| **gateway** `:8080`  | Rate limiting, subdomain → tenant                                                                                               |
+| **frontend** `:5173` | Guest marketplace + host dashboard                                                                                              |
 
 Workers are **in-process** for Railway cost limits; separate-container layout remains on `archive/separate-worker-containers`. Search runs in Postgres (`tsvector`, `pg_trgm`, `earthdistance`) after dropping Elasticsearch.
 
@@ -80,14 +72,14 @@ Workers are **in-process** for Railway cost limits; separate-container layout re
 
 ## Tradeoffs
 
-| Choice | Why | Cost |
-|--------|-----|------|
-| Outbox over sync dual-write | Crash-safe side effects | Poller lag; at-least-once consumers must be idempotent |
-| Session version in Redis + row in Postgres | Fast revoke + queryable device list | Two stores to keep coherent on revoke |
-| Tenant/route rate limits at gateway | Fairness and auth abuse control | Redis dependency; fail-closed on auth when Redis is down |
-| Ledger + escrow statuses | Auditable money | More write path complexity than a single status enum |
-| In-process workers | One deploy unit on a budget | Shared blast radius with API |
-| Boot idempotent SQL migrations | Fast solo iteration | No version table / downs yet |
+| Choice                                     | Why                                 | Cost                                                     |
+| ------------------------------------------ | ----------------------------------- | -------------------------------------------------------- |
+| Outbox over sync dual-write                | Crash-safe side effects             | Poller lag; at-least-once consumers must be idempotent   |
+| Session version in Redis + row in Postgres | Fast revoke + queryable device list | Two stores to keep coherent on revoke                    |
+| Tenant/route rate limits at gateway        | Fairness and auth abuse control     | Redis dependency; fail-closed on auth when Redis is down |
+| Ledger + escrow statuses                   | Auditable money                     | More write path complexity than a single status enum     |
+| In-process workers                         | One deploy unit on a budget         | Shared blast radius with API                             |
+| Boot idempotent SQL migrations             | Fast solo iteration                 | No version table / downs yet                             |
 
 ---
 
@@ -111,17 +103,17 @@ Integration uses Testcontainers Postgres and real migrations. Suites do not yet 
 
 ## Docs
 
-| | |
-|--|--|
-| API contracts | `docs/api-contracts/` |
-| ADRs | `docs/ADR-*.md` |
-| Runbooks | `docs/runbooks/` |
-| Workers | `packages/*/README.md` |
+|               |                        |
+| ------------- | ---------------------- |
+| API contracts | `docs/api-contracts/`  |
+| ADRs          | `docs/ADR-*.md`        |
+| Runbooks      | `docs/runbooks/`       |
+| Workers       | `packages/*/README.md` |
 
 ---
 
 ## Not claimed
 
-- RLS enforced on every production connection  
+- RLS enforced on every production connection
 - Perfect once-only delivery without consumer idempotency
-- Complete automated coverage of every domain  
+- Complete automated coverage of every domain
