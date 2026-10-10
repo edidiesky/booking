@@ -9,7 +9,7 @@ services:
     networks:
       - app-tier
     environment:
-      DATA_SOURCE_NAME: "postgresql://pganalyze:RpFkJ3ftppvXNkdy@postgres:5432/booking_platform?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://pganalyze:${PGANALYZE_PASSWORD}@postgres:5432/booking_platform?sslmode=disable"
       PG_EXPORTER_EXTEND_QUERY_PATH: /etc/postgres_exporter/queries.yaml
     volumes:
       - ./postgres-exporter/queries.yaml:/etc/postgres_exporter/queries.yaml:ro
@@ -30,32 +30,33 @@ services:
       PGBOUNCER_HOST: pgbouncer
       PGBOUNCER_PORT: 6432
       PGBOUNCER_USER: postgres
-      PGBOUNCER_PASSWORD: ${POSTGRES_PASSWORD}
+      PGBOUNCER_PASS: ${POSTGRES_PASSWORD}
+      PGBOUNCER_EXPORTER_HOST: 0.0.0.0
     ports:
       - "127.0.0.1:9127:9127"
     depends_on:
       - pgbouncer
     restart: unless-stopped
 
-  #  PGAnalyze collector 
-  # Sidecar that ships pg_stat_statements, locks, vacuum stats to PGAnalyze cloud
-  # Replace PGA_API_KEY with your key from app.pganalyze.com
-  pganalyze-collector:
-    image: quay.io/pganalyze/collector:stable
-    container_name: pganalyze-collector
-    networks:
-      - app-tier
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: booking_platform
-      DB_USERNAME: pganalyze
-      DB_PASSWORD: RpFkJ3ftppvXNkdy
-      PGA_API_KEY: ${PGA_API_KEY}
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
+  # #  PGAnalyze collector 
+  # # Sidecar that ships pg_stat_statements, locks, vacuum stats to PGAnalyze cloud
+  # # Replace PGA_API_KEY with your key from app.pganalyze.com
+  # pganalyze-collector:
+  #   image: quay.io/pganalyze/collector:stable
+  #   container_name: pganalyze-collector
+  #   networks:
+  #     - app-tier
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_NAME: booking_platform
+  #     DB_USERNAME: pganalyze
+  #     DB_PASSWORD: RpFkJ3ftppvXNkdy
+  #     PGA_API_KEY: ${PGA_API_KEY}
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   restart: unless-stopped
 
   #  Prometheus 
   prometheus:
@@ -120,8 +121,12 @@ services:
         mkdir -p /etc/grafana/provisioning/datasources
         cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
         apiVersion: 1
+        deleteDatasources:
+        - name: Prometheus
+          orgId: 1
         datasources:
         - name: Prometheus
+          uid: prometheus
           type: prometheus
           access: proxy
           orgId: 1
@@ -145,6 +150,7 @@ services:
     volumes:
       - ./grafana.ini:/etc/grafana/grafana.ini:ro
       - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/alerting:/etc/grafana/provisioning/alerting:ro
     networks:
       - app-tier
     depends_on:
