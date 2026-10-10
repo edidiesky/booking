@@ -5,7 +5,8 @@ Taking short-stay bookings online is messy: rooms get double-booked, payments ar
 **Bukking** is a multi-tenant booking marketplace for shortlets, hotels, and guesthouses.
 
 **Live:** [https://bukkings.space](https://bukkings.space)  
-**Stack:** Node.js, TypeScript, PostgreSQL, Redis, RabbitMQ, Docker Compose
+**Stack:** Node.js, TypeScript, PostgreSQL, Redis, RabbitMQ, Docker Compose, Terraform, Kubernetes, Helm, Github Actions, Grafana, Prometheus
+Loki, Promtail
 
 ---
 
@@ -13,10 +14,12 @@ Taking short-stay bookings online is messy: rooms get double-booked, payments ar
 
 1. Open the [live demo](https://bukkings.space).
 2. Browse as a guest, or create a host account (email OTP).
-3. Host path: onboarding → properties → bookings and payouts in the dashboard.
+3. Host path: onboarding > properties > bookings and payouts in the dashboard.
 
 Local: API `4000` · gateway `8080` · frontend `5173`.
+
 ![Architecture diagram](./_docs/architecture.png)
+![Outbox Worker diagram](./_docs/Outbox%20Worker.png)
 
 ---
 
@@ -38,7 +41,7 @@ Abuse is not only global. Limits are matched by identity (user vs IP), route, an
     
 ### 4. Reclaim / recovery workflows
 
-Holds expire, unpaid `pending_payment` bookings time out, availability locks are swept, and reconciliation passes close gaps the happy path missed. The system assumes partial failure: reclaim is a first-class workflow, not a manual SQL cleanup.
+Holds expire, unpaid `pending_payment` bookings time out, availability locks are swept, and reconciliation passes close gaps the happy path missed. The system assumes partial failure: reclaim is a the solution I built around failures.
 
 ### 5. Session-based auth (revocable)
 
@@ -50,7 +53,7 @@ Money movement is recorded as real debit/credit entries (payment received, escro
 
 ---
 
-## What sits on top of that spine
+## What sits on top of the above features
 
 Availability calendars and locks, escrow release to hosts, RBAC, subdomain storefronts (`sellername.bukkings.space`), CSV import, host notifications, and audit trails all depend on the six problems above. Custom apex domains are designed (Caddy + TLS); not live on the current host edge.
 
@@ -64,7 +67,7 @@ Availability calendars and locks, escrow release to hosts, RBAC, subdomain store
 | Process              | Role                                                                                                                            |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | **backend** `:4000`  | API + in-process workers (availability sweep, booking expiry/reclaim, import, notifications, campaigns, audit/outbox consumers) |
-| **gateway** `:8080`  | Rate limiting, subdomain → tenant                                                                                               |
+| **gateway** `:8080`  | Rate limiting, subdomain > tenant                                                                                               |
 | **frontend** `:5173` | Guest marketplace + host dashboard                                                                                              |
 
 Workers are **in-process** for Railway cost limits; separate-container layout remains on `archive/separate-worker-containers`. Search runs in Postgres (`tsvector`, `pg_trgm`, `earthdistance`) after dropping Elasticsearch.
