@@ -1,3 +1,5 @@
+import { measurePaymentOp } from "../../utils/metrics";
+import { instrumentService } from "../../utils/instrumentService";
 import { paymentRepository } from "./payment.repository";
 import { Booking, bookingRepository } from "../booking/booking.repository";
 import { paymentStrategies } from "../../strategies";
@@ -212,7 +214,7 @@ async function runPaymentInitLogic(
   });
 }
 
-export const paymentService = {
+export const paymentServiceImpl = {
   async initializePayment(
     input: InitializePaymentInput,
   ): Promise<InitializePaymentResult> {
@@ -600,3 +602,17 @@ export const paymentService = {
     }
   },
 };
+
+
+
+
+export const paymentService = instrumentService(
+  paymentServiceImpl,
+  measurePaymentOp,
+  {
+    initializePayment: "initialize",
+    processWebhookSuccess: "webhook_success",
+    processWebhookFailure: "webhook_failure",
+    verifyPayment: "verify",
+  },
+);

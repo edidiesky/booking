@@ -1,3 +1,5 @@
+import { measureBookingOp } from "../../utils/metrics";
+import { instrumentService } from "../../utils/instrumentService";
 import { v4 as uuid } from "uuid";
 import {
   availabilityBroadcaster,
@@ -1006,6 +1008,18 @@ export class BookingService {
   }
 }
 
-
-
-export const bookingService = new BookingService();
+export const bookingService = instrumentService(
+  new BookingService(),
+  measureBookingOp,
+  {
+    initiateBooking: "initiate",
+    confirmBookingByPayment: "confirm",
+    cancelBooking: "cancel",
+    checkIn: "check_in",
+    checkOut: "check_out",
+    getTenantBookings: "list_tenant",
+    getGuestBookings: "list_guest",
+    getBookingById: "get_by_id",
+    transitionStatus: "transition",
+  },
+);

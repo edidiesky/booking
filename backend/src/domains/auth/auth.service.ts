@@ -28,6 +28,8 @@ import { tenantService } from "../tenant/tenant.service";
 import { sessionVersionRepository } from "./sessionVersion.repository";
 import { sessionRepository } from "../session/session.repository";
 import { idleTrackingRepository } from "./idleTracking.repository";
+import { instrumentService } from "../../utils/instrumentService";
+import { measureAuthOp } from "../../utils/metrics";
 
 const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -302,11 +304,14 @@ export class AuthService {
       "guest",
       `${input.firstName} ${input.lastName}`,
       undefined,
-      device
+      device,
     );
   }
 
-  async registerHost(input: RegisterHostInput, device?: SessionDeviceMeta): Promise<AuthTokens> {
+  async registerHost(
+    input: RegisterHostInput,
+    device?: SessionDeviceMeta,
+  ): Promise<AuthTokens> {
     const email = input.email.toLowerCase().trim();
     const raw = await redisClient.get(onboardingKey(email));
 
@@ -445,7 +450,7 @@ export class AuthService {
       "host:admin",
       `${input.firstName} ${input.lastName}`,
       tenantId,
-      device
+      device,
     );
   }
 
@@ -1361,4 +1366,20 @@ export class AuthService {
   }
 }
 
-export const authService = new AuthService();
+export const authService = instrumentService(new AuthService(), measureAuthOp, {
+  initiateOnboarding: "initiate_onboarding",
+  confirmEmail: "confirm_email",
+  registerGuest: "register_guest",
+  registerHost: "register_host",
+  refreshToken: "refresh_token",
+  logout: "logout",
+  resendOtp: "resend_otp",
+  changePassword: "change_password",
+  requestPasswordReset: "request_password_reset",
+  confirmPasswordReset: "confirm_password_reset",
+  login: "login",
+  verifyLoginEmailOtp: "verify_email_otp",
+  verifyTwoFactorLogin: "verify_totp",
+  loginWithGoogle: "login_google",
+  disableTwoFactor: "disable_2fa",
+}); 

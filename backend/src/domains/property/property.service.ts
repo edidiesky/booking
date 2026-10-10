@@ -1,3 +1,5 @@
+import { measurePropertyOp } from "../../utils/metrics";
+import { instrumentService } from "../../utils/instrumentService";
 import {
   propertyRepository,
   PropertySearchFilters,
@@ -461,4 +463,22 @@ export class PropertyService {
     return updated;
   }
 }
-export const propertyService = new PropertyService();
+
+
+export const propertyService = instrumentService(
+  new PropertyService(),
+  measurePropertyOp,
+  {
+    createProperty: "create",
+    createRoomType: "create_room_type",
+    updateProperty: "update",
+    updateRoomType: "update_room_type",
+    listTenantProperties: "list_tenant",
+    listPublicProperties: "list_public",
+    searchProperties: "search",
+    getPropertyById: "get_by_id",
+    getAvailability: "get_availability",
+    seedCalendar: "seed_calendar",
+    setDateBlock: "set_date_block",
+  },
+);
