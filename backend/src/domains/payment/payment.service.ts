@@ -28,7 +28,6 @@ import {
 import { requestCoalescer } from "../../utils/requestCoalescer";
 import { auditEventRepository } from "../audit/auditEvent.repository";
 
-
 export interface InitializePaymentInput {
   bookingId: string;
   guestUserId: string;
@@ -131,7 +130,7 @@ async function runPaymentInitLogic(
             targetId: paymentRowId,
             outcome: "denied",
             denialReason: "gateway_call_failed",
-            metadata: { gateway},
+            metadata: { gateway },
             requestId: requestContext.get()?.requestId,
           },
           client,
@@ -174,7 +173,11 @@ async function runPaymentInitLogic(
           targetType: "payment",
           targetId: paymentRowId,
           outcome: "allowed",
-          metadata: { gateway, transactionId, amountNgn: Number(booking.total_amount_ngn) },
+          metadata: {
+            gateway,
+            transactionId,
+            amountNgn: Number(booking.total_amount_ngn),
+          },
           requestId: requestContext.get()?.requestId,
         },
         client,
@@ -283,7 +286,11 @@ export const paymentServiceImpl = {
       }
       return result;
     } catch (err) {
-      await idempotencyRepository.markFailed(claim.row.id, claim.ownerToken, (err as Error).message);
+      await idempotencyRepository.markFailed(
+        claim.row.id,
+        claim.ownerToken,
+        (err as Error).message,
+      );
       throw err;
     }
   },
@@ -345,8 +352,10 @@ export const paymentServiceImpl = {
           outcome: "denied",
           denialReason: "amount_mismatch",
           metadata: {
-            gateway: data.gateway, transactionId: data.transactionId,
-            receivedAmount: data.amount, expectedAmount: Number(payment.amount_ngn),
+            gateway: data.gateway,
+            transactionId: data.transactionId,
+            receivedAmount: data.amount,
+            expectedAmount: Number(payment.amount_ngn),
           },
           requestId: requestContext.get()?.requestId,
         },
@@ -370,7 +379,7 @@ export const paymentServiceImpl = {
               guestName:
                 [guest.first_name, guest.last_name].filter(Boolean).join(" ") ||
                 "Guest",
-              bookingRef: payment.booking_id, // best effort - swap for real ref if available
+              bookingRef: payment.booking_id,
               amountNgn: Number(payment.amount_ngn),
               gateway: data.gateway,
               transactionId: data.transactionId,
@@ -419,7 +428,11 @@ export const paymentServiceImpl = {
         targetId: payment.id,
         affectedUserId: payment.guest_user_id,
         outcome: "allowed",
-        metadata: { gateway: data.gateway, transactionId: data.transactionId, amountNgn: Number(payment.amount_ngn) },
+        metadata: {
+          gateway: data.gateway,
+          transactionId: data.transactionId,
+          amountNgn: Number(payment.amount_ngn),
+        },
         requestId: requestContext.get()?.requestId,
       },
       client,
@@ -522,7 +535,6 @@ export const paymentServiceImpl = {
       client,
     );
 
-
     await auditEventRepository.record(
       {
         tenantId: payment.tenant_id,
@@ -532,13 +544,15 @@ export const paymentServiceImpl = {
         targetId: payment.id,
         affectedUserId: payment.guest_user_id,
         outcome: "denied",
-        denialReason: (data.metadata["gateway_response"] as string) ?? "gateway_reported_failure",
+        denialReason:
+          (data.metadata["gateway_response"] as string) ??
+          "gateway_reported_failure",
         metadata: { gateway: data.gateway, transactionId: data.transactionId },
         requestId: requestContext.get()?.requestId,
       },
       client,
     );
-    
+
     webhookProcessedCounter.inc({ gateway: data.gateway, status: "failed" });
 
     // Notify guest of failed payment
@@ -602,9 +616,6 @@ export const paymentServiceImpl = {
     }
   },
 };
-
-
-
 
 export const paymentService = instrumentService(
   paymentServiceImpl,

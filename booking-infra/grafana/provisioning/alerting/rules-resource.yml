@@ -1,0 +1,178 @@
+apiVersion: 1
+groups:
+- orgId: 1
+  name: resource
+  folder: booking
+  interval: 1m
+  rules:
+
+  #  CPU 
+  - uid: res-cpu-warn
+    title: High CPU warning
+    condition: C
+    data:
+    - refId: A
+      relativeTimeRange: { from: 600, to: 0 }
+      datasourceUid: prometheus
+      model:
+        expr: 100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+        instant: true
+        refId: A
+    - refId: B
+      datasourceUid: __expr__
+      model: { type: reduce, expression: A, reducer: last, refId: B }
+    - refId: C
+      datasourceUid: __expr__
+      model:
+        type: threshold
+        expression: B
+        refId: C
+        conditions:
+        - evaluator: { type: gt, params: [70] }
+    for: 5m
+    labels: { severity: warning, tier: resource }
+    annotations:
+      summary: CPU above 70%
+      description: Host CPU has been > 70% for 5 minutes.
+
+  - uid: res-cpu-crit
+    title: High CPU critical
+    condition: C
+    data:
+    - refId: A
+      relativeTimeRange: { from: 600, to: 0 }
+      datasourceUid: prometheus
+      model:
+        expr: 100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+        instant: true
+        refId: A
+    - refId: B
+      datasourceUid: __expr__
+      model: { type: reduce, expression: A, reducer: last, refId: B }
+    - refId: C
+      datasourceUid: __expr__
+      model:
+        type: threshold
+        expression: B
+        refId: C
+        conditions:
+        - evaluator: { type: gt, params: [90] }
+    for: 2m
+    labels: { severity: critical, tier: resource }
+    annotations:
+      summary: CPU above 90%
+      description: Host CPU has been > 90% for 2 minutes.
+
+  #  Memory 
+  - uid: res-mem-warn
+    title: High Memory warning
+    condition: C
+    data:
+    - refId: A
+      relativeTimeRange: { from: 600, to: 0 }
+      datasourceUid: prometheus
+      model:
+        expr: 100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))
+        instant: true
+        refId: A
+    - refId: B
+      datasourceUid: __expr__
+      model: { type: reduce, expression: A, reducer: last, refId: B }
+    - refId: C
+      datasourceUid: __expr__
+      model:
+        type: threshold
+        expression: B
+        refId: C
+        conditions:
+        - evaluator: { type: gt, params: [75] }
+    for: 5m
+    labels: { severity: warning, tier: resource }
+    annotations:
+      summary: Memory above 75%
+      description: Host memory has been > 75% for 5 minutes.
+
+  - uid: res-mem-crit
+    title: High Memory critical
+    condition: C
+    data:
+    - refId: A
+      relativeTimeRange: { from: 600, to: 0 }
+      datasourceUid: prometheus
+      model:
+        expr: 100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))
+        instant: true
+        refId: A
+    - refId: B
+      datasourceUid: __expr__
+      model: { type: reduce, expression: A, reducer: last, refId: B }
+    - refId: C
+      datasourceUid: __expr__
+      model:
+        type: threshold
+        expression: B
+        refId: C
+        conditions:
+        - evaluator: { type: gt, params: [90] }
+    for: 2m
+    labels: { severity: critical, tier: resource }
+    annotations:
+      summary: Memory above 90%
+      description: Host memory has been > 90% for 2 minutes.
+
+  #  Disk 
+  - uid: res-disk-warn
+    title: Disk usage warning
+    condition: C
+    data:
+    - refId: A
+      relativeTimeRange: { from: 600, to: 0 }
+      datasourceUid: prometheus
+      model:
+        expr: 100 * (1 - (max(node_filesystem_avail_bytes{fstype=~"ext4|9p"}) / max(node_filesystem_size_bytes{fstype=~"ext4|9p"})))
+        instant: true
+        refId: A
+    - refId: B
+      datasourceUid: __expr__
+      model: { type: reduce, expression: A, reducer: last, refId: B }
+    - refId: C
+      datasourceUid: __expr__
+      model:
+        type: threshold
+        expression: B
+        refId: C
+        conditions:
+        - evaluator: { type: gt, params: [80] }
+    for: 5m
+    labels: { severity: warning, tier: resource }
+    annotations:
+      summary: Disk above 80%
+      description: Root filesystem has been > 80% full for 5 minutes.
+
+  - uid: res-disk-crit
+    title: Disk usage critical
+    condition: C
+    data:
+    - refId: A
+      relativeTimeRange: { from: 600, to: 0 }
+      datasourceUid: prometheus
+      model:
+        expr: 100 * (1 - (max(node_filesystem_avail_bytes{fstype=~"ext4|9p"}) / max(node_filesystem_size_bytes{fstype=~"ext4|9p"})))
+        instant: true
+        refId: A
+    - refId: B
+      datasourceUid: __expr__
+      model: { type: reduce, expression: A, reducer: last, refId: B }
+    - refId: C
+      datasourceUid: __expr__
+      model:
+        type: threshold
+        expression: B
+        refId: C
+        conditions:
+        - evaluator: { type: gt, params: [90] }
+    for: 2m
+    labels: { severity: critical, tier: resource }
+    annotations:
+      summary: Disk above 90%
+      description: Root filesystem has been > 90% full for 2 minutes.

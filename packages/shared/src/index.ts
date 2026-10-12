@@ -75,3 +75,6 @@ export type {
   CreateRuleInput,
   UpdateRuleInput,
 } from "./domains/rate-limit/types";
+
+
+export type { RequestContext } from "./context/requestContext";

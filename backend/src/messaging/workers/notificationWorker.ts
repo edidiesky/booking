@@ -125,7 +125,7 @@ export async function startNotificationWorker(): Promise<void> {
           (data as Record<string, string>)["notificationId"] ?? randomUUID();
 
         requestContext.run(
-          { requestId: notificationId, eventType: routingKey },
+          { requestId: notificationId, eventType: routingKey, dbRole: "worker" },
           async () => {
             const handler = HANDLER_MAP[routingKey];
 

@@ -4,7 +4,9 @@ import "dotenv/config";
 import { Pool } from "pg";
 import logger from "../utils/logger";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: process.env.MIGRATION_DATABASE_URL ?? process.env.DATABASE_URL,
+});
 
 const MIGRATIONS_ADVISORY_LOCK_KEY = 8934221;
 

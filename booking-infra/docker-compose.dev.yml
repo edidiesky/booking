@@ -47,17 +47,33 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
+  db-roles:
+    image: postgres:16-alpine
+    networks: [app-tier]
+    env_file: [./.env.production]
+    volumes:
+      - ./postgres/bootstrap-roles.sh:/bootstrap-roles.sh:ro
+    entrypoint: ["/bin/sh", "/bootstrap-roles.sh"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
 
   pgbouncer:
     image: edoburu/pgbouncer:latest
     container_name: pgbouncer
+    env_file:
+      - ./.env.production
     networks:
       - app-tier
     volumes:
       - ./pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
-      - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        printf '"pgbouncer" "%s"\n' "$$PGBOUNCER_AUTH_PASSWORD" > /tmp/userlist.txt
+        exec pgbouncer /etc/pgbouncer/pgbouncer.ini
     ports:
-      - "6432:6432"
+      - "127.0.0.1:6432:6432"
     healthcheck:
       test: ["CMD-SHELL", "nc -z 127.0.0.1 6432 || exit 1"]
       interval: 10s
@@ -67,6 +83,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      db-roles:
+        condition: service_completed_successfully
             
   postgres:
     image: postgres:16-alpine
@@ -184,6 +202,11 @@ services:
     container_name: booking
     env_file:
       - ./.env.production
+    environment:
+      DATABASE_URL:           postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
+      WORKER_DATABASE_URL:    postgres://booking_worker:${WORKER_DB_PASSWORD}@pgbouncer:6432/booking_platform
+      MIGRATION_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
+      ADMIN_DATABASE_URL:     postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
     networks:
       - app-tier
     depends_on:
@@ -197,12 +220,27 @@ services:
         condition: service_healthy
       pgbouncer:   
         condition: service_healthy
+      db-roles: 
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
       interval: 1m30s
       timeout: 10s
       retries: 5
       start_period: 60s
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: node-exporter
+    networks:
+      - app-tier
+    command:
+      - "--path.rootfs=/host"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    volumes:
+      - /:/host:ro
+    ports:
+      - "127.0.0.1:9100:9100"
+    restart: unless-stopped
 
 volumes:
   redis-data:

@@ -51,7 +51,7 @@ export async function runConsumerLoop(
           return;
         }
 
-        await requestContext.run({ requestId, eventType: msg.fields.routingKey }, async () => {
+        await requestContext.run({ requestId, eventType: msg.fields.routingKey, dbRole: "worker"  }, async () => {
           try {
             await handler(data, channel, msg);
           } catch (err) {
