@@ -1,7 +1,14 @@
 {
   "name": "booking-platform",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/shared",
+    "booking-service",
+    "payment-service",
+    "ledger-service",
+    "orchestration-service",
+    "notification-worker"
+  ],
   "overrides": {
     "brace-expansion": "^2.1.2"
   },

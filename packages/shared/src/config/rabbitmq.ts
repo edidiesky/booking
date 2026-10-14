@@ -11,6 +11,7 @@ export const EXCHANGES = {
   BOOKING:      "booking.events",
   PAYMENT:      "payment.events",
   NOTIFICATION: "notification.events",
+  BOOKING_EVENTS: "booking.events",
 } as const;
 
 export const ROUTING_KEYS = {

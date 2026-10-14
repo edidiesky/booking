@@ -1,0 +1,266 @@
+# P0: bootable stack — schemas mounted, citus scripts reachable, app services buildable.
+# From repo root (service-decomposition/):
+#   cp docker/.env.example docker/.env
+#   docker compose --env-file docker/.env -f docker/docker-compose.services.yml up -d --build
+
+networks:
+  ledger-net:
+    driver: bridge
+
+volumes:
+  rabbitmq-data:
+  ledger-coordinator-data:
+  ledger-worker1-data:
+  ledger-worker2-data:
+  booking-db-data:
+  payment-db-data:
+  orchestration-db-data:
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: rabbitmq_decomposition
+    networks: [ledger-net]
+    ports: ["5673:5672", "15673:15672"]
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-booking}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-localdev_rabbit_change_me}
+    volumes: [rabbitmq-data:/var/lib/rabbitmq]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+
+  # --- Citus ledger ---
+  ledger-coordinator:
+    image: citusdata/citus:13.0.3
+    container_name: ledger_citus_coordinator
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-ledger_service}
+    volumes:
+      - ledger-coordinator-data:/var/lib/postgresql/data
+      - ../ledger-service/db/001_init.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+      - ../ledger-service/src/citus-setup.sql:/docker-entrypoint-initdb.d/20-citus.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ledger_service}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    networks: [ledger-net]
+    ports: ["5434:5432"]
+
+  ledger-worker-1:
+    image: citusdata/citus:13.0.3
+    container_name: ledger_citus_worker_1
+    hostname: ledger-worker-1
+    restart: unless-stopped
+    depends_on:
+      ledger-coordinator:
+        condition: service_healthy
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-ledger_service}
+      COORDINATOR_HOST: ledger-coordinator
+    volumes:
+      - ledger-worker1-data:/var/lib/postgresql/data
+      - ./citus/wait-for-coordinator.sh:/wait-for-coordinator.sh:ro
+      - ./citus/register-worker.sh:/register-worker.sh:ro
+    command:
+      - bash
+      - -c
+      - |
+        docker-entrypoint.sh postgres &
+        until pg_isready -h localhost -p 5432 -U postgres -t 3; do sleep 2; done
+        chmod +x /wait-for-coordinator.sh /register-worker.sh
+        /wait-for-coordinator.sh
+        /register-worker.sh
+        wait
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-ledger_service}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    networks: [ledger-net]
+
+  ledger-worker-2:
+    image: citusdata/citus:13.0.3
+    container_name: ledger_citus_worker_2
+    hostname: ledger-worker-2
+    restart: unless-stopped
+    depends_on:
+      ledger-coordinator:
+        condition: service_healthy
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-ledger_service}
+      COORDINATOR_HOST: ledger-coordinator
+    volumes:
+      - ledger-worker2-data:/var/lib/postgresql/data
+      - ./citus/wait-for-coordinator.sh:/wait-for-coordinator.sh:ro
+      - ./citus/register-worker.sh:/register-worker.sh:ro
+    command:
+      - bash
+      - -c
+      - |
+        docker-entrypoint.sh postgres &
+        until pg_isready -h localhost -p 5432 -U postgres -t 3; do sleep 2; done
+        chmod +x /wait-for-coordinator.sh /register-worker.sh
+        /wait-for-coordinator.sh
+        /register-worker.sh
+        wait
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-ledger_service}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    networks: [ledger-net]
+
+  # --- Per-service Postgres ---
+  booking-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev_change_me}
+      POSTGRES_DB: booking_service
+    volumes:
+      - booking-db-data:/var/lib/postgresql/data
+      - ../booking-service/db/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d booking_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [ledger-net]
+
+  payment-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev_change_me}
+      POSTGRES_DB: payment_service
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+      - ../payment-service/db/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d payment_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [ledger-net]
+
+  orchestration-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev_change_me}
+      POSTGRES_DB: orchestration_service
+    volumes:
+      - orchestration-db-data:/var/lib/postgresql/data
+      - ../orchestration-service/db/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d orchestration_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [ledger-net]
+
+  # --- App services ---
+  booking-service:
+    build:
+      context: ..
+      dockerfile: booking-service/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-localdev_change_me}@booking-db:5432/booking_service
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-booking}:${RABBITMQ_PASSWORD:-localdev_rabbit_change_me}@rabbitmq:5672
+      PORT: "4101"
+    depends_on:
+      booking-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks: [ledger-net]
+    ports: ["4101:4101"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4101/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  payment-service:
+    build:
+      context: ..
+      dockerfile: payment-service/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-localdev_change_me}@payment-db:5432/payment_service
+      BOOKING_SERVICE_URL: http://booking-service:4101
+      ORCHESTRATION_SERVICE_URL: http://orchestration-service:4104
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-booking}:${RABBITMQ_PASSWORD:-localdev_rabbit_change_me}@rabbitmq:5672
+      PORT: "4102"
+    depends_on:
+      payment-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      booking-service:
+        condition: service_started
+    networks: [ledger-net]
+    ports: ["4102:4102"]
+
+  ledger-service:
+    build:
+      context: ..
+      dockerfile: ledger-service/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-localdev_change_me}@ledger-coordinator:5432/${POSTGRES_DB:-ledger_service}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-booking}:${RABBITMQ_PASSWORD:-localdev_rabbit_change_me}@rabbitmq:5672
+      PORT: "4103"
+    depends_on:
+      ledger-coordinator:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks: [ledger-net]
+    ports: ["4103:4103"]
+
+  orchestration-service:
+    build:
+      context: ..
+      dockerfile: orchestration-service/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-localdev_change_me}@orchestration-db:5432/orchestration_service
+      BOOKING_SERVICE_URL: http://booking-service:4101
+      PAYMENT_SERVICE_URL: http://payment-service:4102
+      LEDGER_SERVICE_URL: http://ledger-service:4103
+      PORT: "4104"
+    depends_on:
+      orchestration-db:
+        condition: service_healthy
+      booking-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+      ledger-service:
+        condition: service_started
+    networks: [ledger-net]
+    ports: ["4104:4104"]
+
+  notification-worker:
+    build:
+      context: ..
+      dockerfile: notification-worker/Dockerfile
+    environment:
+      LEDGER_DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-localdev_change_me}@ledger-coordinator:5432/${POSTGRES_DB:-ledger_service}
+    depends_on:
+      ledger-coordinator:
+        condition: service_healthy
+    networks: [ledger-net]
