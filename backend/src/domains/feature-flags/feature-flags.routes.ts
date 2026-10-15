@@ -53,7 +53,6 @@ export function createFeatureFlagRouter(
       }
 
       await repository.set(key, enabled, req.user!.userId);
-      // Local apply immediately (pub/sub will update other instances)
       engine.applyUpdate(key, enabled);
 
       res.status(200).json({
