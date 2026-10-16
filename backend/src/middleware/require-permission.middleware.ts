@@ -41,7 +41,7 @@ export function requirePermission(resource: string, action: string) {
         });
         res.status(403).json({
           success: false,
-          message: `Permission denied: ${resource}:${action}`,
+          message: `Permission has been denied. You can kindly reach out to the adminstrator to resolve the issue if you deem if to be correct!`,
         });
         return;
       }
