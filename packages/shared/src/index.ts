@@ -3,6 +3,7 @@ export {
   getInFlightCount,
   stopAllConsumers,
 } from "./messaging/consumerLoop";
+export * from "./domains/property-import";
 export type { MessageHandler } from "./messaging/consumerLoop";
 export { registerGracefulShutdown } from "./shutdown/gracefulShutdown";
 export type { GracefulShutdownOptions } from "./shutdown/gracefulShutdown";

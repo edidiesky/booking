@@ -43,7 +43,7 @@ export default function ProfileActivityTab({ userId }: Props) {
             className="min-w-0 flex-1 pb-3 border-b last:border-0"
             style={{ borderColor: "#f2f0ed" }}
           >
-            <p className="text-sm text-[#17191c] font-mono">{e.action}</p>
+            <p className="text-sm text-[#17191c] ">{e.action}</p>
             {e.changedFields && e.changedFields.length > 0 && (
               <p className="text-xs text-[#a3a6af] mt-0.5">
                 Changed: {e.changedFields.join(", ")}

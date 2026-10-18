@@ -11,12 +11,13 @@ import { useNavigate } from "react-router-dom";
 import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import ExportPdfButton from "@/components/common/ExportPdfButton";
 import { PROPERTY_URL } from "@/constants/api";
-import ImportRoomTypesModal from "./ImportRoomTypesModal";
 import Title from "@/components/dashboard/common/Title";
 import PropertyPerformanceModal from "./PropertyPerformanceModal";
 import { EmptyState } from "@/components/common/EmptyState";
 import TablePagination from "@/components/common/table/TablePagination";
-
+import ImportRoomTypesModal from "./ImportRoomTypesModal";
+import ImportPropertiesModal from "./ImportPropertiesModal";
+import BulkPropertyImagesModal from "./BulkPropertyImagesModal";
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
   { label: "Active", value: "active" },
@@ -30,12 +31,14 @@ const HEADERS = ["Name", "Type", "Location", "Status", "Created", "Actions"];
 export default function DashboardProperties() {
   const [modalOpen, setModalOpen] = useState(false);
   const [performancemodalopen, setPerformanceModalOpen] = useState(false);
+  const [bulkPropertyImagesOpen, setBulkPropertyImagesOpen] = useState(false);
   const [editPropertyId, setEditPropertyId] = useState<string | null>(null);
   const [performanceDetail, sePerformanceDetail] = useState<Property | null>(
     null,
   );
   const [roomTypeId, setRoomTypeId] = useState<string | null>(null);
   const [showImportPicker, setShowImportPicker] = useState(false);
+  const [importPropertiesOpen, setImportPropertiesOpen] = useState(false);
   const [importPropertyId, setImportPropertyId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
@@ -124,49 +127,87 @@ export default function DashboardProperties() {
             <div className="relative">
               <button
                 onClick={() => setShowImportPicker((v) => !v)}
-                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-[13px]     p-2 bold px-6"
+                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-[13px] p-2 bold px-6"
               >
                 Bulk Import
               </button>
+
               {showImportPicker && (
-                <div
-                  className="absolute right-0 mt-1.5 w-64 bg-white border rounded-xl shadow-lg z-30 p-2"
-                  style={{ borderColor: "#e8e6e3" }}
-                >
-                  <p
-                    className="text-[11px] px-2 py-1"
-                    style={{ color: "#a3a6af" }}
+                <>
+                  {/* click-outside catcher */}
+                  <div
+                    className="fixed inset-0 z-20"
+                    onClick={() => setShowImportPicker(false)}
+                  />
+                  <div
+                    className="absolute right-0 top-full mt-1.5 w-64 bg-white border rounded-xl shadow-lg z-30 p-2"
+                    style={{ borderColor: "#e8e6e3" }}
                   >
-                    Choose which property this CSV is for:
-                  </p>
-                  {properties.length === 0 ? (
+                    <button
+                      onClick={() => {
+                        setImportPropertiesOpen(true);
+                        setShowImportPicker(false);
+                      }}
+                      className="w-full text-left text-xs lg:text-[13px] px-2 py-3 rounded-lg hover:bg-[#f2f0ed] transition-colors font-medium"
+                      style={{ color: "#17191c" }}
+                    >
+                      New properties and room types
+                    </button>
+                    <button
+                      onClick={() => {
+                        setBulkPropertyImagesOpen(true);
+                        setShowImportPicker(false);
+                      }}
+                      className="w-full text-left text-xs lg:text-[13px] px-2 py-3 rounded-lg hover:bg-[#f2f0ed] transition-colors font-medium"
+                      style={{ color: "#17191c" }}
+                    >
+                      Property photos
+                    </button>
+
+                    <div
+                      className="h-px my-1"
+                      style={{ backgroundColor: "#e8e6e3" }}
+                    />
+
                     <p
-                      className="text-xs lg:text-[13px]   px-2 py-2"
+                      className="text-[11px] px-2 py-1"
                       style={{ color: "#a3a6af" }}
                     >
-                      Add a property first.
+                      Or add room types to an existing property:
                     </p>
-                  ) : (
-                    properties.map((p) => (
-                      <button
-                        key={p.id}
-                        onClick={() => {
-                          setImportPropertyId(p.id);
-                          setShowImportPicker(false);
-                        }}
-                        className="w-full text-left text-xs lg:text-[13px]   px-2 py-2 rounded-lg hover:bg-[#f2f0ed] transition-colors truncate"
-                        style={{ color: "#17191c" }}
+
+                    {properties.length === 0 ? (
+                      <p
+                        className="text-xs lg:text-[13px] px-2 py-2"
+                        style={{ color: "#a3a6af" }}
                       >
-                        {p.name}
-                      </button>
-                    ))
-                  )}
-                </div>
+                        Add a property first.
+                      </p>
+                    ) : (
+                      <div className="max-h-56 overflow-y-auto">
+                        {properties.map((p) => (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              setImportPropertyId(p.id);
+                              setShowImportPicker(false);
+                            }}
+                            className="w-full text-left text-xs lg:text-[13px] px-2 py-3 rounded-lg hover:bg-[#f2f0ed] transition-colors truncate"
+                            style={{ color: "#17191c" }}
+                          >
+                            {p.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
+
             <button
               onClick={handleOpenCreate}
-              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px]     p-2 bold px-6"
+              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px] p-2 bold px-6"
             >
               Add Property
             </button>
@@ -320,6 +361,22 @@ export default function DashboardProperties() {
             propertyId={deleteTarget.id}
             propertyName={deleteTarget.name}
             onClose={() => setDeleteTarget(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {importPropertiesOpen && (
+          <ImportPropertiesModal
+            onClose={() => setImportPropertiesOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {bulkPropertyImagesOpen && (
+          <BulkPropertyImagesModal
+            onClose={() => setBulkPropertyImagesOpen(false)}
           />
         )}
       </AnimatePresence>

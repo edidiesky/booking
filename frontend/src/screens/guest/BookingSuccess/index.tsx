@@ -193,7 +193,7 @@ export default function BookingSuccess() {
             {booking?.bookingRef && (
               <p className="mt-2 text-[12px] text-[#a3a6af]">
                 Reference{" "}
-                <span className="font-mono font-medium text-[#17191c]">
+                <span className=" font-medium text-[#17191c]">
                   {booking.bookingRef}
                 </span>
               </p>
