@@ -68,6 +68,15 @@ If it cannot be measured or paged, it is not fully “in production” for this 
 
 Unit tests target repositories and services (infra mocked). Integration tests spin real Postgres via Testcontainers, apply the real migration set, and exercise HTTP routing end to end. The intent is to lock the money path, session revoke, and outbox seams — not only utility helpers. Coverage is still partial; suites do not yet run as `booking_app`, so RLS is not asserted in CI. That gap is tracked, not ignored.
 
+### 9. Feature flags (progressive delivery of behavior)
+
+Unfinished or risky behavior must not require a long-lived branch or a full rollback of the binary. Flags live in Redis, evaluated in-process (`FeatureFlagEngine`), refreshed over a dedicated pub/sub subscriber, and enforced on the server (middleware and service checks). Frontends may read flag state for UX; the API remains the source of truth.
+
+What this unlocks:
+
+- **Kill switches** for money and webhook paths without redeploying
+- **Percentage / allowlist rollouts** (stable hash of user or tenant) so a change can hit 5% of traffic before 100%
+- **Decoupling deploy from release**: ship dark code on trunk, turn behavior on when metrics and canaries look safe
 
 ---
 
@@ -76,6 +85,8 @@ Unit tests target repositories and services (infra mocked). Integration tests sp
 Availability calendars and locks, escrow release to hosts, RBAC, subdomain storefronts (`sellername.bukkings.space`), CSV import, host notifications, and audit trails all depend on the six problems above. Custom apex domains are designed (Caddy + TLS); not live on the current host edge.
 
 **Multi-tenant data plane:** `FORCE ROW LEVEL SECURITY` + `SET LOCAL app.current_tenant_id` under PgBouncer transaction pooling. Policies exist; runtime still uses `postgres` via PgBouncer in places, so RLS is **not** end-to-end enforced yet. Intended roles: `booking_app` (RLS) and `booking_worker` (`BYPASSRLS`).
+
+
 
 ---
 
