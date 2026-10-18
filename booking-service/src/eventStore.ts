@@ -50,7 +50,10 @@ export const eventStore = {
     }
   },
 
-  async getEvents(client: PoolClient, aggregateId: string): Promise<StoredEvent[]> {
+  async getEvents(
+    client: PoolClient,
+    aggregateId: string,
+  ): Promise<StoredEvent[]> {
     const result = await client.query<StoredEvent>(
       `SELECT aggregate_id AS "aggregateId", event_type AS "eventType", payload, version
        FROM event_store WHERE aggregate_id = $1 ORDER BY version ASC`,
@@ -59,7 +62,10 @@ export const eventStore = {
     return result.rows;
   },
 
-  async getCurrentVersion(client: PoolClient, aggregateId: string): Promise<number> {
+  async getCurrentVersion(
+    client: PoolClient,
+    aggregateId: string,
+  ): Promise<number> {
     const result = await client.query<{ version: number }>(
       `SELECT COALESCE(MAX(version), 0) AS version FROM event_store WHERE aggregate_id = $1`,
       [aggregateId],

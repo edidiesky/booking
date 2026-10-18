@@ -228,6 +228,127 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
+      
+  booking-service:
+    build:
+      context: ..
+      dockerfile: booking-service/Dockerfile
+    container_name: booking-service
+    env_file:
+      - ./.env.production
+    environment:
+      PORT: "4101"
+      DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
+      RABBITMQ_URL: amqp://guest:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      SERVICE_NAME: booking-service
+    networks:
+      - app-tier
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      db-roles:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4101/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  payment-service:
+    build:
+      context: ..
+      dockerfile: payment-service/Dockerfile
+    container_name: payment-service
+    env_file:
+      - ./.env.production
+    environment:
+      PORT: "4102"
+      DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
+      RABBITMQ_URL: amqp://guest:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      BOOKING_SERVICE_URL: http://booking-service:4101
+      ORCHESTRATION_SERVICE_URL: http://orchestration-service:4104
+      PAYSTACK_SECRET_KEY: ${PAYSTACK_SECRET_KEY}
+      FLW_SECRET_KEY: ${FLW_SECRET_KEY}
+      FLW_SECRET_HASH: ${FLW_SECRET_HASH}
+      SERVICE_NAME: payment-service
+    networks:
+      - app-tier
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      booking-service:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4102/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  ledger-service:
+    build:
+      context: ..
+      dockerfile: ledger-service/Dockerfile
+    container_name: ledger-service
+    env_file:
+      - ./.env.production
+    environment:
+      PORT: "4103"
+      DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
+      RABBITMQ_URL: amqp://guest:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      SERVICE_NAME: ledger-service
+    networks:
+      - app-tier
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4103/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  orchestration-service:
+    build:
+      context: ..
+      dockerfile: orchestration-service/Dockerfile
+    container_name: orchestration-service
+    env_file:
+      - ./.env.production
+    environment:
+      PORT: "4104"
+      DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
+      BOOKING_SERVICE_URL: http://booking-service:4101
+      PAYMENT_SERVICE_URL: http://payment-service:4102
+      LEDGER_SERVICE_URL: http://ledger-service:4103
+      SAGA_PAUSE_TIMEOUT_MS: "1800000"
+      SAGA_SWEEP_INTERVAL_MS: "30000"
+      SERVICE_NAME: orchestration-service
+    networks:
+      - app-tier
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      booking-service:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+      ledger-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4104/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
   node-exporter:
     image: prom/node-exporter:v1.8.2
     container_name: node-exporter

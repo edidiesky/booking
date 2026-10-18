@@ -4,14 +4,16 @@ import { sagaRepository, SagaStatus } from "./saga.repository";
 export type { SagaStatus };
 
 export interface SagaStore {
-  insert(sagaType: string, context: unknown, bookingId?: string): Promise<string>;
+  insert(
+    sagaType: string,
+    context: unknown,
+    bookingId?: string,
+  ): Promise<string>;
   claim(
     sagaId: string,
     leaseMs: number,
   ): Promise<{ id: string; current_step: number; context: unknown } | null>;
-  findById(
-    sagaId: string,
-  ): Promise<{
+  findById(sagaId: string): Promise<{
     status: SagaStatus;
     context: unknown;
     current_step: number;

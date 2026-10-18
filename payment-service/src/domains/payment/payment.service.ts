@@ -6,7 +6,7 @@ import {
   buildRequestHash,
   IdempotencyConflictError,
 } from "./idempotency.repository";
-import { processPayment } from "./resilience";
+import { paymentGateways, GatewayName } from "./gateways";
 import { publishAuditLog } from "../../auditPublisher";
 
 export class ValidationError extends Error {
@@ -118,11 +118,7 @@ export const paymentService = {
         input.gateway,
       );
 
-      if (
-        paymentRow &&
-        paymentRow.status === "pending" &&
-        paymentRow.transaction_id
-      ) {
+      if (paymentRow && paymentRow.status === "pending" && paymentRow.transaction_id) {
         const result = {
           paymentId: paymentRow.id,
           transactionId: paymentRow.transaction_id,
@@ -149,14 +145,14 @@ export const paymentService = {
 
       let gatewayResult;
       try {
-        gatewayResult = await processPayment(input.gateway, {
-          amount: booking.totalAmountNgn,
+        gatewayResult = await paymentGateways.initialize(input.gateway, {
+          amountNgn: booking.totalAmountNgn,
           callbackUrl: input.callbackUrl,
           currency: "NGN",
           email: input.email,
           phone: input.phone ?? "",
           userId: input.guestUserId,
-          name: input.guestUserId,
+          customerName: input.guestUserId,
           metadata: { bookingId: input.bookingId, tenantId: booking.tenantId },
         });
       } catch {
@@ -295,7 +291,7 @@ export const paymentService = {
   },
 
   async requestRefund(pool: Pool, bookingId: string) {
-    const { refundPayment } = await import("../resilience");
+    const { paymentGateways } = await import("./gateways");
     const row = await pool.query(
       `SELECT * FROM payments
        WHERE booking_id = $1 AND status IN ('success', 'pending')
@@ -308,7 +304,7 @@ export const paymentService = {
       return { refundRequested: true, gatewayCalled: false };
     }
     if (payment.status === "success" && payment.transaction_id) {
-      const result = await refundPayment(payment.gateway, {
+      const result = await paymentGateways.refund(payment.gateway, {
         transactionId: payment.transaction_id,
         amountNgn: Number(payment.amount_ngn),
       });

@@ -4,10 +4,7 @@ import { connectRabbitMQ } from "@booking/shared";
 import { createBookingRouter } from "./domains/booking/booking.routes";
 import { errorHandler } from "./middleware/errorHandler";
 
-export interface BootstrappedApp {
-  app: Express;
-  pool: Pool;
-}
+export interface BootstrappedApp { app: Express; pool: Pool; }
 
 export async function bootstrap(): Promise<BootstrappedApp> {
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
