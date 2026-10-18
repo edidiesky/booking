@@ -1,5 +1,7 @@
 export const BASE = import.meta.env.VITE_API_BASE_URL as string;
-
+export const PROPERTY_IMPORT_URL = `${BASE}/api/v1/property-imports`;
+export const PROPERTY_IMPORT_TEMPLATE_URL = import.meta.env
+  .VITE_PROPERTY_IMPORT_TEMPLATE_URL as string | undefined;
 export const AUTH_URL = `${BASE}/api/v1/auth`;
 export const ADMIN_URL = `${BASE}/api/v1/admin`;
 export const PROFILE_URL = `${BASE}/api/v1/profile`;
@@ -22,5 +24,5 @@ export const SELLER_NOTIFICATION_URL = `${BASE}/api/v1/seller-notifications`;
 export const FAVORITE_URL = `${BASE}/api/v1/favorites`;
 export const JOB_URL = `${BASE}/api/v1/jobs`;
 export const AUDIT_EVENT_URL = `${BASE}/api/v1/audit-events`;
-export const INVITATION_URL = `${BASE}/api/v1/invitations`; 
-export const SESSION_URL = `${BASE}/api/v1/sessions`; 
+export const INVITATION_URL = `${BASE}/api/v1/invitations`;
+export const SESSION_URL = `${BASE}/api/v1/sessions`;

@@ -94,14 +94,14 @@ export default function SessionDetailDrawer({
         <DrawerField label="Country" value={session.country ?? "Unknown"} />
         <DrawerField
           label="IP address"
-          value={<span className="font-mono">{ip}</span>}
+          value={<span className="">{ip}</span>}
         />
       </DrawerSection>
 
       <DrawerSection label="Record">
         <DrawerField
           label="Session ID"
-          value={<span className="font-mono break-all">{session.id}</span>}
+          value={<span className=" break-all">{session.id}</span>}
         />
         <DrawerField label="Signed in" value={formatDateTime(session.createdAt)} />
         <DrawerField
