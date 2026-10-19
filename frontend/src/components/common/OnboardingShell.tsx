@@ -74,7 +74,7 @@ export default function OnboardingShell({
                   <span
                     className={`inline-flex items-center gap-1 px-2 py-1 rounded-full ${
                       active
-                        ? "bg-[#17191c] text-white"
+                        ? "bg-[var(--color-primary)] text-white"
                         : done
                           ? "text-[#17191c]"
                           : "text-[#a3a6af]"

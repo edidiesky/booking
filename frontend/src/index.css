@@ -25,18 +25,28 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
+
     --color-canvas: #ffffff;
-    --color-ink: #17191c;
-    --color-primary: #beff50;
-    --color-primary-foreground: #111111;
-    --color-warm-mist: #bfff502d;
-    --color-terracotta: #5d2a1a;
-    --color-fog: #eeece2;
-    --color-muted-stone: #4c4c4c;
-    --color-light-steel: #777b86;
-    --color-hint-of-grey: #a3a6af;
-    --color-vivid: #1a56ff;
+    --color-ink: #0f172a;
+    --color-primary: #0d7377;
+    --color-primary-foreground: #ffffff;
+    --color-vivid: #0d7377;
     --color-vivid-foreground: #ffffff;
+
+    --color-surface: #F4F3F0;
+    --color-fog: #e8edf2;
+    --color-hover: #edf1f5;
+    --color-border: #e1e5ea;
+    --color-muted-stone: #334c64;
+    --color-light-steel: #66798b;
+    --color-hint-of-grey: #99a5b1;
+
+    /* Semantic */
+    --color-success: #166534;
+    --color-success-bg: #dcfce7;
+    --color-danger: #991b1b;
+    --color-danger-bg: #fee2e2;
+    --color-meter-track: #e8e6e3;
     --shadow-steep:
       rgba(4, 23, 43, 0.05) 0px 0px 0px 1px,
       rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,

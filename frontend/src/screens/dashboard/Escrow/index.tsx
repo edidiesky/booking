@@ -3,9 +3,9 @@ import Title from "@/components/dashboard/common/Title";
 import EscrowTableRow from "./EscrowTableRow";
 import { useTenantEscrow } from "./hooks/useTenantEscrow";
 import { formatCurrency } from "@/utils/formatCurrency";
-import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import { EmptyState } from "@/components/common/EmptyState";
 import TablePagination from "@/components/common/table/TablePagination";
+import { StatCardGrid } from "@/components/common/widgets/StatCardGrid";
 
 const HEADERS = [
   "Booking Ref",
@@ -27,6 +27,10 @@ export default function DashboardEscrow() {
     stats,
     isStatsLoading,
   } = useTenantEscrow();
+  const held = stats?.held?.amountNgn ?? 0;
+  const released = stats?.released?.amountNgn ?? 0;
+  const refunded = stats?.refunded?.amountNgn ?? 0;
+  const whole = held + released + refunded || 1;
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -41,33 +45,40 @@ export default function DashboardEscrow() {
         />
       </div>
 
-      <StatsOverview
+      <StatCardGrid
         isLoading={isStatsLoading}
-        growthTooltip="Escrow volume this calendar month vs. last calendar month"
         cards={[
           {
-            label: "Revenue Held",
-            value: formatCurrency(stats?.held?.amountNgn ?? 0),
-            color: "#1e40af",
-            bg: "#dbeafe",
+            label: "Held",
+            value: formatCurrency(held),
+            total: `of ${formatCurrency(whole)}`,
+            progress: held / whole,
+            tone: "warning",
+            footnote: "In escrow now",
           },
           {
-            label: "Revenue Refuded",
-            value: formatCurrency(stats?.refunded?.amountNgn ?? 0),
-            color: "#166534",
-            bg: "#dcfce7",
+            label: "Released",
+            value: formatCurrency(released),
+            total: `of ${formatCurrency(whole)}`,
+            progress: released / whole,
+            tone: "success",
+            footnote: "Paid out to host",
           },
           {
-            label: "Revenue Released",
-            value: formatCurrency(stats?.released?.amountNgn ?? 0),
-            color: "#991b1b",
-            bg: "#fee2e2",
+            label: "Refunded",
+            value: formatCurrency(refunded),
+            total: `of ${formatCurrency(whole)}`,
+            progress: refunded / whole,
+            tone: "danger",
+            footnote: "Returned to guests",
           },
           {
-            label: "Revenue (Month)",
+            label: "Volume (month)",
             value: formatCurrency(stats?.currentMonthVolumeNgn ?? 0),
-            color: "#5b21b6",
-            bg: "#ede9fe",
+            total: "This calendar month",
+            progress: 0,
+            tone: "info",
+            footnote: "Escrow activity",
           },
         ]}
       />

@@ -1,14 +1,22 @@
+
+
 import winston from "winston";
 
-const logger = winston.createLogger({
-  level:  process.env.LOG_LEVEL ?? "info",
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.json()
-  ),
-  defaultMeta: { service: process.env.OTEL_SERVICE_NAME ?? "booking-platform" },
-  transports:  [new winston.transports.Console()],
-});
+const { combine, timestamp, errors, json } = winston.format;
 
-export default logger;
+export type Logger = winston.Logger;
+
+export function createLogger(serviceName?: string): Logger {
+  const service =
+    serviceName ?? process.env.SERVICE_NAME ?? process.env.npm_package_name ?? "booking-service";
+
+  return winston.createLogger({
+    level: process.env.LOG_LEVEL ?? "info",
+    defaultMeta: { service },
+    format: combine(errors({ stack: true }), timestamp(), json()),
+    transports: [new winston.transports.Console()],
+  });
+}
+const logger = createLogger();
+
+export default logger

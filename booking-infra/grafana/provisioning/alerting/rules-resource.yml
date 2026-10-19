@@ -20,7 +20,7 @@ groups:
         refId: A
     - refId: B
       datasourceUid: __expr__
-      model: { type: reduce, expression: A, reducer: last, refId: B }
+      model: { type: reduce, expression: A, reducer: last, settings: { mode: dropNN }, refId: B }
     - refId: C
       datasourceUid: __expr__
       model:
@@ -29,6 +29,8 @@ groups:
         refId: C
         conditions:
         - evaluator: { type: gt, params: [70] }
+    noDataState: OK
+    execErrState: Error
     for: 5m
     labels: { severity: warning, tier: resource }
     annotations:
@@ -48,7 +50,7 @@ groups:
         refId: A
     - refId: B
       datasourceUid: __expr__
-      model: { type: reduce, expression: A, reducer: last, refId: B }
+      model: { type: reduce, expression: A, reducer: last, settings: { mode: dropNN }, refId: B }
     - refId: C
       datasourceUid: __expr__
       model:
@@ -57,6 +59,8 @@ groups:
         refId: C
         conditions:
         - evaluator: { type: gt, params: [90] }
+    noDataState: OK
+    execErrState: Error
     for: 2m
     labels: { severity: critical, tier: resource }
     annotations:
@@ -77,7 +81,7 @@ groups:
         refId: A
     - refId: B
       datasourceUid: __expr__
-      model: { type: reduce, expression: A, reducer: last, refId: B }
+      model: { type: reduce, expression: A, reducer: last, settings: { mode: dropNN }, refId: B }
     - refId: C
       datasourceUid: __expr__
       model:
@@ -86,6 +90,8 @@ groups:
         refId: C
         conditions:
         - evaluator: { type: gt, params: [75] }
+    noDataState: OK
+    execErrState: Error
     for: 5m
     labels: { severity: warning, tier: resource }
     annotations:
@@ -105,7 +111,7 @@ groups:
         refId: A
     - refId: B
       datasourceUid: __expr__
-      model: { type: reduce, expression: A, reducer: last, refId: B }
+      model: { type: reduce, expression: A, reducer: last, settings: { mode: dropNN }, refId: B }
     - refId: C
       datasourceUid: __expr__
       model:
@@ -114,6 +120,8 @@ groups:
         refId: C
         conditions:
         - evaluator: { type: gt, params: [90] }
+    noDataState: OK
+    execErrState: Error
     for: 2m
     labels: { severity: critical, tier: resource }
     annotations:
@@ -134,7 +142,7 @@ groups:
         refId: A
     - refId: B
       datasourceUid: __expr__
-      model: { type: reduce, expression: A, reducer: last, refId: B }
+      model: { type: reduce, expression: A, reducer: last, settings: { mode: dropNN }, refId: B }
     - refId: C
       datasourceUid: __expr__
       model:
@@ -143,11 +151,13 @@ groups:
         refId: C
         conditions:
         - evaluator: { type: gt, params: [80] }
+    noDataState: OK
+    execErrState: Error
     for: 5m
     labels: { severity: warning, tier: resource }
     annotations:
       summary: Disk above 80%
-      description: Root filesystem has been > 80% full for 5 minutes.
+      description: Filesystem has been > 80% full for 5 minutes.
 
   - uid: res-disk-crit
     title: Disk usage critical
@@ -162,7 +172,7 @@ groups:
         refId: A
     - refId: B
       datasourceUid: __expr__
-      model: { type: reduce, expression: A, reducer: last, refId: B }
+      model: { type: reduce, expression: A, reducer: last, settings: { mode: dropNN }, refId: B }
     - refId: C
       datasourceUid: __expr__
       model:
@@ -171,8 +181,10 @@ groups:
         refId: C
         conditions:
         - evaluator: { type: gt, params: [90] }
+    noDataState: OK
+    execErrState: Error
     for: 2m
     labels: { severity: critical, tier: resource }
     annotations:
       summary: Disk above 90%
-      description: Root filesystem has been > 90% full for 2 minutes.
+      description: Filesystem has been > 90% full for 2 minutes.

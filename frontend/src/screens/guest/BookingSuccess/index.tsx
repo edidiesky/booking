@@ -46,7 +46,7 @@ function JourneyChecklist({
           )}
           {step.status === "active" && (
             <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border-2 border-[#17191c]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#17191c]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
             </span>
           )}
           {step.status === "pending" && (
@@ -287,7 +287,7 @@ export default function BookingSuccess() {
                       bookingId ? `/bookings/${bookingId}` : "/guest/bookings",
                     );
                   }}
-                  className="flex h-12 w-full items-center justify-center rounded-full bg-[#17191c] text-[14px] font-medium text-white hover:bg-black"
+                  className="flex h-12 w-full items-center justify-center rounded-full bg-[var(--color-primary)] text-[14px] font-medium text-white hover:bg-black"
                 >
                   View booking details
                 </button>

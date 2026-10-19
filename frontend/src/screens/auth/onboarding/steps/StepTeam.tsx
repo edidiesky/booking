@@ -112,7 +112,7 @@ export default function StepTeam({
           <button
             type="button"
             onClick={add}
-            className="h-11 px-4 rounded-xl text-sm bg-[#17191c] text-white"
+            className="h-11 px-4 rounded-xl text-sm bg-[var(--color-primary)] text-white"
           >
             Invite
           </button>

@@ -1,85 +1,72 @@
-import { RefreshCw } from "lucide-react";
+import { Mail } from "lucide-react";
+import AuthLayout from "@/components/common/AuthLayout";
 
 interface Props {
-  email:       string;
-  onContinue:  () => void;
-  onResend:    () => void;
+  email: string;
+  onContinue: () => void;
+  onResend: () => void;
   isResending: boolean;
+  stepLabels?: string[];
+  currentStep?: number;
 }
 
-export default function VerifyInterstitial({ email, onContinue, onResend, isResending }: Props) {
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!local || !domain) return email;
+  const visible = local.slice(0, Math.min(4, local.length));
+  return `${visible}•••@${domain}`;
+}
+
+export default function VerifyInterstitial({
+  email,
+  onContinue,
+  onResend,
+  isResending,
+  stepLabels = ["Create account", "Verify email", "Your details"],
+  currentStep = 2,
+}: Props) {
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{ backgroundColor: "var(--color-fog)" }}
-    >
-      <div className="max-w-md w-full bg-white p-10 flex flex-col gap-6 rounded-2xl shadow-sm">
+    <AuthLayout stepLabels={stepLabels} currentStep={currentStep}>
+      <div className="flex flex-col items-center text-center gap-6">
+        {/* Envelope mark */}
+        <div className="w-14 h-14 rounded-2xl border border-dashed border-[#d8dce3] flex items-center justify-center">
+          <Mail size={22} className="text-[#a3a8b3]" strokeWidth={1.5} />
+        </div>
 
         <div className="flex flex-col gap-2">
-          <h1
-            className="text-[28px] "
-            style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}
+          <h4
+            className="text-xl lg:text-2xl font-semibold"
+            style={{ color: "var(--color-ink)" }}
           >
-            Check your email
-          </h1>
-          <p className="text-xs lg:text-[13px]   leading-relaxed" style={{ color: "var(--color-muted-stone)" }}>
-            We sent a 6-digit verification code to{" "}
-            <span style={{ color: "var(--color-ink)" }}>{email}</span>.
+            Verify your email
+          </h4>
+          <p className="text-[15px] text-[#777b86] leading-relaxed max-w-sm mx-auto">
+            We&apos;ll send a 6-digit verification code to{" "}
+            <span className="text-[#17191c] font-medium">
+              {maskEmail(email)}
+            </span>
+            . Enter this code to verify your email.
           </p>
-        </div>
-
-        <div
-          className="flex flex-col gap-3 p-4"
-          style={{ backgroundColor: "var(--color-fog)", border: "1px solid #e8e6e3" }}
-        >
-          <p
-            className="text-xs lg:text-[13px]     uppercase bold"
-            style={{ color: "var(--color-muted-stone)" }}
-          >
-            What to do next
-          </p>
-          {[
-            "Open your email inbox",
-            "Find the email from Bukking Platform",
-            "Click the button below and enter the 6-digit code",
-          ].map((step, i) => (
-            <div key={step} className="flex items-center gap-3">
-              <span
-                className="w-8 h-8 rounded-full flex items-center justify-center text-xs lg:text-[13px]   shrink-0 mt-0.5"
-                style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
-              >
-                {i + 1}
-              </span>
-              <p className="text-xs" style={{ color: "var(--color-muted-stone)" }}>{step}</p>
-            </div>
-          ))}
         </div>
 
         <button
+          type="button"
           onClick={onContinue}
-          className="w-full h-12 flex items-center justify-center text-xs lg:text-[13px]   transition-opacity hover:opacity-80 rounded-full"
-          style={{
-              backgroundColor: "var(--color-vivid)",
-              color: "var(--color-vivid-foreground)",
-            }}
+          className="w-full h-12 rounded-full text-[15px] font-medium text-white transition-opacity hover:opacity-90"
+          style={{ backgroundColor: "var(--color-primary)" }}
         >
-          Enter the code
+          Request OTP
         </button>
 
         <button
+          type="button"
           onClick={onResend}
           disabled={isResending}
-          className="flex items-center justify-center gap-2 text-xs lg:text-[13px]   transition-opacity hover:opacity-60 disabled:opacity-40"
-          style={{ color: "var(--color-muted-stone)" }}
+          className="text-[14px] text-[#777b86] hover:text-[#17191c] disabled:opacity-40 transition-colors"
         >
-          <RefreshCw size={13} className={isResending ? "animate-spin" : ""} />
-          {isResending ? "Resending..." : "Didn't receive it? Resend"}
+          {isResending ? "Sending…" : "Didn\u2019t get a code? Resend"}
         </button>
-
-        <p className="text-xs lg:text-[13px]     text-center" style={{ color: "var(--color-hint-of-grey)" }}>
-          Code expires in 15 minutes.
-        </p>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

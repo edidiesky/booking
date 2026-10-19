@@ -16,7 +16,7 @@ export default function TodaysFocusCard({ confirmedCount, checkedInCount, cancel
   return (
     <div className="rounded-2xl border border-[var(--color-fog)] bg-[var(--color-canvas)] flex flex-col">
       <div className="px-5 py-4">
-        <p className="text-xs font-semibold lg:text-sm">Today's Focus</p>
+        <p className="font-bold text-sm">Today's Focus</p>
       </div>
       <div className="flex flex-col divide-y divide-[var(--color-fog)]">
         {items.map(({ id, label, note, color }) => (

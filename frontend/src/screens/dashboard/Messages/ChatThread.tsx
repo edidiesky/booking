@@ -140,7 +140,7 @@ export function ChatThread({
           </button>
           <button
             type="button"
-            className="h-9 rounded-full bg-[#17191c] px-3.5 text-[13px] font-medium text-white hover:bg-black"
+            className="h-9 rounded-full bg-[var(--color-primary)] px-3.5 text-[13px] font-medium text-white hover:bg-black"
           >
             See Profile
           </button>
@@ -189,7 +189,7 @@ export function ChatThread({
                       className={cn(
                         "max-w-[min(75%,420px)] rounded-2xl px-3.5 py-2.5 text-[14px] leading-relaxed",
                         isMine
-                          ? "rounded-br-md bg-[#17191c] text-white"
+                          ? "rounded-br-md bg-[var(--color-primary)] text-white"
                           : "rounded-bl-md bg-[#f3f4f6] text-[#17191c]",
                       )}
                     >

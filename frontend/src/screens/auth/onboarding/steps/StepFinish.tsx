@@ -28,7 +28,7 @@ export default function StepFinish({
       preview={
         <div className="rounded-xl border border-[#e8e6e3] p-4 space-y-3 text-sm">
           <div className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-full bg-[#17191c] text-white flex items-center justify-center text-xs font-medium">
+            <div className="h-10 w-10 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-xs font-medium">
               {business.tenantName.slice(0, 2).toUpperCase()}
             </div>
             <div>

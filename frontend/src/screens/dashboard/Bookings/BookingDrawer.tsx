@@ -172,7 +172,7 @@ export default function AdminBookingDrawer({ booking, onClose }: Props) {
             {TIMELINE_STEPS.map((step, i) => (
               <div key={step.key} className="flex items-start gap-3">
                 <div
-                  className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${i <= idx ? "bg-[#17191c]" : "bg-[#e8e6e3]"}`}
+                  className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${i <= idx ? "bg-[var(--color-primary)]" : "bg-[#e8e6e3]"}`}
                 />
                 <div>
                   <p

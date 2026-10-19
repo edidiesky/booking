@@ -116,7 +116,7 @@ function ToolbarBtn({
       type="button"
       onClick={onClick}
       className={`px-2 py-1 text-xs rounded ${
-        active ? "bg-[#17191c] text-white" : "hover:bg-[#f2f0ed] text-[#17191c]"
+        active ? "bg-[var(--color-primary)] text-white" : "hover:bg-[#f2f0ed] text-[#17191c]"
       }`}
     >
       {children}

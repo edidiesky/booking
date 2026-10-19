@@ -1,19 +1,32 @@
 {
   "name": "booking-platform",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/shared",
+    "packages/availability-worker",
+    "packages/campaign-worker",
+    "packages/csv-room-import-worker",
+    "packages/seller-notification-worker",
+    "packages/audit-worker",
+    "packages/booking-expiry-worker",
+    "orchestration-service",
+    "booking-service",
+    "payment-service",
+    "ledger-service"
+  ],
   "overrides": {
     "brace-expansion": "^2.1.2"
   },
   "scripts": {
     "build": "npm run build -w @booking/shared && npm run build --workspaces --if-present",
     "build:shared": "npm run build -w @booking/shared",
-    "docker:up": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml up -d",
-    "docker:up:build": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml up -d --build --force-recreate --remove-orphans",
-    "docker:down": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml down",
-    "docker:down:clean": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml down -v",
-    "docker:logs": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml logs -f --tail=100",
-    "docker:ps": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml -f booking-infra/docker-compose.workers.yml ps"
+    "docker:up": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml up -d",
+    "docker:up:build": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml up -d --build --force-recreate --remove-orphans",
+    "docker:down": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml down",
+    "docker:down:clean": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml down -v",
+    "docker:logs": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml logs -f --tail=100",
+    "docker:ps": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml ps",
+    "test:orchestration": "npm test -w @booking/orchestration-service"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.8",

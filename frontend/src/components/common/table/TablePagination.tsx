@@ -75,7 +75,7 @@ export default function TablePagination({
                 aria-current={item === page ? "page" : undefined}
                 className={`h-8 min-w-8 px-2 rounded-lg text-xs lg:text-[13px] border ${
                   item === page
-                    ? "bg-[#17191c] text-white border-[#17191c]"
+                    ? "bg-[var(--color-primary)] text-white border-[#17191c]"
                     : "border-[#e8e6e3] text-[#4c4c4c] hover:bg-[#f2f0ed]"
                 } disabled:cursor-wait`}
               >

@@ -95,14 +95,14 @@ export default function Login() {
     <AuthLayout>
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
-          <h1
-            className="text-[32px] leading-[1.1]"
-            style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
+          <h4
+            className="text-[24px] font-normal leading-[1.1]"
+          style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}
           >
             Good to see you again
-          </h1>
+          </h4>
           <p
-            className="text-sm lg:text-base"
+            className="text-sm"
             style={{ color: "var(--color-muted-stone)" }}
           >
             Sign in to check on bookings, payouts, and what's happening across

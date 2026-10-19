@@ -30,37 +30,31 @@ export default function StepSelectUserType({ onSelect }: Props) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-1">
-        <h3
-          className="text-[28px] "
-          style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}
+        <h4
+          className="text-xl lg:text-2xl font-semibold"
+          style={{ color: "var(--color-ink)" }}
         >
           How will you use the platform?
-        </h3>
+        </h4>
         <p className="text-[15px]" style={{ color: "var(--color-muted-stone)" }}>
           Choose your account type to get started.
         </p>
       </div>
 
       <div className="flex flex-col gap-3">
-        {OPTIONS.map(({ value, label, description, Icon }) => (
+        {OPTIONS.map(({ value, label, description }) => (
           <motion.button
             key={value}
             whileTap={{ scale: 0.98 }}
             onClick={() => onSelect(value)}
-            className="flex items-start gap-4 border p-5 rounded-2xl text-left transition-colors hover:border-[var(--color-ink)]"
-            style={{ borderColor: "#e5e7eb", backgroundColor: "var(--color-canvas)" }}
+            className="flex items-start gap-4 border-2 p-5 rounded-2xl text-left transition-colors hover:border-[#17191c]"
+            style={{ backgroundColor: "var(--color-canvas)" }}
           >
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-              style={{ backgroundColor: "var(--color-warm-mist)" }}
-            >
-              <Icon size={18} style={{ color: "var(--color-ink)" }} />
-            </div>
             <div className="flex flex-col gap-0.5">
-              <p className="text-sm lg:text-base bold">
+              <p className="text-base font-bold">
                 {label}
               </p>
-              <h4 className="text-xs" style={{ color: "var(--color-muted-stone)" }}>
+              <h4 className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
                 {description}
               </h4>
             </div>

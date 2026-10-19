@@ -289,7 +289,7 @@ export function BarChartStacked({
     >
       <div className="px-5 py-4 w-full flex items-start justify-between gap-4">
         <div className="w-full">
-          <p className="text-xs lg:text-[13px]     ">{title}</p>
+          <p className="text-sm font-bold">{title}</p>
           <p className="text-xs lg:text-[13px]  medium text-[#777b86] mt-0.5">
             {description}
           </p>

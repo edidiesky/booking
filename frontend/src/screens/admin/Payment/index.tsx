@@ -78,7 +78,7 @@ const [selectedPayment, setSelectedPayment] = useState<AdminPaymentSummary | nul
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+        className="w-full p-4  flex flex-col gap-8"
       >
         <div className="flex items-start justify-between gap-4">
           <Title
@@ -225,7 +225,7 @@ const [selectedPayment, setSelectedPayment] = useState<AdminPaymentSummary | nul
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`h-8 w-8 rounded-xl text-xs lg:text-[13px]     border ${currentPage === page ? "bg-[#17191c] text-white border-[#17191c]" : "border-[#e8e6e3] text-[#4c4c4c] hover:bg-[#f2f0ed]"}`}
+                className={`h-8 w-8 rounded-xl text-xs lg:text-[13px]     border ${currentPage === page ? "bg-[var(--color-primary)] text-white border-[#17191c]" : "border-[#e8e6e3] text-[#4c4c4c] hover:bg-[#f2f0ed]"}`}
               >
                 {page}
               </button>

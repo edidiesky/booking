@@ -115,7 +115,7 @@ export default function AdminPaymentDrawer({ payment, onClose }: Props) {
           {TIMELINE_STEPS.map((step, i) => (
             <div key={step.key} className="flex items-start gap-3">
               <div
-                className={`w-2.5 h-2.5 rounded-full mt-1 shrink-0 border-2 ${i <= idx ? "bg-[#17191c] border-[#17191c]" : "bg-white border-[#e8e6e3]"}`}
+                className={`w-2.5 h-2.5 rounded-full mt-1 shrink-0 border-2 ${i <= idx ? "bg-[var(--color-primary)] border-[#17191c]" : "bg-white border-[#e8e6e3]"}`}
               />
               <div>
                 <p

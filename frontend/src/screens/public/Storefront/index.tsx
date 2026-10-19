@@ -137,7 +137,7 @@ export default function TenantStorefront() {
               <SlidersHorizontal size={14} />
               Filters
               {activeFilterCount > 0 && (
-                <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#17191c] px-1 text-[10px] font-semibold text-white">
+                <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-semibold text-white">
                   {activeFilterCount}
                 </span>
               )}
@@ -163,7 +163,7 @@ export default function TenantStorefront() {
               <button
                 onClick={() => setView("list")}
                 className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                  view === "list" ? "bg-[#17191c] text-white" : "text-[#777b86]"
+                  view === "list" ? "bg-[var(--color-primary)] text-white" : "text-[#777b86]"
                 }`}
                 title="List view"
               >
@@ -172,7 +172,7 @@ export default function TenantStorefront() {
               <button
                 onClick={() => setView("map")}
                 className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                  view === "map" ? "bg-[#17191c] text-white" : "text-[#777b86]"
+                  view === "map" ? "bg-[var(--color-primary)] text-white" : "text-[#777b86]"
                 }`}
                 title="Map view"
               >

@@ -184,7 +184,7 @@ export default function BookingForm({
             <button
               onClick={onBook}
               disabled={isBooking || !selectedRoomType}
-              className="w-full py-4 text-xs lg:text-[13px]     border-lime-950 text-white bg-[#17191c] rounded-full bold hover:opacity-90 disabled:opacity-50 transition-opacity"
+              className="w-full py-4 text-xs lg:text-[13px]     border-lime-950 text-white bg-[var(--color-primary)] rounded-full bold hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               {isBooking
                 ? "Reserving..."
@@ -262,7 +262,7 @@ export default function BookingForm({
           <button
             onClick={onBook}
             disabled={isBooking || !selectedRoomType}
-            className="py-2 px-8 text-xs lg:text-[13px]     rounded-full text-white bg-[#17191c] hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="py-2 px-8 text-xs lg:text-[13px]     rounded-full text-white bg-[var(--color-primary)] hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {isBooking ? "Reserving..." : "Reserve"}
           </button>
