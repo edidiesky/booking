@@ -22,9 +22,23 @@ ALTER ROLE booking_app    LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS 
 ALTER ROLE booking_worker LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE BYPASSRLS   CONNECTION LIMIT 30  PASSWORD :'worker_pass';
 
 GRANT CONNECT ON DATABASE :"DBNAME" TO booking_app, booking_worker;
+
 GRANT USAGE ON SCHEMA public TO booking_app, booking_worker;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO booking_app, booking_worker;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO booking_app, booking_worker;
+
+ALTER DEFAULT PRIVILEGES FOR ROLE :"USER" IN SCHEMA public
+  GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO booking_app, booking_worker;
+ALTER DEFAULT PRIVILEGES FOR ROLE :"USER" IN SCHEMA public
+  GRANT USAGE, SELECT ON SEQUENCES TO booking_app, booking_worker;
+
+-- app schema (assign_user_role, etc.)
+CREATE SCHEMA IF NOT EXISTS app;
+GRANT USAGE ON SCHEMA app TO booking_app, booking_worker;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA app TO booking_app, booking_worker;
+ALTER DEFAULT PRIVILEGES FOR ROLE :"USER" IN SCHEMA app
+  GRANT EXECUTE ON FUNCTIONS TO booking_app, booking_worker;
+
 
 -- Tables created by later migrations (which run as the owner role)
 ALTER DEFAULT PRIVILEGES FOR ROLE :"USER" IN SCHEMA public

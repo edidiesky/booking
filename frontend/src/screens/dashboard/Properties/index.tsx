@@ -8,7 +8,6 @@ import { useProperties } from "./hooks/useProperties";
 import { ChartSelect } from "@/components/common/charts/Chartselect";
 import type { Property, PropertyStatus } from "@/types/api";
 import { useNavigate } from "react-router-dom";
-import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import ExportPdfButton from "@/components/common/ExportPdfButton";
 import { PROPERTY_URL } from "@/constants/api";
 import Title from "@/components/dashboard/common/Title";
@@ -18,6 +17,7 @@ import TablePagination from "@/components/common/table/TablePagination";
 import ImportRoomTypesModal from "./ImportRoomTypesModal";
 import ImportPropertiesModal from "./ImportPropertiesModal";
 import BulkPropertyImagesModal from "./BulkPropertyImagesModal";
+import { StatCardGrid } from "@/components/common/widgets/StatCardGrid";
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
   { label: "Active", value: "active" },
@@ -116,7 +116,7 @@ export default function DashboardProperties() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+        className="w-full p-4  flex flex-col gap-8"
       >
         <div className="flex items-start justify-between lg:flex-row flex-col gap-4">
           <Title
@@ -207,45 +207,50 @@ export default function DashboardProperties() {
 
             <button
               onClick={handleOpenCreate}
-              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px] p-2 bold px-6"
+              className="bg-[var(--color-primary)] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px] p-2 bold px-6"
             >
               Add Property
             </button>
           </div>
         </div>
-        <StatsOverview
+
+        <StatCardGrid
           isLoading={isStatsLoading}
-          growthPct={stats?.newListingsGrowthPct}
-          growthLabel="new listings this month"
-          growthTooltip="New listings created this calendar month vs. last calendar month"
           cards={[
             {
               label: "Active",
               value: String(stats?.activeCount ?? 0),
-              color: "#166534",
-              bg: "#dcfce7",
-              fillPercent: ((stats?.activeCount ?? 0) / propertyTotal) * 100,
+              total: `of ${propertyTotal}`,
+              progress: (stats?.activeCount ?? 0) / propertyTotal,
+              tone: "success",
+              footnote: "Live listings",
             },
             {
               label: "Draft",
               value: String(stats?.draftCount ?? 0),
-              color: "#92400e",
-              bg: "#fef3c7",
-              fillPercent: ((stats?.draftCount ?? 0) / propertyTotal) * 100,
+              total: `of ${propertyTotal}`,
+              progress: (stats?.draftCount ?? 0) / propertyTotal,
+              tone: "warning",
+              footnote: "Not published",
             },
             {
               label: "Paused",
               value: String(stats?.pausedCount ?? 0),
-              color: "#374151",
-              bg: "#f3f4f6",
-              fillPercent: ((stats?.pausedCount ?? 0) / propertyTotal) * 100,
+              total: `of ${propertyTotal}`,
+              progress: (stats?.pausedCount ?? 0) / propertyTotal,
+              tone: "neutral",
+              footnote: "Temporarily off",
             },
             {
               label: "Archived",
               value: String(stats?.archivedCount ?? 0),
-              color: "#991b1b",
-              bg: "#fee2e2",
-              fillPercent: ((stats?.archivedCount ?? 0) / propertyTotal) * 100,
+              total: `of ${propertyTotal}`,
+              progress: (stats?.archivedCount ?? 0) / propertyTotal,
+              tone: "danger",
+              footnote:
+                stats?.newListingsGrowthPct != null
+                  ? `${stats.newListingsGrowthPct >= 0 ? "+" : ""}${Math.round(stats.newListingsGrowthPct)}% new this month`
+                  : "Retired listings",
             },
           ]}
         />

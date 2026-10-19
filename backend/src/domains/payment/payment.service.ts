@@ -27,6 +27,8 @@ import {
 } from "../idempotency/idempotency.repository";
 import { requestCoalescer } from "../../utils/requestCoalescer";
 import { auditEventRepository } from "../audit/auditEvent.repository";
+import { isWorkflowDelegationEnabled, paymentOrchestrationClient } from "../../utils/internalServices.client";
+
 
 export interface InitializePaymentInput {
   bookingId: string;
@@ -237,6 +239,25 @@ export const paymentServiceImpl = {
       throw AppError.conflict(
         `Booking is in status: ${booking.status}. Cannot initiate payment.`,
       );
+    }
+
+    // Façade: public API stays on :4000; money path can run on payment-service
+    if (isWorkflowDelegationEnabled()) {
+      const spine = await paymentOrchestrationClient.initiatePayment({
+        bookingId,
+        guestUserId,
+        email,
+        gateway,
+        callbackUrl,
+        phone,
+        tenantId: booking.tenant_id,
+      });
+      return {
+        paymentId: spine.paymentId ?? spine.transactionId,
+        transactionId: spine.transactionId,
+        redirectUrl: spine.redirectUrl,
+        amountNgn: spine.amountNgn ?? Number(booking.total_amount_ngn),
+      };
     }
 
     const endpoint = "/api/v1/payments/initialize";

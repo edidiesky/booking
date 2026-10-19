@@ -27,7 +27,7 @@ export default function DashboardRenters() {
               Manage tenant records across your properties.
             </p>
           </div>
-          <button className="bg-[#17191c] flex bold rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px]     p-2 px-4">
+          <button className="bg-[var(--color-primary)] flex bold rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px]     p-2 px-4">
             Add Tenant
           </button>
         </div>

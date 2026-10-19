@@ -1,46 +1,32 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import type { NavGroup } from "@/types/ui";
+import type { NavGroup as NavGroupType } from "@/types/ui";
 
 interface Props {
-  group: NavGroup;
-  base?: string; 
+  group: NavGroupType;
+  base?: string;
+  collapsed?: boolean;
+  onNavigate?: () => void;
 }
 
-function PulseIcon({
-  Icon,
-  isHovered,
-}: {
-  Icon: React.ElementType;
-  isHovered: boolean;
-}) {
-  return (
-    <motion.div
-      animate={{
-        y: isHovered ? [0, -8, 0, -8, 0] : 0,
-        rotate: isHovered ? [0, -20, 20, -20, 0] : 0,
-      }}
-      transition={{ duration: 0.4 }}
-      className="shrink-0"
-    >
-      <Icon size={15}  />
-    </motion.div>
-  );
-}
-
-export default function NavGroupComponent({ group, base = "/dashboard"  }: Props) {
+export default function NavGroup({
+  group,
+  base = "/dashboard",
+  collapsed = false,
+  onNavigate,
+}: Props) {
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
 
   return (
     <div className="mb-5">
-      <p
-        className="text-xs lg:text-[13px]     uppercase px-2 mb-1.5 font-semibold"
-        style={{ color: "var(--color-hint-of-grey)" }}
-      >
-        {group.label}
-      </p>
-      {group.items.map((item) => {
+      {!collapsed && (
+        <p className="text-[11px] uppercase px-2 mb-1.5 font-semibold tracking-wide text-[var(--color-hint-of-grey)]">
+          {group.label}
+        </p>
+      )}
+      <div className="flex flex-col gap-1 w-full">
+        {group.items.map((item) => {
         const Icon = item.icon;
         const to = item.path ? `${base}/${item.path}` : base;
         const isHovered = hoveredPath === to;
@@ -51,29 +37,36 @@ export default function NavGroupComponent({ group, base = "/dashboard"  }: Props
             to={to}
             end={!item.path}
             data-tour={item.tour}
+            title={collapsed ? item.text : undefined}
+            onClick={() => onNavigate?.()}
             onMouseEnter={() => setHoveredPath(to)}
             onMouseLeave={() => setHoveredPath(null)}
             className={({ isActive }) =>
               [
-                "flex items-center gap-2.5 text-[#9e9e9e] px-2.5 py-2 rounded-[8px] font-semibold text-[13px]     transition-colors w-full mb-0.5",
-                isActive ? "bg-[#f5f5f3] font-medium" : "hover:bg-[#f5f5f3]",
+                "flex items-center gap-2.5 px-2.5 py-1.5 text-[var(--color-ink)] rounded-full text-[13px] font-semibold transition-colors w-full",
+                collapsed ? "justify-center" : "",
+                isActive
+                  ? "bg-[var(--color-primary)] text-[var(--color-canvas)]"
+                  : " hover:bg-[var(--color-canvas)]",
               ].join(" ")
             }
-            style={({ isActive }) => ({
-              color: isActive ? "#292929" : "#9e9e9e",
-            })}
           >
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.96 }}
-              className="flex items-center gap-2.5 w-full"
+              animate={
+                isHovered && !collapsed
+                  ? { y: [0, -4, 0] }
+                  : { y: 0 }
+              }
+              transition={{ duration: 0.35 }}
+              className="shrink-0"
             >
-              <PulseIcon Icon={Icon} isHovered={isHovered} />
-              {item.text}
+              <Icon size={15} />
             </motion.div>
+            {!collapsed && <span className="truncate">{item.text}</span>}
           </NavLink>
         );
       })}
+      </div>
     </div>
   );
 }

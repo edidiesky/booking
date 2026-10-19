@@ -5,7 +5,7 @@ import { logger } from "@booking/shared";
 import { getBreakerFire } from "./utils/createBreaker";
 import { getRealIp } from "./utils/identity";
 
-const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN ?? "http://localhost:4000";
+const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN ?? "http://booking:4000";
 const GATEWAY_SHARED_SECRET = process.env.GATEWAY_SHARED_SECRET ?? "";
 
 const WEBHOOK_SIGNATURE_HEADERS = ["x-paystack-signature", "verif-hash"];

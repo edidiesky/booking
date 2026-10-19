@@ -36,7 +36,7 @@ export default function RecentTransactionsCard({ recentTransactions }: Props) {
   return (
     <div className="rounded-2xl border border-[var(--color-fog)] bg-[var(--color-canvas)] flex flex-col">
       <div className="px-5 py-4">
-        <p className="text-xs font-semibold lg:text-sm">Recent Transactions</p>
+        <p className="font-bold text-sm">Recent Transactions</p>
       </div>
 
       {recent.length === 0 ? (

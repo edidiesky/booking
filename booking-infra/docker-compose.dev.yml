@@ -13,6 +13,10 @@ services:
       - "127.0.0.1:15672:15672"
     env_file:
       - ./.env.production
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: /
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -21,12 +25,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 1m30s
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-        reservations:
-          memory: 256M
 
   redis:
     image: redis:7.0-alpine
@@ -102,7 +100,6 @@ services:
       - ./postgres/init-monitoring.sh:/docker-entrypoint-initdb.d/20-monitoring.sh:ro
       - ./postgres/postgresql.primary.conf:/etc/postgresql/postgresql.conf:ro
       - ./postgres/pg_hba.primary.conf:/etc/postgresql/pg_hba.conf:ro
-      - ./postgres/init-replication.sh:/docker-entrypoint-initdb.d/10-replication.sh:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d booking_platform"]
       interval: 10s
@@ -154,25 +151,25 @@ services:
       - redis-insight-data:/db
     restart: unless-stopped
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
-    container_name: elasticsearch
-    networks:
-      - app-tier
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - "127.0.0.1:9200:9200"
-    volumes:
-      - es-data:/usr/share/elasticsearch/data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 1m
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+  #   container_name: elasticsearch
+  #   networks:
+  #     - app-tier
+  #   environment:
+  #     - discovery.type=single-node
+  #     - xpack.security.enabled=false
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #   ports:
+  #     - "127.0.0.1:9200:9200"
+  #   volumes:
+  #     - es-data:/usr/share/elasticsearch/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
+  #     start_period: 1m
 
   gateway:
     build:
@@ -207,6 +204,7 @@ services:
       WORKER_DATABASE_URL:    postgres://booking_worker:${WORKER_DB_PASSWORD}@pgbouncer:6432/booking_platform
       MIGRATION_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
       ADMIN_DATABASE_URL:     postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
+      RABBITMQ_URL: ${RABBITMQ_URL}
     networks:
       - app-tier
     depends_on:
@@ -214,8 +212,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
+      
       postgres:
         condition: service_healthy
       pgbouncer:   
@@ -239,7 +236,7 @@ services:
     environment:
       PORT: "4101"
       DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
-      RABBITMQ_URL: amqp://guest:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      RABBITMQ_URL: ${RABBITMQ_URL}
       SERVICE_NAME: booking-service
     networks:
       - app-tier
@@ -267,7 +264,7 @@ services:
     environment:
       PORT: "4102"
       DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
-      RABBITMQ_URL: amqp://guest:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      RABBITMQ_URL: ${RABBITMQ_URL}
       BOOKING_SERVICE_URL: http://booking-service:4101
       ORCHESTRATION_SERVICE_URL: http://orchestration-service:4104
       PAYSTACK_SECRET_KEY: ${PAYSTACK_SECRET_KEY}
@@ -300,7 +297,7 @@ services:
     environment:
       PORT: "4103"
       DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
-      RABBITMQ_URL: amqp://guest:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      RABBITMQ_URL: ${RABBITMQ_URL}
       SERVICE_NAME: ledger-service
     networks:
       - app-tier
@@ -367,7 +364,7 @@ volumes:
   redis-data:
   rabbitmq_data:
   postgres_data:
-  es-data:
+  # es-data:
   redis-insight-data:
   postgres_replica_data:
 

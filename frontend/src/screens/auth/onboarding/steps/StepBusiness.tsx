@@ -152,7 +152,7 @@ export default function StepBusiness({
                   onClick={() => toggleType(t.id)}
                   className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
                     on
-                      ? "bg-[#17191c] text-white border-[#17191c]"
+                      ? "bg-[var(--color-primary)] text-white border-[#17191c]"
                       : "bg-white text-[#4c4c4c] border-[#e8e6e3] hover:bg-[#f2f0ed]"
                   }`}
                 >

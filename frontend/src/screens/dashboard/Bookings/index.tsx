@@ -14,7 +14,6 @@ import CancelBookingModal from "@/screens/guest/MyBookings/CancelBookingModal";
 import BookingTableRow from "./BookingTableRow";
 import ExportPdfButton from "@/components/common/ExportPdfButton";
 import { BOOKING_URL } from "@/constants/api";
-import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import { formatCurrency } from "@/utils/formatCurrency";
 import {
   FilterBar,
@@ -26,6 +25,7 @@ import DateRangeDropdown from "@/components/common/filters/DateRangeDropdown";
 import { EmptyState } from "@/components/common/EmptyState";
 import Title from "@/components/dashboard/common/Title";
 import TablePagination from "@/components/common/table/TablePagination";
+import { StatCardGrid } from "@/components/common/widgets/StatCardGrid";
 const STATUS_OPTIONS: { label: string; value: BookingStatus | "" }[] = [
   { label: "All statuses", value: "" },
   { label: "Pending Payment", value: "pending_payment" },
@@ -100,11 +100,13 @@ export default function DashboardBookings() {
       /* errorMiddleware */
     }
   };
-  const totalBookings =
+
+  const pipeline =
     (stats?.confirmedCount ?? 0) +
       (stats?.checkedInCount ?? 0) +
-      (stats?.cancelledCount ?? 0) || 1;
-  const PEAK_AMT = 1000000;
+      (stats?.cancelledCount ?? 0) +
+      (stats?.pendingCount ?? 0) || 1;
+
   return (
     <>
       <AnimatePresence>
@@ -132,7 +134,7 @@ export default function DashboardBookings() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+        className="w-full p-4  flex flex-col gap-8"
       >
         <Title
           title={`Bookings`}
@@ -140,40 +142,43 @@ export default function DashboardBookings() {
               actions."
         />
 
-        <StatsOverview
+        <StatCardGrid
           isLoading={isStatsLoading}
-          growthPct={stats?.revenueGrowthPct}
-          growthTooltip="Confirmed booking revenue this calendar month vs. last calendar month"
           cards={[
             {
               label: "Confirmed",
               value: String(stats?.confirmedCount ?? 0),
-              color: "#1e40af",
-              bg: "#dbeafe",
-              fillPercent: ((stats?.confirmedCount ?? 0) / totalBookings) * 100,
+              total: `of ${pipeline}`,
+              progress: (stats?.confirmedCount ?? 0) / pipeline,
+              tone: "info",
+              footnote: "Awaiting or upcoming stays",
             },
             {
-              label: "Checked In",
+              label: "Checked in",
               value: String(stats?.checkedInCount ?? 0),
-              color: "#166534",
-              bg: "#dcfce7",
-              fillPercent: ((stats?.checkedInCount ?? 0) / totalBookings) * 100,
+              total: `of ${pipeline}`,
+              progress: (stats?.checkedInCount ?? 0) / pipeline,
+              tone: "success",
+              footnote: "Currently on property",
             },
             {
               label: "Cancelled",
               value: String(stats?.cancelledCount ?? 0),
-              color: "#991b1b",
-              bg: "#fee2e2",
-              fillPercent: ((stats?.cancelledCount ?? 0) / totalBookings) * 100,
+              total: `of ${pipeline}`,
+              progress: (stats?.cancelledCount ?? 0) / pipeline,
+              tone: "danger",
+              footnote: "Of booking pipeline",
             },
             {
-              label: "Revenue (Month)",
+              label: "Revenue (month)",
               value: formatCurrency(stats?.currentMonthRevenueNgn ?? 0),
-              color: "#5b21b6",
-              bg: "#ede9fe",
-              fillPercent:
-                ((stats?.currentMonthRevenueNgn ?? 0) / PEAK_AMT) * 100,
-              // no fillPercent, genuinely nothing to divide revenue by here
+              total:
+                stats?.revenueGrowthPct != null
+                  ? `${stats.revenueGrowthPct >= 0 ? "+" : ""}${Math.round(stats.revenueGrowthPct)}% vs last month`
+                  : "This calendar month",
+              progress: 0,
+              tone: "neutral",
+              footnote: "Confirmed booking revenue",
             },
           ]}
         />

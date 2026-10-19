@@ -8,7 +8,7 @@ export default function AdminCalendar() {
     useAdminCalendar();
 
   return (
-    <div className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8">
+    <div className="w-full p-4  flex flex-col gap-8">
       <Title
         title={`Calendar`}
         description="Platform-wide activity across every seller, every property, every booking."

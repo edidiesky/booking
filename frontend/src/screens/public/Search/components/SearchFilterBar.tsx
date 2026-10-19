@@ -119,7 +119,7 @@ function ClickDatePicker({
                 disabled && "cursor-not-allowed opacity-30",
                 !disabled && !isStart && !isEnd && "hover:bg-[#f3f4f6]",
                 isMid && "w-full rounded-none bg-[#ecfdf5] text-[#166534]",
-                (isStart || isEnd) && "bg-[#17191c] font-semibold text-white",
+                (isStart || isEnd) && "bg-[var(--color-primary)] font-semibold text-white",
                 isToday(day) && !isStart && !isEnd && "ring-1 ring-[#17191c]",
               )}
             >
@@ -286,7 +286,7 @@ export default function SearchFilterBar({
         >
           More filters
           {activeMoreCount > 0 && (
-            <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#17191c] px-1 text-[10px] font-semibold text-white">
+            <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-semibold text-white">
               {activeMoreCount}
             </span>
           )}
@@ -308,7 +308,7 @@ export default function SearchFilterBar({
               onApply();
               setOpen(null);
             }}
-            className="h-10 rounded-full bg-[#17191c] px-5 text-[13px] font-semibold text-white hover:bg-black"
+            className="h-10 rounded-full bg-[var(--color-primary)] px-5 text-[13px] font-semibold text-white hover:bg-black"
           >
             Apply
           </button>
@@ -355,7 +355,7 @@ export default function SearchFilterBar({
             onClick={() => onViewModeChange("list")}
             className={cn(
               "flex h-8 w-8 items-center justify-center rounded-full",
-              viewMode === "list" ? "bg-[#17191c] text-white" : "text-[#777b86]",
+              viewMode === "list" ? "bg-[var(--color-primary)] text-white" : "text-[#777b86]",
             )}
           >
             <LayoutGrid size={15} />
@@ -365,7 +365,7 @@ export default function SearchFilterBar({
             onClick={() => onViewModeChange("map")}
             className={cn(
               "flex h-8 w-8 items-center justify-center rounded-full",
-              viewMode === "map" ? "bg-[#17191c] text-white" : "text-[#777b86]",
+              viewMode === "map" ? "bg-[var(--color-primary)] text-white" : "text-[#777b86]",
             )}
           >
             <MapIcon size={15} />
@@ -423,7 +423,7 @@ export default function SearchFilterBar({
                 <button
                   type="button"
                   onClick={() => { onCityChange(cityDraft); setOpen(null); }}
-                  className="mt-2 h-9 w-full rounded-lg bg-[#17191c] text-[13px] font-medium text-white"
+                  className="mt-2 h-9 w-full rounded-lg bg-[var(--color-primary)] text-[13px] font-medium text-white"
                 >
                   Search this location
                 </button>

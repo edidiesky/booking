@@ -42,6 +42,28 @@ export const userRoleRepository = {
       return (await queryOne<T>(sql, params)) as T;
     };
 
+    if (client) {
+    const row = await run<UserRole>(
+      `SELECT * FROM app.assign_user_role($1::uuid, $2::uuid, $3::uuid, $4::uuid, $5::text)`,
+      [
+        data.userId,
+        data.tenantId,
+        data.roleId,
+        data.assignedBy,
+        data.reason ?? null,
+      ],
+    );
+    logger.info("user_role_assigned", {
+      event: "user_role_assigned",
+      userId: data.userId,
+      tenantId: data.tenantId,
+      roleId: data.roleId,
+      via: "app.assign_user_role",
+      ...ctx(),
+    });
+    return row!;
+  }
+
     if (data.tenantId) {
       const updated = await run<UserRole>(
         `UPDATE user_roles

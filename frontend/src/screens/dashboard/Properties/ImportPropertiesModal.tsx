@@ -291,7 +291,7 @@ export default function ImportPropertiesModal({ onClose }: Props) {
                 </div>
                 <div className="h-1.5 rounded-full bg-[#f2f0ed] overflow-hidden">
                   <div
-                    className="h-full bg-[#17191c] transition-all"
+                    className="h-full bg-[var(--color-primary)] transition-all"
                     style={{ width: `${phase.percent}%` }}
                   />
                 </div>
@@ -318,7 +318,7 @@ export default function ImportPropertiesModal({ onClose }: Props) {
                 type="button"
                 onClick={() => void onSend()}
                 disabled={phase.kind !== "ready" || isStarting}
-                className="flex-1 h-10 text-xs lg:text-[13px] rounded-lg bg-[#17191c] text-white disabled:opacity-40 inline-flex items-center justify-center gap-2"
+                className="flex-1 h-10 text-xs lg:text-[13px] rounded-lg bg-[var(--color-primary)] text-white disabled:opacity-40 inline-flex items-center justify-center gap-2"
               >
                 {isStarting && <Loader2 size={13} className="animate-spin" />}
                 Send
@@ -343,7 +343,7 @@ export default function ImportPropertiesModal({ onClose }: Props) {
               </div>
               <div className="h-1.5 rounded-full bg-[#f2f0ed] overflow-hidden">
                 <div
-                  className={`h-full transition-all ${status === "failed" ? "bg-[#c0392b]" : "bg-[#17191c]"}`}
+                  className={`h-full transition-all ${status === "failed" ? "bg-[#c0392b]" : "bg-[var(--color-primary)]"}`}
                   style={{ width: `${snapshot?.progress ?? 0}%` }}
                 />
               </div>
@@ -480,7 +480,7 @@ export default function ImportPropertiesModal({ onClose }: Props) {
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="flex-1 h-10 text-xs lg:text-[13px] rounded-lg bg-[#17191c] text-white"
+                    className="flex-1 h-10 text-xs lg:text-[13px] rounded-lg bg-[var(--color-primary)] text-white"
                   >
                     Done
                   </button>

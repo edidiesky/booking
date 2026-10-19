@@ -70,7 +70,7 @@ export function MessageComposer({
           onClick={handleSend}
           disabled={!value.trim()}
           aria-label="Send message"
-          className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#17191c] text-white transition-opacity hover:bg-black disabled:opacity-40"
+          className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)] text-white transition-opacity hover:bg-black disabled:opacity-40"
         >
           <SendHorizontal size={16} />
         </button>

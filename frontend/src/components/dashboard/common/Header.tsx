@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Menu, Search, Copy, Check } from "lucide-react";
+import { Menu, Copy, Check } from "lucide-react";
 import NotificationBell from "@/components/common/NotificationBell";
 import {
   Calendar,
@@ -44,7 +44,7 @@ export default function Header() {
     >
       <MobileSidebar isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
-      <div className="max-w-[1280px] mx-auto px-4 lg:px-8 h-[60px] flex items-center justify-between">
+      <div className="max-w-[1200px] mx-auto px-4 lg:px-8 h-[60px] flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileOpen(true)}
@@ -53,7 +53,7 @@ export default function Header() {
             <Menu size={18} style={{ color: "var(--color-ink)" }} />
           </button>
           {/* Search */}
-          <button
+          {/* <button
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors hover:opacity-70 outline-none"
             style={{ color: "var(--color-muted-stone)" }}
           >
@@ -61,7 +61,7 @@ export default function Header() {
             <span className="text-xs lg:text-[13px]   hidden sm:block">
               Search or press ⌘K
             </span>
-          </button>
+          </button> */}
         </div>
 
         {/* Right side */}

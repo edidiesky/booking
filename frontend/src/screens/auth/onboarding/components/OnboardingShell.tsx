@@ -58,7 +58,7 @@ export default function OnboardingShell({
       >
         <header className="flex items-center justify-between gap-4 px-5 lg:px-8 h-14 border-b border-[#eeecea]">
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="h-7 w-7 rounded-lg bg-[#17191c] text-white text-xs font-semibold flex items-center justify-center">
+            <span className="h-7 w-7 rounded-lg bg-[var(--color-primary)] text-white text-xs font-semibold flex items-center justify-center">
               B
             </span>
             <span className="text-sm font-semibold tracking-tight text-[#17191c] hidden sm:inline">

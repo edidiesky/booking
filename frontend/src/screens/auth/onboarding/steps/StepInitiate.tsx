@@ -43,16 +43,16 @@ export default function StepInitiate({
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1
-          className="text-[28px] leading-[1.1]"
-          style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-3">
+        <h4
+          className="text-xl lg:text-2xl font-semibold"
+          style={{ color: "var(--color-ink)" }}
         >
           Set up your account
-        </h1>
+        </h4>
         <p
-          className="text-[15px]"
+          className="text-sm"
           style={{ color: "var(--color-muted-stone)" }}
         >
           {userChoice === "host"
@@ -103,24 +103,6 @@ export default function StepInitiate({
             {...register("confirmPassword")}
           />
         </div>
-
-        <ul className="flex flex-col gap-1.5">
-          {["At least 8 characters", "One uppercase letter", "One number"].map(
-            (rule) => (
-              <li
-                key={rule}
-                className="flex items-center gap-2 text-xs"
-                style={{ color: "var(--color-muted-stone)" }}
-              >
-                <span
-                  className="w-1 h-1 rounded-full"
-                  style={{ backgroundColor: "var(--color-muted-stone)" }}
-                />
-                {rule}
-              </li>
-            ),
-          )}
-        </ul>
 
         <button
           type="submit"

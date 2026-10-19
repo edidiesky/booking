@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { Layers } from "lucide-react";
 import Title from "@/components/dashboard/common/Title";
-import StatsGrid from "./StatsGrid";
 import RecentBookings from "./RecentBookings";
 import { useDashboardHome } from "./hooks/useDashboardHome";
 import { selectCurrentUser } from "@/redux/slices/authSlice";
@@ -12,7 +11,15 @@ import TodaysFocusCard from "./TodaysFocusCard";
 import QuickActionsRow from "./QuickActionsRow";
 import RadialTickCard from "@/components/common/charts/RadialTickCard";
 import LinearTickBarCard from "@/components/common/charts/LinearTickBarCard";
+import { StatCardGrid } from "@/components/common/widgets/StatCardGrid";
 
+function formatNgn(amount: number): string {
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    minimumFractionDigits: 0,
+  }).format(amount);
+}
 
 export default function DashboardHome() {
   const currentUser = useSelector(selectCurrentUser);
@@ -26,8 +33,12 @@ export default function DashboardHome() {
     isLoading,
     recentTransactions,
     tenant,
+    totalProperties,
+    activeProperties,
+    totalBookings,
+    totalPayments,
+    successfulPayments,
   } = useDashboardHome();
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -53,11 +64,48 @@ export default function DashboardHome() {
         </div>
       ) : (
         <>
-          <StatsGrid
-            totalRevenue={totalRevenue}
-            confirmedCount={confirmedCount}
-            checkedInCount={checkedInCount}
-            cancelledCount={cancelledCount}
+          <StatCardGrid
+            isLoading={isLoading}
+            cards={[
+              {
+                label: "Properties",
+                value: String(totalProperties),
+                total: `${activeProperties} active`,
+                progress:
+                  totalProperties > 0 ? activeProperties / totalProperties : 0,
+                tone: "success",
+                footnote: "All listing statuses",
+              },
+              {
+                label: "Bookings",
+                value: String(totalBookings),
+                total: `${confirmedCount} confirmed`,
+                progress:
+                  totalBookings > 0 ? confirmedCount / totalBookings : 0,
+                tone: "info",
+                footnote: "All statuses in pipeline",
+              },
+              {
+                label: "Payments",
+                value: String(totalPayments),
+                total: `${successfulPayments} successful`,
+                progress:
+                  totalPayments > 0 ? successfulPayments / totalPayments : 0,
+                tone: "warning",
+                footnote: "All payment attempts",
+              },
+              {
+                label: "Revenue",
+                value: formatNgn(totalRevenue),
+                total:
+                  revenueGrowthPct != null
+                    ? `${revenueGrowthPct >= 0 ? "+" : ""}${Math.round(revenueGrowthPct)}% vs last month`
+                    : "This month",
+                progress: 0,
+                tone: "neutral",
+                footnote: "Confirmed booking revenue",
+              },
+            ]}
           />
           <div className="grid grid-cols-1 lg:grid-cols-[60%_40%] gap-4">
             <div className="w-full flex flex-col gap-4">
@@ -86,7 +134,6 @@ export default function DashboardHome() {
                 ]}
               />
             </div>
-            
 
             <div className="flex flex-col gap-4">
               <RadialTickCard

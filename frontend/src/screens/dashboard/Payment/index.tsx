@@ -14,10 +14,10 @@ import type {
 import Title from "@/components/dashboard/common/Title";
 import PaymentTableRow from "./PaymentTableRow";
 import PaymentDetailsModal from "./PaymentDetailsModal";
-import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { EmptyState } from "@/components/common/EmptyState";
 import TablePagination from "@/components/common/table/TablePagination";
+import { StatCardGrid } from "@/components/common/widgets/StatCardGrid";
 
 const ROWS_PER_PAGE = 10;
 
@@ -64,23 +64,26 @@ export default function DashboardPayments() {
     status: statusFilter || undefined,
     gateway: gatewayFilter || undefined,
   });
-  const { data: statsData, isLoading: isStatsLoading } =
+  const { data: statsResponse, isLoading: isStatsLoading } =
     useGetTenantPaymentStatsQuery();
 
   const payments: PaymentSummary[] = data?.data ?? [];
   useClampPage(data?.meta, currentPage, setCurrentPage);
 
-  const statusTotal =
-    (statsData?.data.successCount ?? 0) +
-      (statsData?.data.failedCount ?? 0) +
-      (statsData?.data.pendingCount ?? 0) || 1;
+  const stats = statsResponse?.data;
+
+  const payTotal =
+    (stats?.successCount ?? 0) +
+      (stats?.failedCount ?? 0) +
+      (stats?.pendingCount ?? 0) +
+      (stats?.refundedCount ?? 0) || 1;
   return (
     <>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+        className="w-full p-4  flex flex-col gap-8"
       >
         <div className="flex items-start justify-between gap-4">
           <Title
@@ -93,43 +96,43 @@ export default function DashboardPayments() {
           </span>
         </div>
 
-        <StatsOverview
+        <StatCardGrid
           isLoading={isStatsLoading}
-          growthPct={statsData?.data.volumeGrowthPct}
-          growthTooltip="Successful payment volume this calendar month vs. last calendar month"
           cards={[
             {
-              label: "Success",
-              value: String(statsData?.data.successCount ?? 0),
-              color: "#166534",
-              bg: "#dcfce7",
-              fillPercent:
-                ((statsData?.data.successCount ?? 0) / statusTotal) * 100,
+              label: "Successful",
+              value: String(stats?.successCount ?? 0),
+              total: `of ${payTotal}`,
+              progress: (stats?.successCount ?? 0) / payTotal,
+              tone: "success",
+              footnote: "Completed charges",
             },
             {
               label: "Failed",
-              value: String(statsData?.data.failedCount ?? 0),
-              color: "#991b1b",
-              bg: "#fee2e2",
-              fillPercent:
-                ((statsData?.data.failedCount ?? 0) / statusTotal) * 100,
+              value: String(stats?.failedCount ?? 0),
+              total: `of ${payTotal}`,
+              progress: (stats?.failedCount ?? 0) / payTotal,
+              tone: "danger",
+              footnote: "Failed attempts",
             },
             {
               label: "Pending",
-              value: String(statsData?.data.pendingCount ?? 0),
-              color: "#92400e",
-              bg: "#fef3c7",
-              fillPercent:
-                ((statsData?.data.pendingCount ?? 0) / statusTotal) * 100,
+              value: String(stats?.pendingCount ?? 0),
+              total: `of ${payTotal}`,
+              progress: (stats?.pendingCount ?? 0) / payTotal,
+              tone: "warning",
+              footnote: "Awaiting confirmation",
             },
             {
-              label: "Volume (Month)",
-              value: formatCurrency(statsData?.data.currentMonthVolumeNgn ?? 0),
-              color: "#5b21b6",
-              bg: "#ede9fe",
-              fillPercent:
-                ((statsData?.data.currentMonthVolumeNgn ?? 0) / 1000000) * 100,
-              // no fillPercent, currency total, nothing to divide it by
+              label: "Volume (month)",
+              value: formatCurrency(stats?.currentMonthVolumeNgn ?? 0),
+              total:
+                stats?.volumeGrowthPct != null
+                  ? `${stats.volumeGrowthPct >= 0 ? "+" : ""}${Math.round(stats.volumeGrowthPct)}% vs last month`
+                  : "This calendar month",
+              progress: 0,
+              tone: "info",
+              footnote: "Successful payment volume",
             },
           ]}
         />

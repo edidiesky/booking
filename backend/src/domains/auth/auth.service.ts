@@ -398,6 +398,11 @@ export class AuthService {
         client,
       );
 
+      await client.query(
+        `SELECT set_config('app.current_tenant_id', $1, true)`,
+        [tenantId],
+      );
+
       await auditEventRepository.record(
         {
           tenantId,
@@ -1382,4 +1387,4 @@ export const authService = instrumentService(new AuthService(), measureAuthOp, {
   verifyTwoFactorLogin: "verify_totp",
   loginWithGoogle: "login_google",
   disableTwoFactor: "disable_2fa",
-}); 
+});

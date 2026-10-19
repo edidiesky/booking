@@ -92,8 +92,13 @@ export async function checkoutClient(): Promise<PoolClient> {
 }
 
 export async function withTransaction<T>(
-  fn: (client: PoolClient) => Promise<T>
+  fn: (client: PoolClient) => Promise<T>,
 ): Promise<T> {
+  const existing = requestContext.get()?.dbClient;
+  if (existing) {
+    return fn(existing);
+  }
+
   const client = await poolFor().connect();
   try {
     await client.query("BEGIN");

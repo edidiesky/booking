@@ -268,7 +268,7 @@ export default function BulkPropertyImagesModal({ onClose, batchId }: Props) {
                 type="button"
                 disabled={!pending.length}
                 onClick={() => void handleUpload()}
-                className="h-9 px-5 rounded-lg bg-[#17191c] text-white text-xs lg:text-[13px] hover:opacity-90 disabled:opacity-40"
+                className="h-9 px-5 rounded-lg bg-[var(--color-primary)] text-white text-xs lg:text-[13px] hover:opacity-90 disabled:opacity-40"
               >
                 Upload &amp; link
               </button>
@@ -352,7 +352,7 @@ export default function BulkPropertyImagesModal({ onClose, batchId }: Props) {
               <button
                 type="button"
                 onClick={handleClose}
-                className="h-9 px-5 rounded-lg bg-[#17191c] text-white text-xs lg:text-[13px] hover:opacity-90"
+                className="h-9 px-5 rounded-lg bg-[var(--color-primary)] text-white text-xs lg:text-[13px] hover:opacity-90"
               >
                 Done
               </button>

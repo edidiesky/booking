@@ -26,7 +26,7 @@ export default function AdminNotifications() {
     useAdminNotifications();
 
   return (
-    <div className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8">
+    <div className="w-full p-4  flex flex-col gap-8">
       <Title
         title={`Notifications`}
         description="Manage your Notifications, room types, and availability calendars."

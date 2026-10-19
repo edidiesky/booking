@@ -19,7 +19,7 @@ interface Props {
 // color. Distinct hues, not a grayscale ramp, matching the actual ask.
 const DEFAULT_COLORS = ["#ede9fe", "#5b21b6", "#166534", "#92400e", "#5b21b6"];
 
-export default function RadialTickCard({ title, totalValue, totalLabel = "Total", segments, icon }: Props) {
+export default function RadialTickCard({ title, totalValue, totalLabel = "Total", segments }: Props) {
   const [hovered, setHovered] = useState<RadialTickSegment | null>(null);
   const TICK_COUNT = 48;
   const RADIUS_OUTER = 70;
@@ -56,8 +56,7 @@ export default function RadialTickCard({ title, totalValue, totalLabel = "Total"
   return (
     <div className="border rounded-xl p-4 flex flex-col gap-4" style={{ borderColor: "#e8e6e3" }}>
       <div className="flex items-center gap-2 mb-2">
-        {icon}
-        <p className="text-xs lg:text-[13px]   " style={{ color: "#17191c" }}>{title}</p>
+        <p className="text-sm font-bold" style={{ color: "#17191c" }}>{title}</p>
       </div>
 
       <div className="relative flex items-center justify-center py-4" style={{ height: 180 }}>
