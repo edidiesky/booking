@@ -26,3 +26,4 @@ eddykey.pem.*
 
 booking-infra/.env.*
 service-decomposition
+.zip
