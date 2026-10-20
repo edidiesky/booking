@@ -36,15 +36,19 @@ export default function SidebarNavItem({
           "relative flex items-center h-9 rounded-lg transition-colors duration-150",
           collapsed ? "justify-center px-0" : "px-3",
           isActive
-            ? "bg-[var(--color-secondary,#001325)] text-white"
-            : "text-[var(--color-muted-stone,#334c64)] hover:bg-[var(--color-hover,#edf1f5)]",
+            ? "bg-[var(--color-primary)]"
+            : "hover:bg-[var(--color-hover,#edf1f5)]",
         ].join(" ")
       }
+      style={({ isActive }) => ({
+        color: isActive ? "#ffffff" : "var(--color-muted-stone, #334c64)",
+      })}
     >
       {({ isActive }) => (
         <motion.div
           whileTap={{ scale: 0.96 }}
           className={`flex items-center gap-2.5 min-w-0 ${collapsed ? "" : "w-full"}`}
+          style={{ color: "inherit" }}
           aria-current={isActive ? "page" : undefined}
         >
           <motion.div
@@ -52,10 +56,17 @@ export default function SidebarNavItem({
             animate={{ scale: isHovered ? [1, 1.25, 1] : 1 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
           >
-            <Icon size={16} />
+            <Icon
+              size={16}
+              color="currentColor"
+              strokeWidth={isActive ? 2.25 : 2}
+            />
           </motion.div>
           {!collapsed && (
-            <span className="font-medium tracking-tight text-[13px] truncate">
+            <span
+              className="font-medium tracking-tight text-[13px] truncate"
+              style={{ color: "inherit" }}
+            >
               {label}
             </span>
           )}

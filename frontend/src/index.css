@@ -123,11 +123,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-:root {
-  --dark-1: #171717;
-  --dark-grey: rgba(21, 20, 2, 0.48);
-  --grey-1: #f4f3ee;
-}
 
 .family2 {
   font-family: "Bricolage Grotesque", sans-serif;

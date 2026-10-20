@@ -43,8 +43,9 @@ import { PresenceRepository } from "../domains/session/presence.repository";
 import { PresenceEngine } from "../domains/session/PresenceEngine";
 import { setPresence } from "../domains/session/presence.instance";
 import { createPresenceRouter } from "../domains/session/presence.routes";
-import { app } from "../app"; // only if you mount from bootstrap
+import { app } from "../app";
 import { PresenceSync } from "../domains/session/PresenceSync";
+import { ensureRoles } from "../migrations/ensureRoles";
 
 export let presenceSubscriber: Redis | null = null;
 
@@ -92,6 +93,7 @@ async function runStep(step: InitStep): Promise<void> {
 export async function bootstrapServer(httpServer: http.Server): Promise<void> {
   const steps: InitStep[] = [
     { name: "postgres", fn: connectDB },
+    { name: "roles", fn: ensureRoles },
     {
       name: "redis",
       fn: async () => {
