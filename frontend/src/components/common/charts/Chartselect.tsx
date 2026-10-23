@@ -12,24 +12,40 @@ interface ChartSelectOption {
 }
 
 interface ChartSelectProps {
-  value:         string;
+  value: string;
   onValueChange: (value: string) => void;
-  options:       ChartSelectOption[];
-  placeholder?:  string;
+  options: ChartSelectOption[];
+  placeholder?: string;
+  className?: string;
 }
 
 const EMPTY_SENTINEL = "__all__";
 
-function toInternal(v: string) { return v === "" ? EMPTY_SENTINEL : v; }
-function toExternal(v: string) { return v === EMPTY_SENTINEL ? "" : v; }
+function toInternal(v: string) {
+  return v === "" ? EMPTY_SENTINEL : v;
+}
+function toExternal(v: string) {
+  return v === EMPTY_SENTINEL ? "" : v;
+}
 
-export function ChartSelect({ value, onValueChange, options, placeholder }: ChartSelectProps) {
+export function ChartSelect({
+  value,
+  onValueChange,
+  options,
+  placeholder,
+  className,
+}: ChartSelectProps) {
   return (
     <Select
       value={toInternal(value)}
       onValueChange={(v) => onValueChange(toExternal(v))}
     >
-      <SelectTrigger className="p-1 rounded h-[40px] cursor-pointer border shadow-custom-light bg-white flex items-center justify-start px-4 w-[140px]">
+      <SelectTrigger
+        className={[
+          "p-1 rounded h-[40px] cursor-pointer border shadow-custom-light bg-white flex items-center justify-between px-4 w-[140px]",
+          className ?? "",
+        ].join(" ")}
+      >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className="bg-white border border-gray-200 rounded-xl shadow-sm">
@@ -37,7 +53,7 @@ export function ChartSelect({ value, onValueChange, options, placeholder }: Char
           <SelectItem
             key={toInternal(opt.value)}
             value={toInternal(opt.value)}
-            className="text-xs lg:text-[12px] text-gray-500 bold cursor-pointer hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700"
+            className="text-sm font-semibold text-gray-500 bold cursor-pointer hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700"
           >
             <div className="flex items-center bold gap-2 my-1">{opt.label}</div>
           </SelectItem>

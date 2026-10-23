@@ -43,11 +43,11 @@ export default function NavGroup({
             onMouseLeave={() => setHoveredPath(null)}
             className={({ isActive }) =>
               [
-                "flex items-center gap-2.5 px-2.5 py-1.5 text-[var(--color-ink)] rounded-full text-[13px] font-semibold transition-colors w-full",
+                "flex items-center gap-2.5 px-2.5 py-1.5 rounded-full text-[13px] font-semibold transition-colors w-full",
                 collapsed ? "justify-center" : "",
                 isActive
                   ? "bg-[var(--color-primary)] text-[var(--color-canvas)]"
-                  : " hover:bg-[var(--color-canvas)]",
+                  : " hover:bg-[var(--color-canvas)] text-[var(--color-ink)] ",
               ].join(" ")
             }
           >

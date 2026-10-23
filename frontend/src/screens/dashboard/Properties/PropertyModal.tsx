@@ -369,6 +369,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                           onValueChange={field.onChange}
                           options={PROPERTY_TYPE_OPTIONS}
                           placeholder="Select type"
+                          className="w-full"
                         />
                       )}
                     />
@@ -391,6 +392,7 @@ export default function PropertyModal({ propertyId, isOpen, onClose }: Props) {
                           onValueChange={field.onChange}
                           options={statusOptions}
                           placeholder="Select status"
+                          className="w-full"
                         />
                       )}
                     />

@@ -29,7 +29,7 @@ export default function RowActionsMenu({ actions }: Props) {
           <MoreHorizontal size={16} className="text-[#4c4c4c]" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52 bg-white border border-[#e8e6e3] rounded-xl shadow-lg p-1">
+      <DropdownMenuContent align="end" className="w-64 bg-white border border-[#e8e6e3] rounded-xl shadow-lg p-1">
         {visible.map((action, i) => {
           const Icon = action.icon;
           return (
@@ -37,7 +37,7 @@ export default function RowActionsMenu({ actions }: Props) {
               {action.separator && i > 0 && <DropdownMenuSeparator className="my-1 border-[#f2f0ed]" />}
               <DropdownMenuItem
                 onClick={(e) => { e.stopPropagation(); action.onClick(); }}
-                className={`flex items-center gap-2 px-3 py-2 text-xs lg:text-[13px]   cursor-pointer rounded-lg outline-none ${
+                className={`flex items-center gap-2 p-3 text-sm font-bold cursor-pointer rounded-lg outline-none ${
                   action.variant === "danger"
                     ? "text-red-600 hover:bg-red-50"
                     : "text-[#17191c] hover:bg-[#f2f0ed]"

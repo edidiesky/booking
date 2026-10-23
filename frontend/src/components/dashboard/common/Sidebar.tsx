@@ -141,7 +141,7 @@ export default function Sidebar({
           <Search size={16} />
         </button>
       ) : (
-        <div className="relative mb-4 shrink-0">
+        <div className="relative mb-4 shrink-0 rounded-full">
           <Search
             size={15}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-hint-of-grey)] pointer-events-none"
@@ -158,7 +158,7 @@ export default function Sidebar({
             }}
             placeholder="Search anything…"
             aria-label="Search navigation"
-            className="h-9 w-full rounded-lg border bg-white pl-9 pr-12 text-[13px] text-[var(--color-ink)] placeholder:text-[var(--color-hint-of-grey)] outline-none focus:border-[var(--color-primary)]"
+            className="h-9 w-full rounded-full border bg-white pl-9 pr-12 text-[13px] text-[var(--color-ink)] placeholder:text-[var(--color-hint-of-grey)] outline-none focus:border-[var(--color-primary)]"
             style={{ borderColor: "var(--color-border)" }}
           />
           <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] text-[var(--color-hint-of-grey)] pointer-events-none">

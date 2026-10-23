@@ -51,7 +51,7 @@ export default function StepSelectUserType({ onSelect }: Props) {
             style={{ backgroundColor: "var(--color-canvas)" }}
           >
             <div className="flex flex-col gap-0.5">
-              <p className="text-base font-bold">
+              <p className="text-base font-semibold">
                 {label}
               </p>
               <h4 className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
