@@ -9,6 +9,7 @@ RUN npm install --workspace=@booking/shared --workspace=@booking/booking-service
 
 COPY booking-service/tsconfig.json ./booking-service/tsconfig.json
 COPY booking-service/src ./booking-service/src
+COPY booking-service/db ./booking-service/db
 
 RUN npm run build -w @booking/shared \
  && cd booking-service && npx tsc -p tsconfig.json
@@ -26,6 +27,7 @@ RUN npm install --omit=dev --workspace=@booking/shared --workspace=@booking/book
 
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/booking-service/dist ./booking-service/dist
+COPY --from=builder /app/booking-service/db ./booking-service/db
 
 WORKDIR /app/booking-service
 USER app

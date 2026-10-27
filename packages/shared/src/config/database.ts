@@ -91,10 +91,31 @@ export async function checkoutClient(): Promise<PoolClient> {
   return poolFor().connect();
 }
 
+export type RlsContext = {
+  tenantId?: string | null;
+  userId?: string | null;
+};
+
+/**
+ * Runs `fn` inside a transaction.
+ *
+ * RLS session vars:
+ *   - explicit `opts` win
+ *   - else fall back to requestContext (HTTP paths)
+ *   - worker/webhook paths that have no context must pass opts
+ *     or rely on the worker role (BYPASSRLS)
+ *
+ * If requestContext already holds a dbClient (rlsMiddleware /
+ * beginTenantScopedTransaction), we reuse it and do NOT open a
+ * nested transaction or re-set GUCs (they are already set).
+ */
 export async function withTransaction<T>(
   fn: (client: PoolClient) => Promise<T>,
+  opts?: RlsContext,
 ): Promise<T> {
   const existing = requestContext.get()?.dbClient;
+
+  // Already inside a request-scoped transaction → just run the callback.
   if (existing) {
     return fn(existing);
   }
@@ -102,17 +123,38 @@ export async function withTransaction<T>(
   const client = await poolFor().connect();
   try {
     await client.query("BEGIN");
+
+    const ctx = requestContext.get();
+    const tenantId = opts?.tenantId ?? ctx?.tenantId ?? null;
+    const userId = opts?.userId ?? ctx?.userId ?? null;
+
+    if (tenantId) {
+      await client.query(
+        `SELECT set_config('app.current_tenant_id', $1, true)`,
+        [tenantId],
+      );
+    }
+    if (userId) {
+      await client.query(
+        `SELECT set_config('app.current_user_id', $1, true)`,
+        [userId],
+      );
+    }
+
     const result = await fn(client);
     await client.query("COMMIT");
     return result;
-  } catch (err) {
-    await client.query("ROLLBACK");
-    throw err;
+  } catch (e) {
+    try {
+      await client.query("ROLLBACK");
+    } catch {
+      // ignore rollback errors
+    }
+    throw e;
   } finally {
     client.release();
   }
 }
-
 export async function disconnectDB(): Promise<void> {
   await appPool.end();
   if (workerPool !== appPool) await workerPool.end();

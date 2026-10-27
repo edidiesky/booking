@@ -2,7 +2,7 @@ import { bootstrap } from "./bootstrap";
 import { registerGracefulShutdown } from "./shutdown";
 import { logger } from "./logger";
 
-const PORT = process.env.PORT ?? 4104;
+const PORT = process.env.ORCHESTRATION_PORT ?? 4104;
 
 async function main() {
   const { app, pool, stopSweeper } = await bootstrap();

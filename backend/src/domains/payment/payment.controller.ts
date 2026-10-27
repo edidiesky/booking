@@ -24,6 +24,7 @@ export const GetTenantPaymentsHandler = asyncHandler(
       paymentRepository.listByTenant(req.tenantId, page, limit, filters),
       paymentRepository.countByTenant(req.tenantId, filters),
     ]);
+    
 
     res.status(200).json({
       success: true,

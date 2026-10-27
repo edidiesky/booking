@@ -9,6 +9,8 @@ RUN npm install --workspace=@booking/shared --workspace=@booking/payment-service
 
 COPY payment-service/tsconfig.json ./payment-service/tsconfig.json
 COPY payment-service/src ./payment-service/src
+COPY payment-service/db ./payment-service/db
+
 
 RUN npm run build -w @booking/shared \
  && cd payment-service && npx tsc -p tsconfig.json
@@ -26,6 +28,7 @@ RUN npm install --omit=dev --workspace=@booking/shared --workspace=@booking/paym
 
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/payment-service/dist ./payment-service/dist
+COPY --from=builder /app/payment-service/db ./payment-service/db
 
 WORKDIR /app/payment-service
 USER app

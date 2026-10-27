@@ -1,13 +1,14 @@
 import { Pool } from "pg";
 import axios from "axios";
-import { paymentRepository } from "./payment.repository";
+import { paymentRepository, withTenant } from "./payment.repository";
 import {
   idempotencyRepository,
   buildRequestHash,
   IdempotencyConflictError,
 } from "./idempotency.repository";
-import { paymentGateways, GatewayName } from "./gateways";
+import { paymentGateways } from "./gateways";
 import { publishAuditLog } from "../../auditPublisher";
+import { logger } from "../../logger";
 
 export class ValidationError extends Error {
   status = 400;
@@ -26,6 +27,8 @@ const BOOKING_SERVICE_URL =
   process.env.BOOKING_SERVICE_URL ?? "http://booking-service:4101";
 const ORCHESTRATION_SERVICE_URL =
   process.env.ORCHESTRATION_SERVICE_URL ?? "http://orchestration-service:4104";
+const LEDGER_SERVICE_URL =
+  process.env.LEDGER_SERVICE_URL ?? "http://ledger-service:4103";
 
 interface InitializePaymentInput {
   bookingId: string;
@@ -35,11 +38,10 @@ interface InitializePaymentInput {
   callbackUrl: string;
   phone?: string;
   tenantId: string;
+  idempotencyKey?: string;
 }
 
 interface BookingDto {
-  id?: string;
-  bookingId?: string;
   tenantId: string;
   guestUserId: string;
   totalAmountNgn: number;
@@ -47,20 +49,26 @@ interface BookingDto {
 }
 
 async function fetchBooking(bookingId: string): Promise<BookingDto> {
-  const res = await axios.get(
-    `${BOOKING_SERVICE_URL}/internal/bookings/${bookingId}`,
-    { timeout: 10_000 },
-  );
-  const data = res.data as Record<string, unknown>;
-  // Support both camelCase (preferred) and snake_case if mapper missing
-  return {
-    id: (data.id ?? data.bookingId) as string,
-    bookingId: (data.bookingId ?? data.id) as string,
-    tenantId: (data.tenantId ?? data.tenant_id) as string,
-    guestUserId: (data.guestUserId ?? data.guest_user_id) as string,
-    totalAmountNgn: Number(data.totalAmountNgn ?? data.total_amount_ngn),
-    status: data.status as string,
-  };
+  try {
+    const res = await axios.get(
+      `${BOOKING_SERVICE_URL}/internal/bookings/${bookingId}`,
+      { timeout: 10_000 },
+    );
+    const d = res.data as Record<string, unknown>;
+    return {
+      tenantId: (d.tenantId ?? d.tenant_id) as string,
+      guestUserId: (d.guestUserId ?? d.guest_user_id) as string,
+      totalAmountNgn: Number(d.totalAmountNgn ?? d.total_amount_ngn),
+      status: d.status as string,
+    };
+  } catch (err) {
+    const status = (err as { response?: { status?: number } }).response?.status;
+    if (status === 404) throw new NotFoundError("Booking not found.");
+    throw Object.assign(
+      new Error(`Booking service unavailable: ${(err as Error).message}`),
+      { status: 503 },
+    );
+  }
 }
 
 export const paymentService = {
@@ -70,6 +78,9 @@ export const paymentService = {
     }
 
     const booking = await fetchBooking(input.bookingId);
+    if (booking.tenantId !== input.tenantId) {
+      throw new NotFoundError("Booking not found.");
+    }
     if (!booking.guestUserId || booking.guestUserId !== input.guestUserId) {
       throw new ForbiddenError("Access denied.");
     }
@@ -85,6 +96,7 @@ export const paymentService = {
       gateway: input.gateway,
       callbackUrl: input.callbackUrl,
       phone: input.phone,
+      key: input.idempotencyKey,
     });
 
     let claimResult;
@@ -103,45 +115,50 @@ export const paymentService = {
       }
       throw err;
     }
-
-    if (claimResult.kind === "replay") {
-      return claimResult.key.response_body;
-    }
-
+    if (claimResult.kind === "replay") return claimResult.key.response_body;
     const claim = claimResult.key;
 
     try {
-      let paymentRow = await paymentRepository.findLatestByBooking(
-        pool,
-        booking.tenantId,
-        input.bookingId,
-        input.gateway,
+      const existing = await withTenant(pool, booking.tenantId, (c) =>
+        paymentRepository.findLatestByBooking(
+          c,
+          input.bookingId,
+          input.gateway,
+          true,
+        ),
       );
 
-      if (paymentRow && paymentRow.status === "pending" && paymentRow.transaction_id) {
+      if (existing?.status === "success") {
+        throw new ConflictError("This booking has already been paid.");
+      }
+
+      if (existing?.status === "pending" && existing.transaction_id) {
         const result = {
-          paymentId: paymentRow.id,
-          transactionId: paymentRow.transaction_id,
-          redirectUrl: paymentRow.redirect_url,
+          paymentId: existing.id,
+          transactionId: existing.transaction_id,
+          redirectUrl: existing.metadata?.redirectUrl as string | undefined,
           amountNgn: booking.totalAmountNgn,
         };
         await idempotencyRepository.markCompleted(
           pool,
           claim.id,
-          result as unknown as Record<string, unknown>,
+          result as Record<string, unknown>,
         );
         return result;
       }
 
-      if (!paymentRow) {
-        paymentRow = await paymentRepository.create(
-          pool,
-          input.bookingId,
-          booking.tenantId,
-          booking.totalAmountNgn,
-          input.gateway,
-        );
-      }
+      const row =
+        existing?.status === "pending"
+          ? existing
+          : await withTenant(pool, booking.tenantId, (c) =>
+              paymentRepository.create(c, {
+                bookingId: input.bookingId,
+                tenantId: booking.tenantId,
+                guestUserId: input.guestUserId,
+                amountNgn: booking.totalAmountNgn,
+                gateway: input.gateway,
+              }),
+            );
 
       let gatewayResult;
       try {
@@ -153,10 +170,15 @@ export const paymentService = {
           phone: input.phone ?? "",
           userId: input.guestUserId,
           customerName: input.guestUserId,
-          metadata: { bookingId: input.bookingId, tenantId: booking.tenantId },
+          metadata: {
+            bookingId: input.bookingId,
+            tenantId: booking.tenantId,
+          },
         });
       } catch {
-        await paymentRepository.markFailed(pool, paymentRow.id);
+        await withTenant(pool, booking.tenantId, (c) =>
+          paymentRepository.markFailed(c, row.id, "gateway unavailable"),
+        );
         await idempotencyRepository.markFailed(
           pool,
           claim.id,
@@ -168,7 +190,13 @@ export const paymentService = {
       }
 
       if (!gatewayResult.success || !gatewayResult.transactionId) {
-        await paymentRepository.markFailed(pool, paymentRow.id);
+        await withTenant(pool, booking.tenantId, (c) =>
+          paymentRepository.markFailed(
+            c,
+            row.id,
+            gatewayResult.message ?? "link failed",
+          ),
+        );
         await idempotencyRepository.markFailed(
           pool,
           claim.id,
@@ -179,26 +207,26 @@ export const paymentService = {
         );
       }
 
-      await paymentRepository.markPending(
-        pool,
-        paymentRow.id,
-        gatewayResult.transactionId,
-        gatewayResult.redirectUrl,
-      );
-      await paymentRepository.writeOutboxEvent(
-        pool,
-        "payment.initiated",
-        {
-          paymentId: paymentRow.id,
+      await withTenant(pool, booking.tenantId, async (c) => {
+        await paymentRepository.markPending(
+          c,
+          row.id,
+          gatewayResult.transactionId!,
+          gatewayResult.redirectUrl,
+        );
+        await paymentRepository.writeOutboxEvent(c, "payment.initiated", {
+          paymentId: row.id,
           bookingId: input.bookingId,
+          tenantId: booking.tenantId,
+          guestUserId: input.guestUserId,
+          amountNgn: booking.totalAmountNgn,
           transactionId: gatewayResult.transactionId,
           gateway: input.gateway,
-        },
-        booking.tenantId,
-      );
+        });
+      });
 
       const result = {
-        paymentId: paymentRow.id,
+        paymentId: row.id,
         transactionId: gatewayResult.transactionId,
         redirectUrl: gatewayResult.redirectUrl,
         amountNgn: booking.totalAmountNgn,
@@ -206,7 +234,7 @@ export const paymentService = {
       await idempotencyRepository.markCompleted(
         pool,
         claim.id,
-        result as unknown as Record<string, unknown>,
+        result as Record<string, unknown>,
       );
 
       publishAuditLog({
@@ -220,7 +248,6 @@ export const paymentService = {
           transactionId: result.transactionId,
         },
       });
-
       return result;
     } catch (err) {
       if (
@@ -239,10 +266,6 @@ export const paymentService = {
     }
   },
 
-  /**
-   * Webhook: mark paid once, then resume saga.
-   * Returns non-2xx path via thrown errors so controller can fail the gateway retry.
-   */
   async handleWebhook(
     pool: Pool,
     input: {
@@ -257,68 +280,158 @@ export const paymentService = {
       input.transactionId,
     );
     if (!payment) throw new NotFoundError();
-
-    if (payment.status === "success") {
+    if (payment.status === "success" || payment.status === "refunded") {
       return { ok: true, idempotent: true, bookingId: payment.booking_id };
     }
 
-    // Normalize to NGN for comparison
     const amountNgn =
       input.amountUnit === "kobo" ? input.amount / 100 : input.amount;
-    const expected = Number(payment.amount_ngn);
-    if (Math.abs(amountNgn - expected) > 0.01) {
+    if (Math.abs(amountNgn - Number(payment.amount_ngn)) > 0.01) {
       throw new ValidationError("Amount mismatch");
     }
 
-    await paymentRepository.markSuccess(pool, payment.id);
-
-    const resume = await axios.post(
-      `${ORCHESTRATION_SERVICE_URL}/internal/sagas/booking-payment/by-booking/${payment.booking_id}/resume`,
-      {},
-      { timeout: 15_000, validateStatus: () => true },
+    await withTenant(pool, payment.tenant_id, (c) =>
+      paymentRepository.markSuccess(c, payment.id),
     );
-    if (resume.status >= 500) {
-      throw new Error(
-        `Orchestrator resume failed with status ${resume.status}`,
+
+    let resumeStatus = 0;
+    let sagaStatus: string | undefined;
+    try {
+      const resume = await axios.post(
+        `${ORCHESTRATION_SERVICE_URL}/internal/sagas/booking-payment/by-booking/${payment.booking_id}/resume`,
+        {},
+        { timeout: 15_000, validateStatus: () => true },
       );
-    }
-    if (resume.status === 404) {
-      // Saga may still be pausing; surface so gateway retries
-      throw new ConflictError("Saga not ready for resume; retry");
-    }
-
-    return { ok: true, bookingId: payment.booking_id };
-  },
-
-  async requestRefund(pool: Pool, bookingId: string) {
-    const { paymentGateways } = await import("./gateways");
-    const row = await pool.query(
-      `SELECT * FROM payments
-       WHERE booking_id = $1 AND status IN ('success', 'pending')
-       ORDER BY created_at DESC LIMIT 1`,
-      [bookingId],
-    );
-    const payment = row.rows[0];
-    if (!payment) {
-      await paymentRepository.markRefundRequested(pool, bookingId);
-      return { refundRequested: true, gatewayCalled: false };
-    }
-    if (payment.status === "success" && payment.transaction_id) {
-      const result = await paymentGateways.refund(payment.gateway, {
-        transactionId: payment.transaction_id,
-        amountNgn: Number(payment.amount_ngn),
+      resumeStatus = resume.status;
+      sagaStatus = (resume.data as { status?: string } | undefined)?.status;
+    } catch (err) {
+      logger.error("payment_webhook_resume_network_error", {
+        bookingId: payment.booking_id,
+        error: err instanceof Error ? err.message : String(err),
       });
-      await paymentRepository.markRefundRequested(pool, bookingId);
-      if (!result.success) {
-        throw new ValidationError(`Gateway refund failed: ${result.message}`);
+      throw err;
+    }
+
+    if (resumeStatus >= 500) {
+      throw new Error(`Orchestrator resume failed with status ${resumeStatus}`);
+    }
+
+    const sagaClosed =
+      resumeStatus === 404 ||
+      sagaStatus === "compensated" ||
+      sagaStatus === "failed" ||
+      sagaStatus === "unknown";
+
+    if (sagaClosed) {
+      logger.warn("payment_received_for_closed_saga_refunding", {
+        bookingId: payment.booking_id,
+        resumeStatus,
+        sagaStatus,
+      });
+      try {
+        await this.requestRefund(pool, payment.booking_id, payment.tenant_id);
+      } catch (refundErr) {
+        logger.error("late_payment_refund_failed", {
+          bookingId: payment.booking_id,
+          error:
+            refundErr instanceof Error ? refundErr.message : String(refundErr),
+        });
+        throw refundErr;
       }
       return {
-        refundRequested: true,
+        ok: true,
+        bookingId: payment.booking_id,
+        refunded: true,
+        sagaStatus: sagaStatus ?? "not_found",
+      };
+    }
+
+    return {
+      ok: true,
+      bookingId: payment.booking_id,
+      sagaStatus: sagaStatus ?? "resumed",
+      refunded: false,
+    };
+  },
+
+  async getStatusByBooking(
+    pool: Pool,
+    bookingId: string,
+    tenantId?: string,
+  ) {
+    const tenant = tenantId ?? (await fetchBooking(bookingId)).tenantId;
+    const payment = await withTenant(pool, tenant, (c) =>
+      paymentRepository.findLatestByBooking(c, bookingId),
+    );
+    if (!payment) throw new NotFoundError("Payment not found.");
+    return {
+      paymentId: payment.id,
+      status: payment.status,
+      transactionId: payment.transaction_id,
+    };
+  },
+
+  async requestRefund(pool: Pool, bookingId: string, tenantId?: string) {
+    const tenant = tenantId ?? (await fetchBooking(bookingId)).tenantId;
+
+    const payment = await withTenant(pool, tenant, (c) =>
+      paymentRepository.findLatestByBooking(c, bookingId),
+    );
+    if (!payment) return { action: "none", gatewayCalled: false };
+
+    if (payment.status === "pending") {
+      await withTenant(pool, tenant, (c) =>
+        paymentRepository.markFailed(
+          c,
+          payment.id,
+          "cancelled: saga compensation",
+        ),
+      );
+      return { action: "cancelled", gatewayCalled: false };
+    }
+
+    if (payment.status === "success" && payment.transaction_id) {
+      const amountNgn = Number(payment.amount_ngn);
+      const result = await paymentGateways.refund(payment.gateway, {
+        transactionId: payment.transaction_id,
+        amountNgn,
+      });
+      const alreadyRefunded =
+        !result.success && /already/i.test(result.message ?? "");
+      if (!result.success && !alreadyRefunded) {
+        throw new ValidationError(`Gateway refund failed: ${result.message}`);
+      }
+      await withTenant(pool, tenant, (c) =>
+        paymentRepository.markRefunded(c, payment.id),
+      );
+
+      try {
+        await axios.post(
+          `${LEDGER_SERVICE_URL}/internal/ledger/refund`,
+          {
+            bookingId,
+            tenantId: tenant,
+            paymentId: payment.id,
+            amountNgn,
+          },
+          { timeout: 10_000 },
+        );
+      } catch (ledgerErr) {
+        logger.error("ledger_refund_journal_failed", {
+          bookingId,
+          paymentId: payment.id,
+          error:
+            ledgerErr instanceof Error ? ledgerErr.message : String(ledgerErr),
+        });
+      }
+
+      return {
+        action: "refunded",
         gatewayCalled: true,
         message: result.message,
       };
     }
-    await paymentRepository.markRefundRequested(pool, bookingId);
-    return { refundRequested: true, gatewayCalled: false };
+
+    return { action: "none", gatewayCalled: false, status: payment.status };
   },
 };

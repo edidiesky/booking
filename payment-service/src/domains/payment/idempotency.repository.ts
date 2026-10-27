@@ -44,10 +44,21 @@ export const idempotencyRepository = {
     requestHash: string,
     endpoint: string,
     userId?: string,
-  ): Promise<{ kind: "execute"; key: IdempotencyKey } | { kind: "replay"; key: IdempotencyKey }> {
+  ): Promise<
+    | { kind: "execute"; key: IdempotencyKey }
+    | { kind: "replay"; key: IdempotencyKey }
+  > {
+    // Monolith schema: expires_at is NOT NULL (row TTL).
+    // lease_expires_at is the short processing lease.
     const insert = await pool.query<IdempotencyKey>(
-      `INSERT INTO idempotency_keys (request_hash, endpoint, user_id, status, lease_expires_at)
-       VALUES ($1, $2, $3, 'processing', now() + ($4 * interval '1 millisecond'))
+      `INSERT INTO idempotency_keys (
+         request_hash, endpoint, user_id, status, lease_expires_at, expires_at
+       )
+       VALUES (
+         $1, $2, $3, 'processing',
+         now() + ($4 * interval '1 millisecond'),
+         now() + interval '24 hours'
+       )
        ON CONFLICT (request_hash) DO NOTHING
        RETURNING id, request_hash, status, response_body`,
       [requestHash, endpoint, userId ?? null, LEASE_MS],
@@ -56,7 +67,9 @@ export const idempotencyRepository = {
       return { kind: "execute", key: insert.rows[0] };
     }
 
-    const existing = await pool.query<IdempotencyKey & { lease_expires_at: Date | null }>(
+    const existing = await pool.query<
+      IdempotencyKey & { lease_expires_at: Date | null }
+    >(
       `SELECT id, request_hash, status, response_body, lease_expires_at
        FROM idempotency_keys WHERE request_hash = $1`,
       [requestHash],
@@ -77,7 +90,8 @@ export const idempotencyRepository = {
          SET status = 'processing',
              failure_reason = NULL,
              response_body = NULL,
-             lease_expires_at = now() + ($2 * interval '1 millisecond')
+             lease_expires_at = now() + ($2 * interval '1 millisecond'),
+             expires_at = now() + interval '24 hours'
          WHERE id = $1 AND status = 'failed'
          RETURNING id, request_hash, status, response_body`,
         [row.id, LEASE_MS],

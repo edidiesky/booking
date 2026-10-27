@@ -236,11 +236,17 @@ services:
     environment:
       PORT: "4101"
       DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
+      MIGRATION_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
       RABBITMQ_URL: ${RABBITMQ_URL}
       SERVICE_NAME: booking-service
+      REDIS_URL: ${REDIS_URL}
     networks:
       - app-tier
     depends_on:
+      postgres:
+        condition: service_healthy
+      booking:
+        condition: service_healthy   # monolith migrations create bookings/payments/ledger tables
       pgbouncer:
         condition: service_healthy
       rabbitmq:
@@ -263,7 +269,8 @@ services:
       - ./.env.production
     environment:
       PORT: "4102"
-      DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
+      DATABASE_URL: ${DATABASE_URL}
+      MIGRATION_DATABASE_URL: ${MIGRATION_DATABASE_URL}
       RABBITMQ_URL: ${RABBITMQ_URL}
       BOOKING_SERVICE_URL: http://booking-service:4101
       ORCHESTRATION_SERVICE_URL: http://orchestration-service:4104
@@ -271,9 +278,12 @@ services:
       FLW_SECRET_KEY: ${FLW_SECRET_KEY}
       FLW_SECRET_HASH: ${FLW_SECRET_HASH}
       SERVICE_NAME: payment-service
+      REDIS_URL: ${REDIS_URL}
     networks:
       - app-tier
     depends_on:
+      booking:
+        condition: service_healthy   # shares payments/idempotency_keys/outbox tables with the monolith
       pgbouncer:
         condition: service_healthy
       booking-service:
@@ -297,11 +307,17 @@ services:
     environment:
       PORT: "4103"
       DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
+      MIGRATION_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
       RABBITMQ_URL: ${RABBITMQ_URL}
       SERVICE_NAME: ledger-service
+      REDIS_URL: ${REDIS_URL}
     networks:
       - app-tier
     depends_on:
+      postgres:
+        condition: service_healthy
+      booking:
+        condition: service_healthy   # monolith migrations create bookings/payments/ledger tables
       pgbouncer:
         condition: service_healthy
       rabbitmq:
@@ -321,14 +337,15 @@ services:
     env_file:
       - ./.env.production
     environment:
-      PORT: "4104"
       DATABASE_URL: postgres://booking_app:${APP_DB_PASSWORD}@pgbouncer:6432/booking_platform
+      MIGRATION_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
       BOOKING_SERVICE_URL: http://booking-service:4101
       PAYMENT_SERVICE_URL: http://payment-service:4102
       LEDGER_SERVICE_URL: http://ledger-service:4103
       SAGA_PAUSE_TIMEOUT_MS: "1800000"
       SAGA_SWEEP_INTERVAL_MS: "30000"
       SERVICE_NAME: orchestration-service
+      REDIS_URL: ${REDIS_URL}
     networks:
       - app-tier
     depends_on:

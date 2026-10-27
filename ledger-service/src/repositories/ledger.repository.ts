@@ -5,87 +5,73 @@ export type AccountType =
   | "host_payable" | "cash_paid_out" | "refund_payable"
   | "chargeback_loss" | "host_clawback_receivable";
 
+export type LedgerTransactionType =
+  | "payment_received" | "escrow_release" | "payout" | "refund"
+  | "chargeback" | "chargeback_recovered_from_host";
+
 export interface LedgerEntryInput {
   accountType: AccountType;
+  /** null = platform-wide account (gateway_clearing, platform_revenue ...) */
   tenantId: string | null;
   debitNgn?: number;
   creditNgn?: number;
 }
 
+/**
+ * Writes to the monolith's ledger tables (migration 059): no tenant_id column on
+ * transactions/entries; tenant is carried by the account.
+ */
 export const ledgerRepository = {
-  async getOrCreateAccountsBatch(
-    pairs: Array<{ tenantId: string | null; accountType: AccountType }>,
-    client: PoolClient,
-  ): Promise<Map<string, string>> {
-
-    // the real, replicated reference table (ledger_accounts), Citus
-    // makes this transparent, the query looks identical to the
-    // pre-Citus version.
-    const uniquePairs = Array.from(
-      new Map(pairs.map((p) => [`${p.tenantId ?? "null"}:${p.accountType}`, p])).values(),
-    );
-    const existing = await client.query<{ id: string; tenant_id: string | null; account_type: string }>(
-      `SELECT id, tenant_id, account_type FROM ledger_accounts
-       WHERE (tenant_id, account_type) IN (SELECT * FROM unnest($1::uuid[], $2::text[]))`,
-      [uniquePairs.map((p) => p.tenantId), uniquePairs.map((p) => p.accountType)],
-    );
-    const resultMap = new Map<string, string>();
-    for (const row of existing.rows) resultMap.set(`${row.tenant_id ?? "null"}:${row.account_type}`, row.id);
-
-    const missing = uniquePairs.filter((p) => !resultMap.has(`${p.tenantId ?? "null"}:${p.accountType}`));
-    if (missing.length > 0) {
-      const created = await client.query<{ id: string; tenant_id: string | null; account_type: string }>(
-        `INSERT INTO ledger_accounts (tenant_id, account_type)
-         SELECT * FROM unnest($1::uuid[], $2::text[]) RETURNING id, tenant_id, account_type`,
-        [missing.map((p) => p.tenantId), missing.map((p) => p.accountType)],
+  async getOrCreateAccount(client: PoolClient, tenantId: string | null, accountType: AccountType): Promise<string> {
+    const find = () =>
+      client.query<{ id: string }>(
+        `SELECT id FROM ledger_accounts WHERE account_type = $1 AND tenant_id IS NOT DISTINCT FROM $2`,
+        [accountType, tenantId],
       );
-      for (const row of created.rows) resultMap.set(`${row.tenant_id ?? "null"}:${row.account_type}`, row.id);
-    }
-    return resultMap;
+    const found = await find();
+    if (found.rows[0]) return found.rows[0].id;
+
+    // uq_ledger_account (NULLS NOT DISTINCT) makes concurrent creation safe.
+    await client.query(
+      `INSERT INTO ledger_accounts (tenant_id, account_type) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+      [tenantId, accountType],
+    );
+    return (await find()).rows[0]!.id;
   },
 
-  // version: recordTransaction now REQUIRES a real, single, non-null
-  // tenantId for the whole real transaction, not optional per-entry.
-  // This is the real, direct consequence of sharding by tenant_id:
-  // Citus needs every row in a distributed table to genuinely carry
-  // its real shard key, a platform-wide entry (tenantId: null, used
-  // for gateway_clearing/platform_revenue in the single-DB version)
-  // can no longer be silently unsharded here, it has to pick a real
-  // tenant to shard under, or live in a real, separate, reference
-  // structure. This is a genuine, real, structural cost of
-  // decomposition, not a minor implementation detail, flagged
-  // honestly in Open Issues below rather than glossed over.
+  async findTransaction(client: PoolClient, bookingId: string, type: LedgerTransactionType) {
+    const r = await client.query<{ id: string }>(
+      `SELECT id FROM ledger_transactions WHERE booking_id = $1 AND transaction_type = $2 LIMIT 1`,
+      [bookingId, type],
+    );
+    return r.rows[0]?.id ?? null;
+  },
+
   async recordTransaction(
     client: PoolClient,
-    transactionType: string,
-    tenantId: string,
+    transactionType: LedgerTransactionType,
     entries: LedgerEntryInput[],
-    context: { bookingId?: string; paymentId?: string; metadata?: Record<string, unknown> },
+    ctx: { bookingId?: string; paymentId?: string; metadata?: Record<string, unknown> },
   ): Promise<string> {
     const txn = await client.query<{ id: string }>(
-      `INSERT INTO ledger_transactions (transaction_type, tenant_id, booking_id, payment_id, metadata)
-       VALUES ($1, $2, $3, $4, $5::jsonb) RETURNING id`,
-      [transactionType, tenantId, context.bookingId ?? null, context.paymentId ?? null, JSON.stringify(context.metadata ?? {})],
+      `INSERT INTO ledger_transactions (transaction_type, booking_id, payment_id, metadata)
+       VALUES ($1, $2, $3, $4::jsonb) RETURNING id`,
+      [transactionType, ctx.bookingId ?? null, ctx.paymentId ?? null, JSON.stringify(ctx.metadata ?? {})],
     );
     const transactionId = txn.rows[0]!.id;
 
-    const accountMap = await this.getOrCreateAccountsBatch(
-      entries.map((e) => ({ tenantId: e.tenantId, accountType: e.accountType })), client,
-    );
-    const accountIds = entries.map((e) => accountMap.get(`${e.tenantId ?? "null"}:${e.accountType}`)!);
-    const debits = entries.map((e) => e.debitNgn ?? 0);
-    const credits = entries.map((e) => e.creditNgn ?? 0);
-    const transactionIds = entries.map(() => transactionId);
-
-    // row now, for the same real, structural sharding reason.
-    const tenantIds = entries.map(() => tenantId);
-
-    await client.query(
-      `INSERT INTO ledger_entries (ledger_transaction_id, account_id, debit_ngn, credit_ngn, tenant_id)
-       SELECT * FROM unnest($1::uuid[], $2::uuid[], $3::numeric[], $4::numeric[], $5::uuid[])`,
-      [transactionIds, accountIds, debits, credits, tenantIds],
-    );
-
+    for (const e of entries) {
+      const debit = e.debitNgn ?? 0;
+      const credit = e.creditNgn ?? 0;
+      // chk_debit_xor_credit rejects 0/0 rows: a 0% platform fee must simply have no fee line.
+      if (debit === 0 && credit === 0) continue;
+      const accountId = await this.getOrCreateAccount(client, e.tenantId, e.accountType);
+      await client.query(
+        `INSERT INTO ledger_entries (ledger_transaction_id, account_id, debit_ngn, credit_ngn)
+         VALUES ($1, $2, $3, $4)`,
+        [transactionId, accountId, debit, credit],
+      );
+    }
     return transactionId;
   },
 };

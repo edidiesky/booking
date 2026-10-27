@@ -27,30 +27,30 @@ export default function BookingPayment() {
         <div className="w-[90%] xl:w-[70%] mx-auto max-w-[1100px]">
           <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 lg:gap-16">
 
-            <div className="flex flex-col gap-8 w-full">
+            <div className="flex flex-col gap-4 w-full">
               <motion.h2
                 ref={headingRef}
                 initial={{ opacity: 0, y: 24 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.4 }}
-                className="text-3xl lg:text-5xl bold leading-tight text-[#17191c]"
+                className="text-3xl lg:text-4xl bold leading-tight text-[#17191c]"
               >
                 Almost there!
               </motion.h2>
 
               <ul className="flex flex-col gap-4 pb-4 border-b border-[#e8e6e3]">
-                <li className="text-xs lg:text-[13px]     text-[#4c4c4c]">
+                <li className="text-sm lg:text-base   text-[#4c4c4c]">
                   One more step to complete your booking. Our payment platform ensures your payment details are safe and secured.
                 </li>
               </ul>
 
               <div className="flex flex-col gap-4">
-                <h3 className="text-xl lg:text-3xl bold text-[#17191c]">
+                <h3 className="text-xl lg:text-2xl bold text-[#17191c]">
                   Complete your booking seamlessly
                 </h3>
                 <ul className="flex flex-col gap-4 pb-8 border-b border-[#e8e6e3]">
                   {CHECKLIST.map((item) => (
-                    <li key={item} className="text-xs lg:text-[13px]     flex items-start gap-2 text-[#4c4c4c]">
+                    <li key={item} className="text-sm lg:text-sm  flex items-start gap-2 text-[#4c4c4c]">
                       <BiCheck size={20} className="shrink-0 mt-0.5" />
                       {item}
                     </li>

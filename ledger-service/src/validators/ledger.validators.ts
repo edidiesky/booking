@@ -3,6 +3,7 @@ import Joi from "joi";
 export const releaseEscrowSchema = Joi.object({
   bookingId: Joi.string().uuid().required(),
   tenantId: Joi.string().uuid().required(),
+  paymentId: Joi.string().uuid().optional(),
   totalAmountNgn: Joi.number().positive().required(),
   platformFeeNgn: Joi.number().min(0).required(),
 }).custom((value, helpers) => {
@@ -11,3 +12,10 @@ export const releaseEscrowSchema = Joi.object({
   }
   return value;
 }, "platform fee not exceeding total");
+
+export const refundSchema = Joi.object({
+  bookingId: Joi.string().uuid().required(),
+  tenantId: Joi.string().uuid().required(),
+  paymentId: Joi.string().uuid().optional(),
+  amountNgn: Joi.number().positive().required(),
+});

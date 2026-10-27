@@ -2,7 +2,7 @@ import { bootstrap } from "./bootstrap";
 import { registerGracefulShutdown } from "./shutdown";
 import { logger } from "./logger";
 
-const PORT = process.env.PORT ?? 4102;
+const PORT = process.env.PAYMENT_SERVICE_PORT ?? 4102;
 
 async function main() {
   const { app, pool } = await bootstrap();

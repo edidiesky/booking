@@ -4,6 +4,7 @@ import { connectRabbitMQ } from "@booking/shared";
 import { createPaymentRouter } from "./domains/payment/payment.routes";
 import { createFeatureFlagModule } from "./domains/feature-flags/featureFlag.routes";
 import { errorHandler } from "./middleware/errorHandler";
+import { runMigrations } from "./db/migrate";
 import { logger } from "./logger";
 
 export interface BootstrappedApp {
@@ -12,6 +13,8 @@ export interface BootstrappedApp {
 }
 
 export async function bootstrap(): Promise<BootstrappedApp> {
+  await runMigrations();
+
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
   await connectRabbitMQ();
 
@@ -27,8 +30,6 @@ export async function bootstrap(): Promise<BootstrappedApp> {
     }),
   );
   app.get("/health", (_req, res) => res.status(200).json({ status: "ok" }));
-
-  // Same mount style as payment: paths live on the router
   app.use(featureFlags.router);
   app.use(createPaymentRouter(pool));
   app.use(errorHandler);

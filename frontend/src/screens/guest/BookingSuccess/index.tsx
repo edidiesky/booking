@@ -81,8 +81,8 @@ function DetailRow({
     <div className="flex items-start gap-3 py-3">
       <span className="mt-0.5 text-[#777b86]">{icon}</span>
       <div className="min-w-0 flex-1">
-        <p className="text-[12px] text-[#a3a6af]">{label}</p>
-        <p className="text-[14px] font-medium text-[#17191c]">{value}</p>
+        <p className="text-sm lg:text-sm text-[#a3a6af]">{label}</p>
+        <p className="text-base lg:text-base font-medium text-[#17191c]">{value}</p>
       </div>
     </div>
   );
@@ -123,9 +123,10 @@ export default function BookingSuccess() {
     .join(" ");
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-[420px_1fr] bg-white">
-      {/* Left — journey (onboarding pattern) */}
-      <aside className="hidden lg:flex flex-col justify-between border-r border-[#ebebeb] bg-[#fafaf9] p-10">
+    <div className="min-h-screen w-full bg-white">
+      <div className="w-full max-w-[1200px] mx-auto grid lg:grid-cols-[minmax(480px,460px)_1fr]">
+{/* Left — journey */}
+      <aside className="hidden lg:flex flex-col gap-8 items-center px-10 py-10 bg-white">
         <div className="flex flex-col gap-8">
           <Link
             to="/"
@@ -157,7 +158,7 @@ export default function BookingSuccess() {
       </aside>
 
       {/* Right — success + summary */}
-      <main className="flex min-h-screen flex-col items-center justify-center px-4 py-12 lg:px-12">
+      <main className="flex min-h-screen flex-col items-start justify-start px-4 py-12 lg:px-12">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -172,13 +173,10 @@ export default function BookingSuccess() {
           </div>
 
           <div className="text-center lg:text-left">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#dcfce7] lg:mx-0">
-              <CheckCircle2 size={28} className="text-[#166534]" />
-            </div>
-            <h1 className="text-[24px] lg:text-[28px] font-semibold tracking-tight text-[#17191c]">
+            <h1 className="text-2xl lg:text-3xl font-semibold tracking-tight text-[#17191c]">
               Booking confirmed
             </h1>
-            <p className="mt-1.5 text-[14px] text-[#777b86]">
+            <p className="mt-1.5 text-sm lg:text-base text-[#777b86]">
               {booking?.propertyName ? (
                 <>
                   <span className="font-medium text-[#17191c]">
@@ -191,7 +189,7 @@ export default function BookingSuccess() {
               )}
             </p>
             {booking?.bookingRef && (
-              <p className="mt-2 text-[12px] text-[#a3a6af]">
+              <p className="mt-2 text-sm lg:text-sm text-[#a3a6af]">
                 Reference{" "}
                 <span className=" font-medium text-[#17191c]">
                   {booking.bookingRef}
@@ -211,7 +209,7 @@ export default function BookingSuccess() {
                 onClick={() => navigate(`/properties/${booking.propertyId}`)}
                 className="flex w-full items-center gap-3 rounded-2xl border border-[#e8e6e3] p-3 text-left hover:bg-[#fafaf9]"
               >
-                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-[#f2f0ed]">
+                <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-[#f2f0ed]">
                   {cover ? (
                     <LazyImage
                       src={cover}
@@ -225,10 +223,10 @@ export default function BookingSuccess() {
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[15px] font-semibold text-[#17191c]">
+                  <p className="truncate text-lg font-semibold text-[#17191c]">
                     {booking.propertyName ?? "Your stay"}
                   </p>
-                  <p className="truncate text-[13px] text-[#777b86]">
+                  <p className="truncate text-sm lg:text-base text-[#777b86]">
                     {booking.roomTypeName}
                     {booking.propertyCity ? ` · ${booking.propertyCity}` : ""}
                   </p>
@@ -236,9 +234,9 @@ export default function BookingSuccess() {
                 <ChevronRight size={18} className="shrink-0 text-[#a3a6af]" />
               </button>
 
-              <div className="rounded-2xl border border-[#e8e6e3] px-4 divide-y divide-[#f0eeeb]">
+              <div className="rounded-2xl border grid grid-cols-2 border-[#e8e6e3] px-4">
                 <DetailRow
-                  icon={<CalendarDays size={16} />}
+                  icon={<CalendarDays size={18} />}
                   label="Check-in → Check-out"
                   value={
                     <>
@@ -248,31 +246,31 @@ export default function BookingSuccess() {
                   }
                 />
                 <DetailRow
-                  icon={<Moon size={16} />}
+                  icon={<Moon size={18} />}
                   label="Nights"
                   value={`${booking.nights} night${booking.nights === 1 ? "" : "s"}`}
                 />
                 <DetailRow
-                  icon={<Users size={16} />}
+                  icon={<Users size={18} />}
                   label="Guests & rooms"
                   value={`${booking.guestCount} guest${booking.guestCount === 1 ? "" : "s"} · ${booking.roomsCount} room${booking.roomsCount === 1 ? "" : "s"}`}
                 />
                 {guestName && (
                   <DetailRow
-                    icon={<Users size={16} />}
+                    icon={<Users size={18} />}
                     label="Booked for"
                     value={guestName}
                   />
                 )}
                 {booking.propertyCity && (
                   <DetailRow
-                    icon={<MapPin size={16} />}
+                    icon={<MapPin size={18} />}
                     label="Location"
                     value={booking.propertyCity}
                   />
                 )}
                 <DetailRow
-                  icon={<Receipt size={16} />}
+                  icon={<Receipt size={18} />}
                   label="Total paid"
                   value={formatCurrency(booking.totalAmountNgn)}
                 />
@@ -327,6 +325,8 @@ export default function BookingSuccess() {
           )}
         </motion.div>
       </main>
+      </div>
+      
     </div>
   );
 }

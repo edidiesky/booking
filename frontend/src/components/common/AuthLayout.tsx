@@ -77,8 +77,10 @@ export default function AuthLayout({
       : null;
 
   return (
-    <div className="min-h-screen bg-white grid lg:grid-cols-[minmax(480px,460px)_1fr]">
-      <aside className="hidden lg:flex flex-col justify-between items-center px-10 py-10 bg-white">
+    <div className="min-h-screen w-full">
+      <div className="w-full max-w-[1280px] mx-auto grid lg:grid-cols-[minmax(480px,460px)_1fr]">
+        
+           <aside className="hidden lg:flex flex-col justify-between items-center px-10 py-10 bg-white">
         <div className="flex flex-col gap-6">
           <Link
             to="/"
@@ -155,6 +157,8 @@ export default function AuthLayout({
           </motion.div>
         </div>
       </div>
+        </div>
+   
     </div>
   );
 }

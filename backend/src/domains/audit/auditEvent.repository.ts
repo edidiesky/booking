@@ -132,45 +132,47 @@ export const auditEventRepository = {
     input: RecordAuditEventInput,
     client: PoolClient,
   ): Promise<AuditEventRow> {
+    if (!input.tenantId) {
+      // Platform events with no tenant: either skip at call site
+      // or introduce a real system tenant. Do not insert NULL.
+      throw new Error("auditEventRepository.record requires tenantId");
+    }
+
     const changedFields =
       input.before !== undefined || input.after !== undefined
         ? diffKeys(input.before, input.after)
         : null;
 
-    const row = (
-      await client.query<AuditEventRow>(
-        `INSERT INTO audit_events (
-           tenant_id, actor_type, actor_id, actor_email, actor_name,
-           action, target_type, target_id, affected_user_id, affected_user_email,
-           outcome, denial_reason, changed_fields, before_value, after_value,
-           metadata, origin_ip, request_id, occurred_at
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14::jsonb,$15::jsonb,$16::jsonb,$17,$18,$19)
-         RETURNING *`,
-        [
-          input.tenantId,
-          input.actor.type,
-          input.actor.id ?? null,
-          input.actor.email ?? null,
-          input.actor.name ?? null,
-          input.action,
-          input.targetType ?? null,
-          input.targetId ?? null,
-          input.affectedUserId ?? null,
-          input.affectedUserEmail ?? null,
-          input.outcome,
-          input.denialReason ?? null,
-          changedFields,
-          input.before !== undefined ? JSON.stringify(input.before) : null,
-          input.after !== undefined ? JSON.stringify(input.after) : null,
-          JSON.stringify(input.metadata ?? {}),
-          input.originIp ?? null,
-          input.requestId ?? null,
-          input.occurredAt ?? new Date(),
-        ],
-      )
-    ).rows[0];
-
-    return row;
+    const { rows } = await client.query<AuditEventRow>(
+      `SELECT * FROM app.record_audit_event(
+       $1::uuid, $2, $3::uuid, $4, $5,
+       $6, $7, $8, $9::uuid, $10,
+       $11, $12, $13::text[], $14::jsonb, $15::jsonb,
+       $16::jsonb, $17::inet, $18, $19::timestamptz
+     )`,
+      [
+        input.tenantId,
+        input.actor.type,
+        input.actor.id ?? null,
+        input.actor.email ?? null,
+        input.actor.name ?? null,
+        input.action,
+        input.targetType ?? null,
+        input.targetId ?? null,
+        input.affectedUserId ?? null,
+        input.affectedUserEmail ?? null,
+        input.outcome,
+        input.denialReason ?? null,
+        changedFields,
+        input.before != null ? JSON.stringify(input.before) : null,
+        input.after != null ? JSON.stringify(input.after) : null,
+        JSON.stringify(input.metadata ?? {}),
+        input.originIp ?? null,
+        input.requestId ?? null,
+        input.occurredAt ?? new Date(),
+      ],
+    );
+    return rows[0];
   },
   async list(
     filters: AuditEventFilters,

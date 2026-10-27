@@ -816,6 +816,7 @@ export class AuthService {
     | { twoFactorRequired: true; challengeToken: string; method: "totp" }
     | { emailOtpRequired: true; method: "email" }
   > {
+    const isDev = process.env.NODE_ENV === "development";
     const email = input.email.toLowerCase().trim();
     const user = await userRepository.findByEmail(email);
 
@@ -928,12 +929,21 @@ export class AuthService {
       10 * 60, // 10 minutes
     );
 
-    await publishNotifyAuthOtp({
-      notificationId: uuid(),
-      email: user.email,
-      otp,
-      firstName: user.first_name?.trim() || "there",
-    });
+    if (isDev) {
+      logger.info("login_otp_dev_only", {
+        event: "login_otp_dev_only",
+        email: user.email,
+        userId: user.id,
+        otp,
+      });
+    } else {
+      await publishNotifyAuthOtp({
+        notificationId: uuid(),
+        email: user.email,
+        otp,
+        firstName: user.first_name?.trim() || "there",
+      });
+    }
     await auditRepository.log({
       action: "login",
       resource: "user",
@@ -945,6 +955,7 @@ export class AuthService {
     return {
       emailOtpRequired: true,
       method: "email",
+      ...(isDev ? { otp } : {}),
     };
   }
 
@@ -1021,34 +1032,40 @@ export class AuthService {
       });
       throw AppError.forbidden("Please verify your email before logging in.");
     }
-    await withTransaction(async (client) => {
-      await userRepository.updateById(
-        user.id,
-        { last_active_at: new Date() },
-        client,
-      );
-
-      if (user.tenant_id) {
-        await auditEventRepository.record(
-          {
-            tenantId: user.tenant_id,
-            actor: {
-              type: "user",
-              id: user.id,
-              email: user.email,
-              name: [user.first_name, user.last_name].filter(Boolean).join(" "),
-            },
-            action: "auth.login_succeeded",
-            targetType: "user",
-            targetId: user.id,
-            outcome: "allowed",
-            requestId: requestContext.get()?.requestId,
-          },
+    await withTransaction(
+      async (client) => {
+        await userRepository.updateById(
+          user.id,
+          { last_active_at: new Date() },
           client,
         );
-      }
-    });
 
+        if (user.tenant_id) {
+          await auditEventRepository.record(
+            {
+              tenantId: user.tenant_id,
+              actor: {
+                type: "user",
+                id: user.id,
+                email: user.email,
+                name: [user.first_name, user.last_name]
+                  .filter(Boolean)
+                  .join(" "),
+              },
+              action: "auth.login_succeeded",
+              targetType: "user",
+              targetId: user.id,
+              outcome: "allowed",
+              requestId: requestContext.get()?.requestId,
+            },
+            client,
+          );
+        }
+      },
+      user.tenant_id
+        ? { tenantId: user.tenant_id, userId: user.id }
+        : { userId: user.id },
+    );
     await auditRepository.log({
       action: "login",
       resource: "user",

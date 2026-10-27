@@ -95,6 +95,36 @@ function tenantBookingWhere(tenantId: string, f: TenantBookingFilters) {
 }
 
 export const bookingRepository = {
+  async findById(id: string, client?: PoolClient): Promise<Booking | null> {
+  const sql = `SELECT * FROM public.booking_get_by_id($1::uuid)`;
+  try {
+    if (client) {
+      const { rows } = await client.query(sql, [id]);
+      return (rows[0] as Booking) ?? null;
+    }
+    return await queryOne<Booking>(sql, [id]);
+  } catch (err) {
+    trackError("booking_find_failed", "booking_repository", "medium");
+    logger.error("booking_repository_find_by_id_failed", {
+      event: "booking_repository_find_by_id_failed",
+      id,
+      error: (err as Error).message,
+      ...ctx(),
+    });
+    throw err;
+  }
+},
+
+async findByIdForActor(
+  id: string,
+  userId: string,
+  tenantId?: string | null,
+): Promise<Booking | null> {
+  return queryOne<Booking>(
+    `SELECT * FROM public.booking_get_for_actor($1, $2, $3)`,
+    [id, userId, tenantId ?? null],
+  );
+},
   async create(
     data: {
       tenantId: string;
@@ -168,23 +198,6 @@ export const bookingRepository = {
       `UPDATE bookings SET receipt_url = $1, updated_at = now() WHERE id = $2`,
       [receiptUrl, id],
     );
-  },
-
-  async findById(id: string): Promise<Booking | null> {
-    try {
-      return await queryOne<Booking>(`SELECT * FROM bookings WHERE id = $1`, [
-        id,
-      ]);
-    } catch (err) {
-      trackError("booking_find_failed", "booking_repository", "medium");
-      logger.error("booking_repository_find_by_id_failed", {
-        event: "booking_repository_find_by_id_failed",
-        id,
-        error: (err as Error).message,
-        ...ctx(),
-      });
-      throw err;
-    }
   },
 
   async findByRef(ref: string): Promise<Booking | null> {

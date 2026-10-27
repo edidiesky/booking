@@ -3,10 +3,12 @@ import { Pool } from "pg";
 import { connectRabbitMQ } from "@booking/shared";
 import { createLedgerRouter } from "./routes/ledger.routes";
 import { errorHandler } from "./middleware/errorHandler";
+import { runMigrations } from "./migrate";
 
 export interface BootstrappedApp { app: Express; pool: Pool; }
 
 export async function bootstrap(): Promise<BootstrappedApp> {
+  await runMigrations();
 
   // transparent below this connection string.
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });

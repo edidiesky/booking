@@ -9,6 +9,8 @@ RUN npm install --workspace=@booking/shared --workspace=@booking/ledger-service 
 
 COPY ledger-service/tsconfig.json ./ledger-service/tsconfig.json
 COPY ledger-service/src ./ledger-service/src
+COPY ledger-service/db ./ledger-service/db
+
 
 RUN npm run build -w @booking/shared \
  && cd ledger-service && npx tsc -p tsconfig.json
@@ -26,6 +28,7 @@ RUN npm install --omit=dev --workspace=@booking/shared --workspace=@booking/ledg
 
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/ledger-service/dist ./ledger-service/dist
+COPY --from=builder /app/ledger-service/db ./ledger-service/db
 
 WORKDIR /app/ledger-service
 USER app

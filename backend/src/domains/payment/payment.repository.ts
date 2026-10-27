@@ -45,14 +45,13 @@ export interface PaymentSummary {
   room_type_name: string;
   room_type_images: string[];
   tenant_name: string;
-  tenant_id: string,
-tenant_email: string,
+  tenant_id: string;
+  tenant_email: string;
 }
 
 function ctx() {
   return requestContext.get() ?? {};
 }
-
 
 export interface TenantPaymentFilters {
   status?: PaymentStatus;
@@ -67,8 +66,41 @@ function tenantPaymentWhere(tenantId: string, f: TenantPaymentFilters) {
   return { clause: conditions.join(" AND "), params };
 }
 
-
 export const paymentRepository = {
+
+  async findByIdempotencyKey(
+  key: string,
+  client?: PoolClient,
+): Promise<Payment | null> {
+  const sql = `SELECT * FROM payments WHERE idempotency_key = $1`;
+  try {
+    if (client) {
+      const { rows } = await client.query(sql, [key]);
+      return (rows[0] as Payment) ?? null;
+    }
+    return await queryOne<Payment>(sql, [key]);
+  } catch (err) {
+    trackError("payment_find_failed", "payment_repository", "medium");
+    throw err;
+  }
+},
+
+async findByTransactionId(
+  transactionId: string,
+  client?: PoolClient,
+): Promise<Payment | null> {
+  const sql = `SELECT * FROM public.payment_by_transaction_id($1)`;
+  try {
+    if (client) {
+      const { rows } = await client.query(sql, [transactionId]);
+      return (rows[0] as Payment) ?? null;
+    }
+    return await queryOne<Payment>(sql, [transactionId]);
+  } catch (err) {
+    trackError("payment_find_failed", "payment_repository", "medium");
+    throw err;
+  }
+},
   async create(
     data: {
       bookingId: string;
@@ -120,30 +152,6 @@ export const paymentRepository = {
         error: (err as Error).message,
         ...ctx(),
       });
-      throw err;
-    }
-  },
-
-  async findByIdempotencyKey(key: string): Promise<Payment | null> {
-    try {
-      return await queryOne<Payment>(
-        `SELECT * FROM payments WHERE idempotency_key = $1`,
-        [key],
-      );
-    } catch (err) {
-      trackError("payment_find_failed", "payment_repository", "medium");
-      throw err;
-    }
-  },
-
-  async findByTransactionId(transactionId: string): Promise<Payment | null> {
-    try {
-      return await queryOne<Payment>(
-        `SELECT * FROM payments WHERE transaction_id = $1`,
-        [transactionId],
-      );
-    } catch (err) {
-      trackError("payment_find_failed", "payment_repository", "medium");
       throw err;
     }
   },

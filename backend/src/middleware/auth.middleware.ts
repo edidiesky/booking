@@ -8,6 +8,7 @@ import { sessionVersionRepository } from "../domains/auth/sessionVersion.reposit
 import { idleTrackingRepository } from "../domains/auth/idleTracking.repository";
 import { sessionRepository } from "../domains/session/session.repository";
 import logger from "../utils/logger";
+import { beginTenantScopedTransaction } from "./rlsMiddleware";
 
 const LAST_ACTIVE_THROTTLE_MS = 5 * 60 * 1000;
 const LAST_TOUCHED_CACHE_MAX = 10_000;
@@ -30,7 +31,9 @@ export function authenticate(
     (req.cookies as Record<string, string> | undefined)?.["jwt"];
 
   if (!token) {
-    res.status(401).json({ success: false, message: "Authentication required." });
+    res
+      .status(401)
+      .json({ success: false, message: "Authentication required." });
     return;
   }
 
@@ -63,7 +66,6 @@ export function authenticate(
         return;
       }
 
-      // Session-bound tokens (post-rollout)
       if (decoded.sessionId) {
         const currentVersion = await sessionVersionRepository.get(userId);
         if (
@@ -99,8 +101,6 @@ export function authenticate(
 
         req.sessionId = decoded.sessionId;
 
-        // Redis idle TTL is refreshed above on every request. Only the
-        // Postgres last_active_at write stays throttled.
         const now = Date.now();
         const lastTouched = lastTouchedCache.get(decoded.sessionId) ?? 0;
         if (now - lastTouched > LAST_ACTIVE_THROTTLE_MS) {
@@ -118,11 +118,16 @@ export function authenticate(
       }
 
       req.user = decoded.user;
+      // Store identity only — do NOT open a DB transaction here.
+      // Guests have no tenant; SSE / concurrent queries break if we BEGIN
+      // on every authenticated request. Guest reads set app.current_user_id
+      // inside short withTransaction blocks in booking.service.
       requestContext.set({
         userId: decoded.user.userId,
         tenantId: decoded.user.tenantId,
         userType: decoded.user.userType,
       });
+
       next();
     } catch {
       res.status(503).json({
@@ -136,30 +141,24 @@ export function authenticate(
 export function authorize(...roles: UserType[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      res
-        .status(401)
-        .json({
-          success: false,
-          message:
-            "Authentication required. Please kindly register if you do not have an account or you can login.",
-        });
+      res.status(401).json({
+        success: false,
+        message:
+          "Authentication required. Please kindly register if you do not have an account or you can login.",
+      });
       return;
     }
     if (!roles.includes(req.user.userType)) {
-      res
-        .status(403)
-        .json({
-          success: false,
-          message:
-            "Access denied.  Please kindly register if you do not have an account or you can login",
-        });
+      res.status(403).json({
+        success: false,
+        message:
+          "Access denied.  Please kindly register if you do not have an account or you can login",
+      });
       return;
     }
     next();
   };
 }
-
-import { beginTenantScopedTransaction } from "./rlsMiddleware";
 
 export async function requireTenantMember(
   req: Request,
@@ -200,7 +199,13 @@ export async function requireTenantMember(
   }
 
   req.tenantId = tenantId;
-  const ok = await beginTenantScopedTransaction(req, res, tenantId);
+  // tenantId is string here (narrowed by the guard above)
+  const ok = await beginTenantScopedTransaction(
+    req,
+    res,
+    tenantId,
+    req.user.userId,
+  );
   if (!ok) {
     next(new Error("Failed to establish tenant-scoped database session."));
     return;

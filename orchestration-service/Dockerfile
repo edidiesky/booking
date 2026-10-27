@@ -9,6 +9,7 @@ RUN npm install --workspace=@booking/shared --workspace=@booking/orchestration-s
 
 COPY orchestration-service/tsconfig.json ./orchestration-service/tsconfig.json
 COPY orchestration-service/src ./orchestration-service/src
+COPY orchestration-service/db ./orchestration-service/db
 
 RUN npm run build -w @booking/shared \
  && cd orchestration-service && npx tsc -p tsconfig.json
@@ -26,6 +27,8 @@ RUN npm install --omit=dev --workspace=@booking/shared --workspace=@booking/orch
 
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/orchestration-service/dist ./orchestration-service/dist
+# Required for migrate-on-boot
+COPY --from=builder /app/orchestration-service/db ./orchestration-service/db
 
 WORKDIR /app/orchestration-service
 USER app
