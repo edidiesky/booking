@@ -18,6 +18,8 @@ Loki, Promtail
 
 Local: API `4000` · gateway `8080` · frontend `5173`.
 
+![Project diagram](./_docs/project.png)
+![Project diagram](./_docs/project2.png)
 ![Architecture diagram](./_docs/architecture.png)
 ![Outbox Worker diagram](./_docs/Outbox%20Worker.png)
 
