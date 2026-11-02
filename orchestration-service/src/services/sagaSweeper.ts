@@ -21,7 +21,7 @@ export function startSagaSweeper(pool: Pool): () => void {
   let running = false;
 
   const tick = async () => {
-    if (running) return; // never overlap ticks
+    if (running) return; 
     running = true;
     try {
       for (const row of await sagaRepository.listExpiredLeases(pool, 20)) {

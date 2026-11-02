@@ -9,12 +9,12 @@ import {
 export type { SagaStatus, ClaimedSaga, SagaRecord };
 
 export interface SagaStore {
-  insert(
-    sagaType: string,
-    context: unknown,
-    bookingId?: string,
-    idempotencyKey?: string,
-  ): Promise<{ id: string; created: boolean }>;
+insert(
+  sagaType: string,
+  context: unknown,
+  bookingId?: string,
+  idempotencyKey?: string,
+): Promise<{ id: string; created: boolean }>;
   claim(sagaId: string, leaseMs: number): Promise<ClaimedSaga | null>;
   renewLease(sagaId: string, leaseMs: number): Promise<void>;
   findById(sagaId: string): Promise<SagaRecord | null>;
