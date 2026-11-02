@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: booking-backend
+  labels:
+    app: booking-backend
+spec:
+  selector:
+    app: booking-backend
+  ports:
+    - port: 80
+      targetPort: 4000
+
+  type: ClusterIP
