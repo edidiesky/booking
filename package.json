@@ -20,13 +20,43 @@
   "scripts": {
     "build": "npm run build -w @booking/shared && npm run build --workspaces --if-present",
     "build:shared": "npm run build -w @booking/shared",
+
     "docker:up": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml up -d",
     "docker:up:build": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml up -d --build --force-recreate --remove-orphans",
     "docker:down": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml down",
     "docker:down:clean": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml down -v",
     "docker:logs": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml logs -f --tail=100",
     "docker:ps": "docker compose --env-file booking-infra/.env.production -f booking-infra/docker-compose.dev.yml -f booking-infra/docker-compose.monitoring.yml ps",
-    "test:orchestration": "npm test -w @booking/orchestration-service"
+
+    "test:orchestration": "npm test -w @booking/orchestration-service",
+
+    "test:k6:critical:reserve": "k6 run k6/critical/01-booking-reserve.js",
+    "test:k6:critical:payment": "k6 run k6/critical/02-payment-initialize.js",
+    "test:k6:critical:webhook": "k6 run k6/critical/03-webhook-confirm.js",
+    "test:k6:critical:webhook-replay": "k6 run k6/critical/04-webhook-replay.js",
+    "test:k6:critical:cancel-refund": "k6 run k6/critical/05-cancel-refund.js",
+    "test:k6:critical:escrow": "k6 run k6/critical/06-escrow-release.js",
+    "test:k6:critical:login": "k6 run k6/critical/07-auth-login-session.js",
+    "test:k6:critical:token-refresh": "k6 run k6/critical/08-token-refresh.js",
+    "test:k6:critical:logout": "k6 run k6/critical/09-logout-revoke.js",
+    "test:k6:critical:tenant": "k6 run k6/critical/10-tenant-isolation-write.js",
+    "test:k6:critical:idempotent": "k6 run k6/critical/11-idempotent-post.js",
+    "test:k6:critical": "npm run test:k6:critical:reserve && npm run test:k6:critical:payment && npm run test:k6:critical:webhook && npm run test:k6:critical:webhook-replay && npm run test:k6:critical:cancel-refund && npm run test:k6:critical:escrow && npm run test:k6:critical:login && npm run test:k6:critical:token-refresh && npm run test:k6:critical:logout && npm run test:k6:critical:tenant && npm run test:k6:critical:idempotent",
+
+    "test:k6:hot:search": "k6 run k6/hot/01-property-search.js",
+    "test:k6:hot:detail": "k6 run k6/hot/02-property-detail.js",
+    "test:k6:hot:calendar": "k6 run k6/hot/03-availability-calendar.js",
+    "test:k6:hot:concurrent-reserve": "k6 run k6/hot/04-concurrent-reserve.js",
+    "test:k6:hot:login-storm": "k6 run k6/hot/05-auth-login-storm.js",
+    "test:k6:hot:me": "k6 run k6/hot/06-auth-me.js",
+    "test:k6:hot:dashboard": "k6 run k6/hot/07-dashboard-stats.js",
+    "test:k6:hot:host-lists": "k6 run k6/hot/08-host-lists.js",
+    "test:k6:hot:rate-limit": "k6 run k6/hot/09-gateway-rate-limit.js",
+    "test:k6:hot:health": "k6 run k6/hot/10-health-metrics.js",
+    "test:k6:hot": "npm run test:k6:hot:search && npm run test:k6:hot:detail && npm run test:k6:hot:calendar && npm run test:k6:hot:concurrent-reserve && npm run test:k6:hot:login-storm && npm run test:k6:hot:me && npm run test:k6:hot:dashboard && npm run test:k6:hot:host-lists && npm run test:k6:hot:rate-limit && npm run test:k6:hot:health",
+
+    "test:k6": "npm run test:k6:critical && npm run test:k6:hot",
+    "test:k6:smoke": "npm run test:k6:critical:reserve && npm run test:k6:critical:payment && npm run test:k6:hot:health"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.8",
