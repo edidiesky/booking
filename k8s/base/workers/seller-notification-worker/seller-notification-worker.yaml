@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seller-notification-worker
+  labels:
+    app: seller-notification-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seller-notification-worker
+  template:
+    metadata:
+      labels:
+        app: seller-notification-worker
+    spec:
+      containers:
+        - name: seller-notification-worker
+          image: eddyscript/seller-notification-worker:latest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

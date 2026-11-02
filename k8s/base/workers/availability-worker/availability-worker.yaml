@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: availability-worker
+  labels:
+    app: availability-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: availability-worker
+  template:
+    metadata:
+      labels:
+        app: availability-worker
+    spec:
+      containers:
+        - name: availability-worker
+          image: eddyscript/availability-worker:latest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
