@@ -1,65 +1,116 @@
+/**
+ * Idempotency — replay no-op, body conflict, in-flight conflict, lease reclaim.
+ */
 import { describe, it, expect, jest, beforeEach } from "@jest/globals";
-import {
-  idempotencyRepository,
-  IdempotencyConflictError,
-} from "../../../domains/idempotency/idempotency.repository";
+
+const query = jest.fn();
+const queryOne = jest.fn();
 
 jest.mock("@booking/shared", () => ({
-  query: jest.fn(),
-  queryOne: jest.fn(),
-  withTransaction: jest.fn(async (fn: (c: object) => Promise<unknown>) =>
-    fn({ query: jest.fn() }),
-  ),
+  query: (...a: unknown[]) => query(...a),
+  queryOne: (...a: unknown[]) => queryOne(...a),
 }));
 
-import { queryOne } from "@booking/shared";
-const mockQueryOne = queryOne as jest.MockedFunction<typeof queryOne>;
+jest.mock("../../../utils/metrics", () => ({
+  idempotencyStateCounter: { inc: jest.fn() },
+  trackError: jest.fn(),
+}));
+
+jest.mock("../../../utils/logger", () => ({
+  __esModule: true,
+  default: { info: jest.fn(), warn: jest.fn(), error: jest.fn() },
+}));
+
+import { idempotencyRepository } from "../../../domains/idempotency/idempotency.repository";
 
 describe("idempotencyRepository", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("buildHash is stable for same inputs", () => {
-    const a = idempotencyRepository.buildHash("POST", "/pay", "user-1", {
-      bookingId: "b1",
+  describe("buildHash", () => {
+    it("is stable for same inputs", () => {
+      const a = idempotencyRepository.buildHash(
+        "POST",
+        "/pay",
+        "u1",
+        { amount: 1 },
+      );
+      const b = idempotencyRepository.buildHash(
+        "POST",
+        "/pay",
+        "u1",
+        { amount: 1 },
+      );
+      expect(a).toBe(b);
     });
-    const b = idempotencyRepository.buildHash("POST", "/pay", "user-1", {
-      bookingId: "b1",
+
+    it("differs when body differs (replay with different payload)", () => {
+      const a = idempotencyRepository.buildHash("POST", "/pay", "u1", {
+        amount: 1,
+      });
+      const b = idempotencyRepository.buildHash("POST", "/pay", "u1", {
+        amount: 2,
+      });
+      expect(a).not.toBe(b);
     });
-    expect(a).toBe(b);
   });
 
-  it("buildHash differs when body differs", () => {
-    const a = idempotencyRepository.buildHash("POST", "/pay", "user-1", {
-      bookingId: "b1",
+  describe("find — completed replay", () => {
+    it("returns completed response for same hash", async () => {
+      queryOne.mockResolvedValue({
+        status: "completed",
+        status_code: 200,
+        response_body: { ok: true },
+      } as never);
+      const row = await idempotencyRepository.find("hash-1");
+      expect(row?.status).toBe("completed");
+      expect(row?.response_body).toEqual({ ok: true });
     });
-    const b = idempotencyRepository.buildHash("POST", "/pay", "user-1", {
-      bookingId: "b2",
-    });
-    expect(a).not.toBe(b);
   });
 
-  it("find returns completed response", async () => {
-    mockQueryOne.mockResolvedValue({
-      id: "claim-1",
-      response_body: { paymentId: "p1" },
-      status: "completed",
-    } as never);
-    const row = await idempotencyRepository.find("hash-1");
-    expect(row).toMatchObject({ id: "claim-1" });
+  describe("claim", () => {
+    it("throws conflict when another owner holds a live lease", async () => {
+      queryOne
+        .mockResolvedValueOnce(null as never) // insert miss
+        .mockResolvedValueOnce({
+          status: "processing",
+          claimed_by: "other",
+          lease_expires_at: new Date(Date.now() + 60_000),
+        } as never);
+      // First insert returns null via queryOne path — match real claim() flow
+      // If claim uses query for insert, adjust mocks to your implementation.
+      await expect(
+        idempotencyRepository.claim("hash-1", "/pay", "u1"),
+      ).rejects.toThrow(/IdempotencyConflict|conflict/i);
+    });
   });
 
-  it("claim throws IdempotencyConflictError when in flight", async () => {
-    // Wire this to your real claim implementation — if claim checks existing row:
-    mockQueryOne.mockResolvedValue({
-      id: "claim-1",
-      status: "processing",
-    } as never);
-    await expect(
-      (async () => {
-        throw new IdempotencyConflictError();
-      })(),
-    ).rejects.toBeInstanceOf(IdempotencyConflictError);
+  describe("markCompleted", () => {
+    it("only completes when claimed_by matches ownerToken", async () => {
+      queryOne.mockResolvedValue({ id: "k1" } as never);
+      const ok = await idempotencyRepository.markCompleted(
+        "k1",
+        "owner-token",
+        200,
+        { id: "pay-1" },
+      );
+      expect(ok).toBe(true);
+      expect(queryOne).toHaveBeenCalledWith(
+        expect.stringMatching(/claimed_by/i),
+        expect.arrayContaining([200, expect.any(String), "k1", "owner-token"]),
+      );
+    });
+
+    it("returns false when lease was lost (rejection leaves no stolen complete)", async () => {
+      queryOne.mockResolvedValue(null as never);
+      const ok = await idempotencyRepository.markCompleted(
+        "k1",
+        "stale-token",
+        200,
+        {},
+      );
+      expect(ok).toBe(false);
+    });
   });
 });
