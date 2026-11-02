@@ -15,7 +15,7 @@ yarn-error.log*
 temp_key
 temp_key.pub
 run_production.sh
-k8s
+# k8s
 vault.sh
 ssh-rsafile
 dist/
