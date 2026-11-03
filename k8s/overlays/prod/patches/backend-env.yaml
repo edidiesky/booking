@@ -4,7 +4,8 @@ metadata:
   name: booking-backend
 spec:
   selector:
-    name: booking-backend
+    matchLabels:
+      name: booking-backend
   template:
     spec:
       containers:
