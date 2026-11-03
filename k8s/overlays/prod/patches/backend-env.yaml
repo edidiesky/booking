@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-backend
+spec:
+  selector:
+    name: booking-backend
+  template:
+    spec:
+      containers:
+        - name: booking-backend
+          env:
+            - name: APP_ENV
+              value: "production"
+            - name: LOG_LEVEL
+              value: "info"

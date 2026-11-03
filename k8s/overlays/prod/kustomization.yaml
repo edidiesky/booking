@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: prod
 resources:
  - ../../base
+
 replicas:
   - name: booking-backend
     count: 2
@@ -37,6 +38,9 @@ images:
     newTag: prod
   - name: eddyscript/seller-notification-worker
     newTag: prod
+patches:
+  - path: patches/backend-resources.yaml
+  - path: patches/backend-env.yaml
 labels:
   - pairs:
       environment: prod
