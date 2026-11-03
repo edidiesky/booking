@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: campaign-worker
+  labels:
+    app: campaign-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: campaign-worker
+  template:
+    metadata:
+      labels:
+        app: campaign-worker
+    spec:
+      containers:
+        - name: campaign-worker
+          image: eddyscript/campaign-worker:latest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

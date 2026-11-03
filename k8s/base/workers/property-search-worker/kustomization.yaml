@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - property-search-worker.yaml
+labels:
+  - pairs:
+      app.kubernetes.io/name: property-search-worker
+      app.kubernetes.io/part-of: booking-platform
+      app.kubernetes.io/component: worker
+      app.kubernetes.io/managed-by: kustomize
+    includeSelectors: true

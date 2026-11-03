@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - seller-notification-worker.yaml
+labels:
+  - pairs:
+      app.kubernetes.io/name: seller-notification-worker
+      app.kubernetes.io/part-of: booking-platform
+      app.kubernetes.io/component: worker
+      app.kubernetes.io/managed-by: kustomize
+      
+    includeSelectors: true
+    
