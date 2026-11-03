@@ -41,6 +41,8 @@ images:
 patches:
   - path: patches/backend-resources.yaml
   - path: patches/backend-env.yaml
+components:
+  - ../../components/common-labels
 labels:
   - pairs:
       environment: prod
