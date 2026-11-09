@@ -1,0 +1,31 @@
+# default value for the helm chart
+replicaCount: 2
+image:
+  repository: eddyscript/backend
+  tag: latest
+  pullPolicy: IfNotPresent
+environment: devlopment
+
+service:
+  port: 80
+  type: ClusterIP
+  targetPort: 4000
+
+resources:
+  requests:
+    memory: "250Mi"
+    cpu: "200m"
+  limits:
+    memory: "250Mi"
+    cpu: "200m"
+
+probes:
+  enabled: true
+  readinessPath: /health
+  livenessPath: /health
+  initialDelaySeconds: 10
+  periodSeconds: 15
+
+env:
+  APP_ENV: development
+  LOG_LEVEL: debug

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: booking-backend
+description: Helm chart for booking backend service
+type: application
+version: 0.1.0 # version for the helm chart
+appVersion: "1.0.0" # versioned of the actual app
+keyWords:
+  - backend
+  - booking
