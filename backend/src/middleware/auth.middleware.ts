@@ -199,7 +199,6 @@ export async function requireTenantMember(
   }
 
   req.tenantId = tenantId;
-  // tenantId is string here (narrowed by the guard above)
   const ok = await beginTenantScopedTransaction(
     req,
     res,

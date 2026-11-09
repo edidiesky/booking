@@ -151,6 +151,7 @@ services:
       - redis-insight-data:/db
     restart: unless-stopped
 
+
   # elasticsearch:
   #   image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
   #   container_name: elasticsearch
