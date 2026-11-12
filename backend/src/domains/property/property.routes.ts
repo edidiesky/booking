@@ -33,6 +33,7 @@ import {
   blockDatesSchema,
   createPropertySchema,
   createRoomTypeSchema,
+  listTenantPropertiesQuerySchema,
   seedCalendarSchema,
   updatePropertySchema,
   updateRoomTypeSchema,
@@ -45,6 +46,7 @@ propertyRouter.get(
   authenticate,
   requireTenantMember,
   requirePermission("property", "read"),
+  validate(listTenantPropertiesQuerySchema, "query"),
   GetTenantPropertiesHandler,
 );
 propertyRouter.get(

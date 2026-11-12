@@ -84,34 +84,28 @@ async seedCalendar(
     }
   },
 
+  /**
+   * Serialize concurrent bookers for the same room type within a transaction.
+   * Must be called inside an open transaction; lock is released on COMMIT/ROLLBACK.
+   */
+  async lockRoomType(roomTypeId: string, client: PoolClient): Promise<void> {
+    // hashtext → int4; advisory xact lock scopes to this transaction only
+    await client.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [
+      `avail:${roomTypeId}`,
+    ]);
+  },
+
   async isAvailable(
-    roomTypeId:  string,
-    checkIn:     string,
-    checkOut:    string,
+    roomTypeId: string,
+    checkIn: string,
+    checkOut: string,
     roomsNeeded: number,
-    client:      PoolClient
+    client: PoolClient,
   ): Promise<boolean> {
-    // FOR UPDATE OF ac locks the availability_calendar rows for this room
-    // type + date range for the rest of this transaction. Without this, two
-    // concurrent requests for the same room type and overlapping dates
-    // could both read "1 room available" before either had inserted its
-    // booking_locks row (classic check-then-act race), both pass this
-    // check, both proceed to acquireLock, double-booking the room. With
-    // the lock: the second transaction blocks here until the first commits
-    // (making its booking_locks INSERT visible), then re-reads and
-    // correctly sees reduced availability. This also correctly handles
-    // room types with quantity > 1 (multiple legitimately-overlapping
-    // bookings up to capacity), unlike a blanket exclusion constraint
-    // would, since it's the actual remaining-capacity count being
-    // serialized, not "no overlap at all".
-    //
-    // `client` is now required, not optional: this row lock only means
-    // anything inside the same transaction as the subsequent
-    // acquireLock() call, calling this outside withTransaction silently
-    // provides zero protection (the lock releases the instant the query
-    // auto-commits), so making it optional was itself part of the bug
-    // surface, this signature change forces every call site to prove it's
-    // transactional.
+    // Date-only nights count (avoids TZ / Invalid Date issues with Date parsing)
+    const nightsNeeded = nightsBetween(checkIn, checkOut);
+    if (nightsNeeded <= 0) return false;
+
     const sql = `
       WITH locked_rows AS (
         SELECT
@@ -132,25 +126,26 @@ async seedCalendar(
         ORDER BY ac.date
         FOR UPDATE OF ac
       )
-      SELECT COUNT(*) AS nights_available
+      SELECT COUNT(*)::int AS nights_available
       FROM locked_rows
       WHERE net_available >= $4`;
 
     const params = [roomTypeId, checkIn, checkOut, roomsNeeded];
     try {
-      const result = (await client.query(sql, params)).rows[0] as { nights_available: string };
+      const result = (await client.query(sql, params)).rows[0] as {
+        nights_available: number;
+      };
 
-      const nightsNeeded = Math.ceil(
-        (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86_400_000
-      );
-      const available = parseInt(result?.nights_available ?? "0", 10) >= nightsNeeded;
+      const available =
+        Number(result?.nights_available ?? 0) >= nightsNeeded;
 
       logger.debug("availability_check", {
-        event:       "availability_check",
+        event: "availability_check",
         roomTypeId,
         checkIn,
         checkOut,
         roomsNeeded,
+        nightsNeeded,
         available,
         ...ctx(),
       });
@@ -161,6 +156,7 @@ async seedCalendar(
       throw err;
     }
   },
+  
 
   async acquireLock(data: {
     roomTypeId: string;
@@ -284,3 +280,10 @@ async seedCalendar(
     }
   },
 };
+/** Inclusive nights between date-only YYYY-MM-DD strings (UTC). */
+function nightsBetween(checkIn: string, checkOut: string): number {
+  const start = Date.parse(`${checkIn.slice(0, 10)}T00:00:00.000Z`);
+  const end = Date.parse(`${checkOut.slice(0, 10)}T00:00:00.000Z`);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return 0;
+  return Math.round((end - start) / 86_400_000);
+}

@@ -5,7 +5,36 @@ import { AppError } from "../../utils/AppError";
 import { BookingStatus } from "../../types";
 import { bookingRepository } from "./booking.repository";
 
+import { buildPaginationMeta } from "../../utils/pagination";
 
+export const GetTenantBookingsHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
+    const q = req.query as unknown as {
+      page: number;
+      limit: number;
+      status?: BookingStatus[];
+      search?: string;
+      checkInFrom?: string;
+      checkInTo?: string;
+    };
+
+    const { data, total } = await bookingService.getTenantBookings(req.tenantId, {
+      page: q.page,
+      limit: q.limit,
+      statuses: q.status,
+      search: q.search || undefined,
+      checkInFrom: q.checkInFrom,
+      checkInTo: q.checkInTo,
+    });
+
+    res.status(200).json({
+      success: true,
+      data,
+      meta: buildPaginationMeta(q.page, q.limit, total),
+    });
+  },
+);
 export const InitiateBookingHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     if (!req.user) throw AppError.unauthorized();
@@ -66,18 +95,6 @@ export const GetMyBookingsHandler = asyncHandler(
       status: q["status"] as BookingStatus | undefined,
       checkInAfter: q["checkInAfter"],
       checkInBefore: q["checkInBefore"],
-      page: Number(q["page"] ?? 1),
-      limit: Number(q["limit"] ?? 20),
-    });
-    res.status(200).json({ success: true, data: bookings });
-  },
-);
-export const GetTenantBookingsHandler = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
-    const q = req.query as Record<string, string>;
-    const bookings = await bookingService.getTenantBookings(req.tenantId, {
-      status: q["status"] as BookingStatus | undefined,
       page: Number(q["page"] ?? 1),
       limit: Number(q["limit"] ?? 20),
     });

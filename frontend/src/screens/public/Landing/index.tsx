@@ -14,8 +14,9 @@ export default function Landing() {
       <Header />
       <main className="flex-1 w-full flex-col gap-14">
         <Hero />
-        <About />
         <Listing />
+        <About />
+        
         <Expert />
         <Testimonials/>
         <FAQ />

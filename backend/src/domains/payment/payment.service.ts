@@ -1,3 +1,5 @@
+import { measurePaymentOp } from "../../utils/metrics";
+import { instrumentService } from "../../utils/instrumentService";
 import { paymentRepository } from "./payment.repository";
 import { Booking, bookingRepository } from "../booking/booking.repository";
 import { paymentStrategies } from "../../strategies";
@@ -25,7 +27,10 @@ import {
 } from "../idempotency/idempotency.repository";
 import { requestCoalescer } from "../../utils/requestCoalescer";
 import { auditEventRepository } from "../audit/auditEvent.repository";
-
+import {
+  isWorkflowDelegationEnabled,
+  paymentOrchestrationClient,
+} from "../../utils/internalServices.client";
 
 export interface InitializePaymentInput {
   bookingId: string;
@@ -49,11 +54,39 @@ async function runPaymentInitLogic(
 ): Promise<InitializePaymentResult> {
   const { bookingId, guestUserId, email, gateway, callbackUrl, phone } = input;
   const checkpointKey = `pay:${bookingId}:${gateway}`;
+  const rls = { tenantId: booking.tenant_id, userId: guestUserId };
 
   return requestCoalescer.coalesce(checkpointKey, async () => {
-    let existing = await paymentRepository.findByIdempotencyKey(checkpointKey);
+    // 1. Find or create payment row (RLS-safe)
+    const existing = await withTransaction(async (client) => {
+      let row = await paymentRepository.findByIdempotencyKey(
+        checkpointKey,
+        client,
+      );
 
-    if (existing && existing.status === "pending" && existing.transaction_id) {
+      if (row && row.status === "pending" && row.transaction_id) {
+        return row;
+      }
+
+      if (!row) {
+        row = await paymentRepository.create(
+          {
+            bookingId,
+            tenantId: booking.tenant_id,
+            guestUserId,
+            gateway,
+            amountNgn: Number(booking.total_amount_ngn),
+            idempotencyKey: checkpointKey,
+            metadata: {},
+          },
+          client,
+        );
+      }
+
+      return row;
+    }, rls);
+
+    if (existing.status === "pending" && existing.transaction_id) {
       const meta = existing.metadata as { redirectUrl?: string };
       return {
         paymentId: existing.id,
@@ -63,21 +96,10 @@ async function runPaymentInitLogic(
       };
     }
 
-    if (!existing) {
-      existing = await paymentRepository.create({
-        bookingId,
-        tenantId: booking.tenant_id,
-        guestUserId,
-        gateway,
-        amountNgn: Number(booking.total_amount_ngn),
-        idempotencyKey: checkpointKey,
-        metadata: {},
-      });
-    }
-
     const paymentRowId = existing.id;
     const adapter = paymentStrategies.getAdapter(gateway);
 
+    // 2. Call gateway (outside DB)
     let gatewayResult;
     try {
       gatewayResult = await adapter.process({
@@ -95,11 +117,31 @@ async function runPaymentInitLogic(
         },
       });
     } catch (err) {
-      await paymentRepository.updateStatus({
-        id: paymentRowId,
-        status: "failed",
-        metadata: { failureReason: (err as Error).message },
-      });
+      await withTransaction(async (client) => {
+        await paymentRepository.updateStatus(
+          {
+            id: paymentRowId,
+            status: "failed",
+            metadata: { failureReason: (err as Error).message },
+          },
+          client,
+        );
+        await auditEventRepository.record(
+          {
+            tenantId: booking.tenant_id,
+            actor: { type: "user", id: guestUserId },
+            action: "payment.initiation_failed",
+            targetType: "payment",
+            targetId: paymentRowId,
+            outcome: "denied",
+            denialReason: "gateway_call_failed",
+            metadata: { gateway },
+            requestId: requestContext.get()?.requestId,
+          },
+          client,
+        );
+      }, rls);
+
       trackError("payment_init_gateway_call_failed", "payment_service", "high");
       throw AppError.badRequest(
         `Payment gateway ${gateway} is currently unavailable.`,
@@ -108,6 +150,7 @@ async function runPaymentInitLogic(
 
     const { transactionId, success, message, redirectUrl } = gatewayResult;
 
+    // 3. Gateway rejected
     if (!success || !transactionId) {
       await withTransaction(async (client) => {
         await paymentRepository.updateStatus(
@@ -120,7 +163,7 @@ async function runPaymentInitLogic(
           },
           client,
         );
-        auditEventRepository.record(
+        await auditEventRepository.record(
           {
             tenantId: booking.tenant_id,
             actor: { type: "user", id: guestUserId },
@@ -129,18 +172,20 @@ async function runPaymentInitLogic(
             targetId: paymentRowId,
             outcome: "denied",
             denialReason: "gateway_call_failed",
-            metadata: { gateway},
+            metadata: { gateway },
             requestId: requestContext.get()?.requestId,
           },
           client,
         );
-      });
+      }, rls);
+
       trackError("payment_init_failed", "payment_service", "high");
       throw AppError.badRequest(
         `Payment link creation failed with ${gateway}: ${message}`,
       );
     }
 
+    // 4. Success path
     await withTransaction(async (client) => {
       await paymentRepository.updateStatus(
         {
@@ -172,12 +217,16 @@ async function runPaymentInitLogic(
           targetType: "payment",
           targetId: paymentRowId,
           outcome: "allowed",
-          metadata: { gateway, transactionId, amountNgn: Number(booking.total_amount_ngn) },
+          metadata: {
+            gateway,
+            transactionId,
+            amountNgn: Number(booking.total_amount_ngn),
+          },
           requestId: requestContext.get()?.requestId,
         },
         client,
       );
-    });
+    }, rls);
 
     paymentInitializedCounter.inc({ gateway, tenant_id: booking.tenant_id });
 
@@ -212,28 +261,85 @@ async function runPaymentInitLogic(
   });
 }
 
-export const paymentService = {
+/**
+ * bookings.check_in/out are timestamptz. node-pg returns a JS Date, and JSON.stringify(Date) gives a
+ * full timestamp - format to the plain calendar date the orchestrator expects (UTC midnight, matching
+ * how the stay is stored and how the generated `nights` column is computed).
+ */
+function toDateOnly(v: string | Date): string {
+  return (v instanceof Date ? v.toISOString() : String(v)).slice(0, 10);
+}
+
+export const paymentServiceImpl = {
   async initializePayment(
     input: InitializePaymentInput,
   ): Promise<InitializePaymentResult> {
     const { bookingId, guestUserId, gateway, callbackUrl, phone, email } =
       input;
-    if (!email || email.trim().length === 0) {
+
+    if (!email?.trim()) {
       throw AppError.badRequest(
         "A valid guest email is required to initialize payment.",
       );
     }
 
-    const booking = await bookingRepository.findById(bookingId);
+    const booking = await bookingRepository.findByIdForActor(
+      bookingId,
+      guestUserId,
+      null,
+    );
     if (!booking) throw AppError.notFound("Booking not found.");
-    if (booking.guest_user_id !== guestUserId)
+
+    if (booking.guest_user_id !== guestUserId) {
       throw AppError.forbidden("Access denied.");
+    }
     if (booking.status !== "pending_payment") {
       throw AppError.conflict(
         `Booking is in status: ${booking.status}. Cannot initiate payment.`,
       );
     }
 
+if (isWorkflowDelegationEnabled()) {
+  const sagaResult = await paymentOrchestrationClient.startBookingPaymentSaga({
+    tenantId: booking.tenant_id,
+    propertyId: booking.property_id,
+    roomTypeId: booking.room_type_id,
+    guestUserId,
+    guestEmail: email,
+    checkIn: toDateOnly(booking.check_in as string | Date),
+    checkOut: toDateOnly(booking.check_out as string | Date),
+    roomsCount: booking.rooms_count,
+    guestCount: booking.guest_count,
+    totalAmountNgn: Number(booking.total_amount_ngn),
+    platformFeeNgn: Number(booking.platform_fee_ngn),
+    hostPayoutNgn: Number(booking.host_payout_ngn),
+    gateway,
+    callbackUrl,
+    phone,
+    bookingId, // saga adopts this booking (no duplicate reservation)
+  });
+
+  const ctx = sagaResult.context as {
+    bookingId?: string;
+    paymentId?: string;
+    transactionId?: string;
+    redirectUrl?: string;
+    amountNgn?: number;
+  };
+
+  if (!ctx.redirectUrl || !ctx.transactionId) {
+    throw AppError.serviceUnavailable(
+      "Saga paused but payment redirect details were not returned",
+    );
+  }
+
+  return {
+    paymentId: ctx.paymentId ?? ctx.transactionId,
+    transactionId: ctx.transactionId,
+    redirectUrl: ctx.redirectUrl,
+    amountNgn: ctx.amountNgn ?? Number(booking.total_amount_ngn),
+  };
+}
     const endpoint = "/api/v1/payments/initialize";
     const requestHash = idempotencyRepository.buildHash(
       "POST",
@@ -260,21 +366,33 @@ export const paymentService = {
 
     if (!claim) {
       const completed = await idempotencyRepository.find(requestHash);
-      if (!completed)
+      if (!completed) {
         throw AppError.conflict("Request state changed, please retry.");
+      }
       return completed.response_body as unknown as InitializePaymentResult;
     }
 
     try {
       const result = await runPaymentInitLogic(booking, input);
-      await idempotencyRepository.markCompleted(
-        claim.id,
+      const wrote = await idempotencyRepository.markCompleted(
+        claim.row.id,
+        claim.ownerToken,
         200,
         result as unknown as Record<string, unknown>,
       );
+      if (!wrote) {
+        logger.warn("payment_init_completed_after_lease_lost", {
+          event: "payment_init_completed_after_lease_lost",
+          paymentId: claim.row.id,
+        });
+      }
       return result;
     } catch (err) {
-      await idempotencyRepository.markFailed(claim.id, (err as Error).message);
+      await idempotencyRepository.markFailed(
+        claim.row.id,
+        claim.ownerToken,
+        (err as Error).message,
+      );
       throw err;
     }
   },
@@ -336,8 +454,10 @@ export const paymentService = {
           outcome: "denied",
           denialReason: "amount_mismatch",
           metadata: {
-            gateway: data.gateway, transactionId: data.transactionId,
-            receivedAmount: data.amount, expectedAmount: Number(payment.amount_ngn),
+            gateway: data.gateway,
+            transactionId: data.transactionId,
+            receivedAmount: data.amount,
+            expectedAmount: Number(payment.amount_ngn),
           },
           requestId: requestContext.get()?.requestId,
         },
@@ -361,7 +481,7 @@ export const paymentService = {
               guestName:
                 [guest.first_name, guest.last_name].filter(Boolean).join(" ") ||
                 "Guest",
-              bookingRef: payment.booking_id, // best effort - swap for real ref if available
+              bookingRef: payment.booking_id,
               amountNgn: Number(payment.amount_ngn),
               gateway: data.gateway,
               transactionId: data.transactionId,
@@ -410,7 +530,11 @@ export const paymentService = {
         targetId: payment.id,
         affectedUserId: payment.guest_user_id,
         outcome: "allowed",
-        metadata: { gateway: data.gateway, transactionId: data.transactionId, amountNgn: Number(payment.amount_ngn) },
+        metadata: {
+          gateway: data.gateway,
+          transactionId: data.transactionId,
+          amountNgn: Number(payment.amount_ngn),
+        },
         requestId: requestContext.get()?.requestId,
       },
       client,
@@ -513,7 +637,6 @@ export const paymentService = {
       client,
     );
 
-
     await auditEventRepository.record(
       {
         tenantId: payment.tenant_id,
@@ -523,13 +646,15 @@ export const paymentService = {
         targetId: payment.id,
         affectedUserId: payment.guest_user_id,
         outcome: "denied",
-        denialReason: (data.metadata["gateway_response"] as string) ?? "gateway_reported_failure",
+        denialReason:
+          (data.metadata["gateway_response"] as string) ??
+          "gateway_reported_failure",
         metadata: { gateway: data.gateway, transactionId: data.transactionId },
         requestId: requestContext.get()?.requestId,
       },
       client,
     );
-    
+
     webhookProcessedCounter.inc({ gateway: data.gateway, status: "failed" });
 
     // Notify guest of failed payment
@@ -593,3 +718,14 @@ export const paymentService = {
     }
   },
 };
+
+export const paymentService = instrumentService(
+  paymentServiceImpl,
+  measurePaymentOp,
+  {
+    initializePayment: "initialize",
+    processWebhookSuccess: "webhook_success",
+    processWebhookFailure: "webhook_failure",
+    verifyPayment: "verify",
+  },
+);

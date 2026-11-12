@@ -1,6 +1,5 @@
 import { useForm }     from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Building2 }   from "lucide-react";
 import { Input }       from "@/components/ui/input";
 import { createPropertySchema, type CreatePropertyFormData } from "../schema/onboarding.schema";
 
@@ -25,24 +24,17 @@ export default function StepCreateProperty({ onSubmit, isLoading }: Props) {
   const slug = watch("tenantSlug") ?? "";
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h3
-          className="text-[28px] "
-          style={{ color: "var(--color-ink)", letterSpacing: "-0.5px" }}
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <h4
+          className="text-xl lg:text-2xl font-semibold"
+          style={{ color: "var(--color-ink)" }}
         >
           Set up your property
-        </h3>
-        <p className="text-[15px]" style={{ color: "var(--color-muted-stone)" }}>
+        </h4>
+        <p className="text-sm" style={{ color: "var(--color-muted-stone)" }}>
           You can always update these details in your dashboard.
         </p>
-      </div>
-
-      <div
-        className="w-12 h-12 rounded-[12px] flex items-center justify-center"
-        style={{ backgroundColor: "var(--color-warm-mist)" }}
-      >
-        <Building2 size={20} style={{ color: "var(--color-terracotta)" }} />
       </div>
 
       <div className="flex flex-col gap-4">
@@ -72,8 +64,8 @@ export default function StepCreateProperty({ onSubmit, isLoading }: Props) {
 
       <button
         type="submit" disabled={isLoading}
-        className="w-full h-12 rounded-full flex items-center justify-center text-xs lg:text-[13px]   transition-opacity hover:opacity-80 disabled:opacity-50"
-        style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+        className="w-full h-12 px-3 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex font-bold items-center justify-center text-sm transition-opacity hover:opacity-80"
+        style={{ backgroundColor: "var(--color-primary)", color: "var(--color-canvas)" }}
       >
         {isLoading ? "Creating account..." : "Launch my property"}
       </button>

@@ -1,0 +1,8 @@
+* text=auto
+*.sh        text eol=lf
+*.conf      text eol=lf
+*.ini       text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.sql       text eol=lf
+userlist.txt text eol=lf

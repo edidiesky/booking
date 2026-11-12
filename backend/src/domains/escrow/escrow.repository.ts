@@ -69,6 +69,31 @@ export const escrowRepository = {
     );
   },
 
+  async listByTenant(
+    tenantId: string,
+    page = 1,
+    limit = 20,
+  ): Promise<EscrowRecord[]> {
+    const offset = (page - 1) * limit;
+    return query<EscrowRecord>(
+      `SELECT e.*, b.booking_ref, b.check_in, b.check_out
+       FROM escrow_ledger e
+       JOIN bookings b ON b.id = e.booking_id
+       WHERE e.tenant_id = $1
+       ORDER BY e.created_at DESC, e.id DESC
+       LIMIT $2 OFFSET $3`,
+      [tenantId, limit, offset],
+    );
+  },
+
+  async countByTenant(tenantId: string): Promise<number> {
+    const row = await queryOne<{ count: number }>(
+      `SELECT COUNT(*)::int AS count FROM escrow_ledger WHERE tenant_id = $1`,
+      [tenantId],
+    );
+    return row?.count ?? 0;
+  },
+
   async release(
     bookingId: string,
     client: PoolClient,
@@ -154,27 +179,6 @@ export const escrowRepository = {
     return row;
   },
 
-  async listByTenant(
-    tenantId: string,
-    page = 1,
-    limit = 20,
-  ): Promise<EscrowRecord[]> {
-    const offset = (page - 1) * limit;
-    return query<EscrowRecord>(
-      `SELECT e.*, b.booking_ref, b.check_in, b.check_out
-       FROM escrow_ledger e
-       JOIN bookings b ON b.id = e.booking_id
-       WHERE e.tenant_id = $1
-       ORDER BY e.created_at DESC LIMIT $2 OFFSET $3`,
-      [tenantId, limit, offset],
-    );
-  },
-
-  // Single atomic query: per-status counts/sums plus month-over-month
-  // growth, computed with FILTER clauses so it's one round trip and one
-  // consistent snapshot, instead of firing a separate COUNT/SUM per status
-  // (which is also not atomic, values could be read from different
-  // moments in time if writes land between queries).
   async getStatsForTenant(tenantId: string): Promise<EscrowStats> {
     const row = await queryOne<{
       held_count: string;
@@ -254,18 +258,18 @@ export const escrowRepository = {
     );
   },
 
-async getStatsAllForAdmin(): Promise<EscrowStats> {
-  const row = await queryOne<{
-    held_count: string;
-    held_amount: number;
-    released_count: string;
-    released_amount: number;
-    refunded_count: string;
-    refunded_amount: number;
-    current_month_volume: number;
-    previous_month_volume: number;
-  }>(
-    `SELECT
+  async getStatsAllForAdmin(): Promise<EscrowStats> {
+    const row = await queryOne<{
+      held_count: string;
+      held_amount: number;
+      released_count: string;
+      released_amount: number;
+      refunded_count: string;
+      refunded_amount: number;
+      current_month_volume: number;
+      previous_month_volume: number;
+    }>(
+      `SELECT
        COUNT(*) FILTER (WHERE status = 'held')     AS held_count,
        COALESCE(SUM(amount_ngn)      FILTER (WHERE status = 'held'), 0)      AS held_amount,
        COUNT(*) FILTER (WHERE status = 'released') AS released_count,
@@ -278,22 +282,35 @@ async getStatsAllForAdmin(): Promise<EscrowStats> {
            AND created_at <  date_trunc('month', now())
        ), 0) AS previous_month_volume
      FROM escrow_ledger`,
-  );
+    );
 
-  const current = Number(row?.current_month_volume ?? 0);
-  const previous = Number(row?.previous_month_volume ?? 0);
-  const volumeGrowthPct =
-    previous === 0 ? (current > 0 ? 100 : 0) : ((current - previous) / previous) * 100;
+    const current = Number(row?.current_month_volume ?? 0);
+    const previous = Number(row?.previous_month_volume ?? 0);
+    const volumeGrowthPct =
+      previous === 0
+        ? current > 0
+          ? 100
+          : 0
+        : ((current - previous) / previous) * 100;
 
-  return {
-    held:     { count: Number(row?.held_count ?? 0),     amountNgn: Number(row?.held_amount ?? 0) },
-    released: { count: Number(row?.released_count ?? 0), amountNgn: Number(row?.released_amount ?? 0) },
-    refunded: { count: Number(row?.refunded_count ?? 0), amountNgn: Number(row?.refunded_amount ?? 0) },
-    currentMonthVolumeNgn: current,
-    previousMonthVolumeNgn: previous,
-    volumeGrowthPct: Math.round(volumeGrowthPct * 10) / 10,
-  };
-},
+    return {
+      held: {
+        count: Number(row?.held_count ?? 0),
+        amountNgn: Number(row?.held_amount ?? 0),
+      },
+      released: {
+        count: Number(row?.released_count ?? 0),
+        amountNgn: Number(row?.released_amount ?? 0),
+      },
+      refunded: {
+        count: Number(row?.refunded_count ?? 0),
+        amountNgn: Number(row?.refunded_amount ?? 0),
+      },
+      currentMonthVolumeNgn: current,
+      previousMonthVolumeNgn: previous,
+      volumeGrowthPct: Math.round(volumeGrowthPct * 10) / 10,
+    };
+  },
 };
 
 export interface EscrowStats {
@@ -303,10 +320,10 @@ export interface EscrowStats {
   currentMonthVolumeNgn: number;
   previousMonthVolumeNgn: number;
   volumeGrowthPct: number;
-  heldCount?:number;
-  heldAmountNgn?:number;
-  releasedAmountNgn?:number;
-  releasedCount?:number;
-  refundedAmountNgn?:number;
-  refundedCount?:number;
+  heldCount?: number;
+  heldAmountNgn?: number;
+  releasedAmountNgn?: number;
+  releasedCount?: number;
+  refundedAmountNgn?: number;
+  refundedCount?: number;
 }

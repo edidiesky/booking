@@ -12,7 +12,7 @@ export default function ReviewsTab() {
             <div key={n} className="flex items-center gap-2">
               <span className="w-14">{n} · —</span>
               <div className="flex-1 h-1.5 rounded-full bg-[#f2f0ed] overflow-hidden">
-                <div className="h-full w-0 bg-[#17191c] rounded-full" />
+                <div className="h-full w-0 bg-[var(--color-primary)] rounded-full" />
               </div>
               <span className="w-8 text-right">0</span>
             </div>

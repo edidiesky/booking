@@ -8,14 +8,16 @@ import { useProperties } from "./hooks/useProperties";
 import { ChartSelect } from "@/components/common/charts/Chartselect";
 import type { Property, PropertyStatus } from "@/types/api";
 import { useNavigate } from "react-router-dom";
-import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import ExportPdfButton from "@/components/common/ExportPdfButton";
 import { PROPERTY_URL } from "@/constants/api";
-import ImportRoomTypesModal from "./ImportRoomTypesModal";
 import Title from "@/components/dashboard/common/Title";
 import PropertyPerformanceModal from "./PropertyPerformanceModal";
 import { EmptyState } from "@/components/common/EmptyState";
-
+import TablePagination from "@/components/common/table/TablePagination";
+import ImportRoomTypesModal from "./ImportRoomTypesModal";
+import ImportPropertiesModal from "./ImportPropertiesModal";
+import BulkPropertyImagesModal from "./BulkPropertyImagesModal";
+import { StatCardGrid } from "@/components/common/widgets/StatCardGrid";
 const STATUS_OPTIONS = [
   { label: "All statuses", value: "" },
   { label: "Active", value: "active" },
@@ -29,25 +31,34 @@ const HEADERS = ["Name", "Type", "Location", "Status", "Created", "Actions"];
 export default function DashboardProperties() {
   const [modalOpen, setModalOpen] = useState(false);
   const [performancemodalopen, setPerformanceModalOpen] = useState(false);
+  const [bulkPropertyImagesOpen, setBulkPropertyImagesOpen] = useState(false);
   const [editPropertyId, setEditPropertyId] = useState<string | null>(null);
   const [performanceDetail, sePerformanceDetail] = useState<Property | null>(
     null,
   );
   const [roomTypeId, setRoomTypeId] = useState<string | null>(null);
   const [showImportPicker, setShowImportPicker] = useState(false);
+  const [importPropertiesOpen, setImportPropertiesOpen] = useState(false);
   const [importPropertyId, setImportPropertyId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     name: string;
   } | null>(null);
-  const [statusFilter, setStatusFilter] = useState<PropertyStatus | "">("");
   const navigate = useNavigate();
 
-  const { properties, isLoading, stats, isStatsLoading } = useProperties();
-
-  const filtered = properties.filter(
-    (p) => !statusFilter || p.status === statusFilter,
-  );
+  const {
+    properties,
+    meta,
+    isLoading,
+    isFetching,
+    setPage,
+    statusFilter,
+    setStatusFilter,
+    stats,
+    isStatsLoading,
+  } = useProperties();
+  // Filtering now happens on the server.
+  const filtered = properties;
 
   const handleOpenCreate = () => {
     setEditPropertyId(null);
@@ -105,7 +116,7 @@ export default function DashboardProperties() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+        className="w-full p-4  flex flex-col gap-8"
       >
         <div className="flex items-start justify-between lg:flex-row flex-col gap-4">
           <Title
@@ -116,87 +127,130 @@ export default function DashboardProperties() {
             <div className="relative">
               <button
                 onClick={() => setShowImportPicker((v) => !v)}
-                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-[13px]     p-2 bold px-6"
+                className="border border-[#e8e6e3] flex rounded-full items-center gap-2 hover:bg-[#f2f0ed] transition-colors text-[#17191c] text-xs lg:text-[13px] p-2 bold px-6"
               >
                 Bulk Import
               </button>
+
               {showImportPicker && (
-                <div
-                  className="absolute right-0 mt-1.5 w-64 bg-white border rounded-xl shadow-lg z-30 p-2"
-                  style={{ borderColor: "#e8e6e3" }}
-                >
-                  <p
-                    className="text-[11px] px-2 py-1"
-                    style={{ color: "#a3a6af" }}
+                <>
+                  {/* click-outside catcher */}
+                  <div
+                    className="fixed inset-0 z-20"
+                    onClick={() => setShowImportPicker(false)}
+                  />
+                  <div
+                    className="absolute right-0 top-full mt-1.5 w-64 bg-white border rounded-xl shadow-lg z-30 p-2"
+                    style={{ borderColor: "#e8e6e3" }}
                   >
-                    Choose which property this CSV is for:
-                  </p>
-                  {properties.length === 0 ? (
+                    <button
+                      onClick={() => {
+                        setImportPropertiesOpen(true);
+                        setShowImportPicker(false);
+                      }}
+                      className="w-full text-left text-xs lg:text-[13px] px-2 py-3 rounded-lg hover:bg-[#f2f0ed] transition-colors font-medium"
+                      style={{ color: "#17191c" }}
+                    >
+                      New properties and room types
+                    </button>
+                    <button
+                      onClick={() => {
+                        setBulkPropertyImagesOpen(true);
+                        setShowImportPicker(false);
+                      }}
+                      className="w-full text-left text-xs lg:text-[13px] px-2 py-3 rounded-lg hover:bg-[#f2f0ed] transition-colors font-medium"
+                      style={{ color: "#17191c" }}
+                    >
+                      Property photos
+                    </button>
+
+                    <div
+                      className="h-px my-1"
+                      style={{ backgroundColor: "#e8e6e3" }}
+                    />
+
                     <p
-                      className="text-xs lg:text-[13px]   px-2 py-2"
+                      className="text-[11px] px-2 py-1"
                       style={{ color: "#a3a6af" }}
                     >
-                      Add a property first.
+                      Or add room types to an existing property:
                     </p>
-                  ) : (
-                    properties.map((p) => (
-                      <button
-                        key={p.id}
-                        onClick={() => {
-                          setImportPropertyId(p.id);
-                          setShowImportPicker(false);
-                        }}
-                        className="w-full text-left text-xs lg:text-[13px]   px-2 py-2 rounded-lg hover:bg-[#f2f0ed] transition-colors truncate"
-                        style={{ color: "#17191c" }}
+
+                    {properties.length === 0 ? (
+                      <p
+                        className="text-xs lg:text-[13px] px-2 py-2"
+                        style={{ color: "#a3a6af" }}
                       >
-                        {p.name}
-                      </button>
-                    ))
-                  )}
-                </div>
+                        Add a property first.
+                      </p>
+                    ) : (
+                      <div className="max-h-56 overflow-y-auto">
+                        {properties.map((p) => (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              setImportPropertyId(p.id);
+                              setShowImportPicker(false);
+                            }}
+                            className="w-full text-left text-xs lg:text-[13px] px-2 py-3 rounded-lg hover:bg-[#f2f0ed] transition-colors truncate"
+                            style={{ color: "#17191c" }}
+                          >
+                            {p.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
+
             <button
               onClick={handleOpenCreate}
-              className="bg-[#17191c] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px]     p-2 bold px-6"
+              className="bg-[var(--color-primary)] flex rounded-full items-center gap-2 hover:opacity-90 text-white text-xs lg:text-[13px] p-2 bold px-6"
             >
               Add Property
             </button>
           </div>
         </div>
-        <StatsOverview
+
+        <StatCardGrid
           isLoading={isStatsLoading}
-          growthPct={stats?.newListingsGrowthPct}
-          growthLabel="new listings this month"
-          growthTooltip="New listings created this calendar month vs. last calendar month"
           cards={[
             {
               label: "Active",
               value: String(stats?.activeCount ?? 0),
-              color: "#166534",
-              bg: "#dcfce7",
-              fillPercent: ((stats?.activeCount ?? 0) / propertyTotal) * 100,
+              total: `of ${propertyTotal}`,
+              progress: (stats?.activeCount ?? 0) / propertyTotal,
+              tone: "success",
+              footnote: "Live listings",
             },
             {
               label: "Draft",
               value: String(stats?.draftCount ?? 0),
-              color: "#92400e",
-              bg: "#fef3c7",
-              fillPercent: ((stats?.draftCount ?? 0) / propertyTotal) * 100,
+              total: `of ${propertyTotal}`,
+              progress: (stats?.draftCount ?? 0) / propertyTotal,
+              tone: "warning",
+              footnote: "Not published",
             },
             {
               label: "Paused",
               value: String(stats?.pausedCount ?? 0),
-              color: "#374151",
-              bg: "#f3f4f6",
-              fillPercent: ((stats?.pausedCount ?? 0) / propertyTotal) * 100,
+              total: `of ${propertyTotal}`,
+              progress: (stats?.pausedCount ?? 0) / propertyTotal,
+              tone: "neutral",
+              footnote: "Temporarily off",
             },
             {
               label: "Archived",
               value: String(stats?.archivedCount ?? 0),
-              color: "#991b1b",
-              bg: "#fee2e2",
-              fillPercent: ((stats?.archivedCount ?? 0) / propertyTotal) * 100,
+              total: `of ${propertyTotal}`,
+              progress: (stats?.archivedCount ?? 0) / propertyTotal,
+              tone: "danger",
+              footnote:
+                stats?.newListingsGrowthPct != null
+                  ? `${stats.newListingsGrowthPct >= 0 ? "+" : ""}${Math.round(stats.newListingsGrowthPct)}% new this month`
+                  : "Retired listings",
             },
           ]}
         />
@@ -208,7 +262,7 @@ export default function DashboardProperties() {
               options={STATUS_OPTIONS}
             />
             <span className="text-xs lg:text-[13px]     text-[#a3a6af]">
-              {filtered.length} propert{filtered.length === 1 ? "y" : "ies"}
+              {meta?.total ?? 0} propert{meta?.total === 1 ? "y" : "ies"}
             </span>
           </div>
           <div className="flex lg:justify-end">
@@ -279,6 +333,12 @@ export default function DashboardProperties() {
             </tbody>
           </table>
         </div>
+        <TablePagination
+          meta={meta}
+          onPageChange={setPage}
+          isFetching={isFetching}
+          noun={{ singular: "property", plural: "properties" }}
+        />
       </motion.div>
 
       <AnimatePresence>
@@ -306,6 +366,22 @@ export default function DashboardProperties() {
             propertyId={deleteTarget.id}
             propertyName={deleteTarget.name}
             onClose={() => setDeleteTarget(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {importPropertiesOpen && (
+          <ImportPropertiesModal
+            onClose={() => setImportPropertiesOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {bulkPropertyImagesOpen && (
+          <BulkPropertyImagesModal
+            onClose={() => setBulkPropertyImagesOpen(false)}
           />
         )}
       </AnimatePresence>

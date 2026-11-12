@@ -1,3 +1,5 @@
+import { measureBookingOp } from "../../utils/metrics";
+import { instrumentService } from "../../utils/instrumentService";
 import { v4 as uuid } from "uuid";
 import {
   availabilityBroadcaster,
@@ -29,6 +31,8 @@ import {
   publishNotifyBookingCheckedOut,
 } from "../../messaging/publisher";
 import { auditEventRepository } from "../audit/auditEvent.repository";
+import { ledgerService } from "../ledger/ledger.service";
+import type { TenantBookingFilters } from "./booking.repository";
 
 export interface InitiateBookingInput {
   propertyId: string;
@@ -81,6 +85,9 @@ export function toDto(
     roomTypeImage?: string;
   },
 ): BookingDto {
+  if (!b) {
+    throw new Error("toDto called with null/undefined booking");
+  }
   return {
     bookingId: b.id,
     bookingRef: b.booking_ref,
@@ -100,12 +107,6 @@ export function toDto(
     sessionId,
     specialRequests: b.special_requests,
     createdAt: b.created_at,
-    // b is a raw pg row: the joins in listByTenant/listByGuest alias these
-    // as property_name/property_city/room_type_name (snake_case), reading
-    // b.propertyName/b.roomTypeName off that row was always undefined,
-    // that's why these fields never showed up on the frontend. Falls back
-    // to the explicit `enrichment` argument for call sites that pass it
-    // separately instead of joining it onto the row.
     propertyName: b.property_name ?? enrichment?.propertyName,
     roomTypeImage: b.room_types_image?.[0] ?? enrichment?.roomTypeImage,
     receiptUrl: b.receipt_url ?? undefined,
@@ -213,6 +214,15 @@ export class BookingService {
     let booking!: Booking;
 
     await withTransaction(async (client) => {
+      await client.query(
+        `SELECT set_config('app.current_tenant_id', $1, true)`,
+        [tenantId],
+      );
+
+      // Serialize concurrent bookers for this room type (fixes stale-snapshot race
+      // between isAvailable + acquireLock under concurrent load).
+      await availabilityRepository.lockRoomType(roomTypeId, client);
+
       const available = await availabilityRepository.isAvailable(
         roomTypeId,
         checkIn,
@@ -220,11 +230,17 @@ export class BookingService {
         roomsCount,
         client,
       );
-      if (!available)
+      if (!available) {
+        logger.debug("booking_calendar_unavailable:", {
+          roomTypeId,
+          checkIn,
+          checkOut,
+          roomsCount,
+        });
         throw AppError.conflict(
           "Selected dates are not available for the requested rooms.",
         );
-
+      }
       await availabilityRepository.acquireLock(
         { roomTypeId, checkIn, checkOut, roomsHeld: roomsCount, sessionId },
         client,
@@ -330,15 +346,21 @@ export class BookingService {
     const guest = await userRepository.findById(booking.guest_user_id);
     if (!guest) throw AppError.notFound("Guest user not found.");
 
+    const rls = {
+      tenantId: booking.tenant_id,
+      userId: booking.guest_user_id,
+    };
+
     let confirmed!: Booking;
 
     await withTransaction(async (client) => {
-      confirmed = (await bookingRepository.updateStatus(
+      const row = await bookingRepository.updateStatus(
         bookingId,
         "confirmed",
         undefined,
         client,
-      ))!;
+      );
+      confirmed = row ?? { ...booking, status: "confirmed" as BookingStatus };
 
       await availabilityRepository.decrementAvailability(
         booking.room_type_id,
@@ -359,6 +381,14 @@ export class BookingService {
         client,
       );
 
+      await ledgerService.recordPaymentReceived(
+        client,
+        bookingId,
+        undefined,
+        booking.tenant_id,
+        Number(booking.total_amount_ngn),
+      );
+
       await outboxRepository.create(
         "booking.confirmed",
         {
@@ -376,7 +406,6 @@ export class BookingService {
         client,
       );
 
-      // Booking receipt reqested
       await outboxRepository.create(
         "booking.receipt.requested",
         {
@@ -394,18 +423,18 @@ export class BookingService {
         client,
       );
 
-      // adding customer insert to seller records
       await outboxRepository.create(
         "renter.upsert.requested",
         {
           ownerId: booking.tenant_id,
           guestUserId: booking.guest_user_id,
-          fullName: guest.first_name + " " + guest.last_name,
+          fullName: `${guest.first_name} ${guest.last_name}`,
           email: guest.email,
           phone: guest.phone ?? undefined,
         },
         client,
       );
+
       await auditEventRepository.record(
         {
           tenantId: booking.tenant_id,
@@ -421,8 +450,7 @@ export class BookingService {
         },
         client,
       );
-    });
-
+    }, rls);
     availabilityBroadcaster.publish(booking.room_type_id, {
       type: "booked",
       checkIn: booking.check_in,
@@ -505,7 +533,16 @@ export class BookingService {
     requestingUserId: string,
     reason?: string,
   ): Promise<BookingDto> {
-    const booking = await bookingRepository.findById(bookingId);
+    const isSystem = requestingUserId === "system";
+
+    const booking = isSystem
+      ? await bookingRepository.findById(bookingId)
+      : await bookingRepository.findByIdForActor(
+          bookingId,
+          requestingUserId,
+          null,
+        );
+
     if (!booking) throw AppError.notFound("Booking not found.");
 
     const cancelable: BookingStatus[] = ["pending_payment", "confirmed"];
@@ -514,11 +551,9 @@ export class BookingService {
         `Cannot cancel a booking with status: ${booking.status}`,
       );
     }
-    if (
-      requestingUserId !== "system" &&
-      booking.guest_user_id !== requestingUserId
-    )
+    if (!isSystem && booking.guest_user_id !== requestingUserId) {
       throw AppError.forbidden("You can only cancel your own bookings.");
+    }
 
     const tenant = await tenantRepository.findById(booking.tenant_id);
     const refundAmount = tenant
@@ -529,15 +564,28 @@ export class BookingService {
         )
       : 0;
 
+    const rls = {
+      tenantId: booking.tenant_id,
+      userId: isSystem ? booking.guest_user_id : requestingUserId,
+    };
+
     let cancelled!: Booking;
 
     await withTransaction(async (client) => {
-      cancelled = (await bookingRepository.updateStatus(
+      const row = await bookingRepository.updateStatus(
         bookingId,
         "cancelled",
         { cancellation_reason: reason, cancelled_at: new Date() },
         client,
-      ))!;
+      );
+
+      // RETURNING can be empty under RLS; never pass null to toDto
+      cancelled = row ?? {
+        ...booking,
+        status: "cancelled" as BookingStatus,
+        cancellation_reason: reason,
+        cancelled_at: new Date(),
+      };
 
       if (booking.status === "confirmed") {
         await availabilityRepository.incrementAvailability(
@@ -567,13 +615,13 @@ export class BookingService {
         },
         client,
       );
+
       await auditEventRepository.record(
         {
           tenantId: booking.tenant_id,
-          actor:
-            requestingUserId === "system"
-              ? { type: "system" }
-              : { type: "user", id: requestingUserId },
+          actor: isSystem
+            ? { type: "system" }
+            : { type: "user", id: requestingUserId },
           action: "booking.cancelled",
           targetType: "booking",
           targetId: bookingId,
@@ -583,8 +631,8 @@ export class BookingService {
         },
         client,
       );
-    });
-    // broadcast cancel booking
+    }, rls);
+
     availabilityBroadcaster.publish(booking.room_type_id, {
       type: "released",
       checkIn: booking.check_in,
@@ -594,14 +642,16 @@ export class BookingService {
     if (booking.status === "pending_payment") {
       const sessionId =
         (booking.metadata as Record<string, string>)["sessionId"] ?? "";
-      if (sessionId)
+      if (sessionId) {
         await availabilityRepository.releaseLock(sessionId).catch(() => null);
+      }
     }
 
     bookingCancelledCounter.inc({
       tenant_id: booking.tenant_id,
       reason_type: reason ? "guest_reason" : "no_reason",
     });
+
     await auditRepository.log({
       action: "status_changed",
       resource: "booking",
@@ -615,7 +665,6 @@ export class BookingService {
       payload: { bookingId, bookingRef: booking.booking_ref, refundAmount },
     });
 
-    // Resolve and publish cancellation notification
     void resolveNotificationContext(booking)
       .then(({ guestEmail, guestName, propertyName }) => {
         void Promise.allSettled([
@@ -625,10 +674,10 @@ export class BookingService {
             guestName,
             bookingRef: booking.booking_ref,
             propertyName,
-            roomTypeName: "", // not needed in cancelled template
+            roomTypeName: "",
             checkIn: booking.check_in,
             checkOut: booking.check_out,
-            nights: 0, // not needed in cancelled template
+            nights: 0,
             totalAmountNgn: Number(booking.total_amount_ngn),
             tenantId: booking.tenant_id,
             bookingId,
@@ -650,11 +699,16 @@ export class BookingService {
       refundAmount,
       requestingUserId,
     });
+
     return toDto(cancelled);
   }
 
   async checkIn(bookingId: string, hostUserId: string): Promise<BookingDto> {
-    const booking = await bookingRepository.findById(bookingId);
+    const booking = await bookingRepository.findByIdForActor(
+      bookingId,
+      hostUserId,
+      requestContext.get()?.tenantId ?? null,
+    );
     if (!booking) throw AppError.notFound("Booking not found.");
     if (booking.status !== "confirmed")
       throw AppError.conflict("Only confirmed bookings can be checked in.");
@@ -747,7 +801,11 @@ export class BookingService {
   }
 
   async checkOut(bookingId: string, hostUserId: string): Promise<BookingDto> {
-    const booking = await bookingRepository.findById(bookingId);
+    const booking = await bookingRepository.findByIdForActor(
+      bookingId,
+      hostUserId,
+      requestContext.get()?.tenantId ?? null,
+    );
     if (!booking) throw AppError.notFound("Booking not found.");
     if (booking.status !== "checked_in")
       throw AppError.conflict("Only checked-in bookings can be checked out.");
@@ -855,7 +913,15 @@ export class BookingService {
   }
 
   async getBookingById(id: string): Promise<BookingDto> {
-    const b = await bookingRepository.findById(id);
+    const ctx = requestContext.get();
+    const userId = ctx?.userId;
+    if (!userId) throw AppError.unauthorized();
+
+    const b = await bookingRepository.findByIdForActor(
+      id,
+      userId,
+      ctx?.tenantId ?? null,
+    );
     if (!b) throw AppError.notFound("Booking not found.");
 
     const [property, roomType] = await Promise.all([
@@ -873,25 +939,29 @@ export class BookingService {
 
   async getGuestBookings(
     guestUserId: string,
-    opts: { status?: string; checkInAfter?: string; checkInBefore?: string; page?: number; limit?: number } = {},
+    opts: {
+      status?: string;
+      checkInAfter?: string;
+      checkInBefore?: string;
+      page?: number;
+      limit?: number;
+    } = {},
   ): Promise<BookingDto[]> {
-    return (await bookingRepository.listByGuest(guestUserId, opts)).map(
-      (b) => toDto(b),
+    return (await bookingRepository.listByGuest(guestUserId, opts)).map((b) =>
+      toDto(b),
     );
   }
 
   async getTenantBookings(
     tenantId: string,
-    opts: { status?: BookingStatus; page?: number; limit?: number } = {},
-  ): Promise<BookingDto[]> {
-    return (
-      await bookingRepository.listByTenant(
-        tenantId,
-        opts.status,
-        opts.page,
-        opts.limit,
-      )
-    ).map((b) => toDto(b));
+    opts: TenantBookingFilters & { page: number; limit: number },
+  ): Promise<{ data: BookingDto[]; total: number }> {
+    const { page, limit, ...filters } = opts;
+    const [rows, total] = await Promise.all([
+      bookingRepository.listByTenant(tenantId, undefined, page, limit, filters),
+      bookingRepository.countByTenant(tenantId, filters),
+    ]);
+    return { data: rows.map((b) => toDto(b)), total };
   }
 
   async getTenantBookingStats(tenantId: string) {
@@ -904,7 +974,11 @@ export class BookingService {
     targetStatus: BookingStatus,
     actorUserId: string,
   ): Promise<BookingDto> {
-    const booking = await bookingRepository.findById(bookingId);
+    const booking = await bookingRepository.findByIdForActor(
+      bookingId,
+      tenantId,
+      requestContext.get()?.tenantId ?? null,
+    );
     if (!booking) throw AppError.notFound("Booking not found.");
     if (booking.tenant_id !== tenantId)
       throw AppError.notFound("Booking not found.");
@@ -992,4 +1066,18 @@ export class BookingService {
   }
 }
 
-export const bookingService = new BookingService();
+export const bookingService = instrumentService(
+  new BookingService(),
+  measureBookingOp,
+  {
+    initiateBooking: "initiate",
+    confirmBookingByPayment: "confirm",
+    cancelBooking: "cancel",
+    checkIn: "check_in",
+    checkOut: "check_out",
+    getTenantBookings: "list_tenant",
+    getGuestBookings: "list_guest",
+    getBookingById: "get_by_id",
+    transitionStatus: "transition",
+  },
+);

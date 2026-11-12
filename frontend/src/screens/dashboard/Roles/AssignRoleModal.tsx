@@ -96,7 +96,7 @@ export default function AssignRoleModal({ roles, onClose, onSubmit, isSaving }: 
             type="button"
             onClick={handleSubmit(submit)}
             disabled={isSaving}
-            className="h-9 px-5 text-xs lg:text-[13px]     rounded-full bg-[#17191c] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+            className="h-9 px-5 text-xs lg:text-[13px]     rounded-full bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
           >
             {isSaving ? (
               <>

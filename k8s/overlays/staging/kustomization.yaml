@@ -1,0 +1,43 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: staging
+resources:
+ - ../../base
+replicas:
+  - name: booking-backend
+    count: 2
+  - name: booking-expiry-worker
+    count: 1
+  - name: availability-worker
+    count: 1
+  - name: audit-worker
+    count: 1
+  - name: campaign-worker
+    count: 1
+  - name: property-search-worker
+    count: 1
+  - name: seller-notification-worker
+    count: 1
+  - name: csv-room-import-worker
+    count: 1
+images:
+  - name: eddyscript/backend
+    newTag: staging
+  - name: eddyscript/booking-expiry-worker
+    newTag: staging
+  - name: eddyscript/audit-worker
+    newTag: staging
+  - name: eddyscript/availability-worker
+    newTag: staging
+  - name: eddyscript/campaign-worker
+    newTag: staging
+  - name: eddyscript/csv-room-import-worker
+    newTag: staging
+  - name: eddyscript/property-search-worker
+    newTag: staging
+  - name: eddyscript/seller-notification-worker
+    newTag: staging
+labels:
+  - pairs:
+      environment: staging
+    includeSelectors: false

@@ -1,0 +1,47 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: prod
+resources:
+ - ../../base
+
+replicas:
+  - name: booking-backend
+    count: 2
+  - name: booking-expiry-worker
+    count: 1
+  - name: availability-worker
+    count: 1
+  - name: audit-worker
+    count: 1
+  - name: campaign-worker
+    count: 1
+  - name: property-search-worker
+    count: 1
+  - name: seller-notification-worker
+    count: 1
+  - name: csv-room-import-worker
+    count: 1
+images:
+  - name: eddyscript/backend
+    newTag: prod
+  - name: eddyscript/booking-expiry-worker
+    newTag: prod
+  - name: eddyscript/audit-worker
+    newTag: prod
+  - name: eddyscript/availability-worker
+    newTag: prod
+  - name: eddyscript/campaign-worker
+    newTag: prod
+  - name: eddyscript/csv-room-import-worker
+    newTag: prod
+  - name: eddyscript/property-search-worker
+    newTag: prod
+  - name: eddyscript/seller-notification-worker
+    newTag: prod
+patches:
+  - path: patches/backend-resources.yaml
+  - path: patches/backend-env.yaml
+labels:
+  - pairs:
+      environment: prod
+    includeSelectors: false

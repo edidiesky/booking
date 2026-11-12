@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCredentials, selectCurrentUser, selectRefreshToken } from "@/redux/slices/authSlice";
 import { slideSidebarFromLeft } from "@/constants/framer";
-import { NAV_GROUPS } from "./Sidebar";
+import { NAV_GROUPS } from "./sidebarNav";
 import NavGroup from "./NavGroup";
 import SidebarFooter from "./SidebarFooter";
 import { useLogoutMutation } from "@/redux/services/authApi";

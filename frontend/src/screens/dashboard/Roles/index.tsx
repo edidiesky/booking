@@ -11,6 +11,7 @@ import {
 import TeamManagementTab from "./tabs/TeamManagementTab";
 import RolesPermissionsTab from "./tabs/RolesPermissionsTab";
 import DomainSettingsTab from "./tabs/domain/DomainSettingsTab";
+import SessionsTab from "./tabs/sessions/SessionsTab";
 type TopTab = "general" | "team" | "roles" | "domain" | "sessions" | "support";
 
 const TOP_TABS: {
@@ -86,12 +87,7 @@ export default function DashboardRoles() {
           description="Workspace name, branding, and default preferences will live here."
         />
       )}
-      {activeTab === "sessions" && (
-        <PlaceholderTab
-          title="Sessions"
-          description="Active sessions and device management will live here."
-        />
-      )}
+     {activeTab === "sessions" && <SessionsTab />}
       {activeTab === "support" && (
         <PlaceholderTab
           title="Support"

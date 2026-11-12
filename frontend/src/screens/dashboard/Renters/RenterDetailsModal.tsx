@@ -27,7 +27,7 @@ export default function RenterDetailsModal({ renterId, onClose }: Props) {
             <p className="text-xs lg:text-[13px]     text-[#17191c]">Loading...</p>
           ) : (
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#17191c] text-white flex items-center justify-center text-xs lg:text-[13px]   ">
+              <div className="w-9 h-9 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-xs lg:text-[13px]   ">
                 {renter.full_name.charAt(0).toUpperCase()}
               </div>
               <p className="text-xs lg:text-[13px]     text-[#17191c]">{renter.full_name}</p>

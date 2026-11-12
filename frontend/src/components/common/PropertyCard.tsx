@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useInView } from "framer-motion";
 import {
@@ -69,7 +69,8 @@ export type PropertyCardVariant =
   | "compact"
   | "minimal"
   | "search"
-  | "home";
+  | "home"
+  | "featured";
 
 interface Props {
   property: PropertyCardData;
@@ -360,6 +361,131 @@ function HomeCard({
   );
 }
 
+function FeaturedCard({
+  property,
+  isFavorited,
+  onOpen,
+}: {
+  property: PropertyCardData;
+  isFavorited: boolean;
+  onOpen: () => void;
+}) {
+  const images = useImages(property).slice(0, 4);
+  const [active, setActive] = useState(0);
+
+  const city = property.address?.city ?? property.city ?? "";
+  const country = property.address?.country;
+  const price = lowestPrice(property);
+  const type = property.property_type ?? property.propertyType ?? "Stay";
+  const rt = property.roomTypes?.[0];
+  const moreCount = property.amenities?.length ?? 0;
+
+  const stat =
+    rt?.bathrooms != null
+      ? { Icon: Bath, text: `${rt.bathrooms} Baths` }
+      : rt?.bedrooms != null
+        ? { Icon: BedDouble, text: `${rt.bedrooms} Beds` }
+        : null;
+
+  return (
+    <article
+      onClick={onOpen}
+      className="group flex w-full cursor-pointer flex-col gap-3 "
+    >
+      {/* Image */}
+      <div className="relative h-[240px] aspect-square w-full overflow-hidden rounded-xl bg-[#ebebeb]">
+        {images[active] ? (
+          <img
+            src={images[active]}
+            alt={property.name}
+            className="h-full w-full object-cover transition-opacity duration-300"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-[#a3a6af]">
+            <MapPin size={24} />
+          </div>
+        )}
+
+        <span className="absolute left-3 top-3 z-10 rounded-full bg-white px-4 py-1.5 text-sm font-medium capitalize text-[#17191c] shadow-sm">
+          {type}
+        </span>
+
+        <div
+          className="absolute right-2 top-2 z-10"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <FavoriteButton
+            propertyId={property.id}
+            isFavorited={isFavorited}
+            className="h-8 w-8 bg-transparent"
+          />
+        </div>
+
+        {images.length > 1 && (
+          <div
+            className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {images.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Show image ${i + 1}`}
+                onMouseEnter={() => setActive(i)}
+                onClick={() => setActive(i)}
+                className={`rounded-full transition-all ${
+                  i === active ? "h-2 w-2 bg-white" : "h-1.5 w-1.5 bg-white/60"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="flex min-w-0 flex-col gap-2 px-1.5 pb-2">
+        <h3 className="truncate text-base font-semibold text-[#17191c]">
+          {property.name}
+        </h3>
+
+        <p className="flex items-center gap-1.5 text-sm text-[#777b86]">
+          <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#a3a6af]">
+            <MapPin size={12} className="text-white" />
+          </span>
+          <span className="truncate">
+            {city}
+            {country ? `, ${country}` : ""}
+          </span>
+        </p>
+
+        <div className="flex flex-wrap items-center gap-2">
+          {stat && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e8e6e3] px-3 py-1.5 text-sm text-[#17191c]">
+              <stat.Icon size={16} className="text-[#777b86]" />
+              {stat.text}
+            </span>
+          )}
+          {moreCount > 0 && (
+            <span className="inline-flex items-center rounded-full border border-[#e8e6e3] px-3 py-1.5 text-sm text-[#17191c]">
+              +{moreCount} More
+            </span>
+          )}
+        </div>
+
+        {price != null && (
+          <p className="pt-1 text-lg font-bold text-[#17191c]">
+            {formatCurrency(price)}
+            <span className="text-xs font-semibold text-[#17191c]">
+              {" "}
+              /night
+            </span>
+          </p>
+        )}
+      </div>
+    </article>
+  );
+}
+
 function DefaultCard({
   property,
   index,
@@ -559,6 +685,15 @@ export default function PropertyCard({
   if (variant === "home") {
     return (
       <HomeCard property={property} isFavorited={isFavorited} onOpen={onOpen} />
+    );
+  }
+  if (variant === "featured") {
+    return (
+      <FeaturedCard
+        property={property}
+        isFavorited={isFavorited}
+        onOpen={onOpen}
+      />
     );
   }
   return (

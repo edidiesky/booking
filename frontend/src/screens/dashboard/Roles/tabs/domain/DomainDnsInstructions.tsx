@@ -11,11 +11,11 @@ export default function DomainDnsInstructions({ domain, token }: Props) {
       <p className="text-[#777b86]">Add these two DNS records at your domain provider:</p>
       <div>
         <p className="text-[#a3a6af]">CNAME</p>
-        <p className="font-mono text-[#17191c]">{domain} → {PLATFORM_DOMAIN}</p>
+        <p className=" text-[#17191c]">{domain} → {PLATFORM_DOMAIN}</p>
       </div>
       <div>
         <p className="text-[#a3a6af]">TXT</p>
-        <p className="font-mono text-[#17191c] break-all">
+        <p className=" text-[#17191c] break-all">
           _bukkings-verify.{domain} → {token ?? "\u2014"}
         </p>
       </div>

@@ -37,11 +37,16 @@ import userNotificationRoutes from "./domains/user-notification/user-notificatio
 import favoriteRoutes from "./domains/favorite/favorite.routes";
 import jobRoutes from "./domains/jobs/job.routes";
 import invitationRoutes from "./domains/invitation/invitation.routes";
+import sessionRoutes from "./domains/session/session.routes";
 import redisClient from "./config/redis";
 import { logger, query } from "@booking/shared";
 import propertySearchRoutes from "./domains/property-search/propertySearch.routes";
 import conversationRoutes from "./domains/conversation/conversation.routes";
 import messageRoutes from "./domains/message/message.routes";
+import { createFeatureFlagRouter } from "./domains/feature-flags/feature-flags.routes";
+import { FeatureFlagRepository } from "./domains/feature-flags/featureFlag.repository";
+import { getFeatureFlagEngine } from "./domains/feature-flags/FeatureFlagEngine";
+import propertyImportRoutes from "./domains/property-import/propertyImport.routes";
 // import discoveryRoutes from "./domains/property-search/discovery.routes";
 const app = express();
 
@@ -70,6 +75,7 @@ app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(contextMiddleware);
+app.set("trust proxy", 1);
 
 // Health
 app.get("/health", async (_req, res) => {
@@ -113,13 +119,15 @@ app.use("/api/v1/renters", tenantMiddleware, rlsMiddleware, renterRoutes);
 app.use("/api/v1/sse", tenantMiddleware, rlsMiddleware, sseRouter);
 app.use("/api/v1/tenants", tenantMiddleware, rlsMiddleware, tenantRoutes);
 app.use("/api/v1/properties", tenantMiddleware, rlsMiddleware, propertyRoutes);
+app.use("/api/v1/property-imports", propertyImportRoutes);
 app.use("/api/v1/properties-search", propertySearchRoutes);
 // app.use("/api/v1/properties-discovery", discoveryRoutes);
 app.use("/api/v1/bookings", tenantMiddleware, rlsMiddleware, bookingRoutes);
 app.use("/api/v1/payments", tenantMiddleware, rlsMiddleware, paymentRoutes);
 app.use("/api/v1/escrow", tenantMiddleware, rlsMiddleware, escrowRoutes);
 app.use("/api/v1/profile", profileRoutes);
-app.use("/api/v1/security", securityRoutes);
+app.use("/api/v1/security", securityRoutes); 
+app.use("/api/v1/sessions", sessionRoutes); 
 app.use("/api/v1/audit", tenantMiddleware, auditRoutes);
 app.use(
   "/api/v1/audit-events",
@@ -150,6 +158,14 @@ app.use(
   rlsMiddleware,
   messageRoutes,
 );
+app.use("/api/v1/admin/feature-flags", (req, res, next) => {
+  // Lazy bind so import order stays safe: engine exists only after bootstrap
+  const router = createFeatureFlagRouter(
+    new FeatureFlagRepository(redisClient),
+    getFeatureFlagEngine(),
+  );
+  return router(req, res, next);
+});
 // adminRoutes
 
 app.use(NotFound);

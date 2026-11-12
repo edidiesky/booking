@@ -1,5 +1,5 @@
 import logger from "../utils/logger";
-import redisClient from "../config/redis";
+import redisClient, { createRedisSubscriber } from "../config/redis";
 import http from "http";
 import {
   connectDB,
@@ -35,7 +35,21 @@ import {
   stopBookingExpiryReconciliation,
 } from "@booking/booking-expiry-worker/dist/reconciliation";
 import { startSocketServer } from "../realtime/socketServer";
+import { FeatureFlagRepository } from "../domains/feature-flags/featureFlag.repository";
+import { FeatureFlagEngine, setFeatureFlagEngine } from "../domains/feature-flags/FeatureFlagEngine";
+import { FeatureFlagSync } from "../domains/feature-flags/FeatureFlagSync";
+import Redis from "ioredis";
+import { PresenceRepository } from "../domains/session/presence.repository";
+import { PresenceEngine } from "../domains/session/PresenceEngine";
+import { setPresence } from "../domains/session/presence.instance";
+import { createPresenceRouter } from "../domains/session/presence.routes";
+import { app } from "../app";
+import { PresenceSync } from "../domains/session/PresenceSync";
+import { ensureRoles } from "../migrations/ensureRoles";
 
+export let presenceSubscriber: Redis | null = null;
+
+export let featureFlagSubscriber: Redis | null = null;
 const CAMPAIGN_TICK_MS = 3_000;
 
 export const campaignScheduler = createLockedScheduler({
@@ -79,10 +93,48 @@ async function runStep(step: InitStep): Promise<void> {
 export async function bootstrapServer(httpServer: http.Server): Promise<void> {
   const steps: InitStep[] = [
     { name: "postgres", fn: connectDB },
+    { name: "roles", fn: ensureRoles },
     {
       name: "redis",
       fn: async () => {
         await redisClient.ping();
+      },
+    },
+    {
+      name: "presence",
+      fn: async () => {
+        try {
+          await redisClient.config("SET", "notify-keyspace-events", "Ex");
+        } catch (err) {
+          logger.warn("presence_keyspace_config_failed", {
+            event: "presence_keyspace_config_failed",
+            error: (err as Error).message,
+            hint: "Set notify-keyspace-events Ex in redis.conf if CONFIG is disabled",
+          });
+        }
+
+        const repository = new PresenceRepository(redisClient);
+        const engine = new PresenceEngine();
+        setPresence(repository, engine);
+
+        presenceSubscriber = createRedisSubscriber();
+        const sync = new PresenceSync(presenceSubscriber, engine);
+        await sync.subscribe();
+
+        app.use("/api/v1", createPresenceRouter());
+      },
+    },
+    {
+      name: "feature_flags",
+      fn: async () => {
+        const repository = new FeatureFlagRepository(redisClient);
+        const engine = new FeatureFlagEngine(repository);
+        await engine.start();
+        setFeatureFlagEngine(engine);
+
+        featureFlagSubscriber = createRedisSubscriber();
+        const sync = new FeatureFlagSync(featureFlagSubscriber, engine);
+        await sync.subscribe();
       },
     },
     { name: "rabbitmq", fn: connectRabbitMQ },

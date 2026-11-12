@@ -31,7 +31,8 @@ export const apiSlice = createApi({
     "Notification",
     "Invitation",
     "Conversation",
-    "Message"
+    "Message",
+    "Session"
   ],
   endpoints: () => ({}),
 });

@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import { propertyService } from "./property.service";
 import { AppError } from "../../utils/AppError";
-import { PropertyAddress, PropertyType } from "../../types";
+import { PropertyAddress, PropertyStatus, PropertyType } from "../../types";
 import { propertyRepository } from "./property.repository";
 import {
   availabilityBroadcaster,
@@ -11,6 +11,7 @@ import {
 } from "@booking/shared";
 import { nanoid } from "nanoid";
 import { auditRepository } from "../audit/audit.repository";
+import { buildPaginationMeta } from "../../utils/pagination";
 
 export const StreamRoomTypeAvailabilityHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -57,6 +58,7 @@ export const CreatePropertyHandler = asyncHandler(
       checkOutTime?: string;
       latitude: number;
       longitude: number;
+      status?: PropertyStatus;
     };
     const data = await propertyService.createProperty(req.tenantId, {
       ...body,
@@ -78,6 +80,7 @@ export const CreateRoomTypeHandler = asyncHandler(
       images?: string[];
       amenities?: string[];
       quantity: number;
+      status: "active" | "inactive";
     };
     const data = await propertyService.createRoomType(
       req.tenantId,
@@ -141,12 +144,10 @@ export const BlockDatesHandler = asyncHandler(
       endDate,
       block,
     );
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: block ? "Dates blocked." : "Dates unblocked.",
-      });
+    res.status(200).json({
+      success: true,
+      message: block ? "Dates blocked." : "Dates unblocked.",
+    });
   },
 );
 
@@ -167,14 +168,28 @@ export const GetAvailabilityHandler = asyncHandler(
 
 export const GetTenantPropertiesHandler = asyncHandler(async (req, res) => {
   if (!req.tenantId) throw AppError.badRequest("Tenant context required.");
-  const page = Number(req.query["page"] ?? 1);
-  const limit = Number(req.query["limit"] ?? 20);
-  const data = await propertyRepository.listPropertiesWithRoomTypes(
-    req.tenantId,
-    page,
-    limit,
-  );
-  res.status(200).json({ success: true, data });
+  const { page, limit, status } = req.query as unknown as {
+    page: number;
+    limit: number;
+    status?: PropertyStatus;
+  };
+  const filters = { status };
+
+  const [data, total] = await Promise.all([
+    propertyRepository.listPropertiesWithRoomTypes(
+      req.tenantId,
+      page,
+      limit,
+      filters,
+    ),
+    propertyRepository.countForTenant(req.tenantId, filters),
+  ]);
+
+  res.status(200).json({
+    success: true,
+    data,
+    meta: buildPaginationMeta(page, limit, total),
+  });
 });
 
 export const GetTenantPropertyStatsHandler = asyncHandler(async (req, res) => {

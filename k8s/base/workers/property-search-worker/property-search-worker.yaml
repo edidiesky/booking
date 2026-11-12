@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: property-search-worker
+  labels:
+    app: property-search-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: property-search-worker
+  template:
+    metadata:
+      labels:
+        app: property-search-worker
+    spec:
+      containers:
+        - name: property-search-worker
+          image: eddyscript/property-search-worker:latest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

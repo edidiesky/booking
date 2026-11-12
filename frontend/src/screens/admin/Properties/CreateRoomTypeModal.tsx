@@ -499,7 +499,7 @@ export default function CreateRoomTypeModal({
           <button
             onClick={handleSave}
             disabled={isBusy}
-            className="bg-[#17191c] text-white text-xs lg:text-[13px]   rounded-full px-6 h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="bg-[var(--color-primary)] text-white text-xs lg:text-[13px]   rounded-full px-6 h-9 flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {isBusy ? "Saving..." : "Save room type"}
           </button>

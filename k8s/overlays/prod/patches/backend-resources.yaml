@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-backend
+spec:
+  selector:
+    matchLabels:
+      app: booking-backend
+  template:
+    metadata:
+      labels:
+        app: booking-backend
+    spec:
+      containers:
+      - name: booking-backend
+        resources:
+          requests: 
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+              cpu: "1000m"
+              memory: "1Gi"

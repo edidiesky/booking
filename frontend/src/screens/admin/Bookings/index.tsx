@@ -145,7 +145,7 @@ export default function DashboardBookings() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+        className="w-full p-4  flex flex-col gap-8"
       >
         <div className="flex items-start justify-between gap-4">
           <div>

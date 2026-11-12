@@ -1,4 +1,4 @@
-#  Dead tuple accumulation (autovacuum health) 
+
 pg_dead_tuples:
   query: |
     SELECT
@@ -10,10 +10,11 @@ pg_dead_tuples:
         THEN round(n_dead_tup::numeric / n_live_tup * 100, 2)
         ELSE 0
       END AS dead_pct,
-      EXTRACT(EPOCH FROM (now() - last_autovacuum))
+      COALESCE(EXTRACT(EPOCH FROM (now() - last_autovacuum)), 0)
         AS seconds_since_autovacuum
     FROM pg_stat_user_tables
     ORDER BY n_dead_tup DESC
+    LIMIT 20
   metrics:
     - schemaname:
         usage: LABEL
@@ -26,70 +27,63 @@ pg_dead_tuples:
         description: Live tuple count
     - n_dead_tup:
         usage: GAUGE
-        description: Dead tuple count — high value means VACUUM falling behind
+        description: Dead tuple count (high means VACUUM is falling behind)
     - dead_pct:
         usage: GAUGE
-        description: Dead tuples as percentage of live — alert above 20%
+        description: Dead tuples as percentage of live
     - seconds_since_autovacuum:
         usage: GAUGE
-        description: Seconds since last autovacuum — alert if stale
+        description: Seconds since last autovacuum (0 if never vacuumed)
 
-#  Lock monitoring 
+# Lock monitoring
 pg_lock_waits:
   query: |
-    SELECT
-      locktype,
-      mode,
-      granted,
-      count(*) AS lock_count
+    SELECT locktype, mode, granted, count(*) AS lock_count
     FROM pg_locks
     GROUP BY locktype, mode, granted
-    ORDER BY lock_count DESC
   metrics:
     - locktype:
         usage: LABEL
-        description: Lock type (relation, tuple, transactionid, advisory)
+        description: Lock type
     - mode:
         usage: LABEL
         description: Lock mode
     - granted:
         usage: LABEL
-        description: Whether lock is granted or waiting
+        description: Whether the lock is granted or waiting
     - lock_count:
         usage: GAUGE
-        description: Number of locks — granted=false means active waits
+        description: Number of locks (granted=false means active waits)
 
-#  Blocking sessions 
+# Sessions currently waiting on a lock (renamed from blocking_count)
 pg_blocking_sessions:
   query: |
-    SELECT count(*) AS blocking_count
+    SELECT count(*) AS waiting_count
     FROM pg_stat_activity
     WHERE wait_event_type = 'Lock'
       AND state = 'active'
   metrics:
-    - blocking_count:
+    - waiting_count:
         usage: GAUGE
-        description: Number of sessions waiting for a lock — alert above 0
+        description: Sessions waiting for a lock
 
-#  Idle in transaction (autovacuum starvation source) 
+# Idle in transaction (autovacuum starvation source)
 pg_idle_in_transaction:
   query: |
     SELECT
       count(*) AS session_count,
-      COALESCE(
-        EXTRACT(EPOCH FROM max(now() - xact_start)), 0
-      ) AS max_age_seconds
+      COALESCE(EXTRACT(EPOCH FROM max(now() - xact_start)), 0) AS max_age_seconds
     FROM pg_stat_activity
     WHERE state = 'idle in transaction'
   metrics:
     - session_count:
         usage: GAUGE
-        description: Sessions idle in transaction — these hold snapshots and block autovacuum
+        description: Sessions idle in transaction
     - max_age_seconds:
         usage: GAUGE
-        description: Age of oldest idle-in-transaction session — alert above 60s
+        description: Age of the oldest idle-in-transaction session
 
-#  Connection pool utilization 
+# Connection utilisation (client backends only)
 pg_connections:
   query: |
     SELECT
@@ -97,20 +91,19 @@ pg_connections:
       count(*) FILTER (WHERE state = 'active') AS active,
       count(*) FILTER (WHERE state = 'idle') AS idle,
       count(*) FILTER (WHERE state = 'idle in transaction') AS idle_in_txn,
-      max_conn.setting::int AS max_connections
+      (SELECT setting::int FROM pg_settings WHERE name = 'max_connections') AS max_connections
     FROM pg_stat_activity
-    CROSS JOIN (SELECT setting FROM pg_settings WHERE name = 'max_connections') max_conn
-    GROUP BY max_conn.setting
+    WHERE backend_type = 'client backend'
   metrics:
     - total:
         usage: GAUGE
-        description: Total connections
+        description: Total client connections
     - active:
         usage: GAUGE
-        description: Active connections executing queries
+        description: Connections executing queries
     - idle:
         usage: GAUGE
-        description: Idle connections waiting for client
+        description: Idle connections
     - idle_in_txn:
         usage: GAUGE
         description: Connections idle inside a transaction
@@ -118,19 +111,10 @@ pg_connections:
         usage: GAUGE
         description: PostgreSQL max_connections setting
 
-#  Deadlock counter 
+# Deadlocks and rollbacks (counters: use rate()/increase() in PromQL)
 pg_deadlocks:
   query: |
-    SELECT
-      datname,
-      deadlocks,
-      conflicts,
-      xact_commit,
-      xact_rollback,
-      CASE WHEN xact_commit + xact_rollback > 0
-        THEN round(xact_rollback::numeric / (xact_commit + xact_rollback) * 100, 2)
-        ELSE 0
-      END AS rollback_pct
+    SELECT datname, deadlocks, conflicts, xact_commit, xact_rollback
     FROM pg_stat_database
     WHERE datname = current_database()
   metrics:
@@ -139,7 +123,7 @@ pg_deadlocks:
         description: Database name
     - deadlocks:
         usage: COUNTER
-        description: Total deadlocks detected — alert on rate increase
+        description: Total deadlocks detected
     - conflicts:
         usage: COUNTER
         description: Total query conflicts
@@ -149,21 +133,11 @@ pg_deadlocks:
     - xact_rollback:
         usage: COUNTER
         description: Rolled back transactions
-    - rollback_pct:
-        usage: GAUGE
-        description: Rollback percentage — high value under OCC means high contention
 
-#  Buffer pool hit ratio 
+# Buffer cache (counters: compute the ratio over a window in PromQL)
 pg_cache_hit:
   query: |
-    SELECT
-      datname,
-      blks_hit,
-      blks_read,
-      CASE WHEN blks_hit + blks_read > 0
-        THEN round(blks_hit::numeric / (blks_hit + blks_read) * 100, 2)
-        ELSE 100
-      END AS cache_hit_pct
+    SELECT datname, blks_hit, blks_read
     FROM pg_stat_database
     WHERE datname = current_database()
   metrics:
@@ -176,20 +150,17 @@ pg_cache_hit:
     - blks_read:
         usage: COUNTER
         description: Pages read from disk
-    - cache_hit_pct:
-        usage: GAUGE
-        description: Buffer pool hit ratio — alert below 95%
 
-#  Replication lag 
+# Replication lag (returns no rows if no replica is connected)
 pg_replication_lag:
   query: |
     SELECT
       client_addr::text AS replica_addr,
       state,
-      EXTRACT(EPOCH FROM write_lag)  AS write_lag_seconds,
-      EXTRACT(EPOCH FROM flush_lag)  AS flush_lag_seconds,
-      EXTRACT(EPOCH FROM replay_lag) AS replay_lag_seconds,
-      pg_wal_lsn_diff(pg_current_wal_lsn(), replay_lsn) AS lag_bytes
+      COALESCE(EXTRACT(EPOCH FROM write_lag), 0)  AS write_lag_seconds,
+      COALESCE(EXTRACT(EPOCH FROM flush_lag), 0)  AS flush_lag_seconds,
+      COALESCE(EXTRACT(EPOCH FROM replay_lag), 0) AS replay_lag_seconds,
+      COALESCE(pg_wal_lsn_diff(pg_current_wal_lsn(), replay_lsn), 0) AS lag_bytes
     FROM pg_stat_replication
   metrics:
     - replica_addr:
@@ -206,7 +177,7 @@ pg_replication_lag:
         description: WAL flush lag in seconds
     - replay_lag_seconds:
         usage: GAUGE
-        description: WAL replay lag in seconds — alert above 30s
+        description: WAL replay lag in seconds
     - lag_bytes:
         usage: GAUGE
-        description: Replication lag in bytes — alert above 100MB
+        description: Replication lag in bytes

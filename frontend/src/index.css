@@ -1,8 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Forum&family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Forum&family=Karla:ital,wght@0,200..800;1,200..800&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 @layer base {
   :root {
@@ -26,18 +25,28 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
+
     --color-canvas: #ffffff;
-    --color-ink: #17191c;
-    --color-primary: #beff50;
-    --color-primary-foreground: #111111;
-    --color-warm-mist: #bfff502d;
-    --color-terracotta: #5d2a1a;
-    --color-fog: #eeece2;
-    --color-muted-stone: #4c4c4c;
-    --color-light-steel: #777b86;
-    --color-hint-of-grey: #a3a6af;
-    --color-vivid: #1a56ff;
+    --color-ink: #0f172a;
+    --color-primary: #0d7377;
+    --color-primary-foreground: #ffffff;
+    --color-vivid: #0d7377;
     --color-vivid-foreground: #ffffff;
+
+    --color-surface: #F4F3F0;
+    --color-fog: #e8edf2;
+    --color-hover: #edf1f5;
+    --color-border: #e1e5ea;
+    --color-muted-stone: #334c64;
+    --color-light-steel: #66798b;
+    --color-hint-of-grey: #99a5b1;
+
+    /* Semantic */
+    --color-success: #166534;
+    --color-success-bg: #dcfce7;
+    --color-danger: #991b1b;
+    --color-danger-bg: #fee2e2;
+    --color-meter-track: #e8e6e3;
     --shadow-steep:
       rgba(4, 23, 43, 0.05) 0px 0px 0px 1px,
       rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
@@ -69,25 +78,24 @@
   * {
     @apply border-border;
   }
-  html, body {
-  overflow-anchor: none;
-}
+  html,
+  body {
+    overflow-anchor: none;
+  }
 
   body {
     @apply bg-background text-foreground;
     font-family: "Bricolage Grotesque", sans-serif;
     font-weight: 500;
     font-optical-sizing: auto;
-    /* line-height: 1.3; */
+    /* line-height: 1.3;  */
     color: #171717;
   }
   h1,
   h2 {
     /* font-family: "DM Sans", sans-serif !important; */
     font-family: "Bricolage Grotesque", sans-serif;
-    line-height: 2;
   }
-
 
   h3,
   a,
@@ -115,11 +123,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-:root {
-  --dark-1: #171717;
-  --dark-grey: rgba(21, 20, 2, 0.48);
-  --grey-1: #f4f3ee;
-}
 
 .family2 {
   font-family: "Bricolage Grotesque", sans-serif;
@@ -150,7 +153,6 @@ th {
   font-family: "Bricolage Grotesque", sans-serif;
   font-weight: 500;
 }
-
 
 .btn {
   min-height: 50px;
@@ -615,25 +617,37 @@ html.lenis body {
   align-items: center;
 }
 
-.card-stack__item:nth-child(1) { --stack-i: 1; }
-.card-stack__item:nth-child(2) { --stack-i: 2; }
-.card-stack__item:nth-child(3) { --stack-i: 3; }
-.card-stack__item:nth-child(4) { --stack-i: 4; }
+.card-stack__item:nth-child(1) {
+  --stack-i: 1;
+}
+.card-stack__item:nth-child(2) {
+  --stack-i: 2;
+}
+.card-stack__item:nth-child(3) {
+  --stack-i: 3;
+}
+.card-stack__item:nth-child(4) {
+  --stack-i: 4;
+}
 
 @supports (width: calc(sibling-index() * 1px)) {
-  .card-stack__item { --stack-i: sibling-index(); }
+  .card-stack__item {
+    --stack-i: sibling-index();
+  }
 }
 
 @supports (animation-timeline: view()) {
   .card-stack__item {
     animation: card-stack-away linear forwards;
     animation-timeline: --card-stack;
-    animation-range:
-      exit-crossing calc(var(--stack-i, 1) * var(--stack-row) - 100svh)
-      exit-crossing calc(var(--stack-i, 1) * var(--stack-row) - var(--stack-top));
+    animation-range: exit-crossing
+      calc(var(--stack-i, 1) * var(--stack-row) - 100svh) exit-crossing
+      calc(var(--stack-i, 1) * var(--stack-row) - var(--stack-top));
   }
 
-  .card-stack__item:last-of-type { animation: none; }
+  .card-stack__item:last-of-type {
+    animation: none;
+  }
 }
 
 @keyframes card-stack-away {
@@ -644,12 +658,18 @@ html.lenis body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card-stack__item { animation: none; }
+  .card-stack__item {
+    animation: none;
+  }
 }
 
 @media screen and (max-width: 767px) {
-  .card-stack__item { padding: 2em; }
-  .card-stack__item .grid { grid-template-columns: 1fr; }
+  .card-stack__item {
+    padding: 2em;
+  }
+  .card-stack__item .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* e.g. in global CSS */

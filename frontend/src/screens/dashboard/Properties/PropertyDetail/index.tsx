@@ -74,7 +74,7 @@ export default function PropertyDetail() {
               <p className="text-xs lg:text-[13px]     text-[#17191c]">Units</p>
               <button
                 onClick={openCreate}
-                className="text-xs lg:text-[13px]     px-4 py-2 bg-[#17191c] text-white rounded-full hover:opacity-90 transition-opacity flex items-center gap-1.5"
+                className="text-xs lg:text-[13px]     px-4 py-2 bg-[var(--color-primary)] text-white rounded-full hover:opacity-90 transition-opacity flex items-center gap-1.5"
               >
                 Add Room Types
               </button>

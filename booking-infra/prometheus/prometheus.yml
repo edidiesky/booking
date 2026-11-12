@@ -35,3 +35,9 @@ scrape_configs:
       - targets: ['pgbouncer-exporter:9127']
         labels:
           group: 'database'
+          
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          group: 'node'

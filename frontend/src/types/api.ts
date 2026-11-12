@@ -17,6 +17,7 @@ export interface PaginatedResponse<T> {
   meta: PaginationMeta;
 }
 
+export type BookingListResponse = PaginatedResponse<Booking>;
 //  Auth
 
 export interface AuthTokens {
@@ -210,6 +211,7 @@ export interface CreatePropertyPayload {
   checkOutTime?: string;
   latitude?: number;
   longitude?: number;
+  status?: Extract<PropertyStatus, "draft" | "paused">;
 }
 
 export interface CreateRoomTypePayload {
@@ -250,14 +252,14 @@ export interface UpdatePropertyPayload {
   images?: string[];
   checkInTime?: string;
   checkOutTime?: string;
-   address?: {
+  address?: {
     street?: string;
     city?: string;
     state?: string;
     country?: string;
   };
-  longitude?:number;
-  latitude?:number;
+  longitude?: number;
+  latitude?: number;
 }
 
 export interface SeedCalendarPayload {
@@ -303,6 +305,15 @@ export interface BookingStats {
 export interface BookingStatsResponse {
   success: boolean;
   data: BookingStats;
+}
+
+export interface TenantBookingQueryParams {
+  status?: BookingStatus | BookingStatus[];
+  search?: string;
+  checkInFrom?: string; // YYYY-MM-DD
+  checkInTo?: string; // YYYY-MM-DD
+  page?: number;
+  limit?: number;
 }
 
 export interface Booking {
@@ -372,17 +383,6 @@ export interface PropertySaleComparison {
   propertyName: string;
   salesCount: number;
   isCurrent: boolean;
-}
-
-export interface BookingListResponse {
-  success: boolean;
-  data: Booking[];
-}
-
-export interface TenantBookingQueryParams {
-  status?: BookingStatus;
-  page?: number;
-  limit?: number;
 }
 
 //  Payment
@@ -538,11 +538,7 @@ export interface Escrow {
   checkOut: string;
 }
 
-export interface EscrowListResponse {
-  success: boolean;
-  data: Escrow[];
-}
-
+export type EscrowListResponse = PaginatedResponse<Escrow>;
 export interface EscrowStats {
   held: { count: number; amountNgn: number };
   released: { count: number; amountNgn: number };

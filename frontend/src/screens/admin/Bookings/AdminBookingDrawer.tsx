@@ -98,7 +98,7 @@ export default function AdminBookingDrawer({ booking, onClose }: Props) {
           <div className="flex flex-col gap-4">
             {TIMELINE_STEPS.map((step, i) => (
               <div key={step.key} className="flex items-start gap-3">
-                <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${i <= idx ? "bg-[#17191c]" : "bg-[#e8e6e3]"}`} />
+                <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${i <= idx ? "bg-[var(--color-primary)]" : "bg-[#e8e6e3]"}`} />
                 <div>
                   <p className={`text-xs lg:text-[13px]     ${i <= idx ? "text-[#17191c]" : "text-[#a3a6af]"}`}>
                     {step.label}

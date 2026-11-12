@@ -109,7 +109,7 @@ export default function StatsGrid({
           >
             <div className="w-full flex items-center justify-between">
               <p
-                className="text-[13px] uppercase medium"
+                className="text-base uppercase font-bold"
                 style={{ color: "var(--color-muted-stone)" }}
               >
                 {label}

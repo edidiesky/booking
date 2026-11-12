@@ -6,6 +6,7 @@ import type {
   ActorType,
   Outcome,
 } from "@/screens/dashboard/Audit/types";
+import { PaginationMeta } from "@/types/api";
 
 interface RawAuditEvent {
   id: string;
@@ -64,6 +65,7 @@ function toAuditEvent(raw: RawAuditEvent): AuditEvent {
 interface ListResponse {
   success: boolean;
   data: RawAuditEvent[];
+  meta: PaginationMeta;
 }
 interface GetResponse {
   success: boolean;
@@ -72,9 +74,15 @@ interface GetResponse {
 
 export const auditEventApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    listAuditEvents: builder.query<AuditEvent[], AuditEventFilters | void>({
+    listAuditEvents: builder.query<
+      { events: AuditEvent[]; meta: PaginationMeta },
+      AuditEventFilters | void
+    >({
       query: (filters) => ({ url: AUDIT_EVENT_URL, params: filters ?? {} }),
-      transformResponse: (res: ListResponse) => res.data.map(toAuditEvent),
+      transformResponse: (res: ListResponse) => ({
+        events: res.data.map(toAuditEvent),
+        meta: res.meta,
+      }),
       providesTags: ["AuditEvent"],
     }),
     getAuditEvent: builder.query<AuditEvent, string>({

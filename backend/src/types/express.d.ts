@@ -1,15 +1,14 @@
-import type { JWTPayload } from "./index";
+import type { JWTPayload, UserType } from "./index";
 
 declare global {
   namespace Express {
     interface Request {
-      user?:                JWTPayload;
-      tenantId?:            string;
-      tenantSlug?:          string;
-      idempotencyHash?:     string;
-      idempotencyEndpoint?: string;
+      user?: JWTPayload;
+      sessionId: string; 
+      sessionVersion: number;
+      tenantId?: string;
+      userType?: UserType;
     }
   }
 }
-
 export {};

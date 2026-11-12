@@ -5,6 +5,7 @@ import {
   useGetTenantPaymentStatsQuery,
 } from "@/redux/services/paymentApi";
 import { ChartSelect } from "@/components/common/charts/Chartselect";
+import { useClampPage, usePagination } from "@/hooks/usePagination";
 import type {
   PaymentStatus,
   PaymentGateway,
@@ -13,9 +14,10 @@ import type {
 import Title from "@/components/dashboard/common/Title";
 import PaymentTableRow from "./PaymentTableRow";
 import PaymentDetailsModal from "./PaymentDetailsModal";
-import StatsOverview from "@/components/dashboard/common/StatsOverview";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { EmptyState } from "@/components/common/EmptyState";
+import TablePagination from "@/components/common/table/TablePagination";
+import { StatCardGrid } from "@/components/common/widgets/StatCardGrid";
 
 const ROWS_PER_PAGE = 10;
 
@@ -52,38 +54,36 @@ export default function DashboardPayments() {
   const [selectedPayment, setSelectedPayment] = useState<PaymentSummary | null>(
     null,
   );
-  const [currentPage, setCurrentPage] = useState(1);
+  const { page: currentPage, setPage: setCurrentPage } = usePagination();
   const [statusFilter, setStatusFilter] = useState<PaymentStatus | "">("");
   const [gatewayFilter, setGatewayFilter] = useState<PaymentGateway | "">("");
 
-  const { data, isLoading } = useGetTenantPaymentsQuery({
+  const { data, isLoading, isFetching } = useGetTenantPaymentsQuery({
     page: currentPage,
     limit: ROWS_PER_PAGE,
+    status: statusFilter || undefined,
+    gateway: gatewayFilter || undefined,
   });
-  const { data: statsData, isLoading: isStatsLoading } =
+  const { data: statsResponse, isLoading: isStatsLoading } =
     useGetTenantPaymentStatsQuery();
 
-  const allPayments: PaymentSummary[] = data?.data ?? [];
+  const payments: PaymentSummary[] = data?.data ?? [];
+  useClampPage(data?.meta, currentPage, setCurrentPage);
 
-  const payments = allPayments.filter((p) => {
-    const matchStatus = !statusFilter || p?.status === statusFilter;
-    const matchGateway = !gatewayFilter || p?.gateway === gatewayFilter;
-    return matchStatus && matchGateway;
-  });
+  const stats = statsResponse?.data;
 
-  const totalPages = Math.max(1, Math.ceil(payments.length / ROWS_PER_PAGE));
-
-  const statusTotal =
-    (statsData?.data.successCount ?? 0) +
-      (statsData?.data.failedCount ?? 0) +
-      (statsData?.data.pendingCount ?? 0) || 1;
+  const payTotal =
+    (stats?.successCount ?? 0) +
+      (stats?.failedCount ?? 0) +
+      (stats?.pendingCount ?? 0) +
+      (stats?.refundedCount ?? 0) || 1;
   return (
     <>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full p-4 py-8 lg:p-12 flex flex-col gap-8"
+        className="w-full p-4  flex flex-col gap-8"
       >
         <div className="flex items-start justify-between gap-4">
           <Title
@@ -92,47 +92,47 @@ export default function DashboardPayments() {
           />
 
           <span className="text-xs lg:text-[13px]     text-[#a3a6af] mt-2">
-            {allPayments.length} total
+            {data?.meta.total ?? 0} total
           </span>
         </div>
 
-        <StatsOverview
+        <StatCardGrid
           isLoading={isStatsLoading}
-          growthPct={statsData?.data.volumeGrowthPct}
-          growthTooltip="Successful payment volume this calendar month vs. last calendar month"
           cards={[
             {
-              label: "Success",
-              value: String(statsData?.data.successCount ?? 0),
-              color: "#166534",
-              bg: "#dcfce7",
-              fillPercent:
-                ((statsData?.data.successCount ?? 0) / statusTotal) * 100,
+              label: "Successful",
+              value: String(stats?.successCount ?? 0),
+              total: `of ${payTotal}`,
+              progress: (stats?.successCount ?? 0) / payTotal,
+              tone: "success",
+              footnote: "Completed charges",
             },
             {
               label: "Failed",
-              value: String(statsData?.data.failedCount ?? 0),
-              color: "#991b1b",
-              bg: "#fee2e2",
-              fillPercent:
-                ((statsData?.data.failedCount ?? 0) / statusTotal) * 100,
+              value: String(stats?.failedCount ?? 0),
+              total: `of ${payTotal}`,
+              progress: (stats?.failedCount ?? 0) / payTotal,
+              tone: "danger",
+              footnote: "Failed attempts",
             },
             {
               label: "Pending",
-              value: String(statsData?.data.pendingCount ?? 0),
-              color: "#92400e",
-              bg: "#fef3c7",
-              fillPercent:
-                ((statsData?.data.pendingCount ?? 0) / statusTotal) * 100,
+              value: String(stats?.pendingCount ?? 0),
+              total: `of ${payTotal}`,
+              progress: (stats?.pendingCount ?? 0) / payTotal,
+              tone: "warning",
+              footnote: "Awaiting confirmation",
             },
             {
-              label: "Volume (Month)",
-              value: formatCurrency(statsData?.data.currentMonthVolumeNgn ?? 0),
-              color: "#5b21b6",
-              bg: "#ede9fe",
-              fillPercent:
-                ((statsData?.data.currentMonthVolumeNgn ?? 0) / 1000000) * 100,
-              // no fillPercent, currency total, nothing to divide it by
+              label: "Volume (month)",
+              value: formatCurrency(stats?.currentMonthVolumeNgn ?? 0),
+              total:
+                stats?.volumeGrowthPct != null
+                  ? `${stats.volumeGrowthPct >= 0 ? "+" : ""}${Math.round(stats.volumeGrowthPct)}% vs last month`
+                  : "This calendar month",
+              progress: 0,
+              tone: "info",
+              footnote: "Successful payment volume",
             },
           ]}
         />
@@ -223,40 +223,12 @@ export default function DashboardPayments() {
             </tbody>
           </table>
         </div>
-
-        <div className="flex items-center justify-between">
-          <span className="text-xs lg:text-[13px]     text-[#a3a6af]">
-            Page {currentPage} of {totalPages} - {allPayments.length} payments
-          </span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="h-8 px-3 text-xs lg:text-[13px]     border border-[#e8e6e3] text-[#4c4c4c] disabled:opacity-40 hover:bg-[#f2f0ed]"
-            >
-              Prev
-            </button>
-            {Array.from(
-              { length: Math.min(totalPages, 7) },
-              (_, i) => i + 1,
-            ).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`h-8 w-8 rounded-xl text-xs lg:text-[13px]     border ${currentPage === page ? "bg-[#17191c] text-white border-[#17191c]" : "border-[#e8e6e3] text-[#4c4c4c] hover:bg-[#f2f0ed]"}`}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="h-8 px-3 text-xs lg:text-[13px]     border border-[#e8e6e3] text-[#4c4c4c] disabled:opacity-40 hover:bg-[#f2f0ed]"
-            >
-              Next
-            </button>
-          </div>
-        </div>
+        <TablePagination
+          meta={data?.meta}
+          onPageChange={setCurrentPage}
+          isFetching={isFetching}
+          noun={{ singular: "payment", plural: "payments" }}
+        />
       </motion.div>
 
       <AnimatePresence>

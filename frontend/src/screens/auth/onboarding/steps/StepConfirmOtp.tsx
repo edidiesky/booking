@@ -27,6 +27,15 @@ export default function StepConfirmOtp({
     inputRefs.current[0]?.focus();
   }, []);
 
+
+  
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!local || !domain) return email;
+  const visible = local.slice(0, Math.min(4, local.length));
+  return `${visible}•••@${domain}`;
+}
+
   useEffect(() => {
     if (countdown <= 0) return;
     const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
@@ -70,18 +79,18 @@ export default function StepConfirmOtp({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h3
-          className="text-[32px] "
-          style={{ color: "var(--color-ink)", letterSpacing: "-0.66px" }}
+        <h4
+          className="text-xl lg:text-2xl font-semibold"
+          style={{ color: "var(--color-ink)" }}
         >
           Enter your code
-        </h3>
+        </h4>
         <p
-          className="text-[15px]"
+          className="text-sm"
           style={{ color: "var(--color-muted-stone)" }}
         >
           We sent a 6-digit code to{" "}
-          <span style={{ color: "var(--color-ink)" }}>{email}</span>.
+          <span style={{ color: "var(--color-ink)" }}>{maskEmail(email)}</span>.
         </p>
       </div>
 

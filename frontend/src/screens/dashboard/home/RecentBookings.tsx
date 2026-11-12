@@ -21,7 +21,7 @@ export default function RecentBookings({ bookings }: Props) {
         className="flex items-center justify-between px-5 py-4 border-b"
         style={{ borderColor: "#e8e6e3" }}
       >
-        <p className="text-xs font-semibold lg:text-sm">Recent Bookings</p>
+        <p className="text-base font-bold lg:text-sm">Recent Bookings</p>
         <button
           onClick={() => navigate("/dashboard/bookings")}
           className="text-xs lg:text-[13px]   transition-opacity hover:opacity-70"

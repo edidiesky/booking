@@ -18,7 +18,7 @@ function TenantAvatar({
       <img
         src={avatarUrl}
         alt={name ?? "Storefront"}
-        className="h-12 w-12 rounded-full object-cover border border-[#e8e6e3]"
+        className="h-10 w-10 rounded-full object-cover border border-[#e8e6e3]"
       />
     );
   }
@@ -26,7 +26,7 @@ function TenantAvatar({
   const initial = (name?.trim()?.[0] ?? "?").toUpperCase();
   return (
     <div
-      className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-semibold text-white"
+      className="flex h-10 w-10 items-center justify-center rounded-full text-lg font-semibold text-white"
       style={{ backgroundColor: "#6C5CE7" }}
     >
       {initial}
@@ -47,7 +47,7 @@ export default function StorefrontHeader({
       >
         <TenantAvatar name={tenantName} avatarUrl={avatarUrl} />
         <div className="flex flex-col leading-tight">
-          <span className="text-lg font-semibold text-[#17171A]">
+          <span className="text-base font-semibold text-[#17171A]">
             {tenantName ?? "Storefront"}
           </span>
           {tenantSlug && (

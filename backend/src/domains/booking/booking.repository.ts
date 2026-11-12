@@ -5,6 +5,8 @@ import { requestContext } from "../../context/requestContext";
 import { trackError } from "../../utils/metrics";
 import logger from "../../utils/logger";
 
+import { escapeLike } from "../../utils/pagination";
+
 export interface Booking {
   id: string;
   booking_ref: string;
@@ -63,7 +65,66 @@ export interface BookingStats {
   revenueGrowthPct: number;
 }
 
+export interface TenantBookingFilters {
+  statuses?: BookingStatus[];
+  search?: string;
+  checkInFrom?: string; // YYYY-MM-DD
+  checkInTo?: string; // YYYY-MM-DD
+}
+
+function tenantBookingWhere(tenantId: string, f: TenantBookingFilters) {
+  const params: unknown[] = [tenantId];
+  const conditions = ["b.tenant_id = $1"];
+  if (f.statuses?.length) {
+    conditions.push(
+      `b.status = ANY($${params.push(f.statuses)}::booking_status[])`,
+    );
+  }
+  if (f.search) {
+    conditions.push(
+      `b.booking_ref ILIKE $${params.push(`%${escapeLike(f.search)}%`)}`,
+    );
+  }
+  if (f.checkInFrom) {
+    conditions.push(`b.check_in >= $${params.push(f.checkInFrom)}::date`);
+  }
+  if (f.checkInTo) {
+    conditions.push(`b.check_in <= $${params.push(f.checkInTo)}::date`);
+  }
+  return { clause: conditions.join(" AND "), params };
+}
+
 export const bookingRepository = {
+  async findById(id: string, client?: PoolClient): Promise<Booking | null> {
+  const sql = `SELECT * FROM public.booking_get_by_id($1::uuid)`;
+  try {
+    if (client) {
+      const { rows } = await client.query(sql, [id]);
+      return (rows[0] as Booking) ?? null;
+    }
+    return await queryOne<Booking>(sql, [id]);
+  } catch (err) {
+    trackError("booking_find_failed", "booking_repository", "medium");
+    logger.error("booking_repository_find_by_id_failed", {
+      event: "booking_repository_find_by_id_failed",
+      id,
+      error: (err as Error).message,
+      ...ctx(),
+    });
+    throw err;
+  }
+},
+
+async findByIdForActor(
+  id: string,
+  userId: string,
+  tenantId?: string | null,
+): Promise<Booking | null> {
+  return queryOne<Booking>(
+    `SELECT * FROM public.booking_get_for_actor($1, $2, $3)`,
+    [id, userId, tenantId ?? null],
+  );
+},
   async create(
     data: {
       tenantId: string;
@@ -137,23 +198,6 @@ export const bookingRepository = {
       `UPDATE bookings SET receipt_url = $1, updated_at = now() WHERE id = $2`,
       [receiptUrl, id],
     );
-  },
-
-  async findById(id: string): Promise<Booking | null> {
-    try {
-      return await queryOne<Booking>(`SELECT * FROM bookings WHERE id = $1`, [
-        id,
-      ]);
-    } catch (err) {
-      trackError("booking_find_failed", "booking_repository", "medium");
-      logger.error("booking_repository_find_by_id_failed", {
-        event: "booking_repository_find_by_id_failed",
-        id,
-        error: (err as Error).message,
-        ...ctx(),
-      });
-      throw err;
-    }
   },
 
   async findByRef(ref: string): Promise<Booking | null> {
@@ -271,10 +315,14 @@ export const bookingRepository = {
     status: BookingStatus | undefined,
     page = 1,
     limit = 20,
+    filters: TenantBookingFilters = {},
   ): Promise<Booking[]> {
-    const offset = (page - 1) * limit;
-    const params: unknown[] = [tenantId, limit, offset];
-    const where = status ? `AND b.status = $${params.push(status)}` : "";
+    const { clause, params } = tenantBookingWhere(tenantId, {
+      ...filters,
+      statuses: filters.statuses ?? (status ? [status] : undefined),
+    });
+    const limitIdx = params.push(limit);
+    const offsetIdx = params.push((page - 1) * limit);
 
     return query<Booking>(
       `SELECT b.*, t.id AS tenant_id, t.name AS tenant_name, owner.email AS tenant_email,
@@ -287,21 +335,21 @@ export const bookingRepository = {
      JOIN room_types rt    ON rt.id    = b.room_type_id
      JOIN tenants    t     ON t.id     = b.tenant_id
      JOIN users      owner ON owner.id = t.owner_user_id
-     WHERE b.tenant_id = $1 ${where}
-     ORDER BY b.created_at DESC LIMIT $2 OFFSET $3`,
+     WHERE ${clause}
+     ORDER BY b.created_at DESC, b.id DESC
+     LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
       params,
     );
   },
 
   async countByTenant(
     tenantId: string,
-    status?: BookingStatus,
+    filters: TenantBookingFilters = {},
   ): Promise<number> {
-    const params: unknown[] = [tenantId];
-    const where = status ? `AND status = $${params.push(status)}` : "";
+    const { clause, params } = tenantBookingWhere(tenantId, filters);
     try {
       const row = await queryOne<{ count: string }>(
-        `SELECT COUNT(*) AS count FROM bookings WHERE tenant_id = $1 ${where}`,
+        `SELECT COUNT(*) AS count FROM bookings b WHERE ${clause}`,
         params,
       );
       return parseInt(row?.count ?? "0", 10);
@@ -311,8 +359,6 @@ export const bookingRepository = {
     }
   },
 
-  // Atomic: one query, all status counts + month-over-month revenue growth
-  // in a single consistent snapshot.
   async getStatsForTenant(tenantId: string): Promise<BookingStats> {
     const row = await queryOne<{
       confirmed_count: string;

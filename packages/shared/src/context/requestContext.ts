@@ -13,6 +13,7 @@ export interface RequestContext {
   path?:        string;
   eventType?:   string;
   dbClient?:    PoolClient;
+  dbRole?:      "app" | "worker";
 }
 
 class RequestContextStore {

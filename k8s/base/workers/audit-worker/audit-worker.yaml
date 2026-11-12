@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audit-worker
+  labels:
+    app: audit-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audit-worker
+  template:
+    metadata:
+      labels:
+        app: audit-worker
+    spec:
+      containers:
+        - name: audit-worker
+          image: eddyscript/audit-worker:latest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
