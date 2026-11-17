@@ -1,24 +1,75 @@
 export class AppError extends Error {
-  public statusCode:    number;
-  public isOperational: boolean;
-  public details?:      unknown;
+  public readonly statusCode: number;
+  public readonly isOperational: boolean;
+  public readonly code: string;
+  public readonly details?: unknown;
 
-  constructor(message: string, statusCode: number, isOperational = true, details?: unknown) {
+  constructor(
+    message: string,
+    statusCode: number,
+    code: string,
+    isOperational = true,
+    details?: unknown,
+  ) {
     super(message);
-    this.statusCode    = statusCode;
+    this.statusCode = statusCode;
+    this.code = code;
     this.isOperational = isOperational;
-    this.details       = details;
+    this.details = details;
     Object.setPrototypeOf(this, new.target.prototype);
     Error.captureStackTrace(this, this.constructor);
   }
 
-  static badRequest(msg: string, details?: unknown): AppError { return new AppError(msg, 400, true, details); }
-  static unauthorized(msg = "Unauthorized."): AppError        { return new AppError(msg, 401, true); }
-  static forbidden(msg = "Forbidden."): AppError              { return new AppError(msg, 403, true); }
-  static notFound(msg = "Resource not found."): AppError      { return new AppError(msg, 404, true); }
-  static conflict(msg: string, d?: unknown): AppError         { return new AppError(msg, 409, true, d); }
-  static unprocessable(msg: string, d?: unknown): AppError    { return new AppError(msg, 422, true, d); }
-  static tooManyRequests(msg = "Too many requests."): AppError { return new AppError(msg, 429, true); }
-  static serviceUnavailable(msg = "Service temporarily unavailable."): AppError { return new AppError(msg, 503, true); }
-  static internal(msg = "An unexpected error occurred."): AppError { return new AppError(msg, 500, false); }
+  static badRequest(
+    msg: string,
+    details?: unknown,
+    code = "BAD_REQUEST",
+  ): AppError {
+    return new AppError(msg, 400, code, true, details);
+  }
+
+  static unauthorized(msg = "Unauthorized.", code = "UNAUTHORIZED"): AppError {
+    return new AppError(msg, 401, code, true);
+  }
+
+  static forbidden(msg = "Forbidden.", code = "FORBIDDEN"): AppError {
+    return new AppError(msg, 403, code, true);
+  }
+
+  static notFound(msg = "Resource not found.", code = "NOT_FOUND"): AppError {
+    return new AppError(msg, 404, code, true);
+  }
+
+  static conflict(msg: string, code = "CONFLICT", details?: unknown): AppError {
+    return new AppError(msg, 409, code, true, details);
+  }
+
+  static unprocessable(
+    msg: string,
+    code = "UNPROCESSABLE",
+    details?: unknown,
+  ): AppError {
+    return new AppError(msg, 422, code, true, details);
+  }
+
+  static tooManyRequests(
+    msg = "Too many requests.",
+    code = "RATE_LIMITED",
+  ): AppError {
+    return new AppError(msg, 429, code, true);
+  }
+
+  static serviceUnavailable(
+    msg = "Service temporarily unavailable.",
+    code = "SERVICE_UNAVAILABLE",
+  ): AppError {
+    return new AppError(msg, 503, code, true);
+  }
+
+  static internal(
+    msg = "An unexpected error occurred.",
+    code = "INTERNAL",
+  ): AppError {
+    return new AppError(msg, 500, code, false);
+  }
 }

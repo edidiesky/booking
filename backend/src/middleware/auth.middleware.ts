@@ -4,9 +4,6 @@ import redisClient from "../config/redis";
 import { JWTPayload, UserType } from "../types";
 import { AppError } from "../utils/AppError";
 import { requestContext } from "../context/requestContext";
-<<<<<<< HEAD
-import { beginTenantScopedTransaction } from "./rlsMiddleware";
-=======
 import { sessionVersionRepository } from "../domains/auth/sessionVersion.repository";
 import { idleTrackingRepository } from "../domains/auth/idleTracking.repository";
 import { sessionRepository } from "../domains/session/session.repository";
@@ -24,7 +21,6 @@ type AccessTokenPayload = {
   jti?: string;
 };
 
->>>>>>> 91fc74d8f588ce0e5aad698972c9d0583c679311
 export function authenticate(
   req: Request,
   res: Response,
@@ -164,11 +160,6 @@ export function authorize(...roles: UserType[]) {
   };
 }
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 91fc74d8f588ce0e5aad698972c9d0583c679311
 export async function requireTenantMember(
   req: Request,
   res: Response,
@@ -208,9 +199,6 @@ export async function requireTenantMember(
   }
 
   req.tenantId = tenantId;
-<<<<<<< HEAD
-  const ok = await beginTenantScopedTransaction(req, res, tenantId);
-=======
   // tenantId is string here (narrowed by the guard above)
   const ok = await beginTenantScopedTransaction(
     req,
@@ -218,7 +206,6 @@ export async function requireTenantMember(
     tenantId,
     req.user.userId,
   );
->>>>>>> 91fc74d8f588ce0e5aad698972c9d0583c679311
   if (!ok) {
     next(new Error("Failed to establish tenant-scoped database session."));
     return;

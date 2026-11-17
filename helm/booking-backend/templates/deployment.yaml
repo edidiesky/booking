@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "booking-backend.name" . }}
+  labels: 
+    {{- include "booking-backend.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "booking-backend.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "booking-backend.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ include "booking-backend.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 4000
+          env:
+            - name: APP_ENV
+              value: {{ .Values.env.APP_ENV }}
+            - name: LOG_LEVEL
+              value: {{ .Values.env.LOG_LEVEL }}
+          {{- if eq .Values.probes.enabled true }}
+          readinessProbe:
+            httpGet:
+              port: {{ .Values.service.targetPort }}
+              path: {{ .Values.probes.readinessPath }}
+            initialDelaySeconds: {{ .Values.probes.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.periodSeconds }}
+          livenessProbe:
+              httpGet:
+                port: {{ .Values.service.targetPort }}
+                path: {{ .Values.probes.readinessPath }}
+              initialDelaySeconds: {{ .Values.probes.initialDelaySeconds }}
+              periodSeconds: {{ .Values.probes.periodSeconds }}
+          {{- end }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
