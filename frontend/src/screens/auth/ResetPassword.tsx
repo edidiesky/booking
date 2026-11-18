@@ -92,6 +92,7 @@ export default function ResetPassword() {
     );
   }
 
+  
   return (
     <AuthLayout>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 w-[90%]">

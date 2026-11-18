@@ -90,7 +90,6 @@ export default function AuthLayout({
   return (
     <div
       className="min-h-screen grid lg:grid-cols-[400px_1fr]"
-      style={{ background: "var(--color-primary)" }}
     >
       {/* left panel */}
       <div
