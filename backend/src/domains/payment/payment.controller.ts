@@ -5,7 +5,6 @@ import { paymentRepository } from "./payment.repository";
 import { AppError } from "../../utils/AppError";
 import { PaymentGateway } from "../../types";
 import { userRepository } from "../auth/auth.repository";
-
 import { buildPaginationMeta } from "../../utils/pagination";
 import type { PaymentStatus } from "../../types";
 

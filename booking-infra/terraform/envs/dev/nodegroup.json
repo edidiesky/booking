@@ -1,0 +1,63 @@
+{
+    "nodegroup": {
+        "nodegroupName": "general-54c219aabb56df54a28b7b9b08",
+        "nodegroupArn": "arn:aws:eks:us-east-1:606754308364:nodegroup/booking-dev-eks/general-54c219aabb56df54a28b7b9b08/aed0f9a0-f843-f9ef-0383-77756ce918e8",
+        "clusterName": "booking-dev-eks",
+        "version": "1.33",
+        "releaseVersion": "1.33.13-20261112",
+        "createdAt": "2026-11-19T11:02:28.817000+01:00",
+        "modifiedAt": "2026-11-19T11:35:34.726000+01:00",
+        "status": "CREATE_FAILED",
+        "capacityType": "ON_DEMAND",
+        "scalingConfig": {
+            "minSize": 1,
+            "maxSize": 2,
+            "desiredSize": 1
+        },
+        "instanceTypes": [
+            "t3.small"
+        ],
+        "subnets": [
+            "subnet-0c08f6bc2e8ce20b1",
+            "subnet-045f8b17a230decb9"
+        ],
+        "amiType": "AL2023_x86_64_STANDARD",
+        "nodeRole": "arn:aws:iam::606754308364:role/general-eks-node-group-6f740b5873e83e70b1ea3e14d8",
+        "labels": {
+            "role": "general"
+        },
+        "resources": {
+            "autoScalingGroups": [
+                {
+                    "name": "eks-general-54c219aabb56df54a28b7b9b08-aed0f9a0-f843-f9ef-0383-77756ce918e8"
+                }
+            ]
+        },
+        "health": {
+            "issues": [
+                {
+                    "code": "NodeCreationFailure",
+                    "message": "Unhealthy nodes in the kubernetes cluster",
+                    "resourceIds": [
+                        "i-0884a4a9acbbe2800"
+                    ]
+                }
+            ]
+        },
+        "updateConfig": {
+            "maxUnavailablePercentage": 25
+        },
+        "launchTemplate": {
+            "name": "general-c2a9c82235115489041d3a29f0",
+            "version": "1",
+            "id": "lt-000036b8c6f8d76ce"
+        },
+        "tags": {
+            "Project": "booking",
+            "Environment": "dev",
+            "ManagedBy": "terraform",
+            "Module": "eks",
+            "Name": "general"
+        }
+    }
+}

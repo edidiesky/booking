@@ -14,5 +14,3 @@ CREATE TABLE IF NOT EXISTS booking_locks (
   CREATE INDEX IF NOT EXISTS idx_locks_expires    ON booking_locks(expires_at);
   CREATE INDEX IF NOT EXISTS idx_locks_session    ON booking_locks(session_id);
 
-
-

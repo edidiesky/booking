@@ -4,7 +4,6 @@ import { PaymentStatus, PaymentGateway } from "../../types";
 import { trackError } from "../../utils/metrics";
 import { requestContext } from "../../context/requestContext";
 import logger from "../../utils/logger";
-
 export interface Payment {
   id: string;
   booking_id: string;
@@ -67,40 +66,39 @@ function tenantPaymentWhere(tenantId: string, f: TenantPaymentFilters) {
 }
 
 export const paymentRepository = {
-
   async findByIdempotencyKey(
-  key: string,
-  client?: PoolClient,
-): Promise<Payment | null> {
-  const sql = `SELECT * FROM payments WHERE idempotency_key = $1`;
-  try {
-    if (client) {
-      const { rows } = await client.query(sql, [key]);
-      return (rows[0] as Payment) ?? null;
+    key: string,
+    client?: PoolClient,
+  ): Promise<Payment | null> {
+    const sql = `SELECT * FROM payments WHERE idempotency_key = $1`;
+    try {
+      if (client) {
+        const { rows } = await client.query(sql, [key]);
+        return (rows[0] as Payment) ?? null;
+      }
+      return await queryOne<Payment>(sql, [key]);
+    } catch (err) {
+      trackError("payment_find_failed", "payment_repository", "medium");
+      throw err;
     }
-    return await queryOne<Payment>(sql, [key]);
-  } catch (err) {
-    trackError("payment_find_failed", "payment_repository", "medium");
-    throw err;
-  }
-},
+  },
 
-async findByTransactionId(
-  transactionId: string,
-  client?: PoolClient,
-): Promise<Payment | null> {
-  const sql = `SELECT * FROM public.payment_by_transaction_id($1)`;
-  try {
-    if (client) {
-      const { rows } = await client.query(sql, [transactionId]);
-      return (rows[0] as Payment) ?? null;
+  async findByTransactionId(
+    transactionId: string,
+    client?: PoolClient,
+  ): Promise<Payment | null> {
+    const sql = `SELECT * FROM public.payment_by_transaction_id($1)`;
+    try {
+      if (client) {
+        const { rows } = await client.query(sql, [transactionId]);
+        return (rows[0] as Payment) ?? null;
+      }
+      return await queryOne<Payment>(sql, [transactionId]);
+    } catch (err) {
+      trackError("payment_find_failed", "payment_repository", "medium");
+      throw err;
     }
-    return await queryOne<Payment>(sql, [transactionId]);
-  } catch (err) {
-    trackError("payment_find_failed", "payment_repository", "medium");
-    throw err;
-  }
-},
+  },
   async create(
     data: {
       bookingId: string;
@@ -289,7 +287,6 @@ async findByTransactionId(
     );
     return row?.count ?? 0;
   },
-
   // status counts + month-over-month volume growth.
   async getStatsForTenant(tenantId: string): Promise<PaymentStats> {
     const row = await queryOne<{

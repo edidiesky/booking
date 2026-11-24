@@ -299,47 +299,48 @@ export const paymentServiceImpl = {
       );
     }
 
-if (isWorkflowDelegationEnabled()) {
-  const sagaResult = await paymentOrchestrationClient.startBookingPaymentSaga({
-    tenantId: booking.tenant_id,
-    propertyId: booking.property_id,
-    roomTypeId: booking.room_type_id,
-    guestUserId,
-    guestEmail: email,
-    checkIn: toDateOnly(booking.check_in as string | Date),
-    checkOut: toDateOnly(booking.check_out as string | Date),
-    roomsCount: booking.rooms_count,
-    guestCount: booking.guest_count,
-    totalAmountNgn: Number(booking.total_amount_ngn),
-    platformFeeNgn: Number(booking.platform_fee_ngn),
-    hostPayoutNgn: Number(booking.host_payout_ngn),
-    gateway,
-    callbackUrl,
-    phone,
-    bookingId, // saga adopts this booking (no duplicate reservation)
-  });
+    if (isWorkflowDelegationEnabled()) {
+      const sagaResult =
+        await paymentOrchestrationClient.startBookingPaymentSaga({
+          tenantId: booking.tenant_id,
+          propertyId: booking.property_id,
+          roomTypeId: booking.room_type_id,
+          guestUserId,
+          guestEmail: email,
+          checkIn: toDateOnly(booking.check_in as string | Date),
+          checkOut: toDateOnly(booking.check_out as string | Date),
+          roomsCount: booking.rooms_count,
+          guestCount: booking.guest_count,
+          totalAmountNgn: Number(booking.total_amount_ngn),
+          platformFeeNgn: Number(booking.platform_fee_ngn),
+          hostPayoutNgn: Number(booking.host_payout_ngn),
+          gateway,
+          callbackUrl,
+          phone,
+          bookingId, // saga adopts this booking (no duplicate reservation)
+        });
 
-  const ctx = sagaResult.context as {
-    bookingId?: string;
-    paymentId?: string;
-    transactionId?: string;
-    redirectUrl?: string;
-    amountNgn?: number;
-  };
+      const ctx = sagaResult.context as {
+        bookingId?: string;
+        paymentId?: string;
+        transactionId?: string;
+        redirectUrl?: string;
+        amountNgn?: number;
+      };
 
-  if (!ctx.redirectUrl || !ctx.transactionId) {
-    throw AppError.serviceUnavailable(
-      "Saga paused but payment redirect details were not returned",
-    );
-  }
+      if (!ctx.redirectUrl || !ctx.transactionId) {
+        throw AppError.serviceUnavailable(
+          "Saga paused but payment redirect details were not returned",
+        );
+      }
 
-  return {
-    paymentId: ctx.paymentId ?? ctx.transactionId,
-    transactionId: ctx.transactionId,
-    redirectUrl: ctx.redirectUrl,
-    amountNgn: ctx.amountNgn ?? Number(booking.total_amount_ngn),
-  };
-}
+      return {
+        paymentId: ctx.paymentId ?? ctx.transactionId,
+        transactionId: ctx.transactionId,
+        redirectUrl: ctx.redirectUrl,
+        amountNgn: ctx.amountNgn ?? Number(booking.total_amount_ngn),
+      };
+    }
     const endpoint = "/api/v1/payments/initialize";
     const requestHash = idempotencyRepository.buildHash(
       "POST",
@@ -718,6 +719,7 @@ if (isWorkflowDelegationEnabled()) {
     }
   },
 };
+
 
 export const paymentService = instrumentService(
   paymentServiceImpl,

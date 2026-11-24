@@ -27,16 +27,21 @@ module "eks" {
 
   addons = {
     coredns = {
-      most_recent = true
+      most_recent                 = true
+      resolve_conflicts_on_create = "OVERWRITE"
     }
     kube-proxy = {
-      most_recent = true
+      most_recent                 = true
+      resolve_conflicts_on_create = "OVERWRITE"
     }
     vpc-cni = {
-      most_recent = true
+      most_recent                 = true
+      resolve_conflicts_on_create = "OVERWRITE"
+      before_compute              = true
     }
     aws-ebs-csi-driver = {
-      most_recent = true
+      most_recent                 = true
+      resolve_conflicts_on_create = "OVERWRITE"
     }
   }
 
@@ -120,6 +125,24 @@ resource "aws_iam_role" "booking_backend" {
   tags = local.tags
 }
 
+resource "aws_eks_access_entry" "admin" {
+  cluster_name  = module.eks.cluster_name
+  principal_arn = data.aws_caller_identity.current.arn
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "admin" {
+  cluster_name  = module.eks.cluster_name
+  principal_arn = data.aws_caller_identity.current.arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+}
+
+data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role_policy" "booking_backend_secrets" {
   name = "${local.name}-backend-secrets"
   role = aws_iam_role.booking_backend.id
@@ -136,7 +159,7 @@ resource "aws_iam_role_policy" "booking_backend_secrets" {
         Effect   = "Allow"
         Action   = ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"]
         Resource = "arn:aws:s3:::${var.project}-${var.environment}-assets/*"
-      }
+      } 
     ]
   })
 }
