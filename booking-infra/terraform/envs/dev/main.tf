@@ -30,10 +30,10 @@ module "eks" {
 
   node_groups = {
     general = {
-      instance_types = ["t3.medium"]
-      min_size       = 2
-      max_size       = 4
-      desired_size   = 2
+      instance_types = ["t3.small"]
+      min_size       = 1
+      max_size       = 2
+      desired_size   = 1
       labels         = { role = "general" }
       taints         = {}
     }
@@ -65,14 +65,6 @@ variable "db_admin_password" {
 
 output "vpc_id" {
   value = module.networking.vpc_id
-}
-
-output "cluster_name" {
-  value = module.eks.cluster_name
-}
-
-output "cluster_endpoint" {
-  value = module.eks.cluster_endpoint
 }
 
 output "postgres_host" {

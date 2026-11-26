@@ -28,3 +28,16 @@ booking-infra/.env.*
 service-decomposition
 .zip
 saga*
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfplan
+tfplan.*
+*.tfvars
+!*.tfvars.example
+
+# Random dumps
+console-output.txt

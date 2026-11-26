@@ -4,7 +4,6 @@ import { PaymentStatus, PaymentGateway } from "../../types";
 import { trackError } from "../../utils/metrics";
 import { requestContext } from "../../context/requestContext";
 import logger from "../../utils/logger";
-
 export interface Payment {
   id: string;
   booking_id: string;
@@ -304,7 +303,6 @@ export const paymentRepository = {
     );
     return row?.count ?? 0;
   },
-
   // status counts + month-over-month volume growth.
   async getStatsForTenant(tenantId: string): Promise<PaymentStats> {
     const row = await queryOne<{

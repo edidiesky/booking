@@ -1,5 +1,5 @@
 /**
- * Critical: same Idempotency-Key + body replayed — one side effect.
+ * Critical: same Idempotency-Key + body replayed — one side effect
  * Env: GUEST_TOKEN, PROPERTY_ID, ROOM_TYPE_ID, fixed IDEMPOTENCY_KEY
  */
 import http from "k6/http";

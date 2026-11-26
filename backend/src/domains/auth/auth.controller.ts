@@ -133,7 +133,6 @@ export const VerifyLoginEmailOtpHandler = asyncHandler(
     const device = toSessionDeviceMeta(await extractDeviceInfo(req));
     const tokens = await authService.verifyLoginEmailOtp(email, code, device);
 
-    // Prefer same envelope as other login handlers (frontend often expects data.*)
     res.status(200).json({
       success: true,
       message: "Login successful.",

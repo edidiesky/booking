@@ -15,6 +15,7 @@ const BOOKING_SERVICE_URL = process.env.BOOKING_SERVICE_URL ?? "http://booking-s
 const ORCHESTRATION_SERVICE_URL = process.env.ORCHESTRATION_SERVICE_URL ?? "http://orchestration-service:4104";
 const LEDGER_SERVICE_URL = process.env.LEDGER_SERVICE_URL ?? "http://ledger-service:4103";
 
+
 interface InitializePaymentInput {
   bookingId: string;
   guestUserId: string;
@@ -104,7 +105,6 @@ export const paymentService = {
         throw new ConflictError("This booking has already been paid.");
       }
 
-      // Reuse a live attempt (initiated earlier, e.g. the saga retried this step).
       if (existing?.status === "pending" && existing.transaction_id) {
         const result = {
           paymentId: existing.id,
@@ -124,7 +124,7 @@ export const paymentService = {
 
       const row =
         existing?.status === "pending"
-          ? existing // crashed after insert, before the gateway call
+          ? existing 
           : await withTenant(pool, booking.tenantId, (c) =>
               paymentRepository.create(c, {
                 bookingId: input.bookingId,
