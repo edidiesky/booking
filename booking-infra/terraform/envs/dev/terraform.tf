@@ -2,7 +2,7 @@ terraform {
   required_version = "~> 1.14"
 
   backend "s3" {
-    bucket       = "booking-tfstate-booking-09cc6b60"
+    bucket       = "booking-tfstate-booking-3454354c"
     key          = "booking/dev/terraform.tfstate"
     region       = "us-east-1"
     use_lockfile = true

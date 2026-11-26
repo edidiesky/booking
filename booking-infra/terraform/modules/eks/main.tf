@@ -42,6 +42,7 @@ module "eks" {
     aws-ebs-csi-driver = {
       most_recent                 = true
       resolve_conflicts_on_create = "OVERWRITE"
+      service_account_role_arn    = module.irsa_ebs_csi.iam_role_arn  # Critical: bind IRSA
     }
   }
 
@@ -101,6 +102,24 @@ module "irsa_external_secrets" {
   tags = local.tags
 }
 
+# IRSA: EBS CSI Driver
+module "irsa_ebs_csi" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.0"
+
+  role_name             = "${local.name}-ebs-csi"
+  attach_ebs_csi_policy = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+
+  tags = local.tags
+}
+
 # IRSA: Booking Backend pod identity
 resource "aws_iam_role" "booking_backend" {
   name = "${local.name}-booking-backend"
@@ -139,6 +158,8 @@ resource "aws_eks_access_policy_association" "admin" {
   access_scope {
     type = "cluster"
   }
+
+  depends_on = [aws_eks_access_entry.admin] 
 }
 
 data "aws_caller_identity" "current" {}

@@ -18,6 +18,18 @@ output "oidc_provider" {
   value = module.eks.oidc_provider
 }
 
+output "node_security_group_id" {
+  value = module.eks.node_security_group_id
+}
+
+data "aws_iam_roles" "node_group" {
+  name_regex = "general-eks-node-group-.*"
+}
+
+output "node_iam_role_arn" {
+  value = module.eks.eks_managed_node_groups["general"].iam_role_arn
+}
+
 output "alb_controller_role_arn" {
   value = module.irsa_alb_controller.iam_role_arn
 }
@@ -28,12 +40,4 @@ output "external_secrets_role_arn" {
 
 output "booking_backend_role_arn" {
   value = aws_iam_role.booking_backend.arn
-}
-
-output "node_security_group_id" {
-  value = module.eks.node_security_group_id
-}
-
-output "node_iam_role_arn" {
-  value = module.eks.eks_managed_node_groups["general"].iam_role_arn
 }
