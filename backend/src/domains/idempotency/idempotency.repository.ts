@@ -35,8 +35,10 @@ export interface ClaimResult {
 
 export const idempotencyRepository = {
   buildHash(method: string, endpoint: string, userId: string, body: Record<string, unknown>): string {
-    const raw = `${method}:${endpoint}:${userId}:${JSON.stringify(body)}`;
-    return crypto.createHash("sha256").update(raw).digest("hex");
+    return crypto
+    .createHash("sha256")
+    .update(JSON.stringify({ method, endpoint, userId, body }))
+    .digest("hex");
   },
 
   async claim(requestHash: string, endpoint: string, userId?: string): Promise<ClaimResult | null> {

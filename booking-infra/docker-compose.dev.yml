@@ -206,6 +206,8 @@ services:
       MIGRATION_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
       ADMIN_DATABASE_URL:     postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/booking_platform
       RABBITMQ_URL: ${RABBITMQ_URL}
+    ports:
+    - "127.0.0.1:4000:4000" 
     networks:
       - app-tier
     depends_on:
