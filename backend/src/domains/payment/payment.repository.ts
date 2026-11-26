@@ -67,40 +67,39 @@ function tenantPaymentWhere(tenantId: string, f: TenantPaymentFilters) {
 }
 
 export const paymentRepository = {
-
   async findByIdempotencyKey(
-  key: string,
-  client?: PoolClient,
-): Promise<Payment | null> {
-  const sql = `SELECT * FROM payments WHERE idempotency_key = $1`;
-  try {
-    if (client) {
-      const { rows } = await client.query(sql, [key]);
-      return (rows[0] as Payment) ?? null;
+    key: string,
+    client?: PoolClient,
+  ): Promise<Payment | null> {
+    const sql = `SELECT * FROM payments WHERE idempotency_key = $1`;
+    try {
+      if (client) {
+        const { rows } = await client.query(sql, [key]);
+        return (rows[0] as Payment) ?? null;
+      }
+      return await queryOne<Payment>(sql, [key]);
+    } catch (err) {
+      trackError("payment_find_failed", "payment_repository", "medium");
+      throw err;
     }
-    return await queryOne<Payment>(sql, [key]);
-  } catch (err) {
-    trackError("payment_find_failed", "payment_repository", "medium");
-    throw err;
-  }
-},
+  },
 
-async findByTransactionId(
-  transactionId: string,
-  client?: PoolClient,
-): Promise<Payment | null> {
-  const sql = `SELECT * FROM public.payment_by_transaction_id($1)`;
-  try {
-    if (client) {
-      const { rows } = await client.query(sql, [transactionId]);
-      return (rows[0] as Payment) ?? null;
+  async findByTransactionId(
+    transactionId: string,
+    client?: PoolClient,
+  ): Promise<Payment | null> {
+    const sql = `SELECT * FROM public.payment_by_transaction_id($1)`;
+    try {
+      if (client) {
+        const { rows } = await client.query(sql, [transactionId]);
+        return (rows[0] as Payment) ?? null;
+      }
+      return await queryOne<Payment>(sql, [transactionId]);
+    } catch (err) {
+      trackError("payment_find_failed", "payment_repository", "medium");
+      throw err;
     }
-    return await queryOne<Payment>(sql, [transactionId]);
-  } catch (err) {
-    trackError("payment_find_failed", "payment_repository", "medium");
-    throw err;
-  }
-},
+  },
   async create(
     data: {
       bookingId: string;
@@ -233,6 +232,22 @@ async findByTransactionId(
       });
       throw err;
     }
+  },
+
+  async findPendingByBookingAndGateway(
+    bookingId: string,
+    gateway: PaymentGateway,
+    client?: PoolClient,
+  ): Promise<Payment | null> {
+    const sql = `
+    SELECT * FROM payments
+    WHERE booking_id = $1 AND gateway = $2 AND status = 'pending'
+    LIMIT 1`;
+    if (client) {
+      const { rows } = await client.query(sql, [bookingId, gateway]);
+      return (rows[0] as Payment) ?? null;
+    }
+    return queryOne<Payment>(sql, [bookingId, gateway]);
   },
 
   async listByTenant(
