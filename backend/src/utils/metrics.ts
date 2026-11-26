@@ -106,6 +106,14 @@ export const availabilityLockCounter = new client.Counter({
   registers: [register],
 });
 
+export const paymentInitHandlerDuration = new client.Histogram({
+  name: "booking_payment_init_handler_duration_seconds",
+  help: "Payment initialize handler duration, from request entry after auth and validation to response finish",
+  labelNames: ["gateway", "status"] as const,
+  buckets: [0.05, 0.1, 0.25, 0.5, 0.8, 1, 2.5, 5, 10],
+  registers: [register],
+});
+
 //  Domain ops (low cardinality)
 function domainPair(name: string, help: string) {
   return {
@@ -201,6 +209,8 @@ type OpMetrics = {
   counter: client.Counter<"operation" | "status">;
   histogram: client.Histogram<"operation" | "status">;
 };
+
+
 
 async function measureOp<T>(
   metrics: OpMetrics,

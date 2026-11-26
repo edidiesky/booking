@@ -14,6 +14,7 @@ import {
 } from "./payment.controller";
 import { requirePermission } from "../../middleware/require-permission.middleware";
 import { tenantPaymentsQuerySchema } from "./payment.validator";
+import { paymentInitTimer } from "../../middleware/payment-init-timer.middleware";
 const initPaymentSchema = Joi.object({
   bookingId: Joi.string().uuid().required(),
   gateway: Joi.string().valid("paystack", "flutterwave").required(),
@@ -27,6 +28,7 @@ router.post(
   "/initialize",
   authenticate,
   validate(initPaymentSchema),
+  paymentInitTimer,
   InitializePaymentHandler,
 );
 router.get("/booking/:bookingId", authenticate, GetPaymentByBookingHandler);
@@ -52,5 +54,6 @@ router.post(
   requirePermission("report", "export"),
   ExportTenantPaymentsHandler,
 );
+
 
 export default router;
